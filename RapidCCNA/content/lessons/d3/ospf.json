@@ -6,30 +6,30 @@
   ],
   "order": 30,
   "title": "Single-area OSPFv2",
-  "minutes": 8,
+  "minutes": 15,
   "cards": [
     {
       "heading": "Link-state routing",
-      "body": "OSPF routers flood link-state advertisements so every router in the area has the same map (the LSDB). Each router then runs Dijkstra's SPF algorithm to find its own lowest-cost path to every network. OSPF routes have administrative distance 110 and code O.",
+      "body": "OSPF routers flood link-state advertisements so every router in the area has the same map (the LSDB). Each router then runs Dijkstra's SPF algorithm to find its own lowest-cost path to every network. OSPF routes have administrative distance 110 and code O. Every router in an area has an identical LSDB, but each runs SPF from its own position, so their routing tables differ. (Distance-vector protocols such as RIP use Bellman-Ford; EIGRP uses DUAL.) Area 0 is the backbone that all other areas must connect to; in single-area OSPF every interface is normally in area 0.",
       "example": "O    10.4.4.0/24 [110/3] via 10.0.12.2, 00:01:12, Gi0/0"
     },
     {
       "heading": "Turn it on",
-      "body": "router ospf <process-id> starts a process (the ID is local only). A network statement enables OSPF on every interface whose IP matches the address and wildcard, and puts it in an area. Or enable it on the interface directly.",
+      "body": "router ospf <process-id> starts a process (the ID is local only). A network statement enables OSPF on every interface whose IP matches the address and wildcard, and puts it in an area. Or enable it on the interface directly. The network statement uses a wildcard mask: 10.1.0.0 0.0.3.255 matches 10.1.0.0 through 10.1.3.255, and 'network 10.1.1.1 0.0.0.0 area 0' matches exactly the interface with 10.1.1.1. A passive interface still has its network advertised; it just forms no neighbours, which suits user LANs. 'show ip protocols' summarises the process: router ID, network statements, passive interfaces and routing sources.",
       "example": "router ospf 1\n router-id 1.1.1.1\n network 10.0.12.0 0.0.0.3 area 0\n passive-interface g0/2\n!\ninterface g0/1\n ip ospf 1 area 0"
     },
     {
       "heading": "Router ID",
-      "body": "Every router needs a unique 32-bit router ID. It's chosen in this order: the router-id command, else the highest IP on an up loopback, else the highest IP on an up physical interface. A changed router ID takes effect after 'clear ip ospf process'."
+      "body": "Every router needs a unique 32-bit router ID. It's chosen in this order: the router-id command, else the highest IP on an up loopback, else the highest IP on an up physical interface. A changed router ID takes effect after 'clear ip ospf process'. A loopback never goes down unless it's shut, which is why it makes a stable router ID."
     },
     {
       "heading": "Becoming neighbours",
-      "body": "Routers discover each other with Hellos (every 10 s on Ethernet; dead after 40 s). To become neighbours they must match on: subnet and mask, area, Hello and Dead timers, authentication and MTU, and their router IDs must differ. Process IDs, costs and priorities don't have to match. Passive interfaces send no Hellos.",
+      "body": "Routers discover each other with Hellos (every 10 s on Ethernet; dead after 40 s). To become neighbours they must match on: subnet and mask, area, Hello and Dead timers, authentication and MTU, and their router IDs must differ. Process IDs, costs and priorities don't have to match. Passive interfaces send no Hellos. Fix timers with 'ip ospf hello-interval' and 'ip ospf dead-interval'. On a broadcast link, 10.0.12.1/30 and 10.0.12.5/30 are in different subnets, so they never become neighbours. If Hellos work but the routers stick in ExStart/Exchange, the usual cause is mismatched MTU.",
       "example": "R1#show ip ospf neighbor\nNeighbor ID  Pri  State     Dead Time  Address    Interface\n2.2.2.2        1  FULL/DR   00:00:35   10.0.12.2  Gi0/0"
     },
     {
       "heading": "DR and BDR",
-      "body": "On Ethernet segments routers elect a designated router and a backup to cut down flooding. Highest priority wins (default 1, 0 = never), then highest router ID. The election isn't pre-emptive. Other routers (DROTHERs) go FULL with the DR and BDR and stay 2WAY with each other, which is normal."
+      "body": "On Ethernet segments routers elect a designated router and a backup to cut down flooding. Highest priority wins (default 1, 0 = never), then highest router ID. The election isn't pre-emptive. Other routers (DROTHERs) go FULL with the DR and BDR and stay 2WAY with each other, which is normal. 'ip ospf priority 0' on an interface makes the router ineligible. Because there's no preemption, a priority-255 router joining later changes nothing until the DR or BDR fails; then the BDR is promoted to DR and a new BDR is elected. On a point-to-point network type there's no DR or BDR at all: 'ip ospf network point-to-point' on both ends of an Ethernet link between two routers skips the election and comes up faster. 'show ip ospf interface' shows the router's own state (DR, BDR or DROTHER), its priority, cost, network type and the DR's router ID."
     },
     {
       "heading": "Cost",
@@ -45,6 +45,11 @@
       "heading": "Neighbour states",
       "body": "Down, Init (a Hello arrived), 2-Way (each router sees itself in the other's Hello), ExStart, Exchange (database summaries), Loading (requesting missing LSAs), Full. On a broadcast segment two DROthers stop at 2-Way, which is normal: everyone goes Full with the DR and BDR. Hellos go every 10 s on Ethernet and a neighbour is dead after 40 s.",
       "example": "Neighbor ID  Pri  State          Dead Time  Address   Interface\n2.2.2.2        1  FULL/DR        00:00:35   10.0.0.2  Gi0/0\n4.4.4.4        1  2WAY/DROTHER   00:00:33   10.0.0.4  Gi0/0"
+    },
+    {
+      "heading": "OSPF packets and LSAs",
+      "body": "Hello packets find neighbours and keep adjacencies alive; they go to 224.0.0.5 (all OSPF routers), and 224.0.0.6 reaches only the DR and BDR. Then DBD (database description) packets summarise the LSDB during Exchange, LSR (link-state request) asks for specific LSAs, LSU (link-state update) carries full LSAs and LSAck confirms they arrived. Every router originates a type 1 (router) LSA describing its own links and costs. The DR originates a type 2 (network) LSA for a multi-access segment. Types 3 and 5 come from ABRs and ASBRs in multi-area designs.",
+      "example": "Hello  find neighbours, keepalive\nDBD    LSDB summary\nLSR    request LSAs\nLSU    send LSAs\nLSAck  acknowledge\n(224.0.0.9 is RIPv2, 224.0.0.10 is EIGRP)"
     }
   ],
   "recall": [

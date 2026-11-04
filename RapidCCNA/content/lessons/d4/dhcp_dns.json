@@ -7,7 +7,7 @@
   ],
   "order": 30,
   "title": "DHCP and DNS",
-  "minutes": 8,
+  "minutes": 10,
   "cards": [
     {
       "heading": "DNS",
@@ -16,7 +16,7 @@
     },
     {
       "heading": "DNS on a router",
-      "body": "A router can resolve names for its own commands (ping a name) with a name server, or you can disable lookups so a mistyped command isn't treated as a hostname.",
+      "body": "A router can resolve names for its own commands (ping a name) with a name server, or you can disable lookups so a mistyped command isn't treated as a hostname. 'ip name-server' sets the DNS server the router uses; 'ip domain-lookup' (on by default) enables lookups, and with no name server set a mistyped command gets broadcast as a DNS query. 'ip dns server' is different: it makes the router a DNS server itself.",
       "example": "ip name-server 8.8.8.8\nip domain-lookup\n! or: no ip domain-lookup"
     },
     {
@@ -30,12 +30,12 @@
     },
     {
       "heading": "DHCP relay",
-      "body": "A Discover is a broadcast, and routers don't forward broadcasts, so clients on a subnet without a DHCP server need a relay. 'ip helper-address' on the router interface facing the clients forwards their requests as unicast to the server, filling in giaddr (the interface's address) so the server picks the right pool.",
+      "body": "A Discover is a broadcast, and routers don't forward broadcasts, so clients on a subnet without a DHCP server need a relay. 'ip helper-address' on the router interface facing the clients forwards their requests as unicast to the server, filling in giaddr (the interface's address) so the server picks the right pool. The helper turns certain UDP broadcasts, DHCP included, into unicasts. The server then sends its reply back to the relay.",
       "example": "interface g0/1\n ip address 192.168.20.1 255.255.255.0\n ip helper-address 10.0.12.1"
     },
     {
       "heading": "Router as DHCP client and verification",
-      "body": "A router interface can get its own address by DHCP, typically from an ISP. On the server, 'show ip dhcp binding' lists leases and 'show ip dhcp pool' the pools.",
+      "body": "A router interface can get its own address by DHCP, typically from an ISP. On the server, 'show ip dhcp binding' lists leases and 'show ip dhcp pool' the pools. The bindings show each leased IP with the client's MAC and lease expiry; 'show ip dhcp pool' shows pool usage.",
       "example": "interface g0/0\n ip address dhcp"
     }
   ],

@@ -108,8 +108,8 @@ def validate(root: Path, min_per_subtopic: int = 0, min_total: int = 0):
         for st in lesson["subtopics"]:
             if subtopics.get(st) != lesson["domain"]:
                 errors.append(f"{path}: subtopic {st} not in domain {lesson['domain']}")
-        if not 3 <= len(lesson["cards"]) <= 8:
-            errors.append(f"{path}: lessons need 3-8 cards, has {len(lesson['cards'])}")
+        if not 3 <= len(lesson["cards"]) <= 10:
+            errors.append(f"{path}: lessons need 3-10 cards, has {len(lesson['cards'])}")
 
     for path in sorted((root / "questions").rglob("*.json")):
         arr = load(path, errors)

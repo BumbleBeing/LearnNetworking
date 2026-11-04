@@ -23,6 +23,8 @@ jobs:
         run: |
           python3 tools/test_qa_content.py
           python3 tools/qa_content.py --strict
+      - name: Every acronym in the content has a glossary entry
+        run: python3 tools/check_acronyms.py
       - name: Install Godot ${{ env.GODOT_VERSION }}
         run: |
           curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip

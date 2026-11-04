@@ -6,7 +6,7 @@
   ],
   "order": 62,
   "title": "Private IPv4 addressing",
-  "minutes": 5,
+  "minutes": 6,
   "cards": [
     {
       "heading": "Why private addresses",
@@ -19,7 +19,7 @@
     },
     {
       "heading": "Other special ranges",
-      "body": "127.0.0.0/8 is loopback (the host itself). 169.254.0.0/16 is link-local (APIPA): a host gives itself one when DHCP fails. 100.64.0.0/10 is shared address space for carrier-grade NAT. These aren't RFC 1918 but aren't routed on the internet either."
+      "body": "127.0.0.0/8 is loopback (the host itself). 169.254.0.0/16 is link-local (APIPA): a host gives itself one when DHCP fails. 100.64.0.0/10 is shared address space for carrier-grade NAT. These aren't RFC 1918 but aren't routed on the internet either. 100.64.0.0/10 is defined in RFC 6598. 192.168.0.0/16 contains 2^(24-16) = 256 /24 networks, from 192.168.0.0/24 to 192.168.255.0/24."
     }
   ],
   "recall": [

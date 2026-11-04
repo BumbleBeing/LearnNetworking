@@ -8,7 +8,7 @@
   ],
   "order": 40,
   "title": "Wireless architectures and WLC setup",
-  "minutes": 8,
+  "minutes": 14,
   "cards": [
     {
       "heading": "Autonomous APs",
@@ -16,7 +16,7 @@
     },
     {
       "heading": "Lightweight APs and the WLC",
-      "body": "In split-MAC architecture, lightweight APs handle the real-time radio work (beacons, acknowledgements, encryption) while a wireless LAN controller handles management, authentication, roaming and RF tuning. They talk over CAPWAP tunnels: UDP 5246 for control (encrypted with DTLS) and UDP 5247 for data.",
+      "body": "In split-MAC architecture, lightweight APs handle the real-time radio work (beacons, acknowledgements, encryption) while a wireless LAN controller handles management, authentication, roaming and RF tuning. They talk over CAPWAP tunnels: UDP 5246 for control (encrypted with DTLS) and UDP 5247 for data. Time-critical functions stay on the AP: beacons, probe responses, acknowledgements and encryption. The WLC handles authentication, association, RF management and roaming.",
       "example": "[AP] ══ CAPWAP tunnel (UDP 5246/5247) ══ [WLC] ── VLANs ── network"
     },
     {
@@ -25,7 +25,7 @@
     },
     {
       "heading": "AP modes",
-      "body": "Local: the default; serves clients and tunnels their traffic to the WLC. FlexConnect: switches client traffic locally at a branch and keeps working if the WLC link fails. Monitor: doesn't serve clients; scans for rogues and intrusions. Sniffer: captures 802.11 frames for analysis. Rogue detector: listens on the wire for rogue devices. SE-Connect: spectrum analysis of interference. Bridge/mesh: links APs wirelessly."
+      "body": "Local: the default; serves clients and tunnels their traffic to the WLC. FlexConnect: switches client traffic locally at a branch and keeps working if the WLC link fails. Monitor: doesn't serve clients; scans for rogues and intrusions. Sniffer: captures 802.11 frames for analysis. Rogue detector: listens on the wire for rogue devices. SE-Connect: spectrum analysis of interference. Bridge/mesh: links APs wirelessly. Monitor mode listens on every channel for IDS and rogue detection; local mode only scans off-channel briefly. Sniffer mode forwards captured frames to a PC running an analyser such as Wireshark. Bridge/mesh suits links between buildings where cabling isn't possible."
     },
     {
       "heading": "Switch ports for APs",
@@ -33,12 +33,16 @@
     },
     {
       "heading": "WLC ports and interfaces",
-      "body": "Physical ports: the service port (out-of-band management), distribution system ports (to the switched network, usually trunks bundled with LAG), the console port and the redundancy port (to a standby WLC). Logical interfaces: management (and AP management), virtual (DHCP relay, web auth), service-port, and dynamic interfaces that map each WLAN to a VLAN. WLC LAG doesn't negotiate, so the switch must use channel-group mode on.",
+      "body": "Physical ports: the service port (out-of-band management), distribution system ports (to the switched network, usually trunks bundled with LAG), the console port and the redundancy port (to a standby WLC). Logical interfaces: management (and AP management), virtual (DHCP relay, web auth), service-port, and dynamic interfaces that map each WLAN to a VLAN. WLC LAG doesn't negotiate, so the switch must use channel-group mode on. The DS ports connect to trunks because they carry the management interface and every dynamic interface VLAN. The virtual interface uses a non-routable address (such as 192.0.2.1), the same on every WLC in a mobility group; clients see it during web authentication and as the DHCP server address.",
       "example": "interface range g1/0/1 - 2\n channel-group 1 mode on\ninterface port-channel 1\n switchport mode trunk"
     },
     {
       "heading": "Creating a WLAN in the GUI",
-      "body": "WLANs > Create New: give a profile name, the SSID and a WLAN ID. General tab: enable it and pick the interface (VLAN) its clients use. Security tab: Layer 2 security such as WPA2 with a PSK or 802.1X. QoS tab: Platinum (voice), Gold (video), Silver (best effort, default) or Bronze (background). Advanced tab: options such as FlexConnect local switching and session timeouts."
+      "body": "WLANs > Create New: give a profile name, the SSID and a WLAN ID. General tab: enable it and pick the interface (VLAN) its clients use. Security tab: Layer 2 security such as WPA2 with a PSK or 802.1X. QoS tab: Platinum (voice), Gold (video), Silver (best effort, default) or Bronze (background). Advanced tab: options such as FlexConnect local switching and session timeouts. Start on the WLANs tab: Create New, Go, then enter the type, profile name (the WLC's label), SSID (what clients see) and WLAN ID. A new WLAN stays disabled until you tick Status: Enabled on the General tab. On the Security tab, the Layer 2 sub-tab holds WPA/WPA2/WPA3, the cipher and the PSK or 802.1X; Layer 3 is for web authentication."
+    },
+    {
+      "heading": "Where the WLC runs and how APs find it",
+      "body": "A WLC can be a hardware appliance, a virtual machine (such as a Catalyst 9800-CL in a private or public cloud), embedded in a Catalyst switch, or run on an AP. A new lightweight AP finds its WLC by broadcast on the local subnet; on a different subnet it needs DHCP option 43 or a DNS name for the controller. High-power APs may need Cisco UPOE or 802.3bt Type 3 PoE (60 W); 802.3af gives 15.4 W, 802.3at 30 W and Type 4 90-100 W."
     }
   ],
   "recall": [

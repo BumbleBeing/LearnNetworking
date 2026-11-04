@@ -6,7 +6,7 @@
   ],
   "order": 10,
   "title": "Key security concepts",
-  "minutes": 8,
+  "minutes": 10,
   "cards": [
     {
       "heading": "Threat, vulnerability, exploit, mitigation",
@@ -14,15 +14,15 @@
     },
     {
       "heading": "The CIA triad",
-      "body": "Security protects confidentiality (only the right people can read data), integrity (data isn't changed without detection) and availability (systems are there when needed). Attacks target one or more of them: eavesdropping hits confidentiality, tampering integrity, DoS availability."
+      "body": "Security protects confidentiality (only the right people can read data), integrity (data isn't changed without detection) and availability (systems are there when needed). Attacks target one or more of them: eavesdropping hits confidentiality, tampering integrity, DoS availability. Encryption protects confidentiality; a hash of a file, checked later, shows it hasn't changed, which protects integrity; redundancy protects availability."
     },
     {
       "heading": "Denial of service",
-      "body": "DoS overwhelms a target so legitimate users can't reach it. DDoS uses many sources, often a botnet. Reflection attacks spoof the victim's address in requests to third-party servers; amplification picks requests whose replies are much bigger (DNS, NTP), multiplying the flood."
+      "body": "DoS overwhelms a target so legitimate users can't reach it. DDoS uses many sources, often a botnet. Reflection attacks spoof the victim's address in requests to third-party servers; amplification picks requests whose replies are much bigger (DNS, NTP), multiplying the flood. A TCP SYN flood opens many half-finished three-way handshakes, so the server waits on half-open connections until it can't accept real ones."
     },
     {
       "heading": "Spoofing and man-in-the-middle",
-      "body": "Spoofing fakes an identity: a source IP, a MAC address or a rogue DHCP server. A man-in-the-middle sits between two parties to read or alter traffic, for example with ARP poisoning (fake ARP replies mapping the gateway's IP to the attacker's MAC).",
+      "body": "Spoofing fakes an identity: a source IP, a MAC address or a rogue DHCP server. A man-in-the-middle sits between two parties to read or alter traffic, for example with ARP poisoning (fake ARP replies mapping the gateway's IP to the attacker's MAC). A man-in-the-middle (on-path) attacker relays the traffic, so both victims think they're talking to each other directly. ARP spoofing and rogue DHCP servers are common ways to get into the path.",
       "example": "Victim ARP cache:  10.1.1.1 → aaaa.bbbb.cccc  (attacker!)"
     },
     {

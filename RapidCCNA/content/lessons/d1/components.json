@@ -6,11 +6,11 @@
   ],
   "order": 10,
   "title": "Network components",
-  "minutes": 7,
+  "minutes": 12,
   "cards": [
     {
       "heading": "Routers",
-      "body": "A router connects different IP networks and forwards packets between them using its routing table. It's the boundary of a broadcast domain and usually the default gateway for the hosts on each LAN.",
+      "body": "A router connects different IP networks and forwards packets between them using its routing table. It's the boundary of a broadcast domain and usually the default gateway for the hosts on each LAN. Each router interface is its own broadcast domain. By contrast every switch port is its own collision domain, but all ports in one VLAN share a broadcast domain, and a hub puts all its ports in one collision domain.",
       "example": "PC 192.168.1.10 → default gateway R1 192.168.1.1 → R1 routes to 10.5.0.0/16"
     },
     {
@@ -20,11 +20,11 @@
     },
     {
       "heading": "Next-generation firewalls and IPS",
-      "body": "A firewall filters traffic between security zones and is stateful: it remembers outgoing sessions and lets only their return traffic back in. A next-generation firewall (NGFW) adds application awareness, user identity and an integrated IPS. An IPS sits inline and blocks traffic that matches attack signatures; an IDS only watches a copy and alerts."
+      "body": "A firewall filters traffic between security zones and is stateful: it remembers outgoing sessions and lets only their return traffic back in. A next-generation firewall (NGFW) adds application awareness, user identity and an integrated IPS. An IPS sits inline and blocks traffic that matches attack signatures; an IDS only watches a copy and alerts. Because an NGFW inspects traffic up to layer 7 (application visibility and control), it can block a specific application whatever port it uses. An IDS usually gets its copy of traffic from a SPAN port."
     },
     {
       "heading": "Access points and wireless LAN controllers",
-      "body": "An access point (AP) bridges wireless clients onto the wired network. In larger networks lightweight APs are managed centrally by a wireless LAN controller (WLC), which handles configuration, security, roaming and RF tuning."
+      "body": "An access point (AP) bridges wireless clients onto the wired network. In larger networks lightweight APs are managed centrally by a wireless LAN controller (WLC), which handles configuration, security, roaming and RF tuning. Lightweight APs join the WLC over CAPWAP tunnels; the WLC tunes channels and power and handles authentication and roaming for the whole WLAN."
     },
     {
       "heading": "Endpoints and servers",
@@ -32,8 +32,13 @@
     },
     {
       "heading": "Power over Ethernet",
-      "body": "PoE delivers power over the Ethernet cable from the switch (PSE, power sourcing equipment) to the device (PD, powered device) such as an AP, IP phone or camera, so no separate power outlet is needed.",
+      "body": "PoE delivers power over the Ethernet cable from the switch (PSE, power sourcing equipment) to the device (PD, powered device) such as an AP, IP phone or camera, so no separate power outlet is needed. A switch has a total PoE budget shared by all its ports: a 370 W budget powers 370 / 30 = 12 devices at the full PoE+ 30 W, even if the switch has 24 ports.",
       "example": "802.3af PoE     15.4 W per port\n802.3at PoE+    30 W\n802.3bt PoE++   60 W (type 3) / 90-100 W (type 4)"
+    },
+    {
+      "heading": "Which layer each device works at",
+      "body": "Think of the highest layer a device looks at to make its decision. A hub (and a repeater) just repeats bits: layer 1. A layer 2 switch reads MAC addresses in frames: layer 2. A router reads IP addresses in packets: layer 3. A next-generation firewall can look all the way into the application: layer 7.",
+      "example": "Hub ............ Layer 1  bits\nSwitch ......... Layer 2  frames, MAC addresses\nRouter ......... Layer 3  packets, IP addresses\nNGFW ........... Layer 7  applications"
     }
   ],
   "recall": [

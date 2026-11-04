@@ -18,7 +18,7 @@ func _ready() -> void:
 	var v := UI.page(self)
 	var d := ContentDB.get_domain(lesson.get("domain", ""))
 	ScreenHeader.build(v, "Tutorial  ·  " + d.get("name", ""), lesson.get("title", "Missing lesson"),
-		"About %d minutes, then a %d-question recall check" % [int(lesson.get("minutes", 5)), lesson.get("recall", []).size()])
+		"About %d minutes, then a %d-question recall check" % [int(lesson.get("minutes", 5)), lesson.get("recall", []).size()], true)
 	_body = UI.card(v)
 	_body.custom_minimum_size.y = 300
 	_nav = UI.hbox(v, 12)
@@ -34,7 +34,7 @@ func _ready() -> void:
 	_show_card()
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if _recalling or not event is InputEventKey or not event.pressed:
+	if _recalling or not event is InputEventKey or not event.pressed or StudyOverlay.is_open():
 		return
 	if event.keycode == KEY_RIGHT:
 		_go(1)
@@ -51,13 +51,7 @@ func _show_card() -> void:
 	var card: Dictionary = cards[_i]
 	_clear_body()
 	UI.label(_body, "Card %d of %d" % [_i + 1, cards.size()], "H3")
-	UI.label(_body, card.get("heading", ""), "H2", true)
-	UI.label(_body, card.get("body", ""), "Body", true)
-	if card.has("example"):
-		var ex := PanelContainer.new()
-		ex.theme_type_variation = "Exhibit"
-		_body.add_child(ex)
-		UI.label(ex, str(card.example), "Code")
+	UI.lesson_card(_body, card)
 	for c in _dots.get_children():
 		_dots.remove_child(c)
 		c.queue_free()

@@ -6,7 +6,7 @@
   ],
   "order": 10,
   "title": "NAT and PAT",
-  "minutes": 5,
+  "minutes": 7,
   "cards": [
     {
       "heading": "Why NAT exists",
@@ -20,12 +20,12 @@
     },
     {
       "heading": "Static, dynamic and PAT",
-      "body": "Static NAT maps one inside address to one public address permanently (servers). Dynamic NAT hands out addresses from a pool. PAT (overload) lets many hosts share one address by also translating port numbers. PAT is what nearly every network uses.",
+      "body": "Static NAT maps one inside address to one public address permanently (servers). Dynamic NAT hands out addresses from a pool. PAT (overload) lets many hosts share one address by also translating port numbers. PAT is what nearly every network uses. Static NAT is the one that lets internet hosts start connections to an inside server, because the mapping always exists; PAT and dynamic entries are only created by outbound traffic. Without 'overload', dynamic NAT needs a whole public address per inside host: when the pool is used up, new hosts aren't translated and fail until an entry times out.",
       "example": "ip nat inside source static 192.168.1.10 198.51.100.20\nip nat inside source list 1 pool PUB\nip nat inside source list 1 interface Gi0/1 overload"
     },
     {
       "heading": "Reading the translation table",
-      "body": "'show ip nat translations' lists one row per translation. With PAT each row is an ip:port pair, and the inside global port keeps flows from different hosts apart.",
+      "body": "'show ip nat translations' lists one row per translation. With PAT each row is an ip:port pair, and the inside global port keeps flows from different hosts apart. Many inside hosts sharing one inside global address, told apart by port, means PAT. If two hosts use the same source port, the router changes one of them (51000 became 1024 above).",
       "example": "Pro  Inside global       Inside local        Outside local     Outside global\ntcp  198.51.100.2:51000  192.168.1.10:51000  203.0.113.80:443  203.0.113.80:443\ntcp  198.51.100.2:1024   192.168.1.11:51000  203.0.113.80:443  203.0.113.80:443"
     }
   ],

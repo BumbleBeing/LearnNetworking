@@ -6,7 +6,7 @@
   ],
   "order": 50,
   "title": "QoS per-hop behaviour",
-  "minutes": 7,
+  "minutes": 9,
   "cards": [
     {
       "heading": "Why QoS",
@@ -14,7 +14,7 @@
     },
     {
       "heading": "Classification and marking",
-      "body": "Traffic is classified (by ACL, NBAR application recognition, or incoming markings) and marked as close to the source as possible. Layer 2: 802.1Q CoS (3 bits, 0-7). Layer 3: the DSCP field (6 bits, 0-63) in the IP header's ToS byte.",
+      "body": "Traffic is classified (by ACL, NBAR application recognition, or incoming markings) and marked as close to the source as possible. Layer 2: 802.1Q CoS (3 bits, 0-7). Layer 3: the DSCP field (6 bits, 0-63) in the IP header's ToS byte. CoS is the 3-bit 802.1p priority in the 802.1Q tag (values 0-7). DSCP is 6 bits of the IPv4 ToS / IPv6 Traffic Class byte; the other 2 bits are ECN.",
       "example": "EF 46        voice\nAF41 34      video\nAF21-23      business data\nCS0 / 0      best effort\nCS6 48       network control"
     },
     {
@@ -24,7 +24,7 @@
     },
     {
       "heading": "Trust boundary",
-      "body": "Devices only honour markings they trust. Typically the access switch trusts an IP phone's markings but re-marks traffic from PCs. The trust boundary is where markings start being believed."
+      "body": "Devices only honour markings they trust. Typically the access switch trusts an IP phone's markings but re-marks traffic from PCs. The trust boundary is where markings start being believed. With Cisco IP phones on the access ports, the boundary is at the phone and access switch port: the switch trusts the phone's markings (often only when CDP detects a phone) and re-marks the PC's."
     },
     {
       "heading": "Queuing",

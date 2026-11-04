@@ -6,7 +6,7 @@
   ],
   "order": 60,
   "title": "Subnetting: network, broadcast, host range",
-  "minutes": 5,
+  "minutes": 14,
   "cards": [
     {
       "heading": "The mask splits the address",
@@ -27,6 +27,21 @@
       "heading": "Broadcast and range",
       "body": "Broadcast = next network - 1 (192.168.1.191). Usable hosts are everything between: .129 to .190.",
       "example": "next network = .192, so broadcast = .191\nhosts .129 - .190 (62 usable)"
+    },
+    {
+      "heading": "When the interesting octet isn't the last",
+      "body": "The same method works in any octet. Find the octet where the mask isn't 255 or 0, take its block size, round down there, and set every octet after it to 0 for the network or 255 for the broadcast. The first usable host is the network + 1; the last is the broadcast - 1. Usable hosts = 2^(host bits) - 2.",
+      "example": "172.16.45.200/20: mask 255.255.240.0, block 16 in octet 3\n45 rounds down to 32 -> network 172.16.32.0\nnext network 172.16.48.0 -> broadcast 172.16.47.255\n12 host bits -> 2^12 - 2 = 4094 hosts"
+    },
+    {
+      "heading": "Sizing subnets",
+      "body": "For a number of hosts, find the fewest host bits h where 2^h - 2 is big enough; the prefix is 32 - h. For a number of subnets, borrow the fewest bits n where 2^n is big enough and add n to the starting prefix. A /22 holds 2^(26-22) = 16 /26 subnets: each extra prefix bit doubles the count.",
+      "example": "500 hosts: 2^8-2 = 254 too small, 2^9-2 = 510 -> 9 host bits -> /23\n30 hosts: 2^5-2 = 30 -> /27 (255.255.255.224)\n50 subnets from /16: 2^6 = 64 -> /22 (255.255.252.0)"
+    },
+    {
+      "heading": "VLSM and overlapping subnets",
+      "body": "VLSM (variable-length subnet masking) uses different prefix lengths in one network. Allocate the largest subnet first, then put each next subnet at the next free address. Two subnets overlap if one's range (network to broadcast) contains any part of the other's; a shorter prefix that starts at or before a range and ends at or after it contains it.",
+      "example": "192.168.10.0/24 for 100, 50 and 20 hosts:\n100 -> /25  .0 - .127\n 50 -> /26  .128 - .191\n 20 -> /27  .192 - .223\n10.1.4.0/22 = 10.1.4.0 - 10.1.7.255: 10.1.6.0/24 is inside, 10.1.0.0/21 contains it"
     }
   ],
   "recall": [

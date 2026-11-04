@@ -6,7 +6,7 @@
   ],
   "order": 15,
   "title": "Network topology architectures",
-  "minutes": 7,
+  "minutes": 8,
   "cards": [
     {
       "heading": "Three-tier campus",
@@ -19,12 +19,12 @@
     },
     {
       "heading": "Spine-leaf",
-      "body": "Data centres use spine-leaf: every leaf switch connects to every spine switch, and spines don't connect to each other, nor do leaves. Any server is the same number of hops (leaf-spine-leaf) from any other, which suits east-west traffic between servers. Grow by adding leaves (ports) or spines (bandwidth).",
+      "body": "Data centres use spine-leaf: every leaf switch connects to every spine switch, and spines don't connect to each other, nor do leaves. Any server is the same number of hops (leaf-spine-leaf) from any other, which suits east-west traffic between servers. Grow by adding leaves (ports) or spines (bandwidth). Traffic between servers on two different leaves always passes through three switches: leaf, spine, leaf.",
       "example": "  Spine1      Spine2\n   │ ╲   ╱     │\n   │   ╳       │\n   │ ╱   ╲     │\n  Leaf1  Leaf2  Leaf3"
     },
     {
       "heading": "WAN",
-      "body": "A wide area network links sites over large distances, usually with a service provider: leased lines, MPLS, metro Ethernet, or VPNs over the internet. Topologies include point-to-point, hub-and-spoke and full or partial mesh."
+      "body": "A wide area network links sites over large distances, usually with a service provider: leased lines, MPLS, metro Ethernet, or VPNs over the internet. Topologies include point-to-point, hub-and-spoke and full or partial mesh. In hub-and-spoke, branches connect only to the central hub, so branch-to-branch traffic passes through the hub. A full mesh links every site directly, so there is no single hub to fail, but it needs n(n-1)/2 links, which gets expensive."
     },
     {
       "heading": "SOHO",

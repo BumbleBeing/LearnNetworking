@@ -8,7 +8,7 @@
   ],
   "order": 40,
   "title": "SNMP, syslog, TFTP and FTP",
-  "minutes": 8,
+  "minutes": 10,
   "cards": [
     {
       "heading": "SNMP",
@@ -31,12 +31,12 @@
     },
     {
       "heading": "Where logs go",
-      "body": "Console (on by default), the VTY session (terminal monitor), the RAM buffer (logging buffered, read with show logging) and external servers (logging host). Add timestamps so logs can be correlated.",
+      "body": "Console (on by default), the VTY session (terminal monitor), the RAM buffer (logging buffered, read with show logging) and external servers (logging host). Add timestamps so logs can be correlated. The buffer survives logging out but not a reload.",
       "example": "service timestamps log datetime msec\nlogging buffered 16384 informational"
     },
     {
       "heading": "TFTP and FTP",
-      "body": "Both copy files such as IOS images and configs. TFTP (UDP 69) is simple: no login, no directory listing, and it does its own acknowledgements. FTP (TCP 21 control, TCP 20 data in active mode) has usernames and passwords but sends them in clear text.",
+      "body": "Both copy files such as IOS images and configs. TFTP (UDP 69) is simple: no login, no directory listing, and it does its own acknowledgements. FTP (TCP 21 control, TCP 20 data in active mode) has usernames and passwords but sends them in clear text. FTP's control connection (TCP 21) carries commands such as the login and file requests; separate data connections carry the files. FTP is the better choice for a big IOS image: TCP is reliable over lossy links and it supports logins. In copy commands the source comes first, then the destination.",
       "example": "copy running-config tftp:\ncopy ftp: flash:\nip ftp username admin\nip ftp password s3cret"
     }
   ],

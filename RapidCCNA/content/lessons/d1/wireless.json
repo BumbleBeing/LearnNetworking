@@ -6,11 +6,11 @@
   ],
   "order": 80,
   "title": "Wireless principles",
-  "minutes": 7,
+  "minutes": 9,
   "cards": [
     {
       "heading": "RF bands",
-      "body": "Wi-Fi uses unlicensed radio bands. 2.4 GHz reaches further and passes through walls better but is crowded (Bluetooth, microwave ovens). 5 GHz has many more channels but a shorter range. Wi-Fi 6E adds 6 GHz."
+      "body": "Wi-Fi uses unlicensed radio bands. 2.4 GHz reaches further and passes through walls better but is crowded (Bluetooth, microwave ovens). 5 GHz has many more channels but a shorter range. Wi-Fi 6E adds 6 GHz. Microwave ovens leak energy around 2.45 GHz, so they interfere with 2.4 GHz Wi-Fi."
     },
     {
       "heading": "Non-overlapping channels",
@@ -19,7 +19,7 @@
     },
     {
       "heading": "SSID, BSS and ESS",
-      "body": "The SSID is the WLAN's name. A BSS is one AP and its clients, identified by the BSSID (the AP radio's MAC). An ESS is several APs offering the same SSID, so clients can roam between them. An IBSS (ad hoc) has no AP at all."
+      "body": "The SSID is the WLAN's name. A BSS is one AP and its clients, identified by the BSSID (the AP radio's MAC). An ESS is several APs offering the same SSID, so clients can roam between them. An IBSS (ad hoc) has no AP at all. APs advertise their SSID in beacon frames (about 10 per second by default); clients can also send probe requests to ask for networks. Roaming means a client moves between APs with the same SSID without losing its connection."
     },
     {
       "heading": "802.11 standards",

@@ -10,7 +10,7 @@
   "cards": [
     {
       "heading": "Why time matters",
-      "body": "Log messages, certificates, Kerberos and troubleshooting across devices all depend on every device agreeing on the time. NTP keeps clocks synchronised over UDP 123."
+      "body": "Log messages, certificates, Kerberos and troubleshooting across devices all depend on every device agreeing on the time. NTP keeps clocks synchronised over UDP 123. Consistent timestamps are what let you line up log messages from different devices in order."
     },
     {
       "heading": "Stratum",

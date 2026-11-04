@@ -9,7 +9,7 @@ const ORDER := ["noc", "blueprint", "terminal", "daylight"]
 static func _raw() -> Dictionary:
 	return {
 		"noc": {
-			"title": "Night Ops",
+			"title": "Night Ops", "acronym": "#c9b8ff",
 			"bg_top": "#0a0f1f", "bg_bottom": "#141c3a",
 			"panel": "#17213fd6", "border": "#2b3a6b", "border_w": 1, "shadow": "#00000080",
 			"text": "#e8eeff", "muted": "#8d9ac2",
@@ -22,7 +22,7 @@ static func _raw() -> Dictionary:
 			"domains": ["#4cc9f0", "#a78bfa", "#f72585", "#fbbf24", "#4ade80", "#fb923c"],
 		},
 		"blueprint": {
-			"title": "Blueprint",
+			"title": "Blueprint", "acronym": "#8ff0c8",
 			"bg_top": "#0c3a68", "bg_bottom": "#082a4d",
 			"panel": "#0b3560e0", "border": "#7fb8e0", "border_w": 1, "shadow": "#00000040",
 			"text": "#f2f8ff", "muted": "#a6c8e6",
@@ -35,7 +35,7 @@ static func _raw() -> Dictionary:
 			"domains": ["#ffd166", "#06d6a0", "#8ecae6", "#ef476f", "#f4a261", "#c77dff"],
 		},
 		"terminal": {
-			"title": "Phosphor",
+			"title": "Phosphor", "acronym": "#6ee7f9",
 			"bg_top": "#030806", "bg_bottom": "#081610",
 			"panel": "#0a170ee8", "border": "#1f6b35", "border_w": 1, "shadow": "#00000000",
 			"text": "#c4ffbf", "muted": "#5fa868",
@@ -48,7 +48,7 @@ static func _raw() -> Dictionary:
 			"domains": ["#39ff6a", "#7dffb0", "#ffb000", "#ffd866", "#5ce1e6", "#ff6b6b"],
 		},
 		"daylight": {
-			"title": "Daylight",
+			"title": "Daylight", "acronym": "#7c3aed",
 			"bg_top": "#f4f7fb", "bg_bottom": "#e3e9f3",
 			"panel": "#ffffff", "border": "#dbe3ee", "border_w": 1, "shadow": "#1b243324",
 			"text": "#182233", "muted": "#5d6b82",
@@ -98,12 +98,12 @@ static func high_contrast(look: Dictionary) -> Dictionary:
 	var c := {
 		"bg_top": "#000000", "bg_bottom": "#000000", "panel": "#000000", "border": "#ffffff", "shadow": "#00000000",
 		"text": "#ffffff", "muted": "#e6e6e6", "accent": "#7dd3fc", "accent2": "#ff9ecb", "good": "#86efac",
-		"warn": "#fde68a", "on_accent": "#000000", "button": "#000000", "button_hover": "#262626",
+		"warn": "#fde68a", "acronym": "#f0abfc", "on_accent": "#000000", "button": "#000000", "button_hover": "#262626",
 		"input": "#000000", "track": "#404040", "chip": "#000000", "line": "#00000000", "node": "#00000000",
 	} if dark else {
 		"bg_top": "#ffffff", "bg_bottom": "#ffffff", "panel": "#ffffff", "border": "#000000", "shadow": "#00000000",
 		"text": "#000000", "muted": "#1a1a1a", "accent": "#0033cc", "accent2": "#b00020", "good": "#006400",
-		"warn": "#7a4a00", "on_accent": "#ffffff", "button": "#ffffff", "button_hover": "#e6e6e6",
+		"warn": "#7a4a00", "acronym": "#6b21a8", "on_accent": "#ffffff", "button": "#ffffff", "button_hover": "#e6e6e6",
 		"input": "#ffffff", "track": "#bfbfbf", "chip": "#ffffff", "line": "#00000000", "node": "#00000000",
 	}
 	for k in c:

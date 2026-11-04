@@ -7,7 +7,7 @@
   ],
   "order": 10,
   "title": "VLANs and trunks",
-  "minutes": 6,
+  "minutes": 12,
   "cards": [
     {
       "heading": "A VLAN is a separate broadcast domain",
@@ -26,18 +26,27 @@
     },
     {
       "heading": "DTP: let it negotiate or not",
-      "body": "Ports default to dynamic auto: they become a trunk only if the other side actively asks (trunk or dynamic desirable). Two dynamic auto ports stay access ports. Best practice is to configure trunks statically and turn DTP off with 'switchport nonegotiate'.",
+      "body": "Ports default to dynamic auto: they become a trunk only if the other side actively asks (trunk or dynamic desirable). Two dynamic auto ports stay access ports. Best practice is to configure trunks statically and turn DTP off with 'switchport nonegotiate'. Dynamic desirable actively asks to trunk; dynamic auto only answers. A dynamic auto port acts as an access port (in VLAN 1 by default) unless the other side asks. 'switchport nonegotiate' stops DTP frames and only works with a static mode.",
       "example": "auto + auto       → access\nauto + desirable  → trunk\ntrunk + auto      → trunk"
     },
     {
       "heading": "Verify",
-      "body": "'show vlan brief' lists VLANs and their access ports (trunk ports aren't listed). 'show interfaces trunk' shows trunk mode, native VLAN and which VLANs are allowed and active.",
+      "body": "'show vlan brief' lists VLANs and their access ports (trunk ports aren't listed). 'show interfaces trunk' shows trunk mode, native VLAN and which VLANs are allowed and active. The last list in 'show interfaces trunk', VLANs in spanning tree forwarding state and not pruned, shows what the port really forwards: a VLAN allowed and active but missing there is usually blocked by STP (or pruned by VTP). 'show interfaces fa0/1 switchport' shows a port's administrative and operational mode, access and native VLAN and DTP state.",
       "example": "SW1#show interfaces trunk\nPort   Mode  Encapsulation  Status    Native vlan\nGi0/1  on    802.1q         trunking  99"
     },
     {
       "heading": "Voice VLANs and allowed lists",
-      "body": "An access port can also carry a voice VLAN: the PC's frames stay untagged in the access VLAN and the IP phone tags its own frames with the voice VLAN. On a trunk, 'switchport trunk allowed vlan 10,20' replaces the whole list, so use 'add' or 'remove' to change it. Set the same unused native VLAN on both ends; a mismatch leaks frames between the two VLANs, and CDP reports it.",
+      "body": "An access port can also carry a voice VLAN: the PC's frames stay untagged in the access VLAN and the IP phone tags its own frames with the voice VLAN. On a trunk, 'switchport trunk allowed vlan 10,20' replaces the whole list, so use 'add' or 'remove' to change it. Set the same unused native VLAN on both ends; a mismatch leaks frames between the two VLANs, and CDP reports it. The phone learns the voice VLAN through CDP. An unused native VLAN also closes VLAN hopping by double tagging: an attacker in the native VLAN sends a frame with two tags, the first switch strips the outer (native) tag and the inner tag carries it into another VLAN.",
       "example": "interface fa0/5\n switchport mode access\n switchport access vlan 10\n switchport voice vlan 20\n!\ninterface g0/1\n switchport trunk allowed vlan add 40\n switchport trunk native vlan 99"
+    },
+    {
+      "heading": "VLAN numbers and the 802.1Q tag",
+      "body": "Normal-range VLANs are 1-1005 (1002-1005 are reserved for old Token Ring and FDDI); the extended range is 1006-4094; 0 and 4095 are reserved. VLAN 1 is the default: every port starts in it, it's the default native VLAN, and it can't be deleted or renamed. 'vlan 30' then 'name HR' creates and names a VLAN; 'interface vlan 30' creates an SVI instead. 802.1Q inserts a 4-byte tag after the source MAC: a 2-byte TPID (0x8100) and a 2-byte TCI with a 3-bit priority (PCP/CoS), 1-bit DEI and 12-bit VLAN ID. ISL was the old Cisco-proprietary method that wrapped the whole frame in a 26-byte header and 4-byte trailer; it's obsolete."
+    },
+    {
+      "heading": "Routing between VLANs",
+      "body": "Each VLAN is its own subnet, so hosts in different VLANs need a layer 3 device. Hosts in the same VLAN on two switches don't need routing, but the link between the switches must carry that VLAN. Router-on-a-stick uses one router port on a switch trunk with a subinterface per VLAN. A multilayer switch uses an SVI per VLAN, and needs 'ip routing'; without it the SVIs only work as management addresses.",
+      "example": "interface g0/0.10\n encapsulation dot1Q 10\n ip address 10.1.10.1 255.255.255.0\n!\nip routing\ninterface vlan 20\n ip address 10.1.20.1 255.255.255.0"
     }
   ],
   "recall": [

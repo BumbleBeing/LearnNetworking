@@ -6,7 +6,7 @@
   ],
   "order": 40,
   "title": "IPsec VPNs",
-  "minutes": 7,
+  "minutes": 10,
   "cards": [
     {
       "heading": "What a VPN does",
@@ -19,15 +19,15 @@
     },
     {
       "heading": "Remote access",
-      "body": "Individual users connect from anywhere with a VPN client (such as Cisco Secure Client) to a headend firewall or router, using TLS or IPsec. Clientless VPNs give browser access to selected internal web apps over TLS."
+      "body": "Individual users connect from anywhere with a VPN client (such as Cisco Secure Client) to a headend firewall or router, using TLS or IPsec. Clientless VPNs give browser access to selected internal web apps over TLS. Cisco Secure Client was formerly called AnyConnect. Full network access needs the client; a clientless TLS VPN only reaches web applications."
     },
     {
       "heading": "IPsec building blocks",
-      "body": "IKE negotiates the security associations (algorithms and keys) between the peers. ESP encrypts and authenticates the payload; AH only authenticates (no encryption), so ESP is what's used in practice. Tunnel mode wraps the whole original packet in a new IP header (gateway to gateway); transport mode protects only the payload (host to host)."
+      "body": "IKE negotiates the security associations (algorithms and keys) between the peers. ESP encrypts and authenticates the payload; AH only authenticates (no encryption), so ESP is what's used in practice. Tunnel mode wraps the whole original packet in a new IP header (gateway to gateway); transport mode protects only the payload (host to host). ESP is IP protocol 50 and AH is IP protocol 51. IKE uses UDP 500 (UDP 4500 when NAT is in the path); it authenticates the peers and agrees the algorithms and keys, then ESP protects the data, typically with AES. GRE on its own is an unencrypted tunnel."
     },
     {
       "heading": "GRE over IPsec and DMVPN",
-      "body": "Plain IPsec carries only unicast IP, so routing protocols (which use multicast) can't run over it. GRE over IPsec wraps traffic in GRE first, then encrypts it. DMVPN lets many branches build tunnels to a hub and directly to each other on demand."
+      "body": "Plain IPsec carries only unicast IP, so routing protocols (which use multicast) can't run over it. GRE over IPsec wraps traffic in GRE first, then encrypts it. DMVPN lets many branches build tunnels to a hub and directly to each other on demand. DMVPN uses multipoint GRE over IPsec: each spoke needs just one configured tunnel to the hub, registers with it, and builds direct spoke-to-spoke tunnels only when needed."
     }
   ],
   "recall": [

@@ -6,11 +6,11 @@
   ],
   "order": 90,
   "title": "Virtualization fundamentals",
-  "minutes": 6,
+  "minutes": 7,
   "cards": [
     {
       "heading": "Virtual machines",
-      "body": "Server virtualization runs many virtual machines (VMs) on one physical server. Each VM has its own operating system and virtual NICs. A hypervisor shares the CPU, memory and storage between them.",
+      "body": "Server virtualization runs many virtual machines (VMs) on one physical server. Each VM has its own operating system and virtual NICs. A hypervisor shares the CPU, memory and storage between them. The benefits: much better use of hardware, since many VMs share one server, and new servers can be provisioned from templates in minutes instead of days.",
       "example": "┌VM┐┌VM┐┌VM┐\n│ Hypervisor │\n│  Hardware  │"
     },
     {
@@ -19,7 +19,7 @@
     },
     {
       "heading": "Virtual switching",
-      "body": "Inside the host, a virtual switch connects VMs to each other and to the physical NICs, which uplink to the real network, usually on trunks carrying the VMs' VLANs."
+      "body": "Inside the host, a virtual switch connects VMs to each other and to the physical NICs, which uplink to the real network, usually on trunks carrying the VMs' VLANs. A virtual switch can tag VLANs just like a physical one."
     },
     {
       "heading": "Containers",

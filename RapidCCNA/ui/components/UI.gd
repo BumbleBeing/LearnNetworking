@@ -53,6 +53,69 @@ static func label(parent: Node, text: String, variation: String = "", wrap_text:
 	parent.add_child(l)
 	return l
 
+## Like label(), but acronyms (OSPF, VLAN...) are drawn in the look's acronym colour and
+## show their full name in a tooltip when hovered. `variation` is a Label variation that has
+## a Rich twin in ThemeFactory: Stem, Body, H1, H2, Muted, Choice or Code.
+static func rich(parent: Node, text: String, variation: String = "Body", wrap_text: bool = true) -> RichTextLabel:
+	var r := RichTextLabel.new()
+	r.bbcode_enabled = true
+	r.fit_content = true
+	r.scroll_active = false
+	r.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if wrap_text else TextServer.AUTOWRAP_OFF
+	r.mouse_filter = Control.MOUSE_FILTER_PASS   # hover shows the tooltips; the wheel still scrolls the page
+	r.theme_type_variation = "Rich" + variation
+	r.text = Glossary.bbcode(text, Palette.current().acronym)
+	parent.add_child(r)
+	return r
+
+## Gives a button's text the same acronym colours as rich(), with the acronyms' full names
+## as its tooltip. The button keeps its own text (it sizes the button and is what screen
+## readers say) but draws it transparent under a rich-text copy. Call again after changing
+## the text. Buttons without acronyms are left alone.
+static func rich_button(b: Button) -> void:
+	var r: RichTextLabel = b.get_meta("rich_text") if b.has_meta("rich_text") else null
+	if r == null:
+		if Glossary.find(b.text).is_empty():
+			return
+		r = RichTextLabel.new()
+		r.bbcode_enabled = true
+		r.scroll_active = false
+		r.autowrap_mode = TextServer.AUTOWRAP_OFF
+		r.clip_contents = false   # never cut off the last letter if the fonts measure a pixel apart
+		r.mouse_filter = Control.MOUSE_FILTER_IGNORE   # clicks and hover belong to the button
+		r.theme_type_variation = "RichChoice"
+		r.set_anchors_preset(Control.PRESET_FULL_RECT)
+		b.add_child(r)
+		hide_from_screen_readers(r)   # the button's own text is read instead
+		b.set_meta("rich_text", r)
+		for c in ["font_color", "font_hover_color", "font_focus_color", "font_pressed_color",
+				"font_hover_pressed_color", "font_disabled_color"]:
+			b.add_theme_color_override(c, Color.TRANSPARENT)
+		# Line the copy up with where the button draws its text: inside the style's margins.
+		var place := func():
+			if not is_instance_valid(b) or not is_instance_valid(r) or not b.is_inside_tree():
+				return
+			var sb := b.get_theme_stylebox("normal")
+			r.offset_left = sb.get_margin(SIDE_LEFT)
+			r.offset_top = sb.get_margin(SIDE_TOP)
+			r.offset_right = -sb.get_margin(SIDE_RIGHT)
+			r.offset_bottom = -sb.get_margin(SIDE_BOTTOM)
+		r.tree_entered.connect(place, CONNECT_DEFERRED)
+		if b.is_inside_tree():
+			place.call_deferred()
+	r.text = Glossary.bbcode(b.text, Palette.current().acronym)
+	b.tooltip_text = Glossary.tooltip(b.text)
+
+## One lesson card: heading, body and the optional example, with acronyms highlighted.
+static func lesson_card(parent: Node, card: Dictionary) -> void:
+	rich(parent, str(card.get("heading", "")), "H2")
+	rich(parent, str(card.get("body", "")), "Body")
+	if card.has("example"):
+		var ex := PanelContainer.new()
+		ex.theme_type_variation = "Exhibit"
+		parent.add_child(ex)
+		rich(ex, str(card.example), "Code", false)
+
 static func button(parent: Node, text: String, on_press: Callable, primary: bool = false) -> Button:
 	var b := Button.new()
 	b.text = text
@@ -131,6 +194,7 @@ static func mark_choice(b: Button, right: bool) -> void:
 	var r: int = max(2, int(look.radius) / 2)
 	b.add_theme_stylebox_override("disabled", ThemeFactory.box(Color(col, 0.16), col, r, 3, 16, 12))
 	b.text += "   (correct answer)" if right else "   (your answer)"
+	rich_button(b)
 
 ## Centre-aligns everything under `node`: labels' text, buttons/inputs (shrink to
 ## centre) and nested box rows. Call after the subtree is built.
