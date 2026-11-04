@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Networking Learning Path</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1d2330;--muted:#5d6675;--line:#dfe3ea;--t1:#2e9e5b;--t2:#2f7fd1;--t3:#d18a1f;--t4:#c4423a;--tool:#7a52c7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151b;--card:#1b2029;--text:#e6e9ef;--muted:#9aa3b2;--line:#2c3340}}
+:root[data-theme="dark"]{--bg:#12151b;--card:#1b2029;--text:#e6e9ef;--muted:#9aa3b2;--line:#2c3340}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}
+main{max-width:960px;margin:auto;padding:24px 16px 48px}h1{margin:0 0 4px}p.sub{color:var(--muted);margin:0 0 24px}
+.tier{border-left:6px solid var(--c);padding-left:16px;margin:28px 0}.tier h2{margin:0;color:var(--c)}.tier .req{color:var(--muted);font-size:14px;margin:2px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card a{color:var(--text);font-weight:600;text-decoration:none}.card a:hover{text-decoration:underline}
+.card p{margin:6px 0 8px;color:var(--muted);font-size:14px}.meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.bar{display:flex;gap:3px}.bar i{width:14px;height:6px;border-radius:3px;background:var(--line)}.bar i.on{background:var(--c)}
+</style></head><body><main>
+<h1>Networking Learning Path</h1>
+<p class="sub">Resources ranked from zero prior knowledge to expert. Bars show difficulty (1–5).</p>
+<div id="app"></div>
+</main><script>
+const tiers=[
+{n:"Tier 1 · Beginner",c:"--t1",req:"No prior knowledge. Basic computer literacy.",items:[
+["Practical Networking – Networking Fundamentals","https://www.practicalnetworking.net/series/packet-traveling/packet-traveling/","Free series on how a packet moves across a network. Clear diagrams.",1,"Free"],
+["Professor Messer – CompTIA Network+","https://www.professormesser.com/network-plus/n10-009/n10-009-video/n10-009-training-course/","Full free video course on core concepts: OSI, IP, cabling, Wi-Fi.",1,"Free"],
+["Cloudflare Learning Center","https://www.cloudflare.com/learning/","Short plain-English explainers on DNS, CDNs, DDoS, TCP/IP.",1,"Free"],
+["Cisco Packet Tracer","https://www.netacad.com/cisco-packet-tracer","Drag-and-drop network simulator. The usual first lab tool.",2,"Tool · Free"]]},
+{n:"Tier 2 · Intermediate",c:"--t2",req:"Know OSI/TCP-IP models, IP addressing, what a switch and router do.",items:[
+["Jeremy's IT Lab – Free CCNA","https://www.youtube.com/@JeremysITLab","Complete CCNA 200-301 course with Packet Tracer labs and flashcards.",2,"Free"],
+["subnettingpractice.com","https://subnettingpractice.com/","Drill subnetting until it is automatic.",2,"Free"],
+["Wireshark + Wireshark University docs","https://www.wireshark.org/docs/","Capture and inspect real packets: ARP, DNS, TCP handshakes.",3,"Tool · Free"],
+["RapidCCNA (this repo)","RapidCCNA/","Study notes in this repository.",2,"Free"]]},
+{n:"Tier 3 · Advanced",c:"--t3",req:"CCNA-level. Comfortable with routing protocols, VLANs, Linux CLI.",items:[
+["Computer Networking: A Top-Down Approach (Kurose & Ross)","https://gaia.cs.umass.edu/kurose_ross/index.php","University-level textbook plus free lectures and Wireshark labs.",3,"Book"],
+["GNS3","https://www.gns3.com/","Emulator that runs real router/switch images for multi-vendor labs.",4,"Tool · Free"],
+["Containerlab","https://containerlab.dev/","Network labs as code with containerised NOSes (needs Linux/WSL).",4,"Tool · Free"],
+["Beej's Guide to Network Programming","https://beej.us/guide/bgnet/","Sockets in C: learn networking from the programmer's side.",3,"Free"]]},
+{n:"Tier 4 · Expert",c:"--t4",req:"Professional experience; ready for design, internals and automation.",items:[
+["TCP/IP Illustrated, Vol. 1 (Stevens/Fall)","https://www.informit.com/store/tcp-ip-illustrated-volume-1-the-protocols-9780321336316","Protocol internals, examined packet by packet.",5,"Book"],
+["IETF RFCs","https://www.rfc-editor.org/","The primary specs: start with RFC 791 (IP), 9293 (TCP), 4271 (BGP).",5,"Free"],
+["ipSpace.net (Ivan Pepelnjak)","https://www.ipspace.net/","Deep data-center, SDN and automation material.",5,"Paid / blog free"],
+["Network Programmability & Automation (O'Reilly)","https://www.oreilly.com/library/view/network-programmability-and/9781098110826/","Python, Ansible, APIs, and CI for networks.",4,"Book"]]}];
+document.getElementById('app').innerHTML=tiers.map(t=>`<section class="tier" style="--c:var(${t.c})"><h2>${t.n}</h2><div class="req">Prerequisites: ${t.req}</div><div class="grid">${t.items.map(([n,u,d,l,tag])=>`<div class="card"><a href="${u}" target="_blank" rel="noopener">${n}</a><p>${d}</p><div class="meta"><span class="bar">${[1,2,3,4,5].map(i=>`<i class="${i<=l?'on':''}"></i>`).join('')}</span><span>${tag}</span></div></div>`).join('')}</div></section>`).join('');
+</script></body></html>
