@@ -13,10 +13,10 @@ All question content is original and written in exam style. The game does not us
 | M3 | Scoped IOS CLI simulator + config labs | ✅ |
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | ✅ |
 | M5 | All tutorials and remaining mini-games | ✅ |
-| M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | 🚧 part 1: mock exam, 321 questions |
+| M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | 🚧 parts 1-2: mock exam, 460 questions |
 | M7 | Accessibility, web tuning, content QA | |
 
-**Content:** 42 lessons covering all 53 blueprint subtopics, 321 questions (at least 3 per subtopic, and enough in every exam area to fill a full mock exam, both enforced in CI), 16 drills and 14 labs (plus 9 hidden mini-labs behind `cli_task` questions).
+**Content:** 42 lessons covering all 53 blueprint subtopics, 460 questions (at least 3 per subtopic, and enough in every exam area to fill a full mock exam, both enforced in CI), 16 drills and 14 labs (plus 14 hidden mini-labs behind `cli_task` questions).
 
 ## How a study session works
 The dashboard plans each day's session:
