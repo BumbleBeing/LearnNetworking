@@ -1,0 +1,302 @@
+{
+  "id": "lab.discovery",
+  "title": "Map the network with CDP and LLDP",
+  "domain": "d2",
+  "unit": "d2.discovery",
+  "subtopics": [
+    "2.3"
+  ],
+  "description": "SW1's cables aren't labelled. Use CDP and LLDP to find out what's plugged in where, label the ports, and stop SW1 advertising itself to the public kiosk.",
+  "topology": "  [SW1] Fa0/1 - 24, Gi0/1 - 2   ← which port goes where? Nobody knows.\n\n  Somewhere on SW1: router R1, switch SW2, an access point (not Cisco),\n  a desk phone (not Cisco) and a public kiosk PC on Fa0/24.\n\n  Useful: show cdp neighbors [detail], show lldp neighbors",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "fa0/3"
+        },
+        {
+          "name": "fa0/4"
+        },
+        {
+          "name": "fa0/5"
+        },
+        {
+          "name": "fa0/6"
+        },
+        {
+          "name": "fa0/7"
+        },
+        {
+          "name": "fa0/8"
+        },
+        {
+          "name": "fa0/9"
+        },
+        {
+          "name": "fa0/10"
+        },
+        {
+          "name": "fa0/11"
+        },
+        {
+          "name": "fa0/12"
+        },
+        {
+          "name": "fa0/13"
+        },
+        {
+          "name": "fa0/14"
+        },
+        {
+          "name": "fa0/15"
+        },
+        {
+          "name": "fa0/16"
+        },
+        {
+          "name": "fa0/17"
+        },
+        {
+          "name": "fa0/18"
+        },
+        {
+          "name": "fa0/19"
+        },
+        {
+          "name": "fa0/20"
+        },
+        {
+          "name": "fa0/21"
+        },
+        {
+          "name": "fa0/22"
+        },
+        {
+          "name": "fa0/23"
+        },
+        {
+          "name": "fa0/24"
+        },
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ],
+      "mac": "0019.e8a1.1100"
+    },
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0/0",
+        "ip address 10.0.0.1 255.255.255.0",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "SW2",
+      "type": "switch",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/1"
+        }
+      ],
+      "mac": "0019.e8a1.2200"
+    },
+    {
+      "name": "AP-LOBBY",
+      "type": "host",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "eth0"
+        }
+      ],
+      "cdp": false,
+      "lldp": true,
+      "platform": "WAP-6E",
+      "capability": "W"
+    },
+    {
+      "name": "PHONE-114",
+      "type": "host",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "eth0"
+        }
+      ],
+      "cdp": false,
+      "lldp": true,
+      "platform": "SIP-Phone",
+      "capability": "P"
+    },
+    {
+      "name": "KIOSK",
+      "type": "host",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "eth0"
+        }
+      ],
+      "cdp": false,
+      "lldp": true,
+      "platform": "Linux",
+      "capability": "H"
+    }
+  ],
+  "links": [
+    [
+      "SW1",
+      "g0/2",
+      "R1",
+      "g0/0/0"
+    ],
+    [
+      "SW1",
+      "g0/1",
+      "SW2",
+      "g0/1"
+    ],
+    [
+      "SW1",
+      "fa0/7",
+      "AP-LOBBY",
+      "eth0"
+    ],
+    [
+      "SW1",
+      "fa0/15",
+      "PHONE-114",
+      "eth0"
+    ],
+    [
+      "SW1",
+      "fa0/24",
+      "KIOSK",
+      "eth0"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Find the port that connects to router R1 and set its description to 'Uplink to R1'.",
+      "hint": "show cdp neighbors: 'Local Intrfce' is SW1's port. Then interface <that port> → description Uplink to R1",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "iface_description",
+          "args": {
+            "iface": "g0/2",
+            "contains": "R1"
+          }
+        }
+      ]
+    },
+    {
+      "text": "The lobby access point isn't a Cisco device, so CDP can't see it. Turn on LLDP, find the AP's port and describe it as 'AP-LOBBY'.",
+      "hint": "lldp run, then do show lldp neighbors. Look for capability W.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "lldp_run",
+          "args": {
+            "enabled": true
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "discovers",
+          "args": {
+            "neighbor": "AP-LOBBY",
+            "protocol": "lldp"
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "iface_description",
+          "args": {
+            "iface": "fa0/7",
+            "contains": "AP-LOBBY"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Fa0/24 faces a public kiosk. Stop SW1 sending CDP and LLDP out of that port, while both protocols keep running everywhere else.",
+      "hint": "interface fa0/24 → no cdp enable → no lldp transmit (don't use 'no cdp run': that turns CDP off everywhere)",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "cdp_iface",
+          "args": {
+            "iface": "fa0/24",
+            "enabled": false
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "lldp_iface",
+          "args": {
+            "iface": "fa0/24",
+            "transmit": false
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "cdp_run",
+          "args": {
+            "enabled": true
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "lldp_run",
+          "args": {
+            "enabled": true
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "discovers",
+          "args": {
+            "neighbor": "R1",
+            "protocol": "cdp"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "interface g0/2",
+      "description Uplink to R1",
+      "exit",
+      "lldp run",
+      "interface fa0/7",
+      "description AP-LOBBY",
+      "interface fa0/24",
+      "no cdp enable",
+      "no lldp transmit",
+      "end"
+    ]
+  }
+}

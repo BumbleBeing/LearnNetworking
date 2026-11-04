@@ -1,0 +1,46 @@
+{
+  "id": "d1.wireless",
+  "domain": "d1",
+  "subtopics": [
+    "1.11"
+  ],
+  "order": 80,
+  "title": "Wireless principles",
+  "minutes": 7,
+  "cards": [
+    {
+      "heading": "RF bands",
+      "body": "Wi-Fi uses unlicensed radio bands. 2.4 GHz reaches further and passes through walls better but is crowded (Bluetooth, microwave ovens). 5 GHz has many more channels but a shorter range. Wi-Fi 6E adds 6 GHz."
+    },
+    {
+      "heading": "Non-overlapping channels",
+      "body": "In 2.4 GHz, channels are 5 MHz apart but about 22 MHz wide, so only 1, 6 and 11 don't overlap. Neighbouring APs should use different ones of these three. 5 GHz has around two dozen non-overlapping 20 MHz channels.",
+      "example": " 1     6     11\n ┌─┐   ┌─┐   ┌─┐   ← no overlap\n   ┌─┐ 3 overlaps 1 and 6"
+    },
+    {
+      "heading": "SSID, BSS and ESS",
+      "body": "The SSID is the WLAN's name. A BSS is one AP and its clients, identified by the BSSID (the AP radio's MAC). An ESS is several APs offering the same SSID, so clients can roam between them. An IBSS (ad hoc) has no AP at all."
+    },
+    {
+      "heading": "802.11 standards",
+      "body": "Each generation is faster.",
+      "example": "802.11b   2.4 GHz    11 Mbps\n802.11a   5 GHz      54 Mbps\n802.11g   2.4 GHz    54 Mbps\n802.11n   2.4/5 GHz  Wi-Fi 4\n802.11ac  5 GHz      Wi-Fi 5\n802.11ax  2.4/5/6    Wi-Fi 6/6E"
+    },
+    {
+      "heading": "Encryption at a glance",
+      "body": "Open networks send everything in clear text. WEP and WPA are broken. Use WPA2 (AES/CCMP) or WPA3, either with a pre-shared key (Personal) or 802.1X authentication against a RADIUS server (Enterprise). The security lessons cover these in detail."
+    },
+    {
+      "heading": "Half duplex in the air",
+      "body": "Wireless is a shared medium: only one device on a channel can transmit at a time. It uses CSMA/CA (collision avoidance) because radios can't detect collisions while sending."
+    }
+  ],
+  "recall": [
+    "q.d1.wifi.001",
+    "q.d1.wifi.002",
+    "q.d1.wifi.003"
+  ],
+  "drills": [
+    "wifi_planner"
+  ]
+}

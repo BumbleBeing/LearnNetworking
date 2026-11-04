@@ -113,7 +113,7 @@
     ],
     "answer": 0,
     "explanation": "255.255.255.240 is /28, block size 16. 77 sits in the 64-79 subnet (hosts .65-.78). The gateway .94 belongs to the 80-95 subnet, so the PC can't reach it directly and off-subnet traffic fails.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.client_ip"
   },
   {
     "id": "q.d1.binary.001",
@@ -183,7 +183,8 @@
       0,
       2
     ],
-    "explanation": "UDP sends datagrams without setting up a session and has an 8-byte header. Sequencing, acknowledgements, windowing and the three-way handshake are TCP features."
+    "explanation": "UDP sends datagrams without setting up a session and has an 8-byte header. Sequencing, acknowledgements, windowing and the three-way handshake are TCP features.",
+    "lesson_ref": "d1.tcp_udp"
   },
   {
     "id": "q.d1.tcpudp.002",
@@ -198,7 +199,8 @@
       "Client sends ACK",
       "Data is exchanged"
     ],
-    "explanation": "TCP's three-way handshake is SYN, SYN-ACK, ACK. Only then does data flow."
+    "explanation": "TCP's three-way handshake is SYN, SYN-ACK, ACK. Only then does data flow.",
+    "lesson_ref": "d1.tcp_udp"
   },
   {
     "id": "q.d1.switch.001",
@@ -305,5 +307,704 @@
     ],
     "explanation": "Many MAC addresses learned on one port means many hosts are reachable through it, typically another switch (often over a trunk).",
     "lesson_ref": "d1.switching"
+  },
+  {
+    "id": "q.d1.comp.001",
+    "domain": "d1",
+    "subtopic": "1.1",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each device to its main job.",
+    "distractors": [
+      "Translates names to IP addresses"
+    ],
+    "answer": {
+      "Router": "Forwards packets between IP networks",
+      "Layer 2 switch": "Forwards frames within a LAN by MAC address",
+      "Next-generation firewall": "Filters traffic between zones with application awareness",
+      "Wireless LAN controller": "Centrally manages lightweight access points"
+    },
+    "explanation": "Routers join networks, switches build the LAN, firewalls enforce security policy between zones, and a WLC runs the APs.",
+    "lesson_ref": "d1.components"
+  },
+  {
+    "id": "q.d1.comp.002",
+    "domain": "d1",
+    "subtopic": "1.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What does a stateful firewall do with return traffic for a session that an inside host started?",
+    "choices": [
+      "Blocks it unless an inbound rule permits it",
+      "Allows it because it matches a session in its state table",
+      "Sends it to the IPS for inspection only",
+      "Drops it and logs an alert"
+    ],
+    "answer": 1,
+    "explanation": "A stateful firewall tracks sessions in a state table and automatically allows the matching return traffic, while blocking unsolicited inbound traffic.",
+    "lesson_ref": "d1.components"
+  },
+  {
+    "id": "q.d1.comp.003",
+    "domain": "d1",
+    "subtopic": "1.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What is the difference between an IPS and an IDS?",
+    "choices": [
+      "An IDS is inline and an IPS works on a copy of traffic",
+      "An IPS only works on wireless traffic",
+      "An IPS sits inline and can block traffic; an IDS monitors a copy and alerts",
+      "There is no difference"
+    ],
+    "answer": 2,
+    "explanation": "An IPS is inline, so it can drop malicious traffic. An IDS gets a copy of the traffic (for example from a SPAN port) and can only alert.",
+    "lesson_ref": "d1.components"
+  },
+  {
+    "id": "q.d1.comp.004",
+    "domain": "d1",
+    "subtopic": "1.1",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "What is the maximum power per port of 802.3at (PoE+), in watts?",
+    "answer": [
+      "30",
+      "30 W",
+      "30W"
+    ],
+    "explanation": "802.3af PoE gives 15.4 W, 802.3at PoE+ 30 W, and 802.3bt up to 60 or 90-100 W.",
+    "lesson_ref": "d1.components"
+  },
+  {
+    "id": "q.d1.comp.005",
+    "domain": "d1",
+    "subtopic": "1.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which device lets a single switch route between its VLANs at wire speed?",
+    "choices": [
+      "A hub",
+      "A wireless access point",
+      "A layer 2 switch",
+      "A layer 3 (multilayer) switch"
+    ],
+    "answer": 3,
+    "explanation": "A multilayer (layer 3) switch routes between VLANs in hardware using SVIs.",
+    "lesson_ref": "d1.components"
+  },
+  {
+    "id": "q.d1.topo.001",
+    "domain": "d1",
+    "subtopic": "1.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "In a spine-leaf data centre, how are switches connected?",
+    "choices": [
+      "Every leaf connects to every spine; leaves don't connect to each other",
+      "Every leaf connects to every other leaf",
+      "Spines connect in a ring and leaves hang off one spine each",
+      "Leaves connect to the core, which connects to spines"
+    ],
+    "answer": 0,
+    "explanation": "Every leaf connects to every spine. Leaves don't connect to leaves and spines don't connect to spines, so every server-to-server path is leaf-spine-leaf.",
+    "lesson_ref": "d1.topologies"
+  },
+  {
+    "id": "q.d1.topo.002",
+    "domain": "d1",
+    "subtopic": "1.2",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each campus layer to its role.",
+    "distractors": [
+      "Translates private addresses for the internet"
+    ],
+    "answer": {
+      "Access": "Connects end devices, with PoE and port security",
+      "Distribution": "Aggregates access switches and routes between VLANs",
+      "Core": "Fast, resilient backbone between distribution blocks"
+    },
+    "explanation": "Three-tier: access for endpoints, distribution for aggregation and policy, core for high-speed transport.",
+    "lesson_ref": "d1.topologies"
+  },
+  {
+    "id": "q.d1.topo.003",
+    "domain": "d1",
+    "subtopic": "1.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A small campus merges the core and distribution layers into one. What is this design called?",
+    "choices": [
+      "Spine-leaf",
+      "Hub-and-spoke",
+      "Collapsed core (two-tier)",
+      "Full mesh"
+    ],
+    "answer": 2,
+    "explanation": "A two-tier design with a collapsed core.",
+    "lesson_ref": "d1.topologies"
+  },
+  {
+    "id": "q.d1.topo.004",
+    "domain": "d1",
+    "subtopic": "1.2",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each cloud service model to an example.",
+    "answer": {
+      "IaaS": "Renting virtual machines and networks you manage",
+      "PaaS": "A platform that runs your code without managing servers",
+      "SaaS": "A finished application such as webmail"
+    },
+    "explanation": "Infrastructure, platform and software as a service: the higher the layer, the less you manage yourself.",
+    "lesson_ref": "d1.topologies"
+  },
+  {
+    "id": "q.d1.topo.005",
+    "domain": "d1",
+    "subtopic": "1.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which device typically provides routing, switching, firewall and Wi-Fi in a SOHO network?",
+    "choices": [
+      "A spine switch",
+      "A single all-in-one router",
+      "A wireless LAN controller",
+      "A core switch pair"
+    ],
+    "answer": 1,
+    "explanation": "SOHO networks usually rely on one integrated device.",
+    "lesson_ref": "d1.topologies"
+  },
+  {
+    "id": "q.d1.cable.001",
+    "domain": "d1",
+    "subtopic": "1.3",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is the maximum length of a 1000BASE-T copper link?",
+    "choices": [
+      "55 m",
+      "100 m",
+      "185 m",
+      "550 m"
+    ],
+    "answer": 1,
+    "explanation": "Twisted-pair Ethernet (10BASE-T to 10GBASE-T) is limited to 100 m.",
+    "lesson_ref": "d1.cabling"
+  },
+  {
+    "id": "q.d1.cable.002",
+    "domain": "d1",
+    "subtopic": "1.3",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two statements about single-mode fiber are true? (Choose two.)",
+    "choices": [
+      "It uses a narrow core and a laser light source",
+      "It is limited to 100 m",
+      "It is more affected by electrical interference than copper",
+      "It is used for distances of several kilometres"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "Single-mode fiber has a narrow core and uses lasers, so it reaches kilometres. It is more expensive than multimode and immune to electrical interference like all fiber.",
+    "lesson_ref": "d1.cabling"
+  },
+  {
+    "id": "q.d1.cable.003",
+    "domain": "d1",
+    "subtopic": "1.4",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, what is the most likely problem on Fa0/5?",
+    "exhibit": "FastEthernet0/5 is up, line protocol is up (connected)\n  Half-duplex, 100Mb/s, media type is 10/100BaseTX\n     0 runts, 0 giants\n     0 input errors, 0 CRC\n     0 output errors, 1844 collisions, 2 interface resets\n     211 late collision, 0 deferred",
+    "choices": [
+      "A duplex mismatch with the connected device",
+      "The cable is longer than 100 m",
+      "The interface is administratively shut down",
+      "The port was err-disabled by port security"
+    ],
+    "answer": 0,
+    "explanation": "Late collisions only occur on a half-duplex port whose partner is sending in full duplex: a duplex mismatch.",
+    "lesson_ref": "d1.cabling"
+  },
+  {
+    "id": "q.d1.cable.004",
+    "domain": "d1",
+    "subtopic": "1.4",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each interface status line to its likely cause.",
+    "answer": {
+      "administratively down, line protocol is down": "The shutdown command",
+      "down, line protocol is down (notconnect)": "No cable or the far end is off",
+      "down, line protocol is down (err-disabled)": "Port security or BPDU Guard shut it",
+      "up, line protocol is up": "Working at layers 1 and 2"
+    },
+    "explanation": "Read the status pair and the reason in brackets.",
+    "lesson_ref": "d1.cabling"
+  },
+  {
+    "id": "q.d1.cable.005",
+    "domain": "d1",
+    "subtopic": "1.4",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "What do you call a received Ethernet frame that is smaller than 64 bytes?",
+    "answer": [
+      "runt",
+      "runts",
+      "a runt"
+    ],
+    "explanation": "Runts are under 64 bytes (often collision fragments); giants are over 1518 bytes.",
+    "lesson_ref": "d1.cabling"
+  },
+  {
+    "id": "q.d1.cable.006",
+    "domain": "d1",
+    "subtopic": "1.3",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which cable connects a PC's serial/USB adapter to a switch's console port?",
+    "choices": [
+      "Straight-through",
+      "Crossover",
+      "Rollover",
+      "Multimode fiber"
+    ],
+    "answer": 2,
+    "explanation": "Console access uses a rollover (console) cable.",
+    "lesson_ref": "d1.cabling"
+  },
+  {
+    "id": "q.d1.tcpudp.003",
+    "domain": "d1",
+    "subtopic": "1.5",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each protocol to its default transport and port.",
+    "distractors": [
+      "TCP 23"
+    ],
+    "answer": {
+      "SSH": "TCP 22",
+      "HTTPS": "TCP 443",
+      "DNS queries": "UDP 53",
+      "TFTP": "UDP 69",
+      "SNMP": "UDP 161"
+    },
+    "explanation": "SSH 22 and HTTPS 443 use TCP; DNS queries (53), TFTP (69) and SNMP (161) use UDP.",
+    "lesson_ref": "d1.tcp_udp"
+  },
+  {
+    "id": "q.d1.tcpudp.004",
+    "domain": "d1",
+    "subtopic": "1.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which TCP feature lets a receiver control how much data the sender may send before waiting for an acknowledgement?",
+    "choices": [
+      "Sequence numbers",
+      "The three-way handshake",
+      "Checksums",
+      "Windowing"
+    ],
+    "answer": 3,
+    "explanation": "The window size advertised by the receiver provides flow control.",
+    "lesson_ref": "d1.tcp_udp"
+  },
+  {
+    "id": "q.d1.tcpudp.005",
+    "domain": "d1",
+    "subtopic": "1.5",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Why does VoIP use UDP rather than TCP?",
+    "choices": [
+      "Retransmitted audio would arrive too late to be useful",
+      "UDP guarantees delivery",
+      "TCP can't carry audio",
+      "UDP encrypts the audio"
+    ],
+    "answer": 0,
+    "explanation": "Retransmitting late voice samples is useless and adds delay; UDP's low overhead and lack of retransmission suit real-time traffic.",
+    "lesson_ref": "d1.tcp_udp"
+  },
+  {
+    "id": "q.d1.private.001",
+    "domain": "d1",
+    "subtopic": "1.7",
+    "type": "mcq_multi",
+    "difficulty": 1,
+    "stem": "Which two addresses are RFC 1918 private addresses? (Choose two.)",
+    "choices": [
+      "172.32.1.1",
+      "172.20.5.5",
+      "169.254.10.10",
+      "10.200.1.1",
+      "192.169.1.1"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "10.0.0.0/8, 172.16.0.0/12 (172.16-31) and 192.168.0.0/16 are private. 172.32.1.1 and 192.169.1.1 are public, and 169.254.x.x is link-local.",
+    "lesson_ref": "d1.private_ipv4"
+  },
+  {
+    "id": "q.d1.private.002",
+    "domain": "d1",
+    "subtopic": "1.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A PC shows the address 169.254.33.12. What does this tell you?",
+    "choices": [
+      "It has a valid public address",
+      "It's using a static RFC 1918 address",
+      "It couldn't get an address from a DHCP server",
+      "It's the loopback address"
+    ],
+    "answer": 2,
+    "explanation": "169.254.0.0/16 is APIPA (link-local): the host assigned itself an address because it got no DHCP reply.",
+    "lesson_ref": "d1.private_ipv4"
+  },
+  {
+    "id": "q.d1.private.003",
+    "domain": "d1",
+    "subtopic": "1.7",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "What is the last address of the private range 172.16.0.0/12?",
+    "answer": "172.31.255.255",
+    "explanation": "A /12 covers 172.16.0.0 to 172.31.255.255.",
+    "lesson_ref": "d1.private_ipv4"
+  },
+  {
+    "id": "q.d1.private.004",
+    "domain": "d1",
+    "subtopic": "1.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What must happen for a host with a private address to reach a server on the internet?",
+    "choices": [
+      "Nothing; private addresses are routed on the internet",
+      "Its address must be translated to a public one (NAT/PAT)",
+      "It must use IPv6",
+      "It must use a 169.254.x.x address"
+    ],
+    "answer": 1,
+    "explanation": "Private addresses aren't routed on the internet, so the edge router (or firewall) translates them to a public address with NAT/PAT.",
+    "lesson_ref": "d1.private_ipv4"
+  },
+  {
+    "id": "q.d1.ipv6.001",
+    "domain": "d1",
+    "subtopic": "1.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which is the correct shortest form of 2001:0db8:0000:0000:0000:0000:0a00:0001?",
+    "choices": [
+      "2001:db8::a::1",
+      "2001:db8:0:0:0:0:a:1",
+      "2001:db8::a00:1",
+      "2001:db8::a00:0001"
+    ],
+    "answer": 2,
+    "explanation": "Drop leading zeros (db8, a00, 1) and replace the run of four zero groups with ::.",
+    "lesson_ref": "d1.ipv6"
+  },
+  {
+    "id": "q.d1.ipv6.002",
+    "domain": "d1",
+    "subtopic": "1.9",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each IPv6 address to its type.",
+    "distractors": [
+      "Broadcast"
+    ],
+    "answer": {
+      "2001:db8:5::1": "Global unicast",
+      "fe80::21a:2bff:fe3c:4d5e": "Link-local",
+      "fd12:3456::1": "Unique local",
+      "ff02::2": "Multicast (all routers)"
+    },
+    "explanation": "2000::/3 global unicast, FE80::/10 link-local, FC00::/7 unique local, FF00::/8 multicast.",
+    "lesson_ref": "d1.ipv6"
+  },
+  {
+    "id": "q.d1.ipv6.003",
+    "domain": "d1",
+    "subtopic": "1.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does a router use the IPv6 link-local address of its neighbour for?",
+    "choices": [
+      "Routing across the internet",
+      "Replacing the global address on all hosts",
+      "Broadcasting to all hosts",
+      "As the next-hop address and source of Router Advertisements"
+    ],
+    "answer": 3,
+    "explanation": "Routers advertise themselves and appear as next hops using link-local addresses; link-local is valid only on the link.",
+    "lesson_ref": "d1.ipv6"
+  },
+  {
+    "id": "q.d1.ipv6.004",
+    "domain": "d1",
+    "subtopic": "1.8",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "With modified EUI-64, what interface ID is built from MAC address 00:1A:2B:3C:4D:5E?",
+    "answer": [
+      "21a:2bff:fe3c:4d5e",
+      "021a:2bff:fe3c:4d5e"
+    ],
+    "explanation": "Split into 001A2B | 3C4D5E, insert FFFE, then flip bit 7 of 00 to 02: 021A:2BFF:FE3C:4D5E.",
+    "lesson_ref": "d1.ipv6"
+  },
+  {
+    "id": "q.d1.ipv6.005",
+    "domain": "d1",
+    "subtopic": "1.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which command must be entered before a Cisco router will route IPv6?",
+    "choices": [
+      "ipv6 unicast-routing",
+      "ipv6 enable",
+      "ip routing ipv6",
+      "ipv6 address autoconfig"
+    ],
+    "answer": 0,
+    "explanation": "IPv6 routing is off by default; 'ipv6 unicast-routing' enables it globally.",
+    "lesson_ref": "d1.ipv6"
+  },
+  {
+    "id": "q.d1.ipv6.006",
+    "domain": "d1",
+    "subtopic": "1.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What is an IPv6 anycast address?",
+    "choices": [
+      "An address that reaches every host on the link",
+      "One unicast address assigned to several devices; packets go to the nearest",
+      "A private address range",
+      "The address used before DHCPv6 assigns one"
+    ],
+    "answer": 1,
+    "explanation": "Anycast is a unicast address assigned to several devices; routing delivers packets to the nearest one.",
+    "lesson_ref": "d1.ipv6"
+  },
+  {
+    "id": "q.d1.ipv6.007",
+    "domain": "d1",
+    "subtopic": "1.8",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "A site receives 2001:db8:acad::/48 and uses /64 subnets. How many subnets can it create?",
+    "answer": [
+      "65536",
+      "65,536"
+    ],
+    "explanation": "64 - 48 = 16 subnet bits, so 2^16 = 65,536 subnets.",
+    "lesson_ref": "d1.ipv6"
+  },
+  {
+    "id": "q.d1.client.001",
+    "domain": "d1",
+    "subtopic": "1.10",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which Windows command shows a PC's MAC address, DHCP server and DNS servers?",
+    "choices": [
+      "ipconfig",
+      "netstat -r",
+      "ipconfig /all",
+      "ping -a"
+    ],
+    "answer": 2,
+    "explanation": "ipconfig on its own shows only the address, mask and gateway; /all adds MAC, DHCP and DNS details.",
+    "lesson_ref": "d1.client_ip"
+  },
+  {
+    "id": "q.d1.client.002",
+    "domain": "d1",
+    "subtopic": "1.10",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each task on a Linux host to the command.",
+    "distractors": [
+      "ipconfig /all"
+    ],
+    "answer": {
+      "Show the interface addresses": "ip address",
+      "Show the default gateway": "ip route",
+      "Show the DNS servers": "cat /etc/resolv.conf"
+    },
+    "explanation": "Modern Linux uses the ip command; DNS servers are listed in /etc/resolv.conf (or by resolvectl).",
+    "lesson_ref": "d1.client_ip"
+  },
+  {
+    "id": "q.d1.client.003",
+    "domain": "d1",
+    "subtopic": "1.10",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, why can't the Linux host reach the internet?",
+    "exhibit": "$ ip address show eth0\n    inet 10.1.1.50/24 brd 10.1.1.255 scope global eth0\n$ ip route\n10.1.1.0/24 dev eth0 proto kernel scope link src 10.1.1.50",
+    "choices": [
+      "Its address is a broadcast address",
+      "It has no default gateway (no default route)",
+      "Its mask is invalid",
+      "It is using an APIPA address"
+    ],
+    "answer": 1,
+    "explanation": "The host has a route for its own subnet but no default route, so it has no gateway for other networks.",
+    "lesson_ref": "d1.client_ip"
+  },
+  {
+    "id": "q.d1.wifi.001",
+    "domain": "d1",
+    "subtopic": "1.11",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which set of 2.4 GHz channels don't overlap?",
+    "choices": [
+      "1, 5, 9",
+      "1, 6, 11",
+      "2, 7, 12",
+      "1, 3, 5"
+    ],
+    "answer": 1,
+    "explanation": "Only 1, 6 and 11 are clear of each other in the 2.4 GHz band.",
+    "lesson_ref": "d1.wireless"
+  },
+  {
+    "id": "q.d1.wifi.002",
+    "domain": "d1",
+    "subtopic": "1.11",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each wireless term to its meaning.",
+    "answer": {
+      "SSID": "The network name clients join",
+      "BSSID": "The MAC address of an AP radio",
+      "ESS": "Several APs sharing one SSID for roaming",
+      "IBSS": "Clients connected directly with no AP"
+    },
+    "explanation": "SSID is the name, BSSID identifies an AP radio, ESS extends a WLAN over many APs, IBSS is ad hoc.",
+    "lesson_ref": "d1.wireless"
+  },
+  {
+    "id": "q.d1.wifi.003",
+    "domain": "d1",
+    "subtopic": "1.11",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two statements compare 5 GHz with 2.4 GHz correctly? (Choose two.)",
+    "choices": [
+      "5 GHz has more non-overlapping channels",
+      "5 GHz passes through walls better",
+      "5 GHz covers a smaller area per AP",
+      "5 GHz suffers more from microwave ovens"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "5 GHz offers many more non-overlapping channels but a shorter range for the same power.",
+    "lesson_ref": "d1.wireless"
+  },
+  {
+    "id": "q.d1.wifi.004",
+    "domain": "d1",
+    "subtopic": "1.11",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Why do Wi-Fi clients use CSMA/CA instead of CSMA/CD?",
+    "choices": [
+      "Wireless is full duplex",
+      "CSMA/CD only works on fiber",
+      "CSMA/CA is faster",
+      "Radios can't detect collisions while they transmit"
+    ],
+    "answer": 3,
+    "explanation": "A radio can't listen for a collision while it's transmitting, so 802.11 avoids collisions (with backoff and acknowledgements) instead of detecting them.",
+    "lesson_ref": "d1.wireless"
+  },
+  {
+    "id": "q.d1.virt.001",
+    "domain": "d1",
+    "subtopic": "1.12",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is a type 1 hypervisor?",
+    "choices": [
+      "A hypervisor that runs directly on the server hardware",
+      "A hypervisor that runs as an application on Windows or macOS",
+      "A container runtime",
+      "A virtual switch"
+    ],
+    "answer": 0,
+    "explanation": "Type 1 (bare-metal) hypervisors run directly on the hardware; type 2 hypervisors run on top of a host OS.",
+    "lesson_ref": "d1.virtualization"
+  },
+  {
+    "id": "q.d1.virt.002",
+    "domain": "d1",
+    "subtopic": "1.12",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two statements about containers compared with VMs are true? (Choose two.)",
+    "choices": [
+      "Each container runs its own full operating system",
+      "Containers share the host's OS kernel",
+      "Containers start faster and use fewer resources",
+      "Containers need a type 2 hypervisor"
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "Containers share the host kernel, so they're lighter and start faster. VMs each run a full guest OS.",
+    "lesson_ref": "d1.virtualization"
+  },
+  {
+    "id": "q.d1.virt.003",
+    "domain": "d1",
+    "subtopic": "1.12",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does a VRF allow on a single router?",
+    "choices": [
+      "Running several routing protocols at once",
+      "Load balancing across links",
+      "Encrypting traffic between interfaces",
+      "Several separate routing tables, even with overlapping addresses"
+    ],
+    "answer": 3,
+    "explanation": "VRFs give separate routing tables, so traffic stays separated and address ranges can even overlap.",
+    "lesson_ref": "d1.virtualization"
+  },
+  {
+    "id": "q.d1.virt.004",
+    "domain": "d1",
+    "subtopic": "1.12",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "What software component shares a physical server's CPU, memory and storage between virtual machines?",
+    "answer": [
+      "hypervisor",
+      "a hypervisor",
+      "the hypervisor"
+    ],
+    "explanation": "The hypervisor creates and runs VMs.",
+    "lesson_ref": "d1.virtualization"
   }
 ]

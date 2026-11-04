@@ -13,7 +13,8 @@ QUESTION_TYPES = {"mcq_single", "mcq_multi", "drag_match", "drag_order",
 LAB_CHECKS = {"hostname", "vlan_exists", "access_port", "trunk_port", "iface_ip", "iface_up", "iface_shutdown",
               "route_to", "static_route", "ping", "nat_iface", "nat_translates", "port_security",
               "acl_permits", "acl_decides", "stp_mode", "stp_root", "stp_role", "portfast", "etherchannel",
-              "ospf_rid", "ospf_enabled", "ospf_passive", "ospf_neighbor"}
+              "ospf_rid", "ospf_enabled", "ospf_passive", "ospf_neighbor", "cdp_run", "lldp_run", "cdp_iface",
+              "lldp_iface", "iface_description", "discovers"}
 QUESTION_REQUIRED = {"id", "domain", "subtopic", "type", "stem", "answer", "explanation"}
 LESSON_REQUIRED = {"id", "domain", "subtopics", "title", "cards"}
 

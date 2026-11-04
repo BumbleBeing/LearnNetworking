@@ -1,0 +1,104 @@
+{
+  "id": "lab.mini_cdp",
+  "title": "Disable CDP on an edge port",
+  "hidden": true,
+  "domain": "d2",
+  "subtopics": [
+    "2.3"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [R1] Gi0/0 ── LAN switch SW1\n       Gi0/1 ── ISP (untrusted)",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.1.1.1 255.255.255.0",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 203.0.113.2 255.255.255.252",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/1"
+        }
+      ]
+    },
+    {
+      "name": "ISP",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 203.0.113.1 255.255.255.252",
+        "no shutdown"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/0",
+      "SW1",
+      "g0/1"
+    ],
+    [
+      "R1",
+      "g0/1",
+      "ISP",
+      "g0/0"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Stop R1 exchanging CDP with the ISP on Gi0/1, but keep CDP running towards SW1.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "discovers",
+          "args": {
+            "neighbor": "ISP",
+            "protocol": "cdp",
+            "present": false
+          }
+        },
+        {
+          "device": "R1",
+          "check": "discovers",
+          "args": {
+            "neighbor": "SW1",
+            "protocol": "cdp"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "interface g0/1",
+      "no cdp enable",
+      "end"
+    ]
+  }
+}

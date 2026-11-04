@@ -4,7 +4,9 @@ extends Control
 func _ready() -> void:
 	var step := SessionManager.current_step()
 	var v := UI.page(self)
-	if step.get("title", "") == "Quiz":
+	if step.get("title", "") == "Unit quiz":
+		ScreenHeader.build(v, "Unit quiz", ContentDB.lessons.get(step.get("unit", ""), {}).get("title", ""), "Questions from this unit. Your recent accuracy here decides when the unit counts as mastered.")
+	elif step.get("title", "") == "Quiz":
 		ScreenHeader.build(v, "Quiz", SessionManager.title.trim_prefix("Quiz: "), "Questions from across this exam area. They feed your spaced-repetition schedule like any review.")
 	else:
 		ScreenHeader.build(v, "Review", "Due for review", "Questions you studied before, scheduled so you see them just before you'd forget.")

@@ -1,0 +1,35 @@
+{
+  "id": "d1.tcp_udp",
+  "domain": "d1",
+  "subtopics": [
+    "1.5"
+  ],
+  "order": 30,
+  "title": "TCP and UDP",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Transport layer jobs",
+      "body": "TCP and UDP carry data between applications. Port numbers identify the application: a well-known destination port for the server (such as 443) and a random ephemeral source port (49152 and up) for the client. IP address plus port is a socket.",
+      "example": "PC 10.1.1.5:51234  →  server 203.0.113.10:443"
+    },
+    {
+      "heading": "TCP: reliable and connection-oriented",
+      "body": "TCP sets up a session with a three-way handshake (SYN, SYN-ACK, ACK), numbers every byte, acknowledges what arrived, retransmits what didn't and reorders segments. Windowing gives flow control: the receiver says how much it can take before the sender must wait for an ACK. A session closes with FIN/ACK."
+    },
+    {
+      "heading": "UDP: fast and connectionless",
+      "body": "UDP just sends datagrams: no handshake, no acknowledgements, no retransmission, no ordering, and an 8-byte header (TCP's is 20+). It suits real-time traffic such as voice and video, where late data is useless, and short query/response exchanges such as DNS."
+    },
+    {
+      "heading": "Well-known ports",
+      "body": "Learn these pairs.",
+      "example": "TCP 20/21 FTP     TCP 22 SSH      TCP 23 Telnet\nTCP 25 SMTP       TCP 80 HTTP     TCP 443 HTTPS\nUDP 53 DNS (TCP for zone transfers)\nUDP 67/68 DHCP    UDP 69 TFTP     UDP 123 NTP\nUDP 161/162 SNMP  UDP 514 Syslog"
+    }
+  ],
+  "recall": [
+    "q.d1.tcpudp.001",
+    "q.d1.tcpudp.002",
+    "q.d1.tcpudp.003"
+  ]
+}

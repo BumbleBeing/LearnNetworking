@@ -1,0 +1,39 @@
+{
+  "id": "d2.device_access",
+  "domain": "d2",
+  "subtopics": [
+    "2.8"
+  ],
+  "order": 50,
+  "title": "Device management access",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Console",
+      "body": "The console port gives out-of-band access with a rollover/USB cable, even when the network is down. It's the first way into a new device.",
+      "example": "line console 0\n password C0ns0le!\n login"
+    },
+    {
+      "heading": "Telnet and SSH",
+      "body": "Remote CLI access goes through the VTY lines. Telnet (TCP 23) sends everything, including passwords, in clear text. SSH (TCP 22) encrypts the session; always use SSH and restrict the VTY lines to it.",
+      "example": "line vty 0 4\n login local\n transport input ssh"
+    },
+    {
+      "heading": "HTTP and HTTPS",
+      "body": "Many devices, especially WLCs, offer a web GUI. HTTP (TCP 80) is clear text; HTTPS (TCP 443) is encrypted. Disable plain HTTP: 'no ip http server', 'ip http secure-server'."
+    },
+    {
+      "heading": "Centralised authentication",
+      "body": "Instead of local accounts on every device, AAA servers check logins centrally. TACACS+ (Cisco, TCP 49) encrypts the whole payload and separates authorisation, so it suits device administration. RADIUS (UDP 1812/1813) suits network access such as Wi-Fi and 802.1X."
+    },
+    {
+      "heading": "In-band, out-of-band and cloud",
+      "body": "In-band management uses the production network (SSH to an SVI). Out-of-band uses a separate path such as the console or a dedicated management port and network, so it works during outages. Cloud-managed devices are configured from a vendor dashboard."
+    }
+  ],
+  "recall": [
+    "q.d2.mgmt.001",
+    "q.d2.mgmt.002",
+    "q.d2.mgmt.003"
+  ]
+}

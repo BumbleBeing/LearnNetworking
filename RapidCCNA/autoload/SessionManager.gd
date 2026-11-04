@@ -3,7 +3,7 @@ extends Node
 ## calls step_done() when finished and SessionManager moves to the next scene.
 ##
 ## Step kinds:
-##   {kind:"review",   ids:[question ids]}
+##   {kind:"review",   ids:[question ids], title?:"Quiz"|"Unit quiz", unit?:id}
 ##   {kind:"tutorial", lesson:id}
 ##   {kind:"drill",    drill:id, guided:bool, count:int, unit:id}
 ##   {kind:"lab",      lab:id}
@@ -13,6 +13,7 @@ const REVIEW_DRILL_COUNT := 5
 const UNIT_DRILL_COUNT := 10
 const GUIDED_UNTIL := 10          # guided rounds until this many unguided attempts
 const FAST_MS := 15000
+const UNIT_QUIZ_MAX := 10         # questions per unit quiz (units without drills)
 
 const SCENES := {
 	"review": "res://ui/screens/Review.tscn",
@@ -62,14 +63,16 @@ func plan_steps(now: int = -1) -> Array:
 		out.append({"kind": "lab", "lab": l})
 	var unit := next_unit()
 	if not unit.is_empty():
-		out.append_array(unit_steps(unit, false, review_labs))
+		out.append_array(unit_steps(unit, false, review_labs, q_ids))
 	return out
 
 ## Steps to study one unit: tutorial (if not done), guided rounds until GUIDED_UNTIL
 ## unguided attempts, an unguided round per drill, then labs. In the daily plan
 ## (on_demand = false) finished labs are left to spaced repetition; when the learner
 ## picks the unit themselves (on_demand = true) its labs are always included.
-func unit_steps(unit: Dictionary, on_demand: bool = false, skip_labs: Array = []) -> Array:
+## Units without drills end with a unit quiz on their own questions: that's what
+## builds their mastery (the Review screen records attempts against lesson_ref).
+func unit_steps(unit: Dictionary, on_demand: bool = false, skip_labs: Array = [], skip_ids: Array = []) -> Array:
 	var out: Array = []
 	if not Progress.is_tutorial_done(unit.id):
 		out.append({"kind": "tutorial", "lesson": unit.id})
@@ -82,7 +85,20 @@ func unit_steps(unit: Dictionary, on_demand: bool = false, skip_labs: Array = []
 	for l in unit.get("labs", []):
 		if ContentDB.labs.has(l) and (on_demand or not Progress.is_lab_done(l)) and not l in skip_labs:
 			out.append({"kind": "lab", "lab": l})
+	if not unit.get("drills", []).any(func(d): return ContentDB.drills.has(d)):
+		var exclude: Array = skip_ids.duplicate()
+		if not Progress.is_tutorial_done(unit.id):
+			exclude.append_array(unit.get("recall", []))   # just answered in the tutorial's recall check
+		var ids := unit_quiz_ids(unit.id, exclude)
+		if ids.size() > 0:
+			out.append({"kind": "review", "ids": ids, "title": "Unit quiz", "unit": unit.id})
 	return out
+
+## Up to UNIT_QUIZ_MAX of a unit's own questions (lesson_ref), shuffled.
+func unit_quiz_ids(unit_id: String, exclude: Array = []) -> Array:
+	var ids: Array = ContentDB.questions.values().filter(func(q): return q.get("lesson_ref", "") == unit_id and not q.id in exclude).map(func(q): return q.id)
+	ids.shuffle()
+	return ids.slice(0, UNIT_QUIZ_MAX)
 
 func drill_step(drill_id: String, guided: bool, count: int) -> Dictionary:
 	return {"kind": "drill", "drill": drill_id, "guided": guided, "count": count,
@@ -92,6 +108,8 @@ func drill_step(drill_id: String, guided: bool, count: int) -> Dictionary:
 func describe(step: Dictionary) -> String:
 	match step.kind:
 		"review":
+			if step.get("title", "") == "Unit quiz":
+				return "Unit quiz: %s (%d questions)" % [ContentDB.lessons.get(step.get("unit", ""), {}).get("title", ""), step.ids.size()]
 			return "Review %d due question(s)" % step.ids.size()
 		"tutorial":
 			return "Tutorial: %s" % ContentDB.lessons.get(step.lesson, {}).get("title", step.lesson)

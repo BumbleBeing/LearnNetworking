@@ -1,0 +1,39 @@
+{
+  "id": "d1.virtualization",
+  "domain": "d1",
+  "subtopics": [
+    "1.12"
+  ],
+  "order": 90,
+  "title": "Virtualization fundamentals",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Virtual machines",
+      "body": "Server virtualization runs many virtual machines (VMs) on one physical server. Each VM has its own operating system and virtual NICs. A hypervisor shares the CPU, memory and storage between them.",
+      "example": "┌VM┐┌VM┐┌VM┐\n│ Hypervisor │\n│  Hardware  │"
+    },
+    {
+      "heading": "Hypervisor types",
+      "body": "A type 1 (bare-metal) hypervisor runs directly on the hardware, as in data centres (ESXi, Hyper-V, KVM). A type 2 (hosted) hypervisor runs as an application on a normal OS, as on a laptop (VirtualBox, VMware Workstation)."
+    },
+    {
+      "heading": "Virtual switching",
+      "body": "Inside the host, a virtual switch connects VMs to each other and to the physical NICs, which uplink to the real network, usually on trunks carrying the VMs' VLANs."
+    },
+    {
+      "heading": "Containers",
+      "body": "Containers package an application and its libraries but share the host's OS kernel. They're much smaller and start in seconds, so many more fit on one host than VMs. Docker builds and runs them; Kubernetes orchestrates many of them."
+    },
+    {
+      "heading": "VRFs",
+      "body": "Virtual Routing and Forwarding splits one router into several separate routing tables. Interfaces in different VRFs can't reach each other by default, and their address ranges may even overlap: useful for service providers and for separating guests from the corporate network.",
+      "example": "ip vrf GUEST\ninterface g0/2\n ip vrf forwarding GUEST\n ip address 10.0.0.1 255.255.255.0"
+    }
+  ],
+  "recall": [
+    "q.d1.virt.001",
+    "q.d1.virt.002",
+    "q.d1.virt.003"
+  ]
+}

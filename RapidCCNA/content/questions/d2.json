@@ -302,5 +302,292 @@
     "answer": "spanning-tree vlan 30 priority 4096",
     "explanation": "4096 + 30 = 4126 beats SW2's default 32768 + 30, so SW1 wins regardless of MAC address. Priorities must be multiples of 4096.",
     "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.disc.001",
+    "domain": "d2",
+    "subtopic": "2.3",
+    "type": "mcq_multi",
+    "difficulty": 1,
+    "stem": "Which two statements about LLDP are true? (Choose two.)",
+    "choices": [
+      "It is an IEEE standard (802.1AB)",
+      "It is enabled by default on Cisco switches",
+      "It is routed across the network",
+      "It must be enabled with 'lldp run' on Cisco devices"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "LLDP is IEEE 802.1AB, vendor-neutral, and off by default on Cisco devices (enable it with 'lldp run'). CDP is the Cisco-proprietary one that's on by default.",
+    "lesson_ref": "d2.discovery"
+  },
+  {
+    "id": "q.d2.disc.002",
+    "domain": "d2",
+    "subtopic": "2.3",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, which SW1 port connects to R1?",
+    "exhibit": "SW1#show cdp neighbors\nDevice ID   Local Intrfce   Holdtme   Capability  Platform    Port ID\nR1          Gig 0/2         163       R B S I     ISR4321     Gig 0/0/0\nSW2         Gig 0/1         141       S I         WS-C2960X   Gig 0/1",
+    "choices": [
+      "Gi0/0/0",
+      "Gi0/1",
+      "Gi0/2",
+      "Fa0/1"
+    ],
+    "answer": 2,
+    "explanation": "'Local Intrfce' is SW1's own port; 'Port ID' is the neighbour's port. SW1 Gi0/2 connects to R1's Gi0/0/0.",
+    "lesson_ref": "d2.discovery"
+  },
+  {
+    "id": "q.d2.disc.003",
+    "domain": "d2",
+    "subtopic": "2.3",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "Which interface command stops a Cisco switch from sending and processing CDP on that port only? (full command)",
+    "answer": [
+      "no cdp enable"
+    ],
+    "explanation": "'no cdp enable' disables CDP on one interface; 'no cdp run' disables it globally.",
+    "lesson_ref": "d2.discovery"
+  },
+  {
+    "id": "q.d2.disc.004",
+    "domain": "d2",
+    "subtopic": "2.3",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each discovery protocol fact to its value.",
+    "answer": {
+      "CDP advertisement interval": "60 seconds",
+      "CDP holdtime": "180 seconds",
+      "LLDP advertisement interval": "30 seconds",
+      "LLDP hold time": "120 seconds"
+    },
+    "explanation": "CDP: 60/180 seconds. LLDP: 30/120 seconds.",
+    "lesson_ref": "d2.discovery"
+  },
+  {
+    "id": "q.d2.disc.005",
+    "domain": "d2",
+    "subtopic": "2.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which command shows a CDP neighbour's IP address?",
+    "choices": [
+      "show cdp",
+      "show cdp neighbors detail",
+      "show cdp interface",
+      "show ip interface brief"
+    ],
+    "answer": 1,
+    "explanation": "The summary view doesn't list addresses; the detail view (or 'show cdp entry') does.",
+    "lesson_ref": "d2.discovery"
+  },
+  {
+    "id": "q.d2.wlc.001",
+    "domain": "d2",
+    "subtopic": "2.6",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each AP mode to what it does.",
+    "distractors": [
+      "Bridges two VLANs on a trunk"
+    ],
+    "answer": {
+      "Local": "Serves clients and tunnels their traffic to the WLC",
+      "FlexConnect": "Switches client traffic locally at a branch",
+      "Monitor": "Scans for rogues and intrusions without serving clients",
+      "Sniffer": "Captures 802.11 frames for a packet analyser",
+      "SE-Connect": "Spectrum analysis of RF interference"
+    },
+    "explanation": "Local is the default; FlexConnect suits branches; monitor, sniffer and SE-Connect are dedicated analysis modes.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.wlc.002",
+    "domain": "d2",
+    "subtopic": "2.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which protocol and ports carry traffic between a lightweight AP and its WLC?",
+    "choices": [
+      "CAPWAP on UDP 5246 (control) and 5247 (data)",
+      "LWAPP on TCP 12222",
+      "SSH on TCP 22",
+      "RADIUS on UDP 1812"
+    ],
+    "answer": 0,
+    "explanation": "CAPWAP: UDP 5246 for control (DTLS-encrypted) and UDP 5247 for data.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.wlc.003",
+    "domain": "d2",
+    "subtopic": "2.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A switch port connects to a lightweight AP in local mode serving three WLANs in different VLANs. How should the port be configured?",
+    "choices": [
+      "As an 802.1Q trunk carrying all three VLANs",
+      "As an access port in the AP's management VLAN",
+      "As a routed port",
+      "In an LACP EtherChannel"
+    ],
+    "answer": 1,
+    "explanation": "In local mode all client traffic is tunnelled to the WLC in CAPWAP, so the AP only needs an access port in its management VLAN. Autonomous or FlexConnect APs switching VLANs locally need trunks.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.wlc.004",
+    "domain": "d2",
+    "subtopic": "2.7",
+    "type": "mcq_single",
+    "difficulty": 3,
+    "stem": "A WLC's distribution system ports are bundled with LAG. Which EtherChannel mode must the switch use?",
+    "choices": [
+      "active",
+      "desirable",
+      "auto",
+      "on"
+    ],
+    "answer": 3,
+    "explanation": "WLC LAG doesn't run LACP or PAgP, so the switch side must be statically configured with mode on.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.wlc.005",
+    "domain": "d2",
+    "subtopic": "2.7",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each WLC port to its purpose.",
+    "answer": {
+      "Service port": "Out-of-band management",
+      "Distribution system port": "Connects to the switched network for AP and client traffic",
+      "Redundancy port": "Connects to a standby WLC",
+      "Console port": "Local CLI access during setup"
+    },
+    "explanation": "The service port is OOB management; DS ports carry data; the redundancy port pairs WLCs.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.wlc.006",
+    "domain": "d2",
+    "subtopic": "2.9",
+    "type": "drag_order",
+    "difficulty": 2,
+    "stem": "Put the steps for creating a new WLAN on a WLC GUI in order.",
+    "answer": [
+      "Choose WLANs > Create New and enter the profile name and SSID",
+      "Enable the WLAN and map it to an interface (VLAN)",
+      "Configure Layer 2 security such as WPA2 with a PSK",
+      "Set the QoS profile and apply"
+    ],
+    "explanation": "Create, map to an interface, secure, then set QoS and apply.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.wlc.007",
+    "domain": "d2",
+    "subtopic": "2.9",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which WLC QoS profile is meant for voice traffic?",
+    "choices": [
+      "Platinum",
+      "Gold",
+      "Silver",
+      "Bronze"
+    ],
+    "answer": 0,
+    "explanation": "Platinum = voice, Gold = video, Silver = best effort (default), Bronze = background.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.mgmt.001",
+    "domain": "d2",
+    "subtopic": "2.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Why should SSH be used instead of Telnet?",
+    "choices": [
+      "SSH is faster",
+      "Telnet needs a console cable",
+      "SSH encrypts the session, including credentials",
+      "Telnet can't reach VTY lines"
+    ],
+    "answer": 2,
+    "explanation": "Telnet sends everything, including usernames and passwords, in clear text. SSH encrypts the session.",
+    "lesson_ref": "d2.device_access"
+  },
+  {
+    "id": "q.d2.mgmt.002",
+    "domain": "d2",
+    "subtopic": "2.8",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each management protocol to its port.",
+    "distractors": [
+      "UDP 161"
+    ],
+    "answer": {
+      "SSH": "TCP 22",
+      "Telnet": "TCP 23",
+      "HTTPS": "TCP 443",
+      "TACACS+": "TCP 49",
+      "RADIUS authentication": "UDP 1812"
+    },
+    "explanation": "SSH 22, Telnet 23, HTTPS 443, TACACS+ 49, RADIUS 1812 (accounting 1813).",
+    "lesson_ref": "d2.device_access"
+  },
+  {
+    "id": "q.d2.mgmt.003",
+    "domain": "d2",
+    "subtopic": "2.8",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which is an example of out-of-band management?",
+    "choices": [
+      "SSH to a switch's VLAN 1 SVI",
+      "HTTPS to a router's LAN address",
+      "SNMP over the production network",
+      "A console server connected to each device's console port"
+    ],
+    "answer": 3,
+    "explanation": "Out-of-band uses a path separate from production traffic, such as the console port or a dedicated management network.",
+    "lesson_ref": "d2.device_access"
+  },
+  {
+    "id": "q.d2.mgmt.004",
+    "domain": "d2",
+    "subtopic": "2.8",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which AAA protocol encrypts the entire payload and is preferred for device administration?",
+    "choices": [
+      "RADIUS",
+      "TACACS+",
+      "LDAP",
+      "SNMPv1"
+    ],
+    "answer": 1,
+    "explanation": "TACACS+ (TCP 49) encrypts the whole body and separates authentication, authorisation and accounting. RADIUS encrypts only the password and suits network access.",
+    "lesson_ref": "d2.device_access"
+  },
+  {
+    "id": "q.d2.disc.cli.001",
+    "domain": "d2",
+    "subtopic": "2.3",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the R1 command line. R1's Gi0/1 faces the ISP. Stop R1 exchanging CDP with the ISP on that interface while keeping CDP running towards SW1 on Gi0/0.",
+    "lab": "lab.mini_cdp",
+    "answer": "interface g0/1 / no cdp enable",
+    "explanation": "'no cdp enable' on the interface turns CDP off for that port only. 'no cdp run' would also cut off SW1.",
+    "lesson_ref": "d2.discovery"
   }
 ]

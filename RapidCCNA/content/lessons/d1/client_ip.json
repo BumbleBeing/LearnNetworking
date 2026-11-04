@@ -1,0 +1,35 @@
+{
+  "id": "d1.client_ip",
+  "domain": "d1",
+  "subtopics": [
+    "1.10"
+  ],
+  "order": 66,
+  "title": "Checking IP settings on clients",
+  "minutes": 5,
+  "cards": [
+    {
+      "heading": "What to check",
+      "body": "A client needs four things to reach other networks: an IP address, a subnet mask (prefix), a default gateway in the same subnet, and DNS servers. A 169.254.x.x address means DHCP failed."
+    },
+    {
+      "heading": "Windows",
+      "body": "ipconfig shows the basics; ipconfig /all adds the MAC address, DHCP server, lease times and DNS servers. ipconfig /release and /renew request a new DHCP lease.",
+      "example": "C:\\> ipconfig /all\n   Physical Address. . . : 00-50-56-C0-00-08\n   DHCP Enabled. . . . . : Yes\n   IPv4 Address. . . . . : 192.168.1.20(Preferred)\n   Subnet Mask . . . . . : 255.255.255.0\n   Default Gateway . . . : 192.168.1.1\n   DNS Servers . . . . . : 192.168.1.1"
+    },
+    {
+      "heading": "macOS and Linux",
+      "body": "macOS: ifconfig (or networksetup -getinfo Wi-Fi). Linux: ip address (ip addr) for addresses, ip route for the default gateway, and /etc/resolv.conf (or resolvectl) for DNS. Older Linux tools: ifconfig and route -n.",
+      "example": "$ ip addr show eth0\n    inet 192.168.1.30/24 brd 192.168.1.255 scope global eth0\n$ ip route\ndefault via 192.168.1.1 dev eth0"
+    },
+    {
+      "heading": "Sanity checks",
+      "body": "Is the gateway inside the host's subnet? Is the mask the same as the router's? Is the host using the network or broadcast address? Each mistake stops traffic leaving the subnet."
+    }
+  ],
+  "recall": [
+    "q.d1.ipparams.001",
+    "q.d1.client.001",
+    "q.d1.client.002"
+  ]
+}
