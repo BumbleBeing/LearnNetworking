@@ -1,0 +1,43 @@
+{
+  "id": "d1.topologies",
+  "domain": "d1",
+  "subtopics": [
+    "1.2"
+  ],
+  "order": 15,
+  "title": "Network topology architectures",
+  "minutes": 7,
+  "cards": [
+    {
+      "heading": "Three-tier campus",
+      "body": "A large campus uses three layers. Access connects endpoints (PoE, port security, VLANs). Distribution aggregates access switches, routes between VLANs and applies policy. Core is a fast, highly available backbone between distribution blocks.",
+      "example": "        Core   ═══   Core\n       /    \\       /    \\\n   Dist      Dist  Dist      Dist\n   / | \\                 / | \\\n Access switches       Access switches"
+    },
+    {
+      "heading": "Two-tier (collapsed core)",
+      "body": "Smaller campuses merge core and distribution into one layer: the collapsed core. It saves cost when a separate core layer wouldn't add anything."
+    },
+    {
+      "heading": "Spine-leaf",
+      "body": "Data centres use spine-leaf: every leaf switch connects to every spine switch, and spines don't connect to each other, nor do leaves. Any server is the same number of hops (leaf-spine-leaf) from any other, which suits east-west traffic between servers. Grow by adding leaves (ports) or spines (bandwidth).",
+      "example": "  Spine1      Spine2\n   │ ╲   ╱     │\n   │   ╳       │\n   │ ╱   ╲     │\n  Leaf1  Leaf2  Leaf3"
+    },
+    {
+      "heading": "WAN",
+      "body": "A wide area network links sites over large distances, usually with a service provider: leased lines, MPLS, metro Ethernet, or VPNs over the internet. Topologies include point-to-point, hub-and-spoke and full or partial mesh."
+    },
+    {
+      "heading": "SOHO",
+      "body": "A small office/home office often uses one device that combines a router, switch, firewall and wireless AP, with a single internet connection."
+    },
+    {
+      "heading": "On-premises and cloud",
+      "body": "On-premises means you own and run the equipment in your own building. Cloud means the provider runs it and you pay for what you use. The main models are IaaS (infrastructure: VMs and networks), PaaS (a platform to run your code) and SaaS (finished applications such as webmail). Public, private and hybrid clouds differ in who shares the resources."
+    }
+  ],
+  "recall": [
+    "q.d1.topo.001",
+    "q.d1.topo.002",
+    "q.d1.topo.003"
+  ]
+}

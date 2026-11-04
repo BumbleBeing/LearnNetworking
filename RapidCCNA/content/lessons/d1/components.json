@@ -1,0 +1,44 @@
+{
+  "id": "d1.components",
+  "domain": "d1",
+  "subtopics": [
+    "1.1"
+  ],
+  "order": 10,
+  "title": "Network components",
+  "minutes": 7,
+  "cards": [
+    {
+      "heading": "Routers",
+      "body": "A router connects different IP networks and forwards packets between them using its routing table. It's the boundary of a broadcast domain and usually the default gateway for the hosts on each LAN.",
+      "example": "PC 192.168.1.10 → default gateway R1 192.168.1.1 → R1 routes to 10.5.0.0/16"
+    },
+    {
+      "heading": "Layer 2 and layer 3 switches",
+      "body": "A layer 2 switch forwards frames inside a LAN by MAC address. A multilayer (layer 3) switch also routes between VLANs in hardware using SVIs, so it can be the default gateway for many VLANs at wire speed.",
+      "example": "interface vlan 10\n ip address 10.10.10.1 255.255.255.0\nip routing"
+    },
+    {
+      "heading": "Next-generation firewalls and IPS",
+      "body": "A firewall filters traffic between security zones and is stateful: it remembers outgoing sessions and lets only their return traffic back in. A next-generation firewall (NGFW) adds application awareness, user identity and an integrated IPS. An IPS sits inline and blocks traffic that matches attack signatures; an IDS only watches a copy and alerts."
+    },
+    {
+      "heading": "Access points and wireless LAN controllers",
+      "body": "An access point (AP) bridges wireless clients onto the wired network. In larger networks lightweight APs are managed centrally by a wireless LAN controller (WLC), which handles configuration, security, roaming and RF tuning."
+    },
+    {
+      "heading": "Endpoints and servers",
+      "body": "Endpoints are the devices people use: PCs, phones, printers, cameras and IoT sensors. Servers provide services to them, such as web, email, DNS, DHCP and file sharing. The client/server roles are about the job a device is doing, not the hardware."
+    },
+    {
+      "heading": "Power over Ethernet",
+      "body": "PoE delivers power over the Ethernet cable from the switch (PSE, power sourcing equipment) to the device (PD, powered device) such as an AP, IP phone or camera, so no separate power outlet is needed.",
+      "example": "802.3af PoE     15.4 W per port\n802.3at PoE+    30 W\n802.3bt PoE++   60 W (type 3) / 90-100 W (type 4)"
+    }
+  ],
+  "recall": [
+    "q.d1.comp.001",
+    "q.d1.comp.002",
+    "q.d1.comp.003"
+  ]
+}

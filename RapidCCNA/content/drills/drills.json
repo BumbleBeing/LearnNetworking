@@ -96,5 +96,35 @@
     "generator": "res://core/net/OspfGen.gd",
     "description": "Router IDs, DR/BDR elections, costs, best paths, network statements and broken adjacencies.",
     "target_seconds": 50
+  },
+  {
+    "id": "ipv6_workshop",
+    "title": "IPv6 Workshop",
+    "domain": "d1",
+    "unit": "d1.ipv6",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/Ipv6Gen.gd",
+    "description": "Compress and expand addresses, name the address type, find the prefix and build EUI-64 addresses.",
+    "target_seconds": 40
+  },
+  {
+    "id": "interface_doctor",
+    "title": "Interface Doctor",
+    "domain": "d1",
+    "unit": "d1.cabling",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/InterfaceGen.gd",
+    "description": "Pick the right cable and media, predict autonegotiation, and diagnose show interfaces output.",
+    "target_seconds": 35
+  },
+  {
+    "id": "wifi_planner",
+    "title": "Wi-Fi Channel Planner",
+    "domain": "d1",
+    "unit": "d1.wireless",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/WifiGen.gd",
+    "description": "Place APs on non-overlapping channels and keep bands, standards and WLAN terms straight.",
+    "target_seconds": 25
   }
 ]

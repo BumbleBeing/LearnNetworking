@@ -71,6 +71,12 @@ static func _iface_block(d: Device, n: String) -> PackedStringArray:
 			b.append(" ip ospf cost %d" % i.ospf_cost)
 		if not i.ospf_area.is_empty():
 			b.append(" ip ospf %d area %s" % [i.ospf_pid, i.ospf_area])
+	if not i.cdp:
+		b.append(" no cdp enable")
+	if not i.lldp_tx:
+		b.append(" no lldp transmit")
+	if not i.lldp_rx:
+		b.append(" no lldp receive")
 	if i.shutdown:
 		b.append(" shutdown")
 	return b
@@ -79,6 +85,10 @@ static func running_config(d: Device) -> String:
 	var out := PackedStringArray(["Building configuration...", "", "Current configuration:", "!", "hostname " + d.hostname, "!"])
 	if d.password_encryption:
 		out.append_array(["service password-encryption", "!"])
+	if not d.cdp_run:
+		out.append_array(["no cdp run", "!"])
+	if d.lldp_run:
+		out.append_array(["lldp run", "!"])
 	if not d.enable_secret.is_empty():
 		out.append_array(["enable secret 5 $1$mERr$hx5rVt7rPNoS4wqbXKX7m0", "!"])
 	if d.type == "switch":

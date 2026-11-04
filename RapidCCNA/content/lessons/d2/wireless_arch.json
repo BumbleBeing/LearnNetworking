@@ -1,0 +1,49 @@
+{
+  "id": "d2.wireless_arch",
+  "domain": "d2",
+  "subtopics": [
+    "2.6",
+    "2.7",
+    "2.9"
+  ],
+  "order": 40,
+  "title": "Wireless architectures and WLC setup",
+  "minutes": 8,
+  "cards": [
+    {
+      "heading": "Autonomous APs",
+      "body": "An autonomous AP is configured and managed on its own, like a small switch with a radio. Fine for a few APs; every AP's VLANs must be trunked to it."
+    },
+    {
+      "heading": "Lightweight APs and the WLC",
+      "body": "In split-MAC architecture, lightweight APs handle the real-time radio work (beacons, acknowledgements, encryption) while a wireless LAN controller handles management, authentication, roaming and RF tuning. They talk over CAPWAP tunnels: UDP 5246 for control (encrypted with DTLS) and UDP 5247 for data.",
+      "example": "[AP] ══ CAPWAP tunnel (UDP 5246/5247) ══ [WLC] ── VLANs ── network"
+    },
+    {
+      "heading": "Cloud-based APs",
+      "body": "Cloud-managed APs (such as Meraki) are configured and monitored from a cloud dashboard. User data stays local; only management goes to the cloud."
+    },
+    {
+      "heading": "AP modes",
+      "body": "Local: the default; serves clients and tunnels their traffic to the WLC. FlexConnect: switches client traffic locally at a branch and keeps working if the WLC link fails. Monitor: doesn't serve clients; scans for rogues and intrusions. Sniffer: captures 802.11 frames for analysis. Rogue detector: listens on the wire for rogue devices. SE-Connect: spectrum analysis of interference. Bridge/mesh: links APs wirelessly."
+    },
+    {
+      "heading": "Switch ports for APs",
+      "body": "A lightweight AP in local mode only needs an access port: its traffic is tunnelled to the WLC. An autonomous AP or a FlexConnect AP switching several VLANs locally needs a trunk."
+    },
+    {
+      "heading": "WLC ports and interfaces",
+      "body": "Physical ports: the service port (out-of-band management), distribution system ports (to the switched network, usually trunks bundled with LAG), the console port and the redundancy port (to a standby WLC). Logical interfaces: management (and AP management), virtual (DHCP relay, web auth), service-port, and dynamic interfaces that map each WLAN to a VLAN. WLC LAG doesn't negotiate, so the switch must use channel-group mode on.",
+      "example": "interface range g1/0/1 - 2\n channel-group 1 mode on\ninterface port-channel 1\n switchport mode trunk"
+    },
+    {
+      "heading": "Creating a WLAN in the GUI",
+      "body": "WLANs > Create New: give a profile name, the SSID and a WLAN ID. General tab: enable it and pick the interface (VLAN) its clients use. Security tab: Layer 2 security such as WPA2 with a PSK or 802.1X. QoS tab: Platinum (voice), Gold (video), Silver (best effort, default) or Bronze (background). Advanced tab: options such as FlexConnect local switching and session timeouts."
+    }
+  ],
+  "recall": [
+    "q.d2.wlc.001",
+    "q.d2.wlc.002",
+    "q.d2.wlc.003"
+  ]
+}

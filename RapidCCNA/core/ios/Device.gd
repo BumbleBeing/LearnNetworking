@@ -29,6 +29,10 @@ var mac := ""                   # base MAC (bridge ID)
 var stp_mode := "pvst"          # pvst | rapid-pvst
 var stp_priority: Dictionary = {}   # vlan -> configured base priority (default 32768)
 var ospf: Dictionary = {}       # {} = not running; see Commands.h_router_ospf
+var cdp_run := true             # CDP on globally (Cisco default); hosts don't run it
+var lldp_run := false           # LLDP off globally (Cisco default)
+var platform := ""              # shown by CDP/LLDP
+var capability := ""            # CDP capability letters, e.g. "R B S I"
 var _net: WeakRef               # the Network this device belongs to (weak: avoids a reference cycle)
 
 static func create(def: Dictionary) -> Device:
@@ -44,6 +48,10 @@ static func create(def: Dictionary) -> Device:
 		if i.has("shutdown"):
 			d.interfaces[n].shutdown = i.shutdown
 	d.default_gateway = def.get("gateway", "")
+	d.cdp_run = def.get("cdp", d.type != "host")
+	d.lldp_run = def.get("lldp", false)
+	d.platform = def.get("platform", {"router": "ISR4321", "switch": "WS-C2960X", "host": "Host"}.get(d.type, ""))
+	d.capability = def.get("capability", {"router": "R B S I", "switch": "S I", "host": "H"}.get(d.type, ""))
 	d.mac = def.get("mac", "00%s.%s.%s" % [("%06x" % (d.hostname.hash() & 0xffffff)).substr(0, 2),
 		("%06x" % (d.hostname.hash() & 0xffffff)).substr(2, 4), "%04x" % ((d.hostname.hash() >> 8) & 0xffff)])
 	return d
@@ -86,7 +94,8 @@ func add_interface(n: String, link: bool = true) -> Dictionary:
 		"allowed": "all", "nonegotiate": false, "nat": "", "acl_in": "", "acl_out": "",
 		"ps": {"enabled": false, "maximum": 1, "violation": "shutdown", "sticky": false, "macs": []},
 		"channel_group": 0, "channel_mode": "", "portfast": false, "bpduguard": false, "stp_cost": 0,
-		"ospf_cost": 0, "ospf_priority": 1, "ospf_hello": 10, "ospf_dead": 40, "ospf_area": "", "ospf_pid": 0}
+		"ospf_cost": 0, "ospf_priority": 1, "ospf_hello": 10, "ospf_dead": 40, "ospf_area": "", "ospf_pid": 0,
+		"cdp": true, "lldp_tx": true, "lldp_rx": true}
 	iface_order.append(n)
 	return interfaces[n]
 

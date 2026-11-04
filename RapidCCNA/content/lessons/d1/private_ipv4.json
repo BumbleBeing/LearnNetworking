@@ -1,0 +1,30 @@
+{
+  "id": "d1.private_ipv4",
+  "domain": "d1",
+  "subtopics": [
+    "1.7"
+  ],
+  "order": 62,
+  "title": "Private IPv4 addressing",
+  "minutes": 5,
+  "cards": [
+    {
+      "heading": "Why private addresses",
+      "body": "There aren't enough public IPv4 addresses for every device. RFC 1918 reserves three ranges that anyone can use internally; they're never routed on the internet. To reach the internet, private addresses are translated to a public address with NAT (usually PAT).",
+      "example": "10.0.0.0/8       10.0.0.0 - 10.255.255.255\n172.16.0.0/12    172.16.0.0 - 172.31.255.255\n192.168.0.0/16   192.168.0.0 - 192.168.255.255"
+    },
+    {
+      "heading": "The 172.16.0.0/12 trap",
+      "body": "Only 172.16.x.x to 172.31.x.x is private. 172.15.0.1 and 172.32.0.1 are public addresses."
+    },
+    {
+      "heading": "Other special ranges",
+      "body": "127.0.0.0/8 is loopback (the host itself). 169.254.0.0/16 is link-local (APIPA): a host gives itself one when DHCP fails. 100.64.0.0/10 is shared address space for carrier-grade NAT. These aren't RFC 1918 but aren't routed on the internet either."
+    }
+  ],
+  "recall": [
+    "q.d1.private.001",
+    "q.d1.private.002",
+    "q.d1.private.003"
+  ]
+}

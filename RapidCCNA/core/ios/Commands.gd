@@ -53,7 +53,9 @@ const KEYWORD_HELP := {
 	"default": "Suppress routing updates on all interfaces", "auto-cost": "Calculate OSPF interface cost according to bandwidth",
 	"reference-bandwidth": "Use reference bandwidth method to assign OSPF cost", "default-information": "Control distribution of default information",
 	"originate": "Distribute a default route", "hello-interval": "Time between HELLO packets", "dead-interval": "Interval after which a neighbor is declared dead",
-	"neighbor": "Neighbor list", "protocols": "IP routing protocol process parameters and statistics", "clear": "Reset functions", "process": "Reset OSPF process",
+	"neighbor": "Neighbor list", "neighbors": "CDP/LLDP neighbor entries", "cdp": "CDP information / Global CDP configuration subcommands",
+	"lldp": "LLDP information / Global LLDP configuration subcommands", "run": "Enable the protocol globally", "detail": "Show detailed information",
+	"transmit": "Enable LLDP transmission on interface", "receive": "Enable LLDP reception on interface", "protocols": "IP routing protocol process parameters and statistics", "clear": "Reset functions", "process": "Reset OSPF process",
 }
 
 static var TABLE: Array = []
@@ -97,6 +99,11 @@ func _build() -> void:
 	_add(exec, "router", "show ip ospf interface <iface>", "h_show_ospf_if")
 	_add(exec, "router", "show ip protocols", "h_show_protocols")
 	_add("priv", "router", "clear ip ospf process", "h_clear_ospf")
+	_add(exec, "", "show cdp", "h_show_cdp")
+	_add(exec, "", "show cdp neighbors", "h_show_cdp_nbr")
+	_add(exec, "", "show cdp neighbors detail", "h_show_cdp_detail")
+	_add(exec, "", "show lldp", "h_show_lldp")
+	_add(exec, "", "show lldp neighbors", "h_show_lldp_nbr")
 
 	var sub := "config if vlan line nacl router"
 	_add(sub, "", "end", "h_end")
@@ -134,6 +141,10 @@ func _build() -> void:
 	_add("config", "switch", "no spanning-tree vlan <word> priority", "h_stp_no_priority")
 	_add("config", "switch", "spanning-tree vlan <word> root primary", "h_stp_root_primary")
 	_add("config", "switch", "spanning-tree vlan <word> root secondary", "h_stp_root_secondary")
+	_add("config", "", "cdp run", "h_cdp_run")
+	_add("config", "", "no cdp run", "h_no_cdp_run")
+	_add("config", "", "lldp run", "h_lldp_run")
+	_add("config", "", "no lldp run", "h_no_lldp_run")
 	_add("config", "router", "router ospf <num>", "h_router_ospf")
 	_add("config", "router", "no router ospf <num>", "h_no_router_ospf")
 
@@ -185,6 +196,12 @@ func _build() -> void:
 	_add("if", "switch", "spanning-tree bpduguard enable", "h_bpduguard")
 	_add("if", "switch", "no spanning-tree bpduguard", "h_no_bpduguard")
 	_add("if", "switch", "spanning-tree cost <num>", "h_stp_cost")
+	_add("if", "", "cdp enable", "h_cdp_if")
+	_add("if", "", "no cdp enable", "h_no_cdp_if")
+	_add("if", "", "lldp transmit", "h_lldp_tx")
+	_add("if", "", "no lldp transmit", "h_no_lldp_tx")
+	_add("if", "", "lldp receive", "h_lldp_rx")
+	_add("if", "", "no lldp receive", "h_no_lldp_rx")
 	_add("if", "router", "ip ospf cost <num>", "h_ospf_cost")
 	_add("if", "router", "no ip ospf cost", "h_ospf_no_cost")
 	_add("if", "router", "ip ospf priority <num>", "h_ospf_priority")
@@ -1000,3 +1017,36 @@ func h_ospf_no_if_area(s: CLISession, _a: Array) -> String:
 		i.ospf_area = ""
 		i.ospf_pid = 0
 	return ""
+
+# --- CDP / LLDP ---
+
+func h_show_cdp(s: CLISession, _a: Array) -> String: return Discovery.show_cdp(s.device)
+func h_show_lldp(s: CLISession, _a: Array) -> String: return Discovery.show_lldp(s.device)
+func h_show_cdp_nbr(s: CLISession, _a: Array) -> String:
+	return Discovery.show_cdp_neighbors(s.network, s.device.hostname) if s.network else Discovery.show_cdp(s.device)
+func h_show_cdp_detail(s: CLISession, _a: Array) -> String:
+	return Discovery.show_cdp_detail(s.network, s.device.hostname) if s.network else Discovery.show_cdp(s.device)
+func h_show_lldp_nbr(s: CLISession, _a: Array) -> String:
+	return Discovery.show_lldp_neighbors(s.network, s.device.hostname) if s.network else Discovery.show_lldp(s.device)
+func h_cdp_run(s: CLISession, _a: Array) -> String:
+	s.device.cdp_run = true
+	return ""
+func h_no_cdp_run(s: CLISession, _a: Array) -> String:
+	s.device.cdp_run = false
+	return ""
+func h_lldp_run(s: CLISession, _a: Array) -> String:
+	s.device.lldp_run = true
+	return ""
+func h_no_lldp_run(s: CLISession, _a: Array) -> String:
+	s.device.lldp_run = false
+	return ""
+func _if_flag(s: CLISession, key: String, v: bool) -> String:
+	for i in _ifaces(s):
+		i[key] = v
+	return ""
+func h_cdp_if(s: CLISession, _a: Array) -> String: return _if_flag(s, "cdp", true)
+func h_no_cdp_if(s: CLISession, _a: Array) -> String: return _if_flag(s, "cdp", false)
+func h_lldp_tx(s: CLISession, _a: Array) -> String: return _if_flag(s, "lldp_tx", true)
+func h_no_lldp_tx(s: CLISession, _a: Array) -> String: return _if_flag(s, "lldp_tx", false)
+func h_lldp_rx(s: CLISession, _a: Array) -> String: return _if_flag(s, "lldp_rx", true)
+func h_no_lldp_rx(s: CLISession, _a: Array) -> String: return _if_flag(s, "lldp_rx", false)

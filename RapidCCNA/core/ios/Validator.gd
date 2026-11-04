@@ -165,6 +165,30 @@ static func run(net: Network, c: Dictionary) -> Dictionary:
 				if (adj.a == d.hostname and adj.b == a.neighbor) or (adj.b == d.hostname and adj.a == a.neighbor):
 					return _fail("no adjacency with %s: %s" % [a.neighbor, ", ".join(adj.issues.map(func(k): return OSPF.ISSUE_TEXT[k].to_lower()))])
 			return _fail("%s has no OSPF neighbour %s" % [d.hostname, a.neighbor])
+		"cdp_run":
+			return _res(d.cdp_run == a.get("enabled", true), "CDP is %s globally" % ("on" if d.cdp_run else "off"))
+		"lldp_run":
+			return _res(d.lldp_run == a.get("enabled", true), "LLDP is %s globally" % ("on" if d.lldp_run else "off"))
+		"cdp_iface":
+			for n in _ifaces(d, a.iface):
+				if d.interfaces[n].cdp != a.get("enabled", true):
+					return _fail("CDP is %s on %s" % ["enabled" if d.interfaces[n].cdp else "disabled", n])
+			return _ok()
+		"lldp_iface":
+			for n in _ifaces(d, a.iface):
+				var i: Dictionary = d.interfaces[n]
+				if a.has("transmit") and i.lldp_tx != a.transmit:
+					return _fail("LLDP transmit is %s on %s" % ["on" if i.lldp_tx else "off", n])
+				if a.has("receive") and i.lldp_rx != a.receive:
+					return _fail("LLDP receive is %s on %s" % ["on" if i.lldp_rx else "off", n])
+			return _ok()
+		"iface_description":
+			var i: Dictionary = d.iface(a.iface)
+			var desc: String = i.get("description", "")
+			return _res(desc.to_lower().contains(str(a.contains).to_lower()), "%s's description is '%s'" % [Device.short_name(Device.canon_iface(a.iface)), desc])
+		"discovers":
+			var seen: Array = Discovery.neighbors(net, d.hostname, a.get("protocol", "cdp")).map(func(x): return x.device)
+			return _res((a.neighbor in seen) == a.get("present", true), "%s %s %s via %s" % [d.hostname, "sees" if a.neighbor in seen else "doesn't see", a.neighbor, a.get("protocol", "cdp").to_upper()])
 	return _fail("unknown check %s" % c.get("check", ""))
 
 static func _ok() -> Dictionary:

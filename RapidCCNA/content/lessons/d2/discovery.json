@@ -1,0 +1,44 @@
+{
+  "id": "d2.discovery",
+  "domain": "d2",
+  "subtopics": [
+    "2.3"
+  ],
+  "order": 15,
+  "title": "CDP and LLDP",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "What discovery protocols do",
+      "body": "CDP and LLDP let directly connected devices announce themselves: name, model, port, IP address and capabilities. 'show cdp neighbors' maps a network you can't see, such as which switch port leads to which router. They only reach directly connected neighbours; they aren't routed."
+    },
+    {
+      "heading": "CDP",
+      "body": "Cisco Discovery Protocol is Cisco-proprietary and on by default on Cisco devices. It sends every 60 seconds with a 180-second holdtime.",
+      "example": "SW1#show cdp neighbors\nDevice ID   Local Intrfce   Holdtme   Capability  Platform  Port ID\nR1          Gig 0/2         163       R B S I     ISR4321   Gig 0/0/0"
+    },
+    {
+      "heading": "LLDP",
+      "body": "Link Layer Discovery Protocol (IEEE 802.1AB) is the open standard, so non-Cisco devices such as many phones, APs and servers speak it. It's off by default on Cisco devices. It sends every 30 seconds with a 120-second hold time. Transmit and receive can be controlled separately per interface.",
+      "example": "lldp run\ninterface g0/1\n no lldp transmit\n no lldp receive"
+    },
+    {
+      "heading": "Detail and verification",
+      "body": "'show cdp neighbors detail' adds the neighbour's IP address and software version: handy for finding the address of a device you need to manage. 'show cdp' and 'show lldp' report whether the protocol is running.",
+      "example": "SW1#show cdp neighbors detail\nDevice ID: R1\n  IP address: 10.0.0.1\nPlatform: cisco ISR4321,  Capabilities: Router ...\nInterface: GigabitEthernet0/2,  Port ID (outgoing port): GigabitEthernet0/0/0"
+    },
+    {
+      "heading": "Security",
+      "body": "Discovery traffic tells an attacker your models, software versions and addresses. Disable it on ports facing untrusted networks (the internet, guest or public ports): 'no cdp enable' and 'no lldp transmit' per interface, or 'no cdp run' globally.",
+      "example": "interface fa0/24\n no cdp enable\n no lldp transmit"
+    }
+  ],
+  "recall": [
+    "q.d2.disc.001",
+    "q.d2.disc.002",
+    "q.d2.disc.003"
+  ],
+  "labs": [
+    "lab.discovery"
+  ]
+}

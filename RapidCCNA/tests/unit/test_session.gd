@@ -16,9 +16,43 @@ func after_each():
 func _kinds(steps: Array) -> Array:
 	return steps.map(func(s): return s.kind + (":" + s.drill + (":g" if s.guided else ":u") if s.kind == "drill" else ""))
 
-func test_fresh_profile_gets_tutorial_then_guided_and_unguided_drill():
+## Masters every unit that comes before `unit_id` in the daily order.
+func _master_before(unit_id: String) -> void:
+	for d in ContentDB.domains:
+		for l in ContentDB.lessons_for_domain(d.id):
+			if l.id == unit_id:
+				return
+			for i in Progress.MASTERY_WINDOW:
+				Progress.record_attempt(l.id, true)
+
+func test_fresh_profile_starts_with_first_unit_and_a_unit_quiz():
 	var steps := SessionManager.plan_steps(NOW)
-	assert_eq(_kinds(steps), ["tutorial", "drill:bit_flipper:g", "drill:bit_flipper:u"])
+	assert_eq(steps[0].lesson, "d1.components", "blueprint order: 1.1 first")
+	assert_eq(_kinds(steps), ["tutorial", "review"], "a unit without drills ends with a unit quiz")
+	assert_eq(steps[1].title, "Unit quiz")
+	for id in steps[1].ids:
+		assert_eq(ContentDB.questions[id].lesson_ref, "d1.components")
+		assert_false(id in ContentDB.lessons["d1.components"].recall, "recall questions were just asked in the tutorial")
+
+func test_unit_quiz_after_tutorial_uses_all_unit_questions_and_skips_due_ones():
+	Progress.mark_tutorial_done("d1.components")
+	SRS.ensure_card("q.d1.comp.001", NOW - 10)
+	var steps := SessionManager.plan_steps(NOW)
+	assert_eq(_kinds(steps), ["review", "review"])
+	assert_eq(steps[0].ids, ["q.d1.comp.001"])
+	var n := ContentDB.questions.values().filter(func(q): return q.get("lesson_ref") == "d1.components").size()
+	assert_eq(steps[1].ids.size(), min(n - 1, SessionManager.UNIT_QUIZ_MAX))
+	assert_false("q.d1.comp.001" in steps[1].ids, "already in today's review")
+	assert_string_contains(SessionManager.describe(steps[1]), "Unit quiz: Network components")
+
+func test_lab_only_units_get_a_unit_quiz_too():
+	var steps := SessionManager.unit_steps(ContentDB.lessons["d2.vlans_trunks"], true)
+	assert_eq(steps.map(func(s): return s.kind), ["tutorial", "lab", "review"])
+
+func test_binary_unit_gets_tutorial_then_guided_and_unguided_drill():
+	_master_before("d1.binary_basics")
+	var steps := SessionManager.plan_steps(NOW)
+	assert_eq(_kinds(steps), ["tutorial", "drill:bit_flipper:g", "drill:bit_flipper:u"], "units with drills get no unit quiz")
 	assert_eq(steps[0].lesson, "d1.binary_basics")
 
 func test_due_questions_and_generated_cards_come_first():
@@ -33,12 +67,14 @@ func test_due_questions_and_generated_cards_come_first():
 	assert_eq(steps[1].count, SessionManager.REVIEW_DRILL_COUNT)
 
 func test_tutorial_skipped_once_done_and_guided_dropped_after_practice():
+	_master_before("d1.binary_basics")
 	Progress.mark_tutorial_done("d1.binary_basics")
 	for i in SessionManager.GUIDED_UNTIL:
 		Progress.record_attempt("d1.binary_basics", i % 2 == 0)
 	assert_eq(_kinds(SessionManager.plan_steps(NOW)), ["drill:bit_flipper:u"])
 
 func test_mastered_unit_moves_on():
+	_master_before("d1.binary_basics")
 	for i in 20:
 		Progress.record_attempt("d1.binary_basics", true)
 	var steps := SessionManager.plan_steps(NOW)
@@ -71,9 +107,10 @@ func test_unit_steps_on_demand_include_finished_labs():
 	var unit: Dictionary = ContentDB.lessons["d2.vlans_trunks"]
 	Progress.mark_tutorial_done(unit.id)
 	Progress.mark_lab_done("lab.vlans")
-	assert_eq(SessionManager.unit_steps(unit, false), [], "daily plan leaves finished labs to SRS")
+	var daily := SessionManager.unit_steps(unit, false)
+	assert_eq(daily.map(func(st): return st.kind), ["review"], "daily plan leaves finished labs to SRS; the unit quiz remains")
 	var on_demand := SessionManager.unit_steps(unit, true)
-	assert_eq(on_demand.size(), 1)
+	assert_eq(on_demand.map(func(st): return st.kind), ["lab", "review"])
 	assert_eq(on_demand[0].lab, "lab.vlans")
 
 func test_unit_steps_for_drill_unit():

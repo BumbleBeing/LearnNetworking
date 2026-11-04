@@ -12,7 +12,7 @@ All question content is original and written in exam style. The game does not us
 | M2 | Networking logic engine (IPv4/IPv6, routing, ACL, NAT) + its drills | ✅ |
 | M3 | Scoped IOS CLI simulator + config labs | ✅ |
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | ✅ |
-| M5 | All tutorials and remaining mini-games | next |
+| M5 | All tutorials and remaining mini-games | in progress (part 1 of 3: domains 1-2 done) |
 | M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | |
 | M7 | Accessibility, web tuning, content QA | |
 
@@ -20,7 +20,7 @@ All question content is original and written in exam style. The game does not us
 The dashboard plans each day's session:
 1. **Review:** questions that spaced repetition says are due.
 2. **Drill refreshers:** short unguided rounds for generated drill skills that are due.
-3. **Next unit:** the first unmastered lesson. You get its tutorial (once), a **guided** drill round (hints, place values, a worked solution after every item) until you have 10 unguided attempts, then an **unguided** round. Unguided accuracy over the last 20 attempts drives mastery (85% or better).
+3. **Next unit:** the first unmastered lesson. You get its tutorial (once), a **guided** drill round (hints, place values, a worked solution after every item) until you have 10 unguided attempts, then an **unguided** round. Units without a drill (theory topics and lab-only units) end with a **unit quiz** on their own questions instead. Accuracy over the last 20 unguided attempts or quiz answers drives mastery (85% or better).
 
 The daily plan always follows the exam areas in order. To study anything else, use **Topics** (from the dashboard): every exam area has a quiz, and every unit has *Study unit* (tutorial if new, drills, labs), *Tutorial*, per-drill Guided/Unguided buttons and its labs. Free training updates the same progress and spaced-repetition schedule.
 
@@ -40,6 +40,9 @@ Every answer shows an explanation. A miss always shows the worked solution. Dril
 | Frame Forwarder | How a switch forwards frames | Forward, flood or filter; the exact ports a frame leaves on (typed, any order); source learning and moved hosts; per-VLAN lookups in `show mac address-table` |
 | Channel Builder | EtherChannel | Which mode pairs bundle (LACP, PAgP, on), the partner mode a side needs, why a member is suspended, reading `show etherchannel summary` |
 | Spanning Tree Solver | Rapid PVST+ | Root election (priority, sys-id-ext, MAC), root ports with every tiebreak, port roles, the blocked port and root path cost on generated triangle, ring and parallel-link topologies |
+| IPv6 Workshop | IPv6 addressing | Compress (strict RFC 5952: a valid but longer form is marked wrong, with the reason) and expand addresses, address types, /48-/64 prefixes, EUI-64 addresses |
+| Interface Doctor | Cabling and interface problems | Straight-through, crossover or rollover; UTP vs multimode vs single-mode by distance; autonegotiation fallback; diagnosing `show interfaces` (shutdown, no link, duplex mismatch from either side, bad cable, err-disabled) |
+| Wi-Fi Channel Planner | Wireless principles | Pick the free 2.4 GHz channel for a new AP on a floor plan, channel overlap, 2.4 vs 5 GHz, 802.11 standards, SSID/BSSID/BSS/ESS |
 | OSPF Navigator | Single-area OSPFv2 | Router ID order, DR/BDR election, why two routers won't peer, interface cost and reference bandwidth, best path and ECMP, network statements, the neighbour table |
 
 Generated drills share one screen (`minigames/GenDrill.gd`). A drill is a `drills.json` entry plus a generator script with `make_item(rng)` (and `check()` for typed answers), so adding one needs no UI code.
@@ -59,6 +62,7 @@ The M4 puzzles sit on pure engines in `core/net`: `STP` (bridge IDs, root and de
 - **Spanning tree:** `spanning-tree mode rapid-pvst`, `vlan N priority` (multiples of 4096 enforced), `vlan N root primary/secondary` (goes 4096 below a lower current root), `portfast`, `bpduguard enable`, `cost`. The tree is computed per VLAN over trunks and access links with a bundle as one link, and re-converges when a link goes down.
 - **Show commands:** `running-config [interface]`, `ip interface brief`, `vlan brief`, `interfaces trunk`, `ip route [ospf]`, `access-lists`, `ip nat translations`, `port-security [interface]`, `ip ospf neighbor`, `ip ospf interface [brief | <if>]`, `ip protocols`, `spanning-tree [vlan N]`, `etherchannel summary`.
 - **Realistic behaviour:** IOS-like rejections such as "Bad mask", "overlaps with", "is a dynamic port" and "Access VLAN does not exist. Creating vlan".
+- **CDP and LLDP:** `cdp run`, `lldp run`, per-port `cdp enable` and `lldp transmit/receive`; `show cdp [neighbors [detail]]`, `show lldp [neighbors]`. Neighbours come from the lab's cabling. Lab devices can be non-Cisco (LLDP-only APs, phones) with their own platform and capabilities.
 - **`ping`:** follows each device's routing table hop by hop across the lab's links, so it fails if either direction is missing a route.
 
 A lab (`content/labs/*.json`) defines devices, startup config, links, tasks and a model solution. Tasks are checked live against device **behaviour** (`route_to`, `ping`, `nat_translates`, `access_port`, `ospf_neighbor`, `etherchannel`, `stp_root`, `stp_role`...), so any valid configuration passes. Tests apply every lab's solution and require all tasks to pass, and require none to pass beforehand. `cli_task` questions embed a small lab in a question for the mock exam.
@@ -73,6 +77,7 @@ A lab (`content/labs/*.json`) defines devices, startup config, links, tasks and 
 | Root bridges and edge ports (per-VLAN root and backup root, PortFast, BPDU Guard; two switch consoles) | Rapid PVST+ (2.5) |
 | Single-area OSPF (router ID, network statements, passive LAN, default-information originate) | Single-area OSPFv2 (3.4) |
 | Fix an OSPF adjacency (troubleshooting: area and Hello mismatch) | Single-area OSPFv2 (3.4) |
+| Map the network with CDP and LLDP (unlabelled ports, a non-Cisco AP, a public kiosk port) | CDP and LLDP (2.3) |
 
 ![M3 labs](docs/ui/m3.png)
 

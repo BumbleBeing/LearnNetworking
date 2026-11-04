@@ -1,0 +1,57 @@
+{
+  "id": "d1.ipv6",
+  "domain": "d1",
+  "subtopics": [
+    "1.8",
+    "1.9"
+  ],
+  "order": 64,
+  "title": "IPv6 addressing",
+  "minutes": 9,
+  "cards": [
+    {
+      "heading": "128 bits in hex",
+      "body": "An IPv6 address is 128 bits written as eight groups (hextets) of four hex digits. The usual split is a 64-bit prefix (network) and a 64-bit interface ID. An ISP typically hands a site a /48, which leaves 16 bits for subnets: 65,536 /64 subnets.",
+      "example": "2001:0db8:acad:0001:0000:0000:0000:0010\n|--- /48 site ---|sub |-- interface ID -|"
+    },
+    {
+      "heading": "Shortening addresses",
+      "body": "Two rules: drop leading zeros in each group, and replace one run of consecutive all-zero groups with ::. Use :: only once (otherwise the address is ambiguous), on the longest run; if two runs tie, the first. A single zero group stays as 0.",
+      "example": "2001:0db8:0000:0000:0000:ff00:0042:8329\n2001:db8::ff00:42:8329"
+    },
+    {
+      "heading": "Global unicast and unique local",
+      "body": "Global unicast addresses (2000::/3, so they start with 2 or 3) are public and routable, like public IPv4. Unique local addresses (FC00::/7, in practice FDxx) are private, like RFC 1918."
+    },
+    {
+      "heading": "Link-local",
+      "body": "Every IPv6 interface creates a link-local address in FE80::/10 by itself. It's only valid on that link and never routed. Routers use link-local addresses as next hops and to send Router Advertisements."
+    },
+    {
+      "heading": "Multicast and anycast",
+      "body": "IPv6 has no broadcast. Multicast addresses start with FF: FF02::1 all nodes, FF02::2 all routers, FF02::5/6 OSPF, FF02::1:FFxx:xxxx solicited-node (used by Neighbor Discovery instead of ARP). Anycast is one unicast address configured on several devices; packets go to the nearest one."
+    },
+    {
+      "heading": "Modified EUI-64",
+      "body": "A host or router can build its 64-bit interface ID from its MAC address: split the MAC in half, insert FFFE, and flip the 7th bit (the U/L bit) of the first byte.",
+      "example": "MAC 0019.e8a1.1c00\n0019e8 | a11c00 → 0019:e8ff:fea1:1c00\nflip bit 7 of 00 → 02: 0219:e8ff:fea1:1c00"
+    },
+    {
+      "heading": "Configuring a router",
+      "body": "Routing IPv6 must be turned on globally. Interfaces can get a manual address, an EUI-64 address or just a link-local address. Hosts can learn their prefix from Router Advertisements (SLAAC) or use DHCPv6.",
+      "example": "ipv6 unicast-routing\ninterface g0/0\n ipv6 address 2001:db8:acad:1::1/64\ninterface g0/1\n ipv6 address 2001:db8:acad:2::/64 eui-64"
+    },
+    {
+      "heading": "Special addresses",
+      "body": "::1 is loopback and :: (all zeros) is unspecified, used as a source before an address is assigned."
+    }
+  ],
+  "recall": [
+    "q.d1.ipv6.001",
+    "q.d1.ipv6.002",
+    "q.d1.ipv6.003"
+  ],
+  "drills": [
+    "ipv6_workshop"
+  ]
+}

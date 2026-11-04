@@ -13,6 +13,11 @@ func _initialize() -> void:
 	progress.reset()
 	await process_frame   # autoload _ready() runs after _initialize starts
 	progress.reset()
+	var unit: Dictionary = sm.next_unit()
+	var planned: Array = sm.plan_steps()
+	var quiz: Array = planned.filter(func(st): return st.kind == "review" and st.get("title", "") == "Unit quiz")
+	var drills: Array = planned.filter(func(st): return st.kind == "drill" and not st.guided)
+	var expect_attempts: int = quiz[0].ids.size() if quiz.size() > 0 else drills.size() * 10
 	sm.start_daily()
 	var guard := 0
 	while guard < 400:
@@ -38,10 +43,10 @@ func _initialize() -> void:
 			elif d:
 				d.next_item()
 	_check(current_scene != null and current_scene.name == "Summary", "reached summary")
-	_check(sm.results.size() == 3, "3 steps completed (got %d)" % sm.results.size())
-	_check(progress.is_tutorial_done("d1.binary_basics"), "tutorial marked done")
-	_check(progress.attempt_count("d1.binary_basics") == 10, "10 unguided attempts recorded")
-	_check(root.get_node("SRS").has_card("gen.bit_flipper.dec_to_bin") or root.get_node("SRS").cards.size() > 3, "SRS cards created")
+	_check(sm.results.size() == planned.size(), "%d steps completed (got %d)" % [planned.size(), sm.results.size()])
+	_check(progress.is_tutorial_done(unit.id), "tutorial of %s marked done" % unit.id)
+	_check(progress.attempt_count(unit.id) == expect_attempts, "%d mastery attempts recorded (got %d)" % [expect_attempts, progress.attempt_count(unit.id)])
+	_check(root.get_node("SRS").cards.size() > 3, "SRS cards created")
 	_check(FileAccess.file_exists("user://smoke_save.json"), "progress saved")
 	DirAccess.remove_absolute("user://smoke_save.json")
 	print("SMOKE %s" % ("OK" if fails == 0 else "FAILED (%d)" % fails))

@@ -1,0 +1,52 @@
+{
+  "id": "d1.cabling",
+  "domain": "d1",
+  "subtopics": [
+    "1.3",
+    "1.4"
+  ],
+  "order": 20,
+  "title": "Cabling and interface problems",
+  "minutes": 8,
+  "cards": [
+    {
+      "heading": "Copper UTP",
+      "body": "Twisted-pair copper (UTP) with RJ-45 connectors reaches 100 m. Cat 5e handles 1 Gbps, Cat 6a 10 Gbps. Twisting the pairs cancels interference.",
+      "example": "10BASE-T, 100BASE-TX, 1000BASE-T, 10GBASE-T: all copper, 100 m"
+    },
+    {
+      "heading": "Straight-through, crossover and Auto-MDIX",
+      "body": "PCs, routers, servers and APs transmit on pins 1,2; switches and hubs transmit on 3,6. Unlike devices use a straight-through cable; like devices need a crossover. Auto-MDIX on modern ports detects and corrects the wrong cable. A rollover cable connects a console port."
+    },
+    {
+      "heading": "Fiber",
+      "body": "Fiber carries light, so it's immune to electrical interference and goes much further. Multimode fiber (wide core, cheaper optics) covers hundreds of metres; single-mode fiber (narrow 9 µm core, lasers) covers kilometres. Common connectors are LC and SC, usually in an SFP module.",
+      "example": "1000BASE-SX   multimode     ~550 m\n1000BASE-LX   single-mode   ~5-10 km"
+    },
+    {
+      "heading": "Shared media and point-to-point",
+      "body": "Old hubs made one shared collision domain where only one device could send at a time (half duplex, CSMA/CD). Switch ports are point-to-point: each link is its own collision domain and runs full duplex, so collisions shouldn't happen at all."
+    },
+    {
+      "heading": "Reading show interfaces",
+      "body": "The first line gives the layer 1 / layer 2 status. 'administratively down' = shut down. 'down/down' = no physical link. The counters show symptoms: runts (frames under 64 bytes), giants (over 1518), CRC errors (corrupted frames), collisions and late collisions.",
+      "example": "Fa0/1 is up, line protocol is up (connected)\n  Full-duplex, 100Mb/s\n     312 runts, 0 giants\n     4810 input errors, 4497 CRC"
+    },
+    {
+      "heading": "Duplex and speed mismatch",
+      "body": "If one end is hard-coded and the other is auto, the auto end senses the speed but falls back to half duplex (at 10/100). The half-duplex end sees late collisions; the full-duplex end sees CRC errors and runts. A speed mismatch keeps the link down. Fix: configure both ends the same, ideally auto."
+    },
+    {
+      "heading": "Other symptoms",
+      "body": "CRC errors with matching duplex point at a damaged cable, a cable over 100 m or interference. err-disabled means a feature (port security, BPDU Guard) shut the port; fix the cause, then shutdown / no shutdown."
+    }
+  ],
+  "recall": [
+    "q.d1.cable.001",
+    "q.d1.cable.002",
+    "q.d1.cable.003"
+  ],
+  "drills": [
+    "interface_doctor"
+  ]
+}
