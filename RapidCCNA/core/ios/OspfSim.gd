@@ -3,6 +3,8 @@ extends RefCounted
 ## OSPF across a lab Network: enabled interfaces, router IDs, adjacencies (with the real
 ## neighbour requirements), DR/BDR, SPF and the resulting O routes.
 
+const MAX_PATHS := 4   # equal-cost paths installed per prefix (IOS default for OSPF)
+
 ## OSPF-enabled interfaces of a device: {iface: {area, passive, cost, ip, mask}}.
 static func enabled(d: Device) -> Dictionary:
 	var out := {}
@@ -32,12 +34,44 @@ static func cost(d: Device, n: String) -> int:
 		return i.ospf_cost
 	return OSPF.cost(d.bandwidth(n), int(d.ospf.get("ref_bw", OSPF.DEFAULT_REF_MBPS)))
 
+## The router ID the OSPF process is using. It's chosen when the process starts and kept
+## until "clear ip ospf process" or a reload, like IOS: a new loopback doesn't change it.
 static func router_id(d: Device) -> String:
+	return d.ospf_rid if not d.ospf_rid.is_empty() else candidate_rid(d)
+
+## The router ID a (re)starting process would pick: router-id command, highest up loopback,
+## then highest up interface address.
+static func candidate_rid(d: Device) -> String:
 	var ifs: Array = []
 	for n in d.iface_order:
 		var i: Dictionary = d.interfaces[n]
 		ifs.append({"name": n, "ip": i.ip, "up": d.is_up(i)})
 	return OSPF.router_id(d.ospf.get("router_id", ""), ifs).rid
+
+## Starts OSPF processes that have no router ID yet (new, cleared, or waiting for an address)
+## and forgets the ID of removed ones. Runs after every command, like HsrpSim.settle.
+static func settle(net: Network) -> void:
+	if net.booting:
+		return
+	for name in net.devices:
+		var d: Device = net.devices[name]
+		if d.ospf.is_empty():
+			d.ospf_rid = ""
+		elif d.ospf_rid.is_empty():
+			d.ospf_rid = candidate_rid(d)
+
+## A router-id change applies at once while the process has no neighbours. Otherwise IOS keeps
+## the old ID until the process restarts (Cisco command reference, "router-id").
+static func change_rid(d: Device, manual: String) -> String:
+	d.ospf.router_id = manual
+	var want := candidate_rid(d)
+	if d.ospf_rid.is_empty() or want == d.ospf_rid:
+		return ""
+	var net = d.network()
+	if net != null and not net.booting and not neighbors(net, d.key).is_empty():
+		return "% OSPF: Reload or use \"clear ip ospf process\" command, for this to take effect"
+	d.ospf_rid = want
+	return ""
 
 ## Every adjacency attempt on the network: [{a, ai, b, bi, ok, issues, dr, bdr}].
 static func adjacencies(net: Network) -> Array:
@@ -101,7 +135,7 @@ static func routes(net: Network, dev: String) -> Array:
 	for n in enabled(me):
 		var i: Dictionary = me.interfaces[n]
 		mine["%d/%d" % [IPv4.network(IPv4.parse(i.ip), IPv4.prefix_from_mask(IPv4.parse(i.mask))), IPv4.prefix_from_mask(IPv4.parse(i.mask))]] = true
-	var best := {}   # "net/len" -> {metric, owner}
+	var best := {}   # "net/len" -> {metric, owners, net, len}
 	for name in nodes:
 		if name == dev or res.dist[name] >= 1 << 30:
 			continue
@@ -117,24 +151,39 @@ static func routes(net: Network, dev: String) -> Array:
 				continue
 			var metric: int = res.dist[name] + int(en[n].cost)
 			if not best.has(key) or metric < best[key].metric:
-				best[key] = {"metric": metric, "owner": name, "net": netw, "len": plen}
+				best[key] = {"metric": metric, "owners": [name], "net": netw, "len": plen}
+			elif metric == best[key].metric and not name in best[key].owners:
+				best[key].owners.append(name)   # e.g. a transit link reached through either end
 		if d.ospf.get("default_originate", false):
 			var has_default := d.routing_table(false).routes.any(func(r): return r.len == 0)
-			if has_default and not best.has("0/0"):
-				best["0/0"] = {"metric": 1, "owner": name, "net": 0, "len": 0, "ext": "E2"}
+			# E2 routes all have metric 1; the nearest ASBR (or ASBRs) wins.
+			if has_default and (not best.has("0/0") or res.dist[name] < best["0/0"].fwd):
+				best["0/0"] = {"metric": 1, "fwd": res.dist[name], "owners": [name], "net": 0, "len": 0, "ext": "E2"}
+			elif has_default and res.dist[name] == best["0/0"].fwd:
+				best["0/0"].owners.append(name)
 	var out: Array = []
 	for key in best:
 		var b: Dictionary = best[key]
-		var first: Array = res.first[b.owner]
-		first.sort()
-		var hop: String = first[0]
-		var e: Array = edges.filter(func(x): return x.from == dev and x.to == hop)
-		e.sort_custom(func(x, y): return x.cost < y.cost)
-		var r := RoutingTable.route("O", IPv4.to_str(b.net), b.len, e[0].via_ip, e[0].out, b.metric)
-		if b.has("ext"):
-			r.ext = b.ext
-		out.append(r)
+		for e in _first_links(dev, b.owners, res, edges):
+			var r := RoutingTable.route("O", IPv4.to_str(b.net), b.len, e.via_ip, e.out, b.metric)
+			if b.has("ext"):
+				r.ext = b.ext
+			out.append(r)
 	return out
+
+## The links out of `dev` on a shortest path to any of `owners`, by next hop, at most
+## MAX_PATHS (IOS "maximum-paths", 4 by default for OSPF).
+static func _first_links(dev: String, owners: Array, res: Dictionary, edges: Array) -> Array:
+	var found := {}
+	for owner in owners:
+		for hop in res.first[owner]:
+			# hop is a first hop only if a direct link reaches it at its shortest distance.
+			for e in edges:
+				if e.from == dev and e.to == hop and int(e.cost) == int(res.dist[hop]):
+					found["%s|%s" % [e.via_ip, e.out]] = e
+	var links: Array = found.values()
+	links.sort_custom(func(a, b): return IPv4.parse(a.via_ip) < IPv4.parse(b.via_ip))
+	return links.slice(0, MAX_PATHS)
 
 static func show_neighbors(net: Network, dev: String) -> String:
 	return OSPF.show_neighbors(neighbors(net, dev))

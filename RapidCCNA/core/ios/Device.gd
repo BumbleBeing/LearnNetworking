@@ -31,6 +31,7 @@ var mac := ""                   # base MAC (bridge ID)
 var stp_mode := "pvst"          # pvst | rapid-pvst
 var stp_priority: Dictionary = {}   # vlan -> configured base priority (default 32768)
 var ospf: Dictionary = {}       # {} = not running; see Commands.h_router_ospf
+var ospf_rid := ""              # router ID the running OSPF process uses (state, not config; see OspfSim.settle)
 var cdp_run := true             # CDP on globally (Cisco default); hosts don't run it
 var lldp_run := false           # LLDP off globally (Cisco default)
 var platform := ""              # shown by CDP/LLDP
