@@ -51,7 +51,7 @@ static func build(parent: Node, r: Dictionary) -> void:
 			var ex := PanelContainer.new()
 			ex.theme_type_variation = "Exhibit"
 			item.add_child(ex)
-			UI.label(ex, str(q.exhibit), "Code")
+			UI.label(ex, str(q.exhibit), "Code", true)
 		var yours := "Not answered (time ran out)" if not m.answered else "Skipped" if m.get("skipped", false) else Grader.response_text(q, m.response)
 		UI.label(item, "Your answer: " + yours, "Muted", true).add_theme_color_override("font_color", look.accent2)
 		UI.label(item, "Correct answer: " + Grader.answer_text(q), "Body", true).add_theme_color_override("font_color", look.good)

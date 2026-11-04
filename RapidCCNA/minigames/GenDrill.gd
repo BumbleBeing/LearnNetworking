@@ -17,7 +17,7 @@ func present_item() -> void:
 		var ex := PanelContainer.new()
 		ex.theme_type_variation = "Exhibit"
 		prompt_box.add_child(ex)
-		UI.label(ex, item.exhibit, "Code")
+		UI.label(ex, item.exhibit, "Code", true)
 	if item.has("prompt"):
 		var p := UI.label(prompt_box, item.prompt, "CodeBig" if item.prompt.length() <= 34 else "H2", true)
 		p.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

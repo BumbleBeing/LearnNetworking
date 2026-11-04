@@ -13,7 +13,7 @@ static func page(root: Control, centered: bool = false) -> VBoxContainer:
 	root.add_child(bd)
 	bd.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var m := MarginContainer.new()
-	m.set_anchors_preset(Control.PRESET_FULL_RECT)
+	m.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for side in ["left", "right", "top", "bottom"]:
 		m.add_theme_constant_override("margin_" + side, 40)
 	root.add_child(m)
@@ -80,7 +80,6 @@ static func rich_button(b: Button) -> void:
 		r = RichTextLabel.new()
 		r.bbcode_enabled = true
 		r.scroll_active = false
-		r.autowrap_mode = TextServer.AUTOWRAP_OFF
 		r.clip_contents = false   # never cut off the last letter if the fonts measure a pixel apart
 		r.mouse_filter = Control.MOUSE_FILTER_IGNORE   # clicks and hover belong to the button
 		r.theme_type_variation = "RichChoice"
@@ -103,6 +102,7 @@ static func rich_button(b: Button) -> void:
 		r.tree_entered.connect(place, CONNECT_DEFERRED)
 		if b.is_inside_tree():
 			place.call_deferred()
+	r.autowrap_mode = b.autowrap_mode   # break lines exactly where the button's own text does
 	r.text = Glossary.bbcode(b.text, Palette.current().acronym)
 	b.tooltip_text = Glossary.tooltip(b.text)
 
@@ -114,7 +114,7 @@ static func lesson_card(parent: Node, lesson_card_data: Dictionary) -> void:
 		var ex := PanelContainer.new()
 		ex.theme_type_variation = "Exhibit"
 		parent.add_child(ex)
-		rich(ex, str(lesson_card_data.example), "Code", false)
+		rich(ex, str(lesson_card_data.example), "Code")
 
 static func button(parent: Node, text: String, on_press: Callable, primary: bool = false) -> Button:
 	var b := Button.new()
@@ -185,6 +185,22 @@ static func look_picker(parent: Node) -> OptionButton:
 	parent.add_child(opt)
 	return opt
 
+## Long answer text wraps onto more lines instead of running off the window.
+static func wrap_button(b: Button) -> void:
+	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+## Monospace text that mustn't wrap (ASCII topology diagrams): shown in an exhibit box that
+## scrolls sideways when the diagram is wider than the window, instead of overflowing it.
+static func diagram(parent: Node, text: String) -> PanelContainer:
+	var ex := PanelContainer.new()
+	ex.theme_type_variation = "Exhibit"
+	parent.add_child(ex)
+	var sc := ScrollContainer.new()
+	sc.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	ex.add_child(sc)
+	label(sc, text, "Code")
+	return ex
+
 ## Marks an answered choice button as the right answer or the learner's wrong
 ## pick. Colour plus a text label, so it doesn't rely on colour vision.
 static func mark_choice(b: Button, right: bool) -> void:
@@ -213,12 +229,35 @@ static func center_all(node: Node) -> void:
 				center_all(c)
 
 ## Focus a control on the next frame, if it still exists and is in the tree.
+## Gives `c` keyboard focus once the screen is built, without scrolling to it: a screen
+## opens at its top even when its first button or field is further down. (Pages follow focus
+## when the learner presses Tab; use scroll_into_view to reveal a control on purpose.)
 static func focus_later(c: Control) -> void:
 	var ref: WeakRef = weakref(c)
 	(func():
 		var n = ref.get_ref()
 		if n and n.is_inside_tree() and n.is_visible_in_tree():
-			n.grab_focus()).call_deferred()
+			focus_without_scrolling(n)).call_deferred()
+
+static func focus_without_scrolling(c: Control) -> void:
+	var paused: Array[ScrollContainer] = []
+	var p := c.get_parent()
+	while p:
+		if p is ScrollContainer and p.follow_focus:
+			p.follow_focus = false   # ScrollContainer scrolls synchronously in grab_focus()
+			paused.append(p)
+		p = p.get_parent()
+	c.grab_focus()
+	for s in paused:
+		s.follow_focus = true
+
+## Scrolls the page holding `c` back to its top (new content shown in place).
+static func scroll_to_top(c: Control) -> void:
+	var p := c.get_parent()
+	while p and not p is ScrollContainer:
+		p = p.get_parent()
+	if p:
+		p.scroll_vertical = 0
 
 ## Scroll the nearest ScrollContainer so `c` is visible (after layout settles).
 static func scroll_into_view(c: Control) -> void:

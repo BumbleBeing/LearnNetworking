@@ -39,6 +39,7 @@ func _ready() -> void:
 		var detail := UI.label(col, "", "Muted", true)
 		_rows.append([dot, text, detail])
 	var btns := UI.hbox(tasks, 10)
+	btns.alignment = BoxContainer.ALIGNMENT_CENTER
 	UI.button(btns, "Hint", _show_hint).custom_minimum_size.x = 120
 	UI.button(btns, "Show solution", _show_solution).custom_minimum_size.x = 160
 	_hint_label = UI.label(tasks, "", "Muted", true)
@@ -65,17 +66,14 @@ func _ready() -> void:
 
 	# Status + Finish right under the tasks and console. Built in place rather than moved there:
 	# a node moved in the frame it's created drops out of Godot 4.7's screen-reader tree.
-	var foot := UI.hbox(v, 12)
+	var foot := UI.hbox(v, 24)
+	foot.alignment = BoxContainer.ALIGNMENT_CENTER
 	_status = UI.label(foot, "", "H2")
-	_status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_finish = UI.button(foot, "Finish lab", _on_finish)
 	if lab.has("topology"):
 		var topo := UI.card(v, "Topology")
-		var ex := PanelContainer.new()
-		ex.theme_type_variation = "Exhibit"
-		topo.add_child(ex)
-		UI.label(ex, lab.topology, "Code")
+		UI.diagram(topo, lab.topology)
 	_refresh()
 
 func _show_term(n: String) -> void:
@@ -128,7 +126,7 @@ func _show_solution() -> void:
 		var ex := PanelContainer.new()
 		ex.theme_type_variation = "Exhibit"
 		_solution_box.add_child(ex)
-		UI.label(ex, "%s:\n%s" % [dev, "\n".join(lab.solution[dev])], "Code")
+		UI.label(ex, "%s:\n%s" % [dev, "\n".join(lab.solution[dev])], "Code", true)
 
 func _on_finish() -> void:
 	var results := ls.results()

@@ -40,7 +40,9 @@ func _exit_tree() -> void:
 	_open_count = maxi(0, _open_count - 1)
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	# Anchors and offsets: a CanvasLayer never resizes its children, so anchors alone left the
+	# overlay 0x0 and invisible (Study seemed to do nothing).
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP   # nothing behind can be clicked while studying
 	var v := UI.page(self)
 	var head := UI.hbox(v, 16)

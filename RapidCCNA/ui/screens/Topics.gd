@@ -44,7 +44,7 @@ func _unit_row(parent: Node, u: Dictionary) -> void:
 	var row := UI.hbox(parent, 12)
 	var info := UI.vbox(row, 2)
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	UI.label(info, u.title, "Body")
+	UI.label(info, u.title, "Body", true)
 	var bits := PackedStringArray()
 	bits.append("Tutorial done" if Progress.is_tutorial_done(u.id) else "Not started")
 	var n := Progress.attempt_count(u.id)
@@ -53,7 +53,11 @@ func _unit_row(parent: Node, u: Dictionary) -> void:
 	if Progress.is_mastered(u.id):
 		bits.append("Mastered")
 	UI.label(info, "  ·  ".join(bits), "Muted")
-	var extras := UI.hbox(info, 8)
+	# Drill and lab buttons flow onto a second line when the window is narrow.
+	var extras := HFlowContainer.new()
+	extras.add_theme_constant_override("h_separation", 8)
+	extras.add_theme_constant_override("v_separation", 8)
+	info.add_child(extras)
 	for did in u.get("drills", []):
 		var dd: Dictionary = ContentDB.drills.get(did, {})
 		if dd.is_empty():

@@ -42,6 +42,7 @@ func _ready() -> void:
 	if SessionManager.results.is_empty():
 		UI.label(list, "Nothing completed.", "Muted")
 	var back := UI.button(v, "Back to " + dest, _back, true)
+	back.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	UI.focus_later(back)
 
 func _back() -> void:
