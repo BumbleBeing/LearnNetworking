@@ -16,6 +16,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate content
         run: python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600
+      - name: Content QA (answer-key giveaways, wording, links)
+        run: |
+          python3 tools/test_qa_content.py
+          python3 tools/qa_content.py --strict
       - name: Install Godot 4.3
         run: |
           curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
@@ -28,3 +32,16 @@ jobs:
         run: godot --headless --path . -s addons/gut/gut_cmdln.gd
       - name: End-to-end session smoke test
         run: godot --headless --path . -s res://tools/smoke_session.gd
+      - name: Web export
+        run: |
+          python3 tools/fetch_web_templates.py 4.3
+          mkdir -p build/web
+          godot --headless --path . --export-release Web build/web/index.html
+          test -s build/web/index.pck && test -s build/web/index.wasm
+          ls -la build/web
+      - name: Upload web build
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapidccna-web
+          path: RapidCCNA/build/web
+          retention-days: 14

@@ -85,7 +85,7 @@
     "subtopic": "5.6",
     "type": "exhibit",
     "difficulty": 2,
-    "stem": "Host 192.168.10.25 sends an SSH (TCP 22) packet to 10.1.1.10. Which line decides it?",
+    "stem": "Host 192.168.10.25 sends an SSH (TCP 22) packet to 10.1.1.10. Based on the exhibit, which line decides it?",
     "exhibit": "Extended IP access list 110\n    10 permit tcp 192.168.10.0 0.0.0.255 host 10.1.1.10 eq 443\n    20 deny   tcp any host 10.1.1.10 eq 22\n    30 permit ip 192.168.10.0 0.0.0.255 any",
     "choices": [
       "Line 10, permitted",
@@ -173,10 +173,10 @@
     "difficulty": 2,
     "stem": "An attacker sends small DNS queries with the victim's address as the source to many open resolvers, which send large replies to the victim. What is this?",
     "choices": [
-      "A man-in-the-middle attack",
-      "A brute-force attack",
+      "A man-in-the-middle attack on DNS",
+      "A brute-force attack on the resolvers",
       "A reflection and amplification attack",
-      "A trojan"
+      "A trojan installed on the resolvers"
     ],
     "answer": 2,
     "explanation": "Spoofed source (reflection) plus replies much larger than the requests (amplification).",
@@ -227,9 +227,9 @@
     "stem": "An attacker sends forged ARP replies so hosts send their gateway traffic to the attacker's MAC. Which attack is this?",
     "choices": [
       "Man-in-the-middle via ARP poisoning",
-      "DHCP starvation",
-      "A DDoS",
-      "Reconnaissance"
+      "DHCP starvation of the address pool",
+      "A DDoS from many spoofed sources",
+      "Reconnaissance by ARP scanning"
     ],
     "answer": 0,
     "explanation": "ARP poisoning puts the attacker in the middle of the hosts' traffic.",
@@ -260,9 +260,9 @@
     "difficulty": 2,
     "stem": "Which physical control lets only one person through at a time, with one door closed before the next opens?",
     "choices": [
-      "A badge reader",
-      "A CCTV camera",
-      "A locked rack",
+      "A badge reader on the door",
+      "A CCTV camera over the entrance",
+      "A locked rack inside the room",
       "An access control vestibule (mantrap)"
     ],
     "answer": 3,
@@ -277,10 +277,10 @@
     "difficulty": 2,
     "stem": "Why does physical security matter even when every device has strong passwords?",
     "choices": [
-      "It doesn't, if passwords are strong",
+      "It doesn't, as long as every password is strong",
       "Console access allows password recovery and direct tampering",
-      "Passwords stop working when a rack is open",
-      "Physical access disables encryption"
+      "Passwords stop working while a rack door is open",
+      "Physical access turns off encryption on the device's storage"
     ],
     "answer": 1,
     "explanation": "With console access an attacker can use password recovery, or simply steal or unplug the device.",
@@ -311,9 +311,9 @@
     "difficulty": 2,
     "stem": "What does 'service password-encryption' do?",
     "choices": [
-      "Hashes all passwords with SHA-256",
-      "Encrypts passwords as they cross the network",
-      "Applies weak type 7 encryption to clear-text passwords in the configuration",
+      "Hashes every password in the configuration with SHA-256",
+      "Encrypts passwords as they cross the network to the device",
+      "Applies weak type 7 encryption to clear-text passwords",
       "Forces users to choose complex passwords"
     ],
     "answer": 2,
@@ -362,8 +362,8 @@
     "stem": "Which is an example of multi-factor authentication?",
     "choices": [
       "A password plus a code from an authenticator app",
-      "A password plus a PIN",
-      "Two different passwords",
+      "A password plus a PIN typed on the same screen",
+      "Two different passwords for the same account",
       "A long passphrase"
     ],
     "answer": 0,
@@ -392,9 +392,9 @@
     "stem": "Which VPN type connects two office networks through their edge routers, with no software on the hosts?",
     "choices": [
       "Site-to-site IPsec VPN",
-      "Remote access VPN",
+      "Remote-access VPN (client)",
       "Clientless SSL VPN",
-      "802.1X"
+      "802.1X port authentication"
     ],
     "answer": 0,
     "explanation": "A site-to-site VPN is built between gateways; hosts send traffic normally.",
@@ -427,9 +427,9 @@
     "difficulty": 3,
     "stem": "Why is GRE over IPsec used between two routers running OSPF?",
     "choices": [
-      "GRE encrypts traffic better than IPsec",
-      "IPsec can't carry TCP",
-      "Plain IPsec doesn't carry the multicast routing protocols use",
+      "GRE encrypts traffic more strongly than IPsec on its own",
+      "IPsec can't carry TCP, so routing updates need GRE",
+      "Plain IPsec doesn't carry the multicast that routing protocols use",
       "GRE is required for NAT"
     ],
     "answer": 2,
@@ -501,7 +501,7 @@
       "Auditing"
     ],
     "answer": 2,
-    "explanation": "Accounting logs what users did.",
+    "explanation": "Accounting records what users did: commands run, session start and stop times. Authentication proves identity; authorisation decides what is allowed.",
     "lesson_ref": "d5.aaa"
   },
   {
@@ -529,10 +529,10 @@
     "difficulty": 1,
     "stem": "Which encryption does WPA2 use?",
     "choices": [
-      "RC4",
-      "TKIP",
+      "RC4 stream cipher",
+      "TKIP with RC4",
       "AES-CCMP",
-      "DES"
+      "3DES in CBC mode"
     ],
     "answer": 2,
     "explanation": "WPA2 uses AES with CCMP. TKIP was WPA's; RC4 was WEP's.",
@@ -563,9 +563,9 @@
     "difficulty": 2,
     "stem": "What is the main advantage of WPA2-Enterprise over WPA2-Personal?",
     "choices": [
-      "Each user authenticates with their own credentials through a RADIUS server",
-      "It uses a longer pre-shared key",
-      "It doesn't need encryption",
+      "Each user logs in with their own credentials, checked by RADIUS",
+      "It uses a longer pre-shared key that changes every day",
+      "It needs no encryption because users are authenticated",
       "It works without an AP"
     ],
     "answer": 0,
@@ -620,10 +620,10 @@
     "difficulty": 2,
     "stem": "Which password policy is most effective against brute-force guessing?",
     "choices": [
-      "Changing passwords every 30 days",
+      "Requiring a new password every 30 days",
       "Long passphrases plus lockout after repeated failures",
-      "Using only uppercase letters",
-      "Writing passwords on the device label"
+      "Allowing only uppercase letters and digits",
+      "Writing each password on a label on the device itself"
     ],
     "answer": 1,
     "explanation": "Length adds the most guessing work; account lockout limits online attempts.",
@@ -702,10 +702,10 @@
     "difficulty": 2,
     "stem": "Numbered ACL 10 has three entries. You type 'access-list 10 permit host 10.5.5.5'. Where does the new entry go?",
     "choices": [
-      "At the top",
+      "At the top, so it's checked first",
       "At the bottom, after the existing entries",
-      "In order of address",
-      "It replaces the ACL"
+      "In order of address, lowest first",
+      "It replaces the whole ACL with that single entry"
     ],
     "answer": 1,
     "explanation": "New entries are appended. To insert one elsewhere, edit the ACL with 'ip access-list standard 10' and give a sequence number.",
@@ -756,10 +756,10 @@
     "difficulty": 1,
     "stem": "Which feature checks ARP messages against the DHCP snooping binding table and drops forged ones?",
     "choices": [
-      "Port security",
+      "Port security with sticky MACs",
       "Dynamic ARP Inspection",
-      "BPDU Guard",
-      "Storm control"
+      "BPDU Guard on access ports",
+      "Storm control for broadcasts"
     ],
     "answer": 1,
     "explanation": "DAI compares each ARP's sender MAC/IP with the bindings learned by DHCP snooping on untrusted ports, stopping ARP spoofing (man-in-the-middle) attacks.",
@@ -839,10 +839,10 @@
     "difficulty": 1,
     "stem": "Thousands of infected home devices flood a web server with traffic at once. What is this?",
     "choices": [
-      "A man-in-the-middle attack",
-      "A phishing attack",
+      "A man-in-the-middle attack using ARP poisoning",
+      "A phishing attack aimed at the server's admins",
       "A brute-force attack",
-      "A distributed denial-of-service (DDoS) attack by a botnet"
+      "A distributed denial-of-service (DDoS) attack"
     ],
     "answer": 3,
     "explanation": "Many compromised devices (a botnet) attacking availability at once is a DDoS.",
@@ -856,9 +856,9 @@
     "difficulty": 1,
     "stem": "An attacker sits between a client and a server, relaying their traffic and reading it on the way. Which attack is this?",
     "choices": [
-      "Reflection",
-      "Denial of service",
-      "Reconnaissance",
+      "Reflection and amplification",
+      "Denial of service (DoS)",
+      "Reconnaissance by scanning",
       "Man-in-the-middle (on-path)"
     ],
     "answer": 3,
@@ -874,9 +874,9 @@
     "stem": "Why should users avoid reusing one password across several sites?",
     "choices": [
       "A breach of one site gives attackers the password for the others",
-      "Reused passwords expire faster",
-      "Sites reject passwords used elsewhere",
-      "Reuse turns off multi-factor authentication"
+      "Reused passwords expire faster on most sites",
+      "Sites reject passwords already used elsewhere",
+      "Reusing a password turns off multi-factor login"
     ],
     "answer": 0,
     "explanation": "Stolen password lists are tried against other sites (credential stuffing). Unique passwords, a password manager and MFA limit the damage.",
@@ -890,8 +890,8 @@
     "difficulty": 2,
     "stem": "Which remote-access VPN option works in a web browser with no VPN client installed?",
     "choices": [
-      "DMVPN",
-      "Site-to-site IPsec",
+      "DMVPN with a hub router",
+      "Site-to-site IPsec tunnel",
       "GRE over IPsec",
       "Clientless SSL/TLS VPN"
     ],
@@ -978,8 +978,8 @@
     "difficulty": 2,
     "stem": "What does a TCP SYN flood do?",
     "choices": [
-      "Sends many SYNs and never completes the handshake, filling the server's table of half-open connections",
-      "Floods the network with ARP replies",
+      "Opens many half-finished handshakes to exhaust the server",
+      "Floods the network with forged ARP replies",
       "Guesses TCP sequence numbers to hijack a session",
       "Sends oversized ICMP packets"
     ],
@@ -995,10 +995,10 @@
     "difficulty": 1,
     "stem": "What is the difference between user awareness and user training in a security program?",
     "choices": [
-      "Awareness is general reminders for everyone, like posters and emails; training is formal, structured instruction",
+      "Awareness is everyday reminders for all; training is formal instruction",
       "They are the same thing",
       "Training is only for IT staff; awareness is only for managers",
-      "Awareness is technical; training is physical"
+      "Awareness covers technical controls; training covers physical ones"
     ],
     "answer": 0,
     "explanation": "Awareness keeps security in mind day to day. Training teaches specific skills and policies, often with tests or certification.",
@@ -1012,9 +1012,9 @@
     "difficulty": 1,
     "stem": "Which of these is a physical access control?",
     "choices": [
-      "An ACL on the edge router",
+      "An ACL on the edge router's outside interface",
       "A badge reader on the server room door",
-      "A password policy",
+      "A password policy requiring 14 characters",
       "Port security"
     ],
     "answer": 1,
@@ -1029,7 +1029,7 @@
     "difficulty": 1,
     "stem": "Someone follows an employee through a badge-controlled door without badging in. What is this called?",
     "choices": [
-      "Whaling",
+      "Shoulder surfing",
       "Phishing",
       "Spoofing",
       "Tailgating"
@@ -1046,8 +1046,8 @@
     "difficulty": 2,
     "stem": "Why shouldn't you rely on type 7 password encryption?",
     "choices": [
-      "It only works on the console",
-      "It slows the router down",
+      "It only works on the console line, not VTY lines",
+      "It slows the router down on every login attempt",
       "It can be reversed easily with freely available tools",
       "It stops SSH working"
     ],
@@ -1094,9 +1094,9 @@
     "stem": "A VTY line is configured with 'no login'. What happens when someone connects?",
     "choices": [
       "They get in without being asked for any password",
-      "They are asked for the line password",
+      "They are asked for the line password first",
       "The connection is refused",
-      "They are asked for a username"
+      "They are asked for a username and password"
     ],
     "answer": 0,
     "explanation": "'no login' turns off authentication on the line completely. Use 'login' with a password, or 'login local' with user accounts.",
@@ -1111,9 +1111,9 @@
     "stem": "Which of these can replace or supplement passwords for authentication?",
     "choices": [
       "Digital certificates",
-      "Longer ACLs",
-      "VLANs",
-      "Syslog"
+      "Longer access lists",
+      "Separate management VLANs",
+      "Central syslog servers"
     ],
     "answer": 0,
     "explanation": "Certificates, biometrics and hardware tokens are password alternatives, and are often combined with a password for MFA.",
@@ -1127,10 +1127,10 @@
     "difficulty": 1,
     "stem": "Which of these is the strongest password?",
     "choices": [
-      "P@ssw0rd1",
-      "Admin2026!",
+      "P@ssw0rd1!",
+      "Admin2026!#$",
       "correct-horse-battery-staple-92",
-      "qwerty123"
+      "Qwerty123456!"
     ],
     "answer": 2,
     "explanation": "Length adds the most strength. A long passphrase is easy to remember and resists brute force; short passwords with symbol substitutions are in every dictionary.",
@@ -1161,10 +1161,10 @@
     "difficulty": 2,
     "stem": "What does IKE do in IPsec?",
     "choices": [
-      "Authenticates the peers and negotiates the security associations and keys",
-      "Encrypts the user data",
+      "Authenticates the peers and negotiates the SAs and keys",
+      "Encrypts and authenticates the user data in each packet",
       "Compresses the traffic",
-      "Assigns IP addresses to remote users"
+      "Assigns IP addresses and DNS servers to remote users"
     ],
     "answer": 0,
     "explanation": "IKE (UDP 500, or 4500 through NAT) builds the secure channel and agrees on algorithms and keys; ESP then protects the data.",
@@ -1178,9 +1178,9 @@
     "difficulty": 3,
     "stem": "What makes DMVPN useful for many branch sites?",
     "choices": [
-      "Branches need only a tunnel to the hub, and spoke-to-spoke tunnels are built on demand",
-      "It doesn't use encryption",
-      "It replaces routing protocols",
+      "Spokes need one tunnel to the hub; spoke-to-spoke tunnels form on demand",
+      "It doesn't use encryption, so it's faster than IPsec",
+      "It replaces routing protocols with static tunnel routes",
       "It needs a separate tunnel configured for every pair of sites"
     ],
     "answer": 0,
@@ -1229,8 +1229,8 @@
     "stem": "How many IPv4 ACLs can you apply to one interface?",
     "choices": [
       "One per direction (in and out)",
-      "One in total",
-      "Up to four",
+      "One in total, in either direction",
+      "Up to four, checked in order",
       "As many as you like"
     ],
     "answer": 0,
@@ -1311,10 +1311,10 @@
     "difficulty": 1,
     "stem": "Which switch ports should be trusted for DHCP snooping?",
     "choices": [
-      "Every access port",
+      "Every access port, so clients can renew",
       "Ports toward the legitimate DHCP server, such as uplinks",
-      "Only ports with IP phones",
-      "None"
+      "Only ports with IP phones connected to them",
+      "None: every port stays untrusted"
     ],
     "answer": 1,
     "explanation": "Trust only the paths to real DHCP servers. Leaving user ports untrusted blocks rogue servers there.",
@@ -1328,10 +1328,10 @@
     "difficulty": 2,
     "stem": "What does the DHCP snooping binding table record?",
     "choices": [
-      "ARP entries learned from routers",
-      "Every DHCP server on the network",
+      "ARP entries learned from routers and servers",
+      "Every DHCP server seen on any port",
       "The DHCP pools",
-      "Each client's MAC address, leased IP, lease time, VLAN and port"
+      "Each client's MAC, leased IP, VLAN and port"
     ],
     "answer": 3,
     "explanation": "The bindings are learned from DHCP exchanges on untrusted ports. DAI and IP Source Guard use them to check traffic.",
@@ -1347,9 +1347,9 @@
     "exhibit": "SW1#show port-security interface fa0/5\nPort Security              : Enabled\nPort Status                : Secure-shutdown\nViolation Mode             : Shutdown\nMaximum MAC Addresses      : 1\nTotal MAC Addresses        : 1\nSticky MAC Addresses       : 1\nLast Source Address:Vlan   : 0050.7966.6802:10\nSecurity Violation Count   : 1",
     "choices": [
       "Nothing: the port is working normally",
-      "Sticky learning failed, so the port needs a reload",
-      "The port is in the wrong VLAN",
-      "A second device was seen, so the port went err-disabled; remove the device, then shutdown and no shutdown"
+      "Sticky learning failed, so the port needs a reload to recover",
+      "The port is in the wrong VLAN, so frames are being dropped",
+      "A second device appeared, so the port is err-disabled until bounced"
     ],
     "answer": 3,
     "explanation": "Secure-shutdown with a violation count of 1 means an unexpected MAC arrived while the one allowed address was already learned. The port is err-disabled until bounced (or errdisable recovery).",
@@ -1393,9 +1393,9 @@
     "stem": "Which Cisco product is commonly used as the AAA server for RADIUS and TACACS+?",
     "choices": [
       "Cisco ISE (Identity Services Engine)",
-      "Catalyst Center",
+      "Catalyst Center (DNA Center)",
       "Cisco Prime Infrastructure",
-      "Meraki Dashboard"
+      "Meraki Dashboard (cloud)"
     ],
     "answer": 0,
     "explanation": "ISE provides RADIUS for network access (802.1X, VPN) and TACACS+ for device administration.",
@@ -1426,9 +1426,9 @@
     "difficulty": 2,
     "stem": "What does WPA3's Enhanced Open (OWE) add for networks with no password, such as a café?",
     "choices": [
-      "It requires 802.1X",
-      "It adds a captive portal",
-      "It encrypts each client's traffic without needing a password",
+      "It requires 802.1X logins for every client",
+      "It adds a captive portal for guests to accept terms",
+      "It encrypts each client's traffic without a password",
       "Nothing: open networks stay unencrypted"
     ],
     "answer": 2,
@@ -1443,10 +1443,10 @@
     "difficulty": 2,
     "stem": "What does Protected Management Frames (802.11w), required in WPA3, protect against?",
     "choices": [
-      "Weak passwords",
+      "Weak passphrases that users choose themselves",
       "Forged deauthentication and disassociation frames",
-      "Rogue DHCP servers",
-      "Channel interference"
+      "Rogue DHCP servers on the wired side",
+      "Co-channel interference from neighbours"
     ],
     "answer": 1,
     "explanation": "Without PMF an attacker can spoof deauthentication frames to kick clients off, for example to capture a handshake.",
@@ -1460,9 +1460,9 @@
     "difficulty": 2,
     "stem": "Why is a weak WPA2-Personal passphrase vulnerable even though traffic is encrypted?",
     "choices": [
-      "A captured four-way handshake can be attacked offline with password guesses",
-      "WPA2 sends the PSK in clear text",
-      "WPA2 uses RC4",
+      "A captured handshake lets attackers guess offline",
+      "WPA2 sends the PSK in clear text during association",
+      "WPA2 uses RC4, which can be cracked in minutes",
       "WPA2 has no encryption"
     ],
     "answer": 0,
@@ -1494,9 +1494,9 @@
     "difficulty": 1,
     "stem": "Where in the WLC GUI do you enter the pre-shared key for a WPA2-Personal WLAN?",
     "choices": [
-      "Security > AAA > RADIUS",
-      "Controller > General",
-      "WLANs > edit the WLAN > Security > Layer 2, with Auth Key Mgmt set to PSK",
+      "Security > AAA > RADIUS > Authentication",
+      "Controller > General > Default Mobility",
+      "WLANs > the WLAN > Security > Layer 2 (PSK)",
       "Wireless > Access Points"
     ],
     "answer": 2,

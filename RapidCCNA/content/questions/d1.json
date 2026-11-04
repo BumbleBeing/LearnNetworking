@@ -245,9 +245,9 @@
     "stem": "SW1 receives a frame on Fa0/3 (VLAN 20) with destination 0050.7966.1a01. Based on the exhibit, what does SW1 do with it?",
     "exhibit": "SW1#show mac address-table\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    0050.7966.1a01    DYNAMIC     Fa0/1\n  20    0050.7966.2b02    DYNAMIC     Fa0/2\n  20    000c.2944.3c03    DYNAMIC     Gi0/1",
     "choices": [
-      "Forwards it out Fa0/1",
+      "Forwards it out Fa0/1 only, using the MAC table entry",
       "Forwards it out Gi0/1",
-      "Drops it",
+      "Drops it, because the destination is in a different VLAN",
       "Floods it out the other VLAN 20 ports, including the trunk"
     ],
     "answer": 3,
@@ -335,10 +335,10 @@
     "difficulty": 1,
     "stem": "What does a stateful firewall do with return traffic for a session that an inside host started?",
     "choices": [
-      "Blocks it unless an inbound rule permits it",
+      "Blocks it unless an inbound rule permits that traffic",
       "Allows it because it matches a session in its state table",
       "Sends it to the IPS for inspection only",
-      "Drops it and logs an alert"
+      "Drops it and logs an alert, as it does for all inbound traffic"
     ],
     "answer": 1,
     "explanation": "A stateful firewall tracks sessions in a state table and automatically allows the matching return traffic, while blocking unsolicited inbound traffic.",
@@ -352,8 +352,8 @@
     "difficulty": 2,
     "stem": "What is the difference between an IPS and an IDS?",
     "choices": [
-      "An IDS is inline and an IPS works on a copy of traffic",
-      "An IPS only works on wireless traffic",
+      "An IDS sits inline and blocks; an IPS works on a copy and alerts",
+      "An IPS only inspects wireless traffic; an IDS only wired traffic",
       "An IPS sits inline and can block traffic; an IDS monitors a copy and alerts",
       "There is no difference"
     ],
@@ -385,8 +385,8 @@
     "stem": "Which device lets a single switch route between its VLANs at wire speed?",
     "choices": [
       "A hub",
-      "A wireless access point",
-      "A layer 2 switch",
+      "A wireless access point (autonomous)",
+      "A layer 2 switch with VLAN trunks",
       "A layer 3 (multilayer) switch"
     ],
     "answer": 3,
@@ -436,10 +436,10 @@
     "difficulty": 2,
     "stem": "A small campus merges the core and distribution layers into one. What is this design called?",
     "choices": [
-      "Spine-leaf",
+      "Spine-leaf (two-layer fabric)",
       "Hub-and-spoke",
       "Collapsed core (two-tier)",
-      "Full mesh"
+      "Full mesh (no hierarchy)"
     ],
     "answer": 2,
     "explanation": "A two-tier design with a collapsed core.",
@@ -626,8 +626,8 @@
     "stem": "Why does VoIP use UDP rather than TCP?",
     "choices": [
       "Retransmitted audio would arrive too late to be useful",
-      "UDP guarantees delivery",
-      "TCP can't carry audio",
+      "UDP guarantees delivery, so no audio is lost",
+      "TCP can't carry real-time audio payloads at all",
       "UDP encrypts the audio"
     ],
     "answer": 0,
@@ -663,10 +663,10 @@
     "difficulty": 2,
     "stem": "A PC shows the address 169.254.33.12. What does this tell you?",
     "choices": [
-      "It has a valid public address",
+      "It has a valid public address from its ISP",
       "It's using a static RFC 1918 address",
       "It couldn't get an address from a DHCP server",
-      "It's the loopback address"
+      "It's the loopback address, so the NIC is down"
     ],
     "answer": 2,
     "explanation": "169.254.0.0/16 is APIPA (link-local): the host assigned itself an address because it got no DHCP reply.",
@@ -744,8 +744,8 @@
     "difficulty": 2,
     "stem": "What does a router use the IPv6 link-local address of its neighbour for?",
     "choices": [
-      "Routing across the internet",
-      "Replacing the global address on all hosts",
+      "Routing to its neighbours' networks across the internet",
+      "Replacing the global unicast address on all of the hosts",
       "Broadcasting to all hosts",
       "As the next-hop address and source of Router Advertisements"
     ],
@@ -792,10 +792,10 @@
     "difficulty": 2,
     "stem": "What is an IPv6 anycast address?",
     "choices": [
-      "An address that reaches every host on the link",
+      "An address that reaches every host on the local link at once",
       "One unicast address assigned to several devices; packets go to the nearest",
-      "A private address range",
-      "The address used before DHCPv6 assigns one"
+      "A private address range used inside one organisation",
+      "The temporary address a host uses before DHCPv6 assigns one"
     ],
     "answer": 1,
     "explanation": "Anycast is a unicast address assigned to several devices; routing delivers packets to the nearest one.",
@@ -823,10 +823,10 @@
     "difficulty": 1,
     "stem": "Which Windows command shows a PC's MAC address, DHCP server and DNS servers?",
     "choices": [
-      "ipconfig",
-      "netstat -r",
+      "ipconfig /displaydns",
+      "netstat -r -n",
       "ipconfig /all",
-      "ping -a"
+      "ping -a -n 1"
     ],
     "answer": 2,
     "explanation": "ipconfig on its own shows only the address, mask and gateway; /all adds MAC, DHCP and DNS details.",
@@ -929,8 +929,8 @@
     "difficulty": 2,
     "stem": "Why do Wi-Fi clients use CSMA/CA instead of CSMA/CD?",
     "choices": [
-      "Wireless is full duplex",
-      "CSMA/CD only works on fiber",
+      "Wireless is full duplex, so collisions can't happen",
+      "CSMA/CD only works on fiber, not on radio links",
       "CSMA/CA is faster",
       "Radios can't detect collisions while they transmit"
     ],
@@ -983,9 +983,9 @@
     "difficulty": 2,
     "stem": "What does a VRF allow on a single router?",
     "choices": [
-      "Running several routing protocols at once",
+      "Running several routing protocols at once in one table",
       "Load balancing across links",
-      "Encrypting traffic between interfaces",
+      "Encrypting traffic between interfaces on the same router",
       "Several separate routing tables, even with overlapping addresses"
     ],
     "answer": 3,
@@ -1004,7 +1004,7 @@
       "a hypervisor",
       "the hypervisor"
     ],
-    "explanation": "The hypervisor creates and runs VMs.",
+    "explanation": "The hypervisor (VMware ESXi, Hyper-V, KVM) creates and runs VMs, giving each a share of the physical CPU, memory, storage and network.",
     "lesson_ref": "d1.virtualization"
   },
   {
@@ -1122,9 +1122,9 @@
     "stem": "What does SLAAC let an IPv6 host do?",
     "choices": [
       "Build its own global address from the prefix in a router advertisement",
-      "Get its address from a DHCPv6 server",
+      "Get its address and DNS servers from a stateful DHCPv6 server",
       "Translate IPv6 to IPv4",
-      "Find its neighbours' MAC addresses"
+      "Find its neighbours' MAC addresses by sending ARP broadcasts"
     ],
     "answer": 0,
     "explanation": "With SLAAC the host takes the /64 prefix from a router advertisement and adds its own interface ID (EUI-64 or random). Neighbour discovery (NDP) finds MAC addresses.",
@@ -1280,10 +1280,10 @@
     "difficulty": 1,
     "stem": "What does a wireless LAN controller do for lightweight APs?",
     "choices": [
-      "Supplies them with PoE",
+      "Supplies them with PoE through the controller's own ports",
       "Routes between VLANs for them",
       "Centrally manages their configuration, RF settings and client roaming",
-      "Encrypts their uplinks with IPsec"
+      "Encrypts their uplinks to the core with site-to-site IPsec"
     ],
     "answer": 2,
     "explanation": "Lightweight APs join a WLC over CAPWAP. The WLC pushes configuration, tunes channels and power, and handles roaming and authentication for the whole WLAN.",
@@ -1331,9 +1331,9 @@
     "difficulty": 1,
     "stem": "What is the main advantage of a full-mesh WAN over hub-and-spoke?",
     "choices": [
-      "It costs less",
+      "It costs less, because each site needs only one WAN link",
       "Every site has a direct path to every other site, with no single hub to fail",
-      "It needs fewer routers",
+      "It needs fewer routers, because the hub does all the routing",
       "It doesn't need routing"
     ],
     "answer": 1,
@@ -1365,10 +1365,10 @@
     "difficulty": 1,
     "stem": "What does an SFP slot on a switch let you do?",
     "choices": [
-      "Power an access point",
+      "Power an access point with more wattage than a normal PoE port",
       "Connect a console cable",
-      "Plug in a transceiver for the medium you need, such as multimode fiber, single-mode fiber or copper",
-      "Stack switches together"
+      "Plug in a transceiver for the medium you need, such as fiber or copper",
+      "Stack switches so they're managed as one with a single IP"
     ],
     "answer": 2,
     "explanation": "SFP (and SFP+ for 10 Gbps) modules are hot-swappable transceivers, so the same port can take different fiber or copper media.",
@@ -1400,10 +1400,10 @@
     "difficulty": 2,
     "stem": "Two switches are joined with a straight-through cable, and Auto-MDIX is turned off on both ports. What happens?",
     "choices": [
-      "The link stays down, because like devices need a crossover cable without Auto-MDIX",
-      "The link comes up at half duplex",
+      "The link stays down: like devices need a crossover cable",
+      "The link comes up at half duplex after autonegotiation fails",
       "The link comes up normally",
-      "The ports go err-disabled"
+      "Both ports go err-disabled because they detect a loop"
     ],
     "answer": 0,
     "explanation": "Switch-to-switch is a like-to-like connection: both transmit on the same pairs. Without Auto-MDIX that needs a crossover cable.",
@@ -1418,9 +1418,9 @@
     "stem": "The input error counters on Gi0/2 keep rising. Based on the exhibit, what is the most likely cause?",
     "exhibit": "GigabitEthernet0/2 is up, line protocol is up (connected)\n  Full-duplex, 1000Mb/s, media type is 10/100/1000BaseTX\n     0 runts, 0 giants, 0 throttles\n     2154 input errors, 2154 CRC, 0 frame, 0 overrun, 0 ignored\n     0 output errors, 0 collisions, 0 interface resets\n     0 late collision, 0 deferred",
     "choices": [
-      "A duplex mismatch",
+      "A duplex mismatch between Gi0/2 and its neighbour",
       "A damaged cable or electrical interference",
-      "An MTU that is too small",
+      "An MTU that is too small for the received frames",
       "A port security violation"
     ],
     "answer": 1,
@@ -1436,9 +1436,9 @@
     "stem": "One end of a link is hard-set to 100 Mbps full duplex and the other autonegotiates. What does the autonegotiating end choose?",
     "choices": [
       "100 Mbps half duplex, causing a duplex mismatch",
-      "100 Mbps full duplex",
+      "100 Mbps full duplex, matching the other end",
       "1000 Mbps full duplex",
-      "10 Mbps half duplex"
+      "10 Mbps half duplex, the lowest common setting"
     ],
     "answer": 0,
     "explanation": "It can sense the speed from the signal, but with no negotiation it can't learn the duplex, so it falls back to half duplex at 10 or 100 Mbps. Set both ends the same way.",
@@ -1642,7 +1642,7 @@
     "difficulty": 1,
     "stem": "Convert 1100 1000 to decimal.",
     "answer": "200",
-    "explanation": "128 + 64 + 8 = 200.",
+    "explanation": "Add the place values of the 1 bits: 128 + 64 + 8 = 200. 1100 1000 is also the last octet of a /29 mask (255.255.255.248 is 1111 1000).",
     "lesson_ref": "d1.binary_basics"
   },
   {
@@ -1694,9 +1694,9 @@
     "stem": "What is the 100.64.0.0/10 range for?",
     "choices": [
       "Multicast",
-      "Documentation examples",
-      "Link-local autoconfiguration",
-      "Carrier-grade NAT shared address space between a provider and its customers"
+      "Documentation and example addresses in RFCs and books",
+      "Link-local autoconfiguration when DHCP isn't available",
+      "Carrier-grade NAT space shared by a provider and its customers"
     ],
     "answer": 3,
     "explanation": "RFC 6598 reserves 100.64.0.0/10 for carrier-grade NAT. It isn't RFC 1918, but it isn't routed on the internet either.",
@@ -1785,9 +1785,9 @@
     "difficulty": 1,
     "stem": "IPv6 has no broadcast. What does it use instead?",
     "choices": [
-      "Anycast",
+      "Anycast, delivered to every host in the subnet",
       "Link-local unicast",
-      "Unicast to every host",
+      "Unicast to every host, sent one copy at a time",
       "Multicast, such as ff02::1 for all nodes"
     ],
     "answer": 3,
@@ -1802,9 +1802,9 @@
     "difficulty": 2,
     "stem": "What are unique local addresses (fd00::/8, part of fc00::/7) for?",
     "choices": [
-      "Internet-routable addressing",
+      "Internet-routable addressing assigned by a regional registry",
       "Private addressing inside an organisation, not routed on the internet",
-      "Addresses valid only on one link",
+      "Addresses valid only on one link, created automatically",
       "One-to-nearest anycast"
     ],
     "answer": 1,
@@ -1922,10 +1922,10 @@
     "difficulty": 1,
     "stem": "What is wireless roaming?",
     "choices": [
-      "A client connecting to two SSIDs at once",
+      "A client connecting to two SSIDs at once on different bands",
       "An AP changing channel automatically",
-      "A client moving between APs that share the same SSID without losing its connection",
-      "Two APs bridging their wired networks"
+      "A client moving between APs with the same SSID without losing its connection",
+      "Two APs bridging their wired networks together over the air"
     ],
     "answer": 2,
     "explanation": "An ESS is several BSSs (APs) with the same SSID. Clients move from one AP to another as they go, and a WLC can keep their session intact.",
@@ -1939,8 +1939,8 @@
     "difficulty": 1,
     "stem": "Which is an example of a type 2 (hosted) hypervisor?",
     "choices": [
-      "VMware ESXi",
-      "Microsoft Hyper-V Server",
+      "VMware ESXi installed directly on a server",
+      "Microsoft Hyper-V Server on bare-metal hardware",
       "KVM on bare metal",
       "Oracle VirtualBox on a Windows laptop"
     ],
@@ -1956,10 +1956,10 @@
     "difficulty": 1,
     "stem": "How do virtual machines on one host reach each other and the physical network?",
     "choices": [
-      "Through the host's console port",
-      "Each VM needs its own physical NIC",
+      "Through the host's console and management port",
+      "Each VM needs its own dedicated physical NIC",
       "Through a virtual switch inside the hypervisor",
-      "Only through a router"
+      "Only through an external router on the network"
     ],
     "answer": 2,
     "explanation": "The hypervisor's virtual switch connects VM vNICs to each other and to the physical NICs, and can tag VLANs like a physical switch.",
@@ -1990,8 +1990,8 @@
     "difficulty": 1,
     "stem": "What is a key benefit of server virtualization?",
     "choices": [
-      "Each application gets its own physical server",
-      "No need for networking",
+      "Each application gets its own dedicated physical server",
+      "Servers no longer need any network connectivity at all",
       "Better use of hardware and faster provisioning of new servers",
       "Guest systems never need patching"
     ],
@@ -2007,9 +2007,9 @@
     "difficulty": 1,
     "stem": "A switch receives a broadcast frame on Fa0/1 in VLAN 10. Where does it send it?",
     "choices": [
-      "Out every port on the switch",
+      "Out every port on the switch, in every VLAN, including Fa0/1",
       "Out every other port in VLAN 10, including trunks carrying VLAN 10",
-      "Only out the trunk ports",
+      "Only out the trunk ports, so other switches can deliver it",
       "Back out Fa0/1"
     ],
     "answer": 1,
@@ -2024,10 +2024,10 @@
     "difficulty": 2,
     "stem": "Hosts A and B both connect to a hub on switch port Fa0/1. A sends a frame to B, whose MAC the switch learned on Fa0/1. What does the switch do?",
     "choices": [
-      "Filters (drops) it, because the destination is on the port it came in on",
-      "Forwards it back out Fa0/1",
-      "Floods the frame",
-      "Sends it to the CPU"
+      "Filters (drops) it: the destination is on the port it came in on",
+      "Forwards it back out Fa0/1 so the hub can deliver it",
+      "Floods the frame out every other port in the VLAN",
+      "Sends it to the CPU to learn which port B is really on"
     ],
     "answer": 0,
     "explanation": "When the destination MAC is on the same port as the source, B already received the frame through the hub, so the switch filters it.",

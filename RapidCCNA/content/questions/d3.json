@@ -214,9 +214,9 @@
     "difficulty": 1,
     "stem": "What does 'passive-interface g0/2' do under router ospf 1?",
     "choices": [
-      "Removes Gi0/2's network from OSPF",
+      "Removes Gi0/2's network from OSPF but keeps its neighbours",
       "Makes Gi0/2 the DR",
-      "Shuts down Gi0/2",
+      "Shuts down Gi0/2 until OSPF converges again",
       "Stops Hellos on Gi0/2 but still advertises its network"
     ],
     "answer": 3,
@@ -342,9 +342,9 @@
     "difficulty": 1,
     "stem": "When HSRP priorities are equal, which router becomes active?",
     "choices": [
-      "The one with the lowest IP",
-      "The one that booted last",
-      "The one with the lowest MAC",
+      "The one with the lowest interface IP",
+      "The one that booted last in the group",
+      "The one with the lowest MAC address",
       "The one with the highest interface IP"
     ],
     "answer": 3,
@@ -387,8 +387,8 @@
     "difficulty": 1,
     "stem": "What does the 'L' code in 'show ip route' mean?",
     "choices": [
-      "A route learned from a neighbour",
-      "A floating static route",
+      "A route learned from a directly connected neighbour",
+      "A floating static route that is waiting as a backup",
       "The default route",
       "The router's own interface address (a /32 local route)"
     ],
@@ -506,9 +506,9 @@
     "difficulty": 2,
     "stem": "What does '10.0.0.0/8 is variably subnetted, 4 subnets, 3 masks' mean in show ip route?",
     "choices": [
-      "R1 has a route to 10.0.0.0/8 and four other routes",
-      "Four routes inside 10.0.0.0/8 are listed below, using three different prefix lengths",
-      "10.0.0.0/8 is split into four equal subnets",
+      "R1 has a route to 10.0.0.0/8 itself plus four other routes",
+      "Four routes inside 10.0.0.0/8 follow, with three prefix lengths",
+      "10.0.0.0/8 has been split into four equal-sized subnets",
       "Three of the four subnets are unreachable"
     ],
     "answer": 1,
@@ -611,7 +611,7 @@
     "choices": [
       "Lowers it by one, and drops the packet with ICMP time exceeded if it reaches zero",
       "Nothing: only the source host sets the TTL",
-      "Resets it to 255",
+      "Resets it to 255 so the packet can cross the next network",
       "Raises it by one so the destination knows how many hops it crossed"
     ],
     "answer": 0,
@@ -632,7 +632,7 @@
       "ip route 10.50.0.0 0.0.255.255 172.16.2.2 120"
     ],
     "answer": 2,
-    "explanation": "A floating static route needs an AD higher than the route it backs up. OSPF is 110, so 120 works. AD 1 (the default) or 100 would replace the OSPF route. The last option uses a wildcard instead of a mask.",
+    "explanation": "A floating static route needs an AD higher than the route it backs up. OSPF is 110, so 120 works. AD 1 (the default) or 100 would replace the OSPF route. 0.0.255.255 is a wildcard, not a subnet mask, so that command is wrong.",
     "lesson_ref": "d3.static_routing"
   },
   {
@@ -657,9 +657,9 @@
     "stem": "Why must an IPv6 static route with a link-local next hop (fe80::2) also name the exit interface?",
     "choices": [
       "IOS can't ping link-local addresses",
-      "Link-local next hops need a higher administrative distance",
-      "Link-local addresses are only unique on one link, so the router needs to know which link",
-      "Exit interfaces are required on every IPv6 static route"
+      "Link-local next hops need a higher administrative distance than global ones",
+      "Link-local addresses are only unique on one link, so the link must be named",
+      "Exit interfaces are required on every IPv6 static route, global or link-local"
     ],
     "answer": 2,
     "explanation": "Every interface has its own fe80:: address and the same one can appear on several links, so 'ipv6 route 2001:db8:5::/64 g0/0 fe80::2' says which link to use.",
@@ -706,10 +706,10 @@
     "difficulty": 3,
     "stem": "R1 has 'ip route 10.30.0.0 255.255.0.0 GigabitEthernet0/1' and no next hop. Gi0/1 is Ethernet. What is the drawback?",
     "choices": [
-      "The route has an AD of 0 and overrides OSPF",
-      "Packets are sent as broadcasts",
+      "The route gets AD 0 like a connected route and overrides OSPF",
+      "Packets out Gi0/1 are sent as broadcasts to every host on the link",
       "The route never appears in the routing table",
-      "R1 ARPs for every destination in 10.30.0.0/16 and relies on proxy ARP from the next router"
+      "R1 ARPs for every destination and relies on proxy ARP from the next router"
     ],
     "answer": 3,
     "explanation": "With only an exit interface on a multi-access link, R1 treats every destination as directly connected and ARPs for each one. It only works if the next router answers with proxy ARP. Name the next hop (or both) instead.",
@@ -970,9 +970,9 @@
     "difficulty": 2,
     "stem": "What does 'standby 1 track GigabitEthernet0/1 20' do?",
     "choices": [
-      "Sends HSRP Hellos out Gi0/1 every 20 seconds",
+      "Sends HSRP Hellos out Gi0/1 every 20 seconds instead of 3",
       "Lowers this router's HSRP priority by 20 while Gi0/1 is down",
-      "Makes Gi0/1 the standby interface for group 1",
+      "Makes Gi0/1 the standby interface for HSRP group 1",
       "Raises the priority to 20 when Gi0/1 comes up"
     ],
     "answer": 1,
@@ -1005,9 +1005,9 @@
     "stem": "What does the code 'O*E2' in show ip route mean?",
     "choices": [
       "An OSPF external type 2 route that is a candidate default route",
-      "An OSPF intra-area route with cost 2",
+      "An OSPF intra-area route whose total cost is 2",
       "OSPF area 2",
-      "An OSPF route that failed twice"
+      "An OSPF route that has flapped twice and is suppressed"
     ],
     "answer": 0,
     "explanation": "O = OSPF, E2 = external type 2 (the metric doesn't grow inside the area), * = candidate default. It's what 'default-information originate' produces on the other routers.",
@@ -1032,9 +1032,9 @@
     "difficulty": 1,
     "stem": "An interface is given 10.1.1.1/24 and comes up. Which routes appear?",
     "choices": [
-      "C 10.1.1.0/24 only",
+      "C 10.1.1.0/24 only, for the connected subnet",
       "C 10.1.1.0/24 and L 10.1.1.1/32",
-      "L 10.1.1.1/32 only",
+      "L 10.1.1.1/32 only, for the interface address",
       "S 10.1.1.0/24"
     ],
     "answer": 1,
@@ -1086,9 +1086,9 @@
     "stem": "R1 has a static route (AD 1) and an OSPF route to the same 10.2.0.0/16. Which does it use for 10.2.3.4?",
     "choices": [
       "The OSPF route, because it's dynamic",
-      "Both, load-balanced",
+      "Both, load-balanced across the two next hops",
       "The static route, because it has the lower AD",
-      "Whichever was learned first"
+      "Whichever was learned first, until it fails"
     ],
     "answer": 2,
     "explanation": "Same prefix and length, so AD decides: static 1 beats OSPF 110. Only the static route is installed.",
@@ -1102,10 +1102,10 @@
     "difficulty": 1,
     "stem": "A router has connected routes and a default route. A packet arrives for a host on one of its connected subnets. Which route is used?",
     "choices": [
-      "The default route",
+      "The default route, because it was configured last",
       "The connected route, because it's the longer match",
       "Both",
-      "Neither; it is dropped"
+      "Neither; the packet is dropped as unroutable"
     ],
     "answer": 1,
     "explanation": "0.0.0.0/0 matches everything but is the shortest possible prefix. The connected /24 (or whatever length) is more specific and wins.",
@@ -1119,10 +1119,10 @@
     "difficulty": 2,
     "stem": "Without NAT, what does a router change when it forwards a packet from one Ethernet link to another?",
     "choices": [
-      "The source and destination IP addresses",
-      "Only the destination port",
-      "Nothing at all",
-      "The layer 2 header (new source and destination MACs), and it lowers the TTL"
+      "The source and destination IP addresses, hop by hop",
+      "Only the destination port, to match the next hop",
+      "Nothing at all: the packet leaves exactly as it arrived",
+      "The layer 2 header (new source and destination MACs) and the TTL"
     ],
     "answer": 3,
     "explanation": "IP addresses stay end-to-end. Each hop builds a new frame with its own MAC as source and the next hop's MAC as destination, and decrements the TTL (updating the checksum).",
@@ -1164,10 +1164,10 @@
     "difficulty": 2,
     "stem": "A static route points out an interface that goes down. What happens to the route?",
     "choices": [
-      "It stays in the table and traffic is dropped",
-      "It's deleted from the running configuration",
-      "It changes to AD 255",
-      "It's removed from the routing table, so a floating backup can take over"
+      "It stays in the table and traffic to it is dropped",
+      "It's deleted from the running configuration automatically",
+      "It stays in the table, but its AD changes to 255",
+      "It's removed from the table, so a floating backup can take over"
     ],
     "answer": 3,
     "explanation": "Static routes whose exit interface (or next-hop path) is down are withdrawn from the table but stay in the config, and return when the interface comes back.",
@@ -1240,10 +1240,10 @@
     "difficulty": 1,
     "stem": "What does OSPF run on its link-state database to find the best paths?",
     "choices": [
-      "Bellman-Ford",
+      "Bellman-Ford, comparing neighbours' distances",
       "Dijkstra's shortest path first (SPF) algorithm",
-      "DUAL",
-      "Split horizon"
+      "DUAL, with feasible successors",
+      "Split horizon with poison reverse"
     ],
     "answer": 1,
     "explanation": "Each router builds a tree of lowest-cost paths from itself using SPF. Bellman-Ford is used by distance-vector protocols like RIP; DUAL is EIGRP's.",
@@ -1274,10 +1274,10 @@
     "difficulty": 1,
     "stem": "Why is a loopback address often used as (or chosen for) the OSPF router ID?",
     "choices": [
-      "It's faster",
+      "Loopback interfaces forward OSPF packets faster than physical ones",
       "A loopback never goes down unless shut, so the ID stays stable",
-      "OSPF requires a loopback",
-      "Loopbacks have the lowest cost"
+      "OSPF can't start unless a loopback exists",
+      "Loopbacks always get the lowest OSPF cost"
     ],
     "answer": 1,
     "explanation": "Without a router-id command, OSPF picks the highest loopback address, then the highest up interface. A loopback is always up. Setting 'router-id' explicitly is even more predictable.",
@@ -1338,9 +1338,9 @@
     "difficulty": 2,
     "stem": "A router with OSPF priority 255 joins a segment that already has a DR and BDR. What happens?",
     "choices": [
-      "It becomes DR straight away",
-      "Nothing changes until the DR or BDR fails; DR elections aren't preemptive",
-      "It becomes BDR straight away",
+      "It becomes DR straight away because 255 is the highest priority",
+      "Nothing changes until the DR or BDR fails; no preemption",
+      "It becomes BDR straight away and waits to take over as DR",
       "It can't form any adjacency"
     ],
     "answer": 1,
@@ -1355,8 +1355,8 @@
     "difficulty": 1,
     "stem": "What does 'default-information originate' under router ospf do?",
     "choices": [
-      "Creates a default route on this router",
-      "Sets the default cost",
+      "Creates a default route on this router pointing at the DR",
+      "Sets the default cost used on every OSPF interface",
       "Advertises this router's default route to its OSPF neighbours",
       "Makes this router the DR"
     ],
@@ -1386,7 +1386,7 @@
     "choices": [
       "Speak",
       "Listen",
-      "Init",
+      "Initial",
       "Learn"
     ],
     "answer": 1,
@@ -1401,10 +1401,10 @@
     "difficulty": 2,
     "stem": "Which is a difference between HSRPv2 and HSRPv1?",
     "choices": [
-      "HSRPv2 load-balances within one group",
+      "HSRPv2 load-balances one group across several routers",
       "HSRPv2 is an open standard",
-      "HSRPv2 supports groups 0-4095 and IPv6, and uses multicast 224.0.0.102",
-      "HSRPv2 has no preempt"
+      "HSRPv2 supports groups 0-4095 and IPv6",
+      "HSRPv2 removes preempt, so the active router never changes"
     ],
     "answer": 2,
     "explanation": "v1: groups 0-255, 224.0.0.2, MAC 0000.0c07.acXX. v2: groups 0-4095, 224.0.0.102, MAC 0000.0c9f.fXXX, and IPv6 support. Both are Cisco-proprietary.",
@@ -1469,8 +1469,8 @@
     "difficulty": 1,
     "stem": "In 'O 10.4.0.0/16 [110/3] via 10.0.0.2, 00:12:44, GigabitEthernet0/0', what does 00:12:44 show?",
     "choices": [
-      "The route's metric",
-      "The OSPF Dead timer",
+      "The route's metric, in tenths of a millisecond",
+      "The OSPF Dead timer for the neighbour 10.0.0.2",
       "How long ago the route was learned or last updated",
       "The time until the route expires"
     ],
@@ -1487,9 +1487,9 @@
     "stem": "show ip route says 'Gateway of last resort is not set'. What does that mean?",
     "choices": [
       "Routing is disabled",
-      "The router can't reach its default gateway",
-      "The router has no default route, so packets matching no other route are dropped",
-      "OSPF isn't running"
+      "The router can't reach the default gateway configured on it",
+      "There's no default route, so packets that match nothing are dropped",
+      "OSPF isn't running, so no routes can be learned at all"
     ],
     "answer": 2,
     "explanation": "The gateway of last resort is the next hop of the default route. Without one, a packet that matches nothing is dropped with ICMP unreachable.",
@@ -1570,9 +1570,9 @@
     "exhibit": "R1#show ipv6 route\nC   2001:DB8:1::/64 [0/0]\n     via GigabitEthernet0/0, directly connected\nL   2001:DB8:1::1/128 [0/0]\n     via GigabitEthernet0/0, receive\nS   ::/0 [1/0]\n     via 2001:DB8:1::FE\nO   2001:DB8:2::/64 [110/2]\n     via FE80::2, GigabitEthernet0/1",
     "choices": [
       "FE80::2 out GigabitEthernet0/1",
-      "2001:DB8:1::FE",
-      "2001:DB8:1::1",
-      "It's directly connected"
+      "2001:DB8:1::FE, the default route's next hop",
+      "2001:DB8:1::1, R1's own address on Gi0/0",
+      "None: the prefix is directly connected"
     ],
     "answer": 0,
     "explanation": "IPv6 routing protocols use the neighbour's link-local address as the next hop, together with the exit interface. 2001:DB8:1::FE is only for the default route.",
@@ -1621,10 +1621,10 @@
     "difficulty": 2,
     "stem": "R1 has 'ip route 10.9.0.0 255.255.0.0 172.16.1.2'. What is a recursive lookup?",
     "choices": [
-      "R1 checks the ARP table for 10.9.0.0",
-      "R1 asks a neighbour for the route",
+      "R1 checks its ARP table for the address 10.9.0.0",
+      "R1 asks its OSPF neighbours which way 10.9.0.0 is",
       "R1 floods the packet",
-      "R1 looks up 172.16.1.2 in its routing table to find which interface to send the packet out"
+      "R1 looks up 172.16.1.2 itself to find the exit interface"
     ],
     "answer": 3,
     "explanation": "A next hop alone doesn't say which interface to use. The router looks up the next hop itself, normally matching a connected route.",
@@ -1793,10 +1793,10 @@
     "stem": "Based on the exhibit, which statement is true?",
     "exhibit": "R1#show ip route 10.5.5.5\nRouting entry for 10.5.0.0/16\n  Known via \"ospf 1\", distance 110, metric 20, type intra area\n  Last update from 10.0.0.2 on GigabitEthernet0/0, 00:04:10 ago\n  Routing Descriptor Blocks:\n  * 10.0.0.2, from 2.2.2.2, 00:04:10 ago, via GigabitEthernet0/0\n      Route metric is 20, traffic share count is 1",
     "choices": [
-      "The route is static with AD 20",
-      "OSPF learned it from router ID 2.2.2.2, and packets go to next hop 10.0.0.2 out Gi0/0",
-      "10.5.5.5 is directly connected",
-      "R1 load-balances over two paths"
+      "The route is static, with administrative distance 20",
+      "OSPF learned it from router 2.2.2.2; the next hop is 10.0.0.2 on Gi0/0",
+      "10.5.5.5 is directly connected to GigabitEthernet0/0",
+      "R1 load-balances 10.5.0.0/16 over two equal paths"
     ],
     "answer": 1,
     "explanation": "'from 2.2.2.2' is the advertising router's ID and 10.0.0.2 the next hop. There is one descriptor block, so one path.",
@@ -1811,9 +1811,9 @@
     "stem": "How does a Cisco router forward IPv4 packets by default?",
     "choices": [
       "Process switching: the CPU looks up every packet",
-      "By flooding",
+      "By flooding each packet out every routed interface",
       "Fast switching using a route cache built by the first packet",
-      "Cisco Express Forwarding (CEF), using tables built in advance from the routing table"
+      "Cisco Express Forwarding, using tables built from the routing table"
     ],
     "answer": 3,
     "explanation": "CEF is on by default. It precomputes a forwarding table (FIB) and an adjacency table, so packets aren't looked up in the routing table one by one.",
@@ -1946,10 +1946,10 @@
     "difficulty": 1,
     "stem": "What is the main drawback of using only static routes in a large network?",
     "choices": [
-      "They don't adapt to failures by themselves and must be maintained by hand on every router",
-      "They use a lot of bandwidth",
+      "They don't adapt to failures and must be maintained by hand",
+      "They use a lot of bandwidth sending periodic updates",
       "They have a high AD",
-      "They can't be used for default routes"
+      "They can't be used for default routes in large networks"
     ],
     "answer": 0,
     "explanation": "Static routes send no updates and need no CPU, but every topology change means manual edits, and a failure isn't routed around unless you planned a backup.",
@@ -1985,9 +1985,9 @@
     "exhibit": "R1#traceroute 10.9.9.9\n  1 10.0.0.2 1 msec\n  2 10.0.0.1 1 msec\n  3 10.0.0.2 2 msec\n  4 10.0.0.1 2 msec\n  5 10.0.0.2 3 msec",
     "choices": [
       "A routing loop: R2's route for 10.9.9.9 points back to R1",
-      "The destination host is down",
-      "An ACL is blocking ICMP",
-      "The TTL is too low"
+      "The destination host is down and not answering",
+      "An ACL on R2 is blocking ICMP to 10.9.9.9",
+      "The TTL is set too low on the packets from the user's PC"
     ],
     "answer": 0,
     "explanation": "The packet bounces between 10.0.0.2 (R2) and 10.0.0.1 (R1) until the TTL runs out. Each router's route points at the other, a common mistake with static routes.",
@@ -2001,9 +2001,9 @@
     "difficulty": 2,
     "stem": "When is a static route with only an exit interface (no next hop) a reasonable choice?",
     "choices": [
-      "On a point-to-point link such as a serial link, where there's only one possible neighbour",
-      "On any Ethernet LAN",
-      "Whenever the next hop is unknown",
+      "On a point-to-point link such as a serial link",
+      "On any Ethernet LAN with a single router on it",
+      "Whenever the next-hop address isn't known yet",
       "Never"
     ],
     "answer": 0,
@@ -2051,8 +2051,8 @@
     "difficulty": 1,
     "stem": "What is OSPF area 0?",
     "choices": [
-      "Any area with only one router",
-      "The area for loopback interfaces",
+      "Any area that contains only one router",
+      "The area reserved for loopback interfaces",
       "An area that only carries default routes",
       "The backbone area, which all other areas must connect to"
     ],
@@ -2069,8 +2069,8 @@
     "stem": "What does every router in one OSPF area have in common?",
     "choices": [
       "An identical link-state database for the area",
-      "The same router ID",
-      "The same routing table",
+      "The same router ID, set by the area's DR",
+      "The same routing table, since SPF gives one answer",
       "The same interface costs"
     ],
     "answer": 0,
@@ -2121,8 +2121,8 @@
     "exhibit": "R1#show ip ospf interface g0/0\nGigabitEthernet0/0 is up, line protocol is up\n  Internet Address 10.0.0.1/24, Area 0\n  Process ID 1, Router ID 1.1.1.1, Network Type BROADCAST, Cost: 1\n  Transmit Delay is 1 sec, State BDR, Priority 1\n  Designated Router (ID) 3.3.3.3, Interface address 10.0.0.3\n  Backup Designated router (ID) 1.1.1.1, Interface address 10.0.0.1\n  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5",
     "choices": [
       "R1 is the DR on this segment",
-      "R1 has priority 0",
-      "The segment is point-to-point",
+      "R1 has priority 0, so it's a DROther",
+      "The segment is point-to-point, with no DR",
       "R1 is the BDR and 3.3.3.3 is the DR"
     ],
     "answer": 3,
@@ -2154,9 +2154,9 @@
     "difficulty": 2,
     "stem": "R1's link to R2 is 10.0.12.1/30 and R2's side is 10.0.12.5/30. Both run OSPF in area 0. What happens?",
     "choices": [
-      "They become neighbours",
-      "They become neighbours but stay in 2-Way",
-      "They don't become neighbours, because they're in different subnets",
+      "They become neighbours, because both are in area 0",
+      "They become neighbours but stay stuck in 2-Way",
+      "They don't become neighbours: different subnets",
       "R2 changes its address"
     ],
     "answer": 2,
@@ -2265,10 +2265,10 @@
     "difficulty": 2,
     "stem": "Why change 'auto-cost reference-bandwidth' in a network with 1, 10 and 100 Gbps links?",
     "choices": [
-      "To reduce Hello traffic",
-      "To speed up convergence",
+      "To reduce Hello traffic on the fastest links",
+      "To speed up convergence after a link fails",
       "So the faster links get lower costs than the slower ones",
-      "To change the administrative distance"
+      "To change OSPF's administrative distance"
     ],
     "answer": 2,
     "explanation": "With the default 100 Mbps reference every link of 100 Mbps or faster costs 1, so OSPF can't tell them apart. Set the same reference on every router.",
@@ -2319,10 +2319,10 @@
     "difficulty": 1,
     "stem": "What problem do first hop redundancy protocols solve?",
     "choices": [
-      "DHCP servers run out of addresses",
-      "Switches loop without spanning tree",
-      "Routers can't share routes",
-      "Hosts can only have one default gateway, so that gateway is a single point of failure"
+      "DHCP servers run out of addresses on busy subnets",
+      "Switches loop without spanning tree on redundant links",
+      "Routers can't share routes without a routing protocol",
+      "Hosts have one default gateway, which is a single point of failure"
     ],
     "answer": 3,
     "explanation": "An FHRP lets two or more routers share a virtual IP and MAC, so the hosts' single gateway setting keeps working if one router fails.",
@@ -2379,9 +2379,9 @@
     "difficulty": 3,
     "stem": "In VRRP, can the virtual IP be the real interface address of one of the routers?",
     "choices": [
-      "No, it must be an unused address",
-      "Yes: that router is the address owner, gets priority 255 and is master while it's up",
-      "Only with HSRP",
+      "No, it must be an unused address in the subnet",
+      "Yes: the address owner gets priority 255 and is master",
+      "Only in HSRP, where the active router owns the IP",
       "Only for IPv6"
     ],
     "answer": 1,
@@ -2396,10 +2396,10 @@
     "difficulty": 2,
     "stem": "In GLBP, what does the active virtual gateway (AVG) do?",
     "choices": [
-      "Forwards all traffic itself",
+      "Forwards all traffic itself while the others stand by",
       "Acts as a backup only",
-      "Answers ARP requests for the virtual IP, handing out the virtual MACs of different forwarders",
-      "Runs the routing protocol for the group"
+      "Answers ARP for the virtual IP with different forwarders' MACs",
+      "Runs the routing protocol on behalf of the group"
     ],
     "answer": 2,
     "explanation": "The AVG assigns virtual MACs to up to four active virtual forwarders (AVFs) and spreads hosts across them in its ARP replies.",
@@ -2414,9 +2414,9 @@
     "stem": "R2 has a lower priority than R1 (192.168.1.2, priority 100) but is active. Based on the exhibit from R2, why?",
     "exhibit": "R2#show standby\nGigabitEthernet0/0 - Group 10\n  State is Active\n  Virtual IP address is 192.168.1.254\n  Active virtual MAC address is 0000.0c07.ac0a\n  Hello time 3 sec, hold time 10 sec\n  Preemption disabled\n  Active router is local\n  Standby router is 192.168.1.2, priority 100 (expires in 9.1 sec)\n  Priority 90 (configured 90)",
     "choices": [
-      "R2 has the higher IP address",
-      "Priority 90 beats 100 in HSRP",
-      "R1 has no preempt configured, so it doesn't take over from R2, which became active first",
+      "R2 has the higher IP address, which beats priority",
+      "In HSRP a lower priority value wins the election",
+      "R1 has no preempt, so it doesn't take over from R2",
       "R2 is using HSRPv2"
     ],
     "answer": 2,

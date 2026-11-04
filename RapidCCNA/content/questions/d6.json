@@ -92,10 +92,10 @@
     "difficulty": 1,
     "stem": "Which task is a typical use of machine learning in network operations?",
     "choices": [
-      "Replacing OSPF",
-      "Assigning VLAN numbers",
+      "Replacing OSPF with learned routes",
+      "Assigning VLAN numbers to new ports",
       "Detecting traffic that deviates from a learned baseline",
-      "Encrypting VPN traffic"
+      "Encrypting VPN traffic between branch sites"
     ],
     "answer": 2,
     "explanation": "ML learns a baseline from telemetry and flags deviations; it doesn't replace routing protocols or cabling.",
@@ -109,9 +109,9 @@
     "difficulty": 2,
     "stem": "What is the main difference between supervised and unsupervised machine learning?",
     "choices": [
-      "Supervised learning trains on labelled data; unsupervised finds patterns in unlabelled data",
+      "Supervised trains on labelled data; unsupervised on unlabelled data",
       "Unsupervised learning needs a human to approve every result",
-      "Supervised learning can only run in the cloud",
+      "Supervised learning can only run on cloud servers",
       "There is no difference"
     ],
     "answer": 0,
@@ -126,10 +126,10 @@
     "difficulty": 2,
     "stem": "A generative AI assistant produces a configuration for a core switch. What should happen before it's applied?",
     "choices": [
-      "Nothing: AI output is always correct",
+      "Nothing: AI output is always correct and safe",
       "An engineer reviews and tests it like any other change",
-      "It should be applied at once to save time",
-      "It must be converted to JSON"
+      "It should be applied at once to save engineer time",
+      "It must be converted to JSON before it's applied"
     ],
     "answer": 1,
     "explanation": "Generated output can be wrong; review and test it, as with any change.",
@@ -143,7 +143,7 @@
     "difficulty": 1,
     "stem": "Which capability forecasts that a link will run out of capacity next month?",
     "choices": [
-      "Syslog",
+      "Syslog correlation",
       "NetFlow sampling",
       "Port security",
       "Predictive analytics"
@@ -196,9 +196,9 @@
     "difficulty": 2,
     "stem": "What does it mean that REST is stateless?",
     "choices": [
-      "Responses are never cached",
-      "The server stores each client's session",
-      "Each request carries everything the server needs, including credentials",
+      "Responses are never cached by clients or proxies",
+      "The server keeps each client's session between requests",
+      "Each request carries everything needed, including credentials",
       "Only GET requests are allowed"
     ],
     "answer": 2,
@@ -286,9 +286,9 @@
     "stem": "What is a benefit of keeping device configurations as code in version control?",
     "choices": [
       "Changes can be reviewed, repeated and rolled back",
-      "Devices no longer need passwords",
-      "It removes the need for testing",
-      "Configurations become encrypted"
+      "Devices no longer need passwords or AAA",
+      "It removes the need to test changes",
+      "The configurations become encrypted at rest"
     ],
     "answer": 0,
     "explanation": "Changes are reviewable, repeatable and can be rolled back.",
@@ -303,10 +303,10 @@
     "stem": "Based on the exhibit, why is this not valid JSON?",
     "exhibit": "{\n  \"hostname\": \"R1\",\n  \"vlans\": [10, 20],\n}",
     "choices": [
-      "Keys must not be quoted",
-      "Arrays can't hold numbers",
+      "Keys must not be quoted in JSON",
+      "Arrays can't hold numbers, only strings",
       "There's a trailing comma after the last item",
-      "Objects need square brackets"
+      "Objects need square brackets, not braces"
     ],
     "answer": 2,
     "explanation": "JSON doesn't allow a comma after the last item in an object or array.",
@@ -375,10 +375,10 @@
     "difficulty": 1,
     "stem": "Which problem does network automation directly address?",
     "choices": [
-      "Cable faults",
-      "RF interference",
-      "Configuration drift and errors from manual, device-by-device changes",
-      "Power failures"
+      "Cable faults and bad connectors in closets",
+      "RF interference between access points",
+      "Errors and drift from manual, device-by-device changes",
+      "Power failures in the data centre"
     ],
     "answer": 2,
     "explanation": "Manual box-by-box changes are slow and inconsistent and cause configuration drift; automation applies changes consistently.",
@@ -392,10 +392,10 @@
     "difficulty": 2,
     "stem": "Which is a challenge of adopting network automation?",
     "choices": [
-      "Devices stop supporting the CLI",
-      "It makes changes slower",
+      "Devices stop supporting the CLI once automated",
+      "It makes routine changes slower to carry out",
       "It requires more devices",
-      "Engineers need new skills, and a wrong change can spread to many devices fast"
+      "Engineers need new skills, and a bad change can spread fast"
     ],
     "answer": 3,
     "explanation": "Teams need new skills (APIs, data formats, programming, tools); a bad automated change can also spread quickly.",
@@ -411,8 +411,8 @@
     "choices": [
       "The VXLAN tunnels between fabric nodes",
       "The physical routed network the fabric is built on",
-      "The policy defined in Catalyst Center",
-      "The wireless network"
+      "The policy and groups defined in Catalyst Center",
+      "The wireless network that clients connect to"
     ],
     "answer": 1,
     "explanation": "The underlay is the physical network of switches and routed links (IS-IS) that carries the overlay tunnels.",
@@ -427,9 +427,9 @@
     "stem": "What does Catalyst Center (DNA Center) offer compared with traditional device-by-device management?",
     "choices": [
       "Central policy, automation and assurance, with a REST API",
-      "A faster console port",
-      "It replaces the data plane on switches",
-      "Free licences for all devices"
+      "A faster console connection to each device",
+      "It replaces the data plane on every managed switch",
+      "Free licences for all managed devices"
     ],
     "answer": 0,
     "explanation": "Central intent-based policy and automation, assurance analytics, software image management and a REST API.",
@@ -494,10 +494,10 @@
     "difficulty": 2,
     "stem": "What is intent-based networking?",
     "choices": [
-      "Writing every device configuration by hand",
-      "Replacing routing protocols with static routes",
+      "Writing every device configuration by hand from a template",
+      "Replacing routing protocols with static routes everywhere",
       "Using only open-source routers",
-      "Stating the outcome you want and letting a controller turn it into device configuration and verify it"
+      "Stating the outcome you want; a controller configures and verifies it"
     ],
     "answer": 3,
     "explanation": "You declare intent (for example 'guests can't reach finance'). The controller translates it into configuration, deploys it and checks that the network behaves that way.",
@@ -574,8 +574,8 @@
     "difficulty": 1,
     "stem": "What does it mean that Ansible is agentless?",
     "choices": [
-      "It needs no software installed on the managed devices; it connects over SSH or APIs",
-      "It runs without a control node",
+      "Nothing is installed on managed devices; it uses SSH or APIs",
+      "It runs without a control node or inventory",
       "It can only read configurations",
       "It pulls its configuration from devices on a schedule"
     ],
@@ -591,7 +591,7 @@
     "difficulty": 2,
     "stem": "How does generative AI differ from predictive AI in network operations?",
     "choices": [
-      "Generative AI creates new content such as configs or summaries; predictive AI forecasts or classifies from past data",
+      "Generative AI creates content such as configs; predictive AI forecasts",
       "Generative AI only works on wireless networks",
       "Predictive AI writes configurations; generative AI detects anomalies",
       "There is no difference"
@@ -608,10 +608,10 @@
     "difficulty": 1,
     "stem": "How does automation reduce outages caused by changes?",
     "choices": [
-      "It removes the need to test changes",
-      "Changes are applied the same way every time, with fewer typing mistakes",
+      "It removes the need to test changes first",
+      "Changes are applied the same way every time",
       "It turns off logging",
-      "It makes devices reboot faster"
+      "It makes devices reboot faster after a change"
     ],
     "answer": 1,
     "explanation": "Most outages come from human error. Templates and tested scripts apply consistent configuration, and can verify the result.",
@@ -625,9 +625,9 @@
     "difficulty": 2,
     "stem": "What is configuration drift?",
     "choices": [
-      "Routes changing because of a flapping link",
-      "Clock differences between devices",
-      "Devices' configurations slowly diverging from the intended standard through one-off manual changes",
+      "Routes changing because a link keeps flapping",
+      "Clock differences between devices without NTP",
+      "Configurations slowly diverging from the standard",
       "Wireless clients roaming between APs"
     ],
     "answer": 2,
@@ -642,9 +642,9 @@
     "difficulty": 1,
     "stem": "Which task shows automation's impact on network management?",
     "choices": [
-      "Drawing the topology by hand",
+      "Drawing the network topology by hand",
       "Typing the same command on each switch's console",
-      "Pushing a new NTP server to 500 switches in minutes and checking each one",
+      "Pushing a new NTP server to 500 switches in minutes",
       "Replacing a failed power supply"
     ],
     "answer": 2,
@@ -676,10 +676,10 @@
     "difficulty": 1,
     "stem": "Which is an example of a northbound interface?",
     "choices": [
-      "NETCONF to a router",
+      "NETCONF from the controller to a router",
       "OpenFlow between the controller and switches",
-      "A REST API that scripts and applications use to talk to the controller",
-      "The console port"
+      "A REST API that scripts and apps use to reach the controller",
+      "The console port on each managed device"
     ],
     "answer": 2,
     "explanation": "Northbound interfaces face up toward applications and admins. Southbound ones (NETCONF, RESTCONF, OpenFlow, CLI/SSH) face the devices.",
@@ -710,10 +710,10 @@
     "difficulty": 2,
     "stem": "What is RESTCONF?",
     "choices": [
-      "A JSON validator",
-      "A routing protocol",
+      "A JSON validator built into IOS XE",
+      "A routing protocol for software-defined WANs",
       "A REST API used only by Catalyst Center",
-      "A REST-style HTTPS API for reading and changing YANG-modelled device data"
+      "An HTTPS API for reading and changing YANG-modelled data"
     ],
     "answer": 3,
     "explanation": "RESTCONF maps HTTP methods (GET, POST, PUT, PATCH, DELETE) onto YANG data on the device.",
@@ -728,9 +728,9 @@
     "stem": "In SD-Access, what does a fabric edge node do?",
     "choices": [
       "Connects endpoints to the fabric, much like an access switch",
-      "Connects the fabric to external networks",
-      "Stores endpoint locations",
-      "Runs Catalyst Center"
+      "Connects the fabric to external networks and the internet",
+      "Stores endpoint locations for the fabric",
+      "Runs Catalyst Center on the switch"
     ],
     "answer": 0,
     "explanation": "Edge nodes attach users and devices. Border nodes connect to outside networks, and control-plane nodes hold the LISP map server.",
@@ -744,10 +744,10 @@
     "difficulty": 2,
     "stem": "What does Catalyst Center Assurance do?",
     "choices": [
-      "Encrypts traffic between sites",
-      "Collects telemetry and uses analytics to show network and client health and suggest fixes",
-      "Assigns IP addresses",
-      "Replaces spanning tree"
+      "Encrypts traffic between sites over the WAN",
+      "Uses telemetry and analytics to show health and suggest fixes",
+      "Assigns IP addresses to endpoints in the fabric",
+      "Replaces spanning tree in the fabric underlay"
     ],
     "answer": 1,
     "explanation": "Assurance turns streaming telemetry, logs and events into health scores, issues and guided remediation.",
@@ -761,9 +761,9 @@
     "difficulty": 2,
     "stem": "What are scalable group tags (SGTs) used for in SD-Access?",
     "choices": [
-      "Marking QoS",
-      "Tagging VLANs on trunks",
-      "Applying policy by user or device group rather than by IP address",
+      "Marking QoS for voice and video traffic",
+      "Tagging VLANs on trunks between fabric nodes",
+      "Applying policy by group rather than by IP address",
       "Numbering VXLAN tunnels"
     ],
     "answer": 2,
@@ -778,9 +778,9 @@
     "difficulty": 1,
     "stem": "What is AIOps?",
     "choices": [
-      "A routing protocol for AI clusters",
-      "Using AI and machine learning on IT operations data to detect, predict and help fix problems",
-      "A cloud VPN service",
+      "A routing protocol designed for AI training clusters",
+      "Applying AI/ML to operations data to detect and fix problems",
+      "A cloud VPN service with AI-based path selection",
       "A replacement for SNMP"
     ],
     "answer": 1,
@@ -795,10 +795,10 @@
     "difficulty": 2,
     "stem": "Why does a machine learning model for network operations need large amounts of good-quality data?",
     "choices": [
-      "Models work the same without data",
-      "Data is only needed for encryption",
-      "It learns patterns from its training data, so poor or too little data gives poor predictions",
-      "To fill the controller's disk"
+      "Models work the same with or without any data",
+      "Data is only needed to encrypt the model",
+      "It learns from its training data, so poor data gives poor results",
+      "To fill the controller's disk with historic logs"
     ],
     "answer": 2,
     "explanation": "Models are only as good as the data they learn from. Incomplete or biased telemetry leads to missed problems or false alarms.",
@@ -812,10 +812,10 @@
     "difficulty": 2,
     "stem": "How does reinforcement learning learn?",
     "choices": [
-      "From labelled examples",
+      "From examples that humans have labelled",
       "By trying actions and being rewarded or penalised for the results",
-      "By grouping unlabelled data",
-      "From a fixed set of rules written by engineers"
+      "By grouping unlabelled data into clusters",
+      "From a fixed set of rules written by engineers in advance"
     ],
     "answer": 1,
     "explanation": "Supervised learning uses labelled data, unsupervised finds structure in unlabelled data, and reinforcement learning learns by trial and reward.",
@@ -848,8 +848,8 @@
     "choices": [
       "/api/v1/network-device",
       "dnac.example.com",
-      "https",
-      "The port number"
+      "https://",
+      "The implied port number, 443"
     ],
     "answer": 0,
     "explanation": "The scheme is https, the host is dnac.example.com and the path names the resource. A query string (?key=value) can filter it.",
@@ -863,9 +863,9 @@
     "difficulty": 2,
     "stem": "What is the difference between HTTP 401 and 403?",
     "choices": [
-      "401: success; 403: redirect",
-      "401: not found; 403: server error",
-      "401: not authenticated (missing or bad credentials); 403: authenticated but not allowed",
+      "401: request succeeded; 403: resource moved elsewhere",
+      "401: resource not found; 403: internal server error",
+      "401: not authenticated; 403: authenticated but not allowed",
       "There is no difference"
     ],
     "answer": 2,
@@ -880,10 +880,10 @@
     "difficulty": 2,
     "stem": "Many REST APIs return a token after you log in. How is it usually sent on later requests?",
     "choices": [
-      "In an HTTP header, such as 'Authorization: Bearer <token>' or a vendor header",
-      "In the URL path",
+      "In an HTTP header, such as Authorization: Bearer",
+      "In the URL path, after the resource name",
       "As a DNS record",
-      "It isn't; you log in on every request"
+      "It isn't; you log in again on every request"
     ],
     "answer": 0,
     "explanation": "Token-based authentication avoids sending the username and password each time. Catalyst Center, for example, uses an X-Auth-Token header.",
@@ -914,10 +914,10 @@
     "difficulty": 2,
     "stem": "What does 'terraform plan' do?",
     "choices": [
-      "Applies the configuration",
+      "Applies the configuration to the managed devices",
       "Shows the changes Terraform would make, without making them",
-      "Deletes all resources",
-      "Installs providers on the devices"
+      "Deletes every resource Terraform manages",
+      "Downloads and installs the providers the configuration needs"
     ],
     "answer": 1,
     "explanation": "plan compares the configuration with the current state and lists the changes; apply carries them out.",
@@ -931,10 +931,10 @@
     "difficulty": 2,
     "stem": "Configuration management tools aim to be idempotent. What does that mean?",
     "choices": [
-      "Changes can't be rolled back",
+      "Changes can't be rolled back once applied",
       "Every run makes the same changes again",
-      "Tasks run in parallel",
-      "Running the same task again changes nothing if the device is already in the desired state"
+      "Tasks always run in parallel on all hosts",
+      "Re-running a task changes nothing if it's already done"
     ],
     "answer": 3,
     "explanation": "Idempotent tasks describe the end state, so they're safe to re-run: they only act where the device differs.",
@@ -949,9 +949,9 @@
     "stem": "How do Puppet and Chef normally get configuration onto managed nodes?",
     "choices": [
       "An agent on each node pulls its configuration from a server",
-      "The server pushes it over SSH with no agent",
-      "Through SNMP sets",
-      "Through syslog"
+      "The server pushes it over SSH, with no agent",
+      "Through SNMP set requests from the server",
+      "Through syslog messages sent to each node"
     ],
     "answer": 0,
     "explanation": "Puppet and Chef are agent-based pull models. Ansible is agentless and pushes over SSH or APIs.",

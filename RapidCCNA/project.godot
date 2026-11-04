@@ -15,6 +15,7 @@ ContentDB="*res://autoload/ContentDB.gd"
 SRS="*res://autoload/SRS.gd"
 Progress="*res://autoload/Progress.gd"
 SessionManager="*res://autoload/SessionManager.gd"
+Display="*res://autoload/Display.gd"
 
 [display]
 
