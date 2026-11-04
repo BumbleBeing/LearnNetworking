@@ -33,6 +33,11 @@
       "heading": "The default route",
       "body": "0.0.0.0/0 matches every destination but is the least specific route, so it's used only when nothing else matches. It shows up as the 'gateway of last resort'. With no default route, a packet that matches nothing is dropped.",
       "example": "ip route 0.0.0.0 0.0.0.0 203.0.113.1\nS*   0.0.0.0/0 [1/0] via 203.0.113.1"
+    },
+    {
+      "heading": "No match, TTL and equal-cost paths",
+      "body": "If nothing matches and there's no default route, the router drops the packet and sends ICMP destination unreachable to the source. Every router that forwards a packet lowers its TTL by one; at zero it drops the packet and sends ICMP time exceeded, which is how traceroute maps a path. Two routes to the same prefix from the same protocol with equal best metric are both installed, and traffic is shared between them (ECMP).",
+      "example": "O    10.9.0.0/16 [110/30] via 10.0.0.2, Gi0/0\n                 [110/30] via 10.0.0.6, Gi0/1"
     }
   ],
   "recall": [

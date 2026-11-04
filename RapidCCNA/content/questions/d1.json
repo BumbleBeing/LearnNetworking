@@ -1006,5 +1006,226 @@
     ],
     "explanation": "The hypervisor creates and runs VMs.",
     "lesson_ref": "d1.virtualization"
+  },
+  {
+    "id": "q.d1.subnet.006",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "subnet_calc",
+    "difficulty": 2,
+    "stem": "Host 10.44.130.77 is configured with a /18 prefix. Fill in its subnet.",
+    "fields": [
+      {
+        "key": "network",
+        "label": "Network address",
+        "placeholder": "a.b.c.d"
+      },
+      {
+        "key": "broadcast",
+        "label": "Broadcast address",
+        "placeholder": "a.b.c.d"
+      },
+      {
+        "key": "first",
+        "label": "First usable host",
+        "placeholder": "a.b.c.d"
+      },
+      {
+        "key": "last",
+        "label": "Last usable host",
+        "placeholder": "a.b.c.d"
+      }
+    ],
+    "answer": {
+      "network": "10.44.128.0",
+      "broadcast": "10.44.191.255",
+      "first": "10.44.128.1",
+      "last": "10.44.191.254"
+    },
+    "explanation": "/18 is 255.255.192.0, so the interesting octet is the third with block size 64: 0, 64, 128, 192. 130 falls in the 128-191 block.",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.subnet.007",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "You need at least 50 subnets from 172.16.0.0/16, each as large as possible. Which mask do you use?",
+    "choices": [
+      "255.255.255.0",
+      "255.255.252.0",
+      "255.255.248.0",
+      "255.255.254.0"
+    ],
+    "answer": 1,
+    "explanation": "50 subnets need 6 borrowed bits (2^6 = 64; 5 bits only give 32). /16 + 6 = /22 = 255.255.252.0, leaving 10 host bits (1022 hosts).",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.subnet.008",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "What is the longest prefix (smallest subnet) that still fits 500 hosts? (for example /24)",
+    "answer": [
+      "/23",
+      "23"
+    ],
+    "explanation": "500 hosts need 9 host bits: 2^9 - 2 = 510. 8 bits only give 254. 32 - 9 = /23.",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.subnet.009",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "mcq_multi",
+    "difficulty": 3,
+    "stem": "Which two subnets overlap with 10.1.4.0/22? (Choose two.)",
+    "choices": [
+      "10.1.2.0/23",
+      "10.1.0.0/21",
+      "10.1.6.0/24",
+      "10.1.8.0/24"
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "10.1.4.0/22 covers 10.1.4.0-10.1.7.255. 10.1.6.0/24 is inside it, and 10.1.0.0/21 (10.1.0.0-10.1.7.255) contains it. 10.1.8.0/24 and 10.1.2.0/23 (2.0-3.255) are outside.",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.ipv6.008",
+    "domain": "d1",
+    "subtopic": "1.9",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which prefix identifies IPv6 multicast addresses?",
+    "choices": [
+      "ff00::/8",
+      "fc00::/7",
+      "fe80::/10",
+      "2000::/3"
+    ],
+    "answer": 0,
+    "explanation": "ff00::/8 is multicast (ff02::1 all nodes, ff02::2 all routers). fe80::/10 is link-local, fc00::/7 unique local and 2000::/3 global unicast.",
+    "lesson_ref": "d1.ipv6"
+  },
+  {
+    "id": "q.d1.ipv6.009",
+    "domain": "d1",
+    "subtopic": "1.8",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does SLAAC let an IPv6 host do?",
+    "choices": [
+      "Build its own global address from the prefix in a router advertisement",
+      "Get its address from a DHCPv6 server",
+      "Translate IPv6 to IPv4",
+      "Find its neighbours' MAC addresses"
+    ],
+    "answer": 0,
+    "explanation": "With SLAAC the host takes the /64 prefix from a router advertisement and adds its own interface ID (EUI-64 or random). Neighbour discovery (NDP) finds MAC addresses.",
+    "lesson_ref": "d1.ipv6"
+  },
+  {
+    "id": "q.d1.client.004",
+    "domain": "d1",
+    "subtopic": "1.10",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which Windows commands release the PC's DHCP address and request a new one?",
+    "choices": [
+      "ipconfig /release then ipconfig /renew",
+      "ipconfig /flushdns then ipconfig /all",
+      "netstat -r then route print",
+      "arp -d then ping"
+    ],
+    "answer": 0,
+    "explanation": "/release gives up the lease and /renew runs DHCP again. /flushdns clears the DNS cache, and /all just displays settings.",
+    "lesson_ref": "d1.client_ip"
+  },
+  {
+    "id": "q.d1.tcpudp.006",
+    "domain": "d1",
+    "subtopic": "1.5",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Which TCP flag does a host set to close its side of a connection gracefully?",
+    "answer": [
+      "FIN"
+    ],
+    "explanation": "FIN starts the four-way close (FIN, ACK, FIN, ACK). RST aborts a connection immediately; SYN opens one.",
+    "lesson_ref": "d1.tcp_udp"
+  },
+  {
+    "id": "q.d1.wifi.005",
+    "domain": "d1",
+    "subtopic": "1.11",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which IEEE standard is marketed as Wi-Fi 6?",
+    "choices": [
+      "802.11n",
+      "802.11ax",
+      "802.11ac",
+      "802.11g"
+    ],
+    "answer": 1,
+    "explanation": "Wi-Fi 4 = 802.11n, Wi-Fi 5 = 802.11ac, Wi-Fi 6 = 802.11ax (2.4 and 5 GHz; 6E adds 6 GHz).",
+    "lesson_ref": "d1.wireless"
+  },
+  {
+    "id": "q.d1.switch.007",
+    "domain": "d1",
+    "subtopic": "1.13",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "By default, how long does a Catalyst switch keep a dynamic MAC address entry with no frames from that address?",
+    "choices": [
+      "300 seconds",
+      "60 seconds",
+      "4 hours",
+      "Until the switch reloads"
+    ],
+    "answer": 0,
+    "explanation": "The default aging time is 300 seconds (5 minutes). The ARP cache on routers is a different timer (4 hours).",
+    "lesson_ref": "d1.switching"
+  },
+  {
+    "id": "q.d1.comp.006",
+    "domain": "d1",
+    "subtopic": "1.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which device gives every port its own collision domain but keeps all ports in the same VLAN in one broadcast domain?",
+    "choices": [
+      "Hub",
+      "Switch",
+      "Router",
+      "Repeater"
+    ],
+    "answer": 1,
+    "explanation": "Each switch port is its own collision domain; broadcasts still flood within the VLAN. Routers separate broadcast domains; hubs and repeaters share one collision domain.",
+    "lesson_ref": "d1.components"
+  },
+  {
+    "id": "q.d1.topo.006",
+    "domain": "d1",
+    "subtopic": "1.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "In a hub-and-spoke WAN, how do two branch sites usually talk to each other?",
+    "choices": [
+      "Through the central hub site",
+      "Directly over a link between the branches",
+      "Through the internet with no VPN",
+      "They can't communicate"
+    ],
+    "answer": 0,
+    "explanation": "Branches (spokes) connect only to the hub, so branch-to-branch traffic passes through it. Full mesh links every site directly, at a higher cost.",
+    "lesson_ref": "d1.topologies"
   }
 ]

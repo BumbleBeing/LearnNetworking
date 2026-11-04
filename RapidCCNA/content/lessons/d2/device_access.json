@@ -29,6 +29,11 @@
     {
       "heading": "In-band, out-of-band and cloud",
       "body": "In-band management uses the production network (SSH to an SVI). Out-of-band uses a separate path such as the console or a dedicated management port and network, so it works during outages. Cloud-managed devices are configured from a vendor dashboard."
+    },
+    {
+      "heading": "Managing a layer 2 switch",
+      "body": "A layer 2 switch has no routed ports, so it gets its management address on an SVI in the management VLAN. To be reachable from other subnets it also needs 'ip default-gateway', because it doesn't route.",
+      "example": "interface vlan 99\n ip address 10.99.0.11 255.255.255.0\n no shutdown\n!\nip default-gateway 10.99.0.1"
     }
   ],
   "recall": [

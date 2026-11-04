@@ -63,6 +63,17 @@ def check_answer(q, where, errors):
             errors.append(f"{where}: subnet_calc field keys must match answer keys")
 
 
+def allocate(domains, n):
+    """Seats per domain by weight, largest remainder (mirrors core/exam/MockExam.gd)."""
+    total = sum(d.get("weight", 0) for d in domains) or 1
+    exact = [n * d.get("weight", 0) / total for d in domains]
+    seats = [int(x) for x in exact]
+    order = sorted(range(len(domains)), key=lambda i: (-(exact[i] - seats[i]), i))
+    for k in range(n - sum(seats)):
+        seats[order[k % len(order)]] += 1
+    return {d["id"]: s for d, s in zip(domains, seats)}
+
+
 def validate(root: Path, min_per_subtopic: int = 0):
     errors = []
     bp = load(root / "blueprint.json", errors)
@@ -197,6 +208,17 @@ def validate(root: Path, min_per_subtopic: int = 0):
         for qid in lesson.get("recall", []):
             if qid not in questions:
                 errors.append(f"{path}: recall question {qid} does not exist")
+
+    mock = bp.get("mock", {})
+    for kind, cfg in (("full", mock), ("quick", mock.get("quick", {}))):
+        n = cfg.get("questions")
+        if not isinstance(n, int) or n <= 0 or not isinstance(cfg.get("minutes"), int):
+            errors.append(f"blueprint: mock {kind} needs integer questions and minutes")
+            continue
+        for d_id, seats in allocate(list(domains.values()), n).items():
+            have = sum(1 for q in questions.values() if q["domain"] == d_id and q["type"] != "cli_task")
+            if have < seats:
+                errors.append(f"mock {kind}: domain {d_id} needs {seats} questions (not counting CLI tasks), has {have}")
 
     if min_per_subtopic:
         counts = {st: 0 for st in subtopics}

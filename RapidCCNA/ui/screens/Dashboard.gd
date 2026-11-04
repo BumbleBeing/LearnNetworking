@@ -77,6 +77,20 @@ func _ready() -> void:
 		UI.label(line, "%d%%  ·  w%d" % [int(round(r * 100)), int(d.weight)], "Muted")
 		UI.bar(right, r, color, 8)
 
+	# Mock exams
+	var mock := UI.card(v, "Mock exam")
+	var mrow := UI.hbox(mock, 12)
+	var minfo := UI.vbox(mrow, 2)
+	minfo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var full := SessionManager.mock_config("full")
+	UI.label(minfo, "A timed exam weighted like the real CCNA, with no feedback until the end. Scored out of 1000; %d passes." % full.pass_scaled, "Body", true)
+	UI.label(minfo, mock_history_line(), "Muted", true)
+	var quick := SessionManager.mock_config("quick")
+	var mbtns := UI.vbox(mrow, 8)
+	mbtns.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	UI.button(mbtns, "Full exam  ·  %dq / %d min" % [full.questions, full.minutes], SessionManager.start_mock.bind("full")).custom_minimum_size.x = 260
+	UI.button(mbtns, "Quick exam  ·  %dq / %d min" % [quick.questions, quick.minutes], SessionManager.start_mock.bind("quick")).custom_minimum_size.x = 260
+
 	# Free training: the daily plan follows exam-area order; anything can be studied on demand.
 	var train := UI.card(v, "Train any topic")
 	var trow := UI.hbox(train, 12)
@@ -87,6 +101,16 @@ func _ready() -> void:
 		ContentDB.labs.values().filter(func(l): return not l.get("hidden", false)).size(), ContentDB.questions.size()], "Muted")
 	var browse := UI.button(trow, "Browse topics", func(): get_tree().change_scene_to_file(SessionManager.SCENES.topics))
 	browse.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+## "Last: 812 (not yet), 2026-11-03  ·  best 870  ·  3 taken", or a first-time hint.
+static func mock_history_line() -> String:
+	var h: Array = Progress.mock_history
+	if h.is_empty():
+		return "No mock exams yet. A quick exam is a good first check."
+	var last: Dictionary = h[-1]
+	var date := Time.get_date_string_from_unix_time(int(last.when))
+	return "Last: %d (%s), %s  ·  best %d  ·  %d taken" % [int(last.scaled), "pass" if last.passed else "not yet", date,
+		Progress.best_mock_score(), h.size()]
 
 func _readiness(domain_id: String) -> float:
 	if preview_readiness.has(domain_id):

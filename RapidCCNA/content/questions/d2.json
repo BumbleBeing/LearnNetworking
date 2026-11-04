@@ -654,5 +654,363 @@
     "answer": 0,
     "explanation": "The General tab selects the interface (dynamic interface/VLAN) for the WLAN; Security, QoS and Advanced cover the rest.",
     "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.vlan.006",
+    "domain": "d2",
+    "subtopic": "2.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which VLAN IDs make up the extended range?",
+    "choices": [
+      "1-1005",
+      "1002-1005",
+      "1006-4094",
+      "4095-8191"
+    ],
+    "answer": 2,
+    "explanation": "Normal range is 1-1005 (1002-1005 are reserved for old Token Ring/FDDI). Extended range is 1006-4094. 0 and 4095 are reserved.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.007",
+    "domain": "d2",
+    "subtopic": "2.1",
+    "type": "mcq_multi",
+    "difficulty": 1,
+    "stem": "Which two statements about VLAN 1 on a Catalyst switch are true? (Choose two.)",
+    "choices": [
+      "VLAN 1 can't be deleted",
+      "VLAN 1 isn't allowed on trunks by default",
+      "VLAN 1 is reserved for voice traffic",
+      "Every port is in VLAN 1 by default"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "VLAN 1 is the default VLAN: all ports start in it, it's allowed on trunks and it's the default native VLAN, and it can't be deleted or renamed. Good practice moves users and the native VLAN off it.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.008",
+    "domain": "d2",
+    "subtopic": "2.1",
+    "type": "exhibit",
+    "difficulty": 1,
+    "stem": "The PC on Fa0/7 should be in SALES but can't reach the other SALES hosts. Based on the exhibit, what fixes it?",
+    "exhibit": "SW1#show vlan brief\nVLAN Name                             Status    Ports\n---- -------------------------------- --------- -------------------------------\n1    default                          active    Fa0/7, Fa0/8, Gi0/2\n10   SALES                            active    Fa0/1, Fa0/2, Fa0/3\n20   VOICE                            active    Fa0/4",
+    "choices": [
+      "Create VLAN 10",
+      "Run 'no shutdown' on VLAN 10",
+      "Make Fa0/7 a trunk",
+      "Configure 'switchport access vlan 10' on Fa0/7"
+    ],
+    "answer": 3,
+    "explanation": "VLAN 10 exists and is active, but Fa0/7 is still in VLAN 1. Assign it with 'switchport access vlan 10'. Trunk ports wouldn't appear in show vlan brief at all.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.009",
+    "domain": "d2",
+    "subtopic": "2.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "An access port in data VLAN 10 connects an IP phone with a PC behind it. Which command makes the phone tag its traffic in VLAN 20?",
+    "choices": [
+      "switchport voice vlan 20",
+      "switchport trunk native vlan 20",
+      "switchport access vlan 20",
+      "switchport trunk allowed vlan 10,20"
+    ],
+    "answer": 0,
+    "explanation": "'switchport voice vlan 20' tells the phone (via CDP) to tag voice frames with VLAN 20, while the PC's frames stay untagged in access VLAN 10. The port stays an access port.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.010",
+    "domain": "d2",
+    "subtopic": "2.2",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Which interface command sets a trunk's native VLAN to 99? (full command)",
+    "answer": [
+      "switchport trunk native vlan 99"
+    ],
+    "explanation": "Set the same native VLAN on both ends. Using an unused VLAN rather than VLAN 1 is a common hardening step.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.011",
+    "domain": "d2",
+    "subtopic": "2.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "How many bytes does an 802.1Q tag add to an Ethernet frame?",
+    "choices": [
+      "2",
+      "8",
+      "4",
+      "26"
+    ],
+    "answer": 2,
+    "explanation": "The 4-byte tag sits after the source MAC: a 2-byte TPID (0x8100) and a 2-byte TCI holding the 3-bit priority (PCP/CoS), 1-bit DEI and 12-bit VLAN ID.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.012",
+    "domain": "d2",
+    "subtopic": "2.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "SW1's end of a trunk uses native VLAN 1 and SW2's end uses native VLAN 99. What happens?",
+    "choices": [
+      "The trunk goes down until they match",
+      "Untagged frames sent in VLAN 1 on SW1 arrive in VLAN 99 on SW2, and CDP reports a native VLAN mismatch",
+      "Both switches switch to native VLAN 1",
+      "Nothing: the native VLAN only matters for DTP"
+    ],
+    "answer": 1,
+    "explanation": "The trunk stays up, but untagged frames cross between VLAN 1 and VLAN 99, joining two broadcast domains. CDP logs '%CDP-4-NATIVE_VLAN_MISMATCH'.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.013",
+    "domain": "d2",
+    "subtopic": "2.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Trunk Gi0/1 allows VLANs 10,20,30. Which command also allows VLAN 40 without removing the others?",
+    "choices": [
+      "switchport trunk allowed vlan 40",
+      "switchport trunk native vlan 40",
+      "switchport trunk allowed vlan add 40",
+      "vlan 40"
+    ],
+    "answer": 2,
+    "explanation": "'allowed vlan 40' replaces the whole list with just VLAN 40, cutting 10, 20 and 30 off. 'add' (and 'remove') edit the existing list.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.disc.006",
+    "domain": "d2",
+    "subtopic": "2.3",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which command turns CDP off on every interface of a device?",
+    "choices": [
+      "no cdp run",
+      "no cdp enable",
+      "no lldp run",
+      "cdp disable all"
+    ],
+    "answer": 0,
+    "explanation": "'no cdp run' is global. 'no cdp enable' is the per-interface command. 'no lldp run' turns off LLDP, not CDP.",
+    "lesson_ref": "d2.discovery"
+  },
+  {
+    "id": "q.d2.disc.007",
+    "domain": "d2",
+    "subtopic": "2.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What are CDP's default advertisement interval and holdtime?",
+    "choices": [
+      "5 s and 15 s",
+      "30 s and 120 s",
+      "10 s and 40 s",
+      "60 s and 180 s"
+    ],
+    "answer": 3,
+    "explanation": "CDP sends every 60 s with a 180 s holdtime. LLDP defaults to 30 s and 120 s (holdtime = 4 x timer).",
+    "lesson_ref": "d2.discovery"
+  },
+  {
+    "id": "q.d2.ec.007",
+    "domain": "d2",
+    "subtopic": "2.4",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two settings must match on every member port for an EtherChannel to bundle? (Choose two.)",
+    "choices": [
+      "Interface description",
+      "CDP enabled or disabled",
+      "Switchport mode and VLANs (access VLAN, or trunk allowed and native VLANs)",
+      "Speed and duplex"
+    ],
+    "answer": [
+      2,
+      3
+    ],
+    "explanation": "Members must agree on speed, duplex, switchport mode and VLAN settings, or they're suspended. Descriptions and CDP settings don't matter.",
+    "lesson_ref": "d2.etherchannel"
+  },
+  {
+    "id": "q.d2.ec.008",
+    "domain": "d2",
+    "subtopic": "2.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which EtherChannel negotiation protocol is Cisco-proprietary?",
+    "choices": [
+      "LACP",
+      "LLDP",
+      "STP",
+      "PAgP"
+    ],
+    "answer": 3,
+    "explanation": "PAgP (modes desirable and auto) is Cisco's. LACP (active and passive) is IEEE 802.3ad, now 802.1AX.",
+    "lesson_ref": "d2.etherchannel"
+  },
+  {
+    "id": "q.d2.stp.008",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each Rapid PVST+ port role to its description.",
+    "answer": {
+      "Root port": "The non-root switch's best path toward the root bridge",
+      "Designated port": "The forwarding port for a segment",
+      "Alternate port": "A discarding backup path to the root, via another switch",
+      "Backup port": "A discarding backup for a designated port on the same shared segment"
+    },
+    "explanation": "Root and designated ports forward. Alternate ports replace a failed root port quickly; backup ports only appear when two ports of one switch share a segment (a hub).",
+    "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.stp.009",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which port states does Rapid STP (802.1w) use?",
+    "choices": [
+      "Active, standby, listen",
+      "Blocking, listening, learning, forwarding, disabled",
+      "Init, 2-Way, Full",
+      "Discarding, learning, forwarding"
+    ],
+    "answer": 3,
+    "explanation": "RSTP merges 802.1D's disabled, blocking and listening into one discarding state. The five-state list belongs to classic 802.1D STP.",
+    "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.stp.010",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does 'spanning-tree guard root' do on a port?",
+    "choices": [
+      "Err-disables the port if any BPDU arrives",
+      "Makes this switch the root bridge",
+      "Blocks the port (root-inconsistent) while it receives superior BPDUs, so the switch behind it can't become root",
+      "Skips the listening and learning states"
+    ],
+    "answer": 2,
+    "explanation": "Root Guard keeps the root where you put it. BPDU Guard (any BPDU, err-disable) is for edge ports, root primary sets priority, and PortFast skips to forwarding.",
+    "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.wlc.010",
+    "domain": "d2",
+    "subtopic": "2.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which architecture manages the APs from a dashboard on the internet while client traffic goes straight onto the local network?",
+    "choices": [
+      "Autonomous APs",
+      "Lightweight APs with an on-premises WLC",
+      "Cloud-based APs (such as Meraki)",
+      "Mesh APs"
+    ],
+    "answer": 2,
+    "explanation": "Cloud-based APs are managed in the cloud but forward data locally. Autonomous APs are configured one by one; lightweight APs tunnel to a WLC with CAPWAP.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.wlc.011",
+    "domain": "d2",
+    "subtopic": "2.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "An autonomous AP serves two SSIDs mapped to VLANs 10 and 20, plus its management VLAN 99. How should its switch port be set up?",
+    "choices": [
+      "Access port in VLAN 99",
+      "Access port in VLAN 10 with voice VLAN 20",
+      "Trunk carrying VLANs 10, 20 and 99",
+      "Routed port with an IP address"
+    ],
+    "answer": 2,
+    "explanation": "An autonomous AP bridges each SSID to its own VLAN, so it needs a trunk. A lightweight AP in local mode tunnels client traffic to the WLC in CAPWAP, so it only needs an access port.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.wlc.012",
+    "domain": "d2",
+    "subtopic": "2.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which kind of WLC interface maps a WLAN's client traffic to a VLAN on the wired network?",
+    "choices": [
+      "Management interface",
+      "Dynamic interface",
+      "Virtual interface",
+      "Service port"
+    ],
+    "answer": 1,
+    "explanation": "Dynamic interfaces are the WLC's VLAN interfaces for client data; each WLAN is tied to one. The management interface is for CAPWAP and admin access, the virtual interface for web auth and DHCP relay, and the service port is out-of-band.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.mgmt.005",
+    "domain": "d2",
+    "subtopic": "2.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "A layer 2 switch has 10.99.0.11/24 on interface vlan 99. Admins on other subnets can't SSH to it. What is missing?",
+    "choices": [
+      "ip routing",
+      "ip default-gateway 10.99.0.1",
+      "A static route on the switch to every admin subnet",
+      "switchport mode trunk on interface vlan 99"
+    ],
+    "answer": 1,
+    "explanation": "A layer 2 switch doesn't route, so it needs a default gateway for its own traffic to other subnets. 'ip routing' would turn it into a layer 3 switch.",
+    "lesson_ref": "d2.device_access"
+  },
+  {
+    "id": "q.d2.mgmt.006",
+    "domain": "d2",
+    "subtopic": "2.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Where do you put the management IP address of a layer 2 switch?",
+    "choices": [
+      "On a physical access port",
+      "On an SVI such as interface vlan 99",
+      "On the console line",
+      "On the VTY lines"
+    ],
+    "answer": 1,
+    "explanation": "Layer 2 switch ports have no IP addresses. The switch gets a management address on a switched virtual interface in its management VLAN.",
+    "lesson_ref": "d2.device_access"
+  },
+  {
+    "id": "q.d2.mgmt.007",
+    "domain": "d2",
+    "subtopic": "2.8",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each way of managing a device to its description.",
+    "answer": {
+      "Console port": "Out-of-band, needs a physical cable",
+      "Telnet": "In-band, sends everything in clear text",
+      "SSH": "In-band, encrypted command line",
+      "HTTPS": "In-band, encrypted web GUI"
+    },
+    "explanation": "Console access works even when the network is down. Telnet, SSH and HTTPS travel over the production network; only SSH and HTTPS are encrypted.",
+    "lesson_ref": "d2.device_access"
   }
 ]

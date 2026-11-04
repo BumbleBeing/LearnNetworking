@@ -1,6 +1,7 @@
 {
   "exam": "CCNA 200-301 v1.1",
-  "mock": {"questions": 100, "minutes": 120, "pass_scaled": 825},
+  "mock": {"questions": 100, "minutes": 120, "pass_scaled": 825,
+           "quick": {"questions": 30, "minutes": 36}},
   "domains": [
     {"id": "d1", "name": "Network Fundamentals", "weight": 20, "subtopics": [
       {"id": "1.1", "name": "Role and function of network components"},

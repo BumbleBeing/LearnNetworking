@@ -534,5 +534,123 @@
     "answer": 0,
     "explanation": "FTP runs over TCP (reliable, faster for big files on lossy links) and supports logins; TFTP is simpler but has no authentication.",
     "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.nat.004",
+    "domain": "d4",
+    "subtopic": "4.1",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "Write the command that translates traffic matching ACL 1 to Gi0/1's address with PAT. (full command)",
+    "answer": [
+      "ip nat inside source list 1 interface gigabitethernet0/1 overload",
+      "ip nat inside source list 1 interface g0/1 overload",
+      "ip nat inside source list 1 interface gi0/1 overload",
+      "ip nat inside source list 1 interface gig0/1 overload"
+    ],
+    "explanation": "'overload' turns dynamic NAT into PAT, so many inside hosts share the one outside address, told apart by port.",
+    "lesson_ref": "d4.nat_basics"
+  },
+  {
+    "id": "q.d4.nat.005",
+    "domain": "d4",
+    "subtopic": "4.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Static NAT maps 192.168.1.10 to 203.0.113.10. What does this allow that PAT alone does not?",
+    "choices": [
+      "Inside hosts reach the internet",
+      "Encrypting traffic to the server",
+      "Saving public addresses",
+      "Hosts on the internet start connections to the server at 203.0.113.10"
+    ],
+    "answer": 3,
+    "explanation": "A static mapping always exists, so outside hosts can reach the inside server. PAT entries are created only by outbound traffic.",
+    "lesson_ref": "d4.nat_basics"
+  },
+  {
+    "id": "q.d4.nat.006",
+    "domain": "d4",
+    "subtopic": "4.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which interface command marks an interface as facing the internal network for NAT?",
+    "choices": [
+      "nat enable",
+      "ip nat outside",
+      "ip nat pool inside",
+      "ip nat inside"
+    ],
+    "answer": 3,
+    "explanation": "Mark the LAN interface 'ip nat inside' and the internet-facing one 'ip nat outside'. Translation happens as traffic crosses between them.",
+    "lesson_ref": "d4.nat_basics"
+  },
+  {
+    "id": "q.d4.ntp.005",
+    "domain": "d4",
+    "subtopic": "4.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which command makes a router serve time from its own clock, advertising stratum 3?",
+    "choices": [
+      "ntp server 3",
+      "ntp peer 3",
+      "ntp master 3",
+      "clock set stratum 3"
+    ],
+    "answer": 2,
+    "explanation": "'ntp master <stratum>' makes the router an authoritative source using its internal clock. 'ntp server <ip>' makes it a client of another server.",
+    "lesson_ref": "d4.ntp"
+  },
+  {
+    "id": "q.d4.dhcp.007",
+    "domain": "d4",
+    "subtopic": "4.3",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which command makes a router use 8.8.8.8 to resolve hostnames?",
+    "choices": [
+      "ip dns server 8.8.8.8",
+      "ip name-server 8.8.8.8",
+      "ip domain name 8.8.8.8",
+      "ip helper-address 8.8.8.8"
+    ],
+    "answer": 1,
+    "explanation": "'ip name-server' sets the DNS server and 'ip domain-lookup' (on by default) enables lookups. 'ip dns server' makes the router itself a DNS server.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.qos.007",
+    "domain": "d4",
+    "subtopic": "4.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "In a network with Cisco IP phones on the access ports, where should the QoS trust boundary usually be?",
+    "choices": [
+      "At the IP phone and access switch port",
+      "At the WAN router",
+      "At the core switches",
+      "At the internet firewall"
+    ],
+    "answer": 0,
+    "explanation": "Trust markings as close to the source as possible, but only from devices you control. The switch trusts the phone's markings (often only when CDP detects a phone) and re-marks the PC's.",
+    "lesson_ref": "d4.qos"
+  },
+  {
+    "id": "q.d4.svc.010",
+    "domain": "d4",
+    "subtopic": "4.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which SNMP message does an agent send to the manager unprompted and without asking for acknowledgement?",
+    "choices": [
+      "Trap",
+      "Set",
+      "Get",
+      "Inform"
+    ],
+    "answer": 0,
+    "explanation": "Traps are unacknowledged notifications. Informs (SNMPv2c and later) are acknowledged by the manager. Get and Set come from the manager.",
+    "lesson_ref": "d4.network_services"
   }
 ]

@@ -3,7 +3,7 @@ extends VBoxContainer
 ## Renders one question of any non-CLI type, grades it and shows an explanation.
 ## Keyboard: 1-9 pick choices, Enter submits / continues.
 
-signal answered(result: Dictionary)   # {id, correct, response, ms}
+signal answered(result: Dictionary)   # {id, correct, response, ms, skipped}
 signal continued
 
 var q: Dictionary = {}
@@ -62,7 +62,7 @@ func _ready() -> void:
 			_get_response = func(): return null
 	var row := UI.hbox(self, 12)
 	_submit = UI.button(row, "Submit", _on_submit, true)
-	_skip = UI.button(row, "I don't know", _on_submit.bind(true))
+	_skip = UI.button(row, "I don't know" if show_feedback else "Skip", _on_submit.bind(true))
 	_notice = UI.label(row, "", "Muted")
 	_notice.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_feedback = UI.vbox(self, 8)
@@ -258,7 +258,7 @@ func _on_submit(skip: bool = false) -> void:
 	_submit.visible = false
 	_skip.visible = false
 	_notice.text = ""
-	answered.emit({"id": q.get("id", ""), "correct": correct, "response": response, "ms": ms})
+	answered.emit({"id": q.get("id", ""), "correct": correct, "response": response, "ms": ms, "skipped": skip})
 	if show_feedback:
 		_show_feedback(correct)
 	else:

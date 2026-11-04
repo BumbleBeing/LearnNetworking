@@ -645,5 +645,278 @@
     "answer": 0,
     "explanation": "PSK is Personal mode; 802.1X is Enterprise mode with a RADIUS server.",
     "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.acl.004",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Write the standard ACL 1 entry that permits the whole 192.168.10.0/24 subnet.",
+    "answer": [
+      "access-list 1 permit 192.168.10.0 0.0.0.255"
+    ],
+    "explanation": "Standard ACLs match the source only. /24 becomes wildcard 0.0.0.255.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.005",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "ACL 101 is applied with 'ip access-group 101 in' on Gi0/0. Which packets does it check?",
+    "choices": [
+      "Only packets the router itself sends out Gi0/0",
+      "Packets leaving Gi0/0, after the routing decision",
+      "Packets arriving on Gi0/0, before the routing decision",
+      "Every packet the router forwards, on all interfaces"
+    ],
+    "answer": 2,
+    "explanation": "'in' filters traffic entering that interface, before it's routed. 'out' filters traffic about to leave it. Router-generated traffic isn't filtered by an outbound ACL.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.006",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "ACL 110 is applied inbound on the LAN interface. Host 10.1.1.20 opens an SSH session to 172.16.0.5. Based on the exhibit, what happens?",
+    "exhibit": "access-list 110 deny   tcp 10.1.1.0 0.0.0.255 any eq 23\naccess-list 110 permit tcp 10.1.1.0 0.0.0.255 any eq 22\naccess-list 110 deny   ip host 10.1.1.20 any\naccess-list 110 permit ip any any",
+    "choices": [
+      "Permitted by line 4",
+      "Denied by line 3",
+      "Denied by the implicit deny",
+      "Permitted by line 2"
+    ],
+    "answer": 3,
+    "explanation": "ACLs are read top-down and the first match decides. SSH is TCP 22 from 10.1.1.0/24, so line 2 permits it. Line 3 never gets a look at it.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.007",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Numbered ACL 10 has three entries. You type 'access-list 10 permit host 10.5.5.5'. Where does the new entry go?",
+    "choices": [
+      "At the top",
+      "At the bottom, after the existing entries",
+      "In order of address",
+      "It replaces the ACL"
+    ],
+    "answer": 1,
+    "explanation": "New entries are appended. To insert one elsewhere, edit the ACL with 'ip access-list standard 10' and give a sequence number.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.008",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_multi",
+    "difficulty": 1,
+    "stem": "Which two things can an extended ACL match that a standard ACL can't? (Choose two.)",
+    "choices": [
+      "TCP or UDP port",
+      "Source MAC address",
+      "Source IP address",
+      "Destination IP address"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "Standard ACLs (1-99, 1300-1999) match the source address only. Extended ACLs (100-199, 2000-2699) add protocol, destination and ports. Neither matches MAC addresses.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.l2.001",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What does DHCP snooping do with a DHCPOFFER that arrives on an untrusted port?",
+    "choices": [
+      "Drops it",
+      "Forwards it, then logs it",
+      "Converts it to a DHCPACK",
+      "Forwards it only to the client that asked"
+    ],
+    "answer": 0,
+    "explanation": "Server messages (OFFER, ACK, NAK) are only accepted on trusted ports, so a rogue DHCP server on an access port is ignored.",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.l2.002",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which feature checks ARP messages against the DHCP snooping binding table and drops forged ones?",
+    "choices": [
+      "Port security",
+      "Dynamic ARP Inspection",
+      "BPDU Guard",
+      "Storm control"
+    ],
+    "answer": 1,
+    "explanation": "DAI compares each ARP's sender MAC/IP with the bindings learned by DHCP snooping on untrusted ports, stopping ARP spoofing (man-in-the-middle) attacks.",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.l2.003",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each layer 2 attack to the feature that mitigates it.",
+    "answer": {
+      "Rogue DHCP server": "DHCP snooping",
+      "ARP spoofing": "Dynamic ARP Inspection",
+      "MAC address table flooding": "Port security",
+      "Unauthorised switch taking over as root": "Root Guard"
+    },
+    "distractors": [
+      "PortFast"
+    ],
+    "explanation": "DHCP snooping filters server messages, DAI validates ARP, port security caps MAC addresses per port and Root Guard blocks superior BPDUs.",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.ps.004",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Which interface command makes port security learn MAC addresses and save them in the running configuration? (full command)",
+    "answer": [
+      "switchport port-security mac-address sticky"
+    ],
+    "explanation": "Sticky addresses are written to the running config. Save it to keep them across a reload.",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.aaa.005",
+    "domain": "d5",
+    "subtopic": "5.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which transport and port does RADIUS use for authentication?",
+    "choices": [
+      "TCP 49",
+      "TCP 443",
+      "UDP 514",
+      "UDP 1812"
+    ],
+    "answer": 3,
+    "explanation": "RADIUS uses UDP 1812 (authentication) and 1813 (accounting). TACACS+ uses TCP 49. UDP 514 is syslog.",
+    "lesson_ref": "d5.aaa"
+  },
+  {
+    "id": "q.d5.aaa.006",
+    "domain": "d5",
+    "subtopic": "5.8",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which method list tries RADIUS first and uses the local user database only if no RADIUS server answers?",
+    "choices": [
+      "aaa authentication login default local group radius",
+      "aaa authentication login default group radius local",
+      "aaa authorization exec default radius",
+      "aaa accounting login radius local"
+    ],
+    "answer": 1,
+    "explanation": "Methods are tried in order, and the next one is used only if the previous one doesn't respond. A RADIUS reject doesn't fall through to local.",
+    "lesson_ref": "d5.aaa"
+  },
+  {
+    "id": "q.d5.sec.006",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Thousands of infected home devices flood a web server with traffic at once. What is this?",
+    "choices": [
+      "A man-in-the-middle attack",
+      "A phishing attack",
+      "A brute-force attack",
+      "A distributed denial-of-service (DDoS) attack by a botnet"
+    ],
+    "answer": 3,
+    "explanation": "Many compromised devices (a botnet) attacking availability at once is a DDoS.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.sec.007",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "An attacker sits between a client and a server, relaying their traffic and reading it on the way. Which attack is this?",
+    "choices": [
+      "Reflection",
+      "Denial of service",
+      "Reconnaissance",
+      "Man-in-the-middle (on-path)"
+    ],
+    "answer": 3,
+    "explanation": "In a man-in-the-middle attack the victims think they talk to each other directly. ARP spoofing and rogue DHCP servers are common ways to get in the path.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.pw.008",
+    "domain": "d5",
+    "subtopic": "5.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Why should users avoid reusing one password across several sites?",
+    "choices": [
+      "A breach of one site gives attackers the password for the others",
+      "Reused passwords expire faster",
+      "Sites reject passwords used elsewhere",
+      "Reuse turns off multi-factor authentication"
+    ],
+    "answer": 0,
+    "explanation": "Stolen password lists are tried against other sites (credential stuffing). Unique passwords, a password manager and MFA limit the damage.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.vpn.005",
+    "domain": "d5",
+    "subtopic": "5.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which remote-access VPN option works in a web browser with no VPN client installed?",
+    "choices": [
+      "DMVPN",
+      "Site-to-site IPsec",
+      "GRE over IPsec",
+      "Clientless SSL/TLS VPN"
+    ],
+    "answer": 3,
+    "explanation": "A clientless TLS VPN gives access to web applications through the browser. Full network access needs a client such as AnyConnect (Cisco Secure Client), over TLS or IPsec.",
+    "lesson_ref": "d5.vpn"
+  },
+  {
+    "id": "q.d5.wsec.007",
+    "domain": "d5",
+    "subtopic": "5.9",
+    "type": "mcq_multi",
+    "difficulty": 1,
+    "stem": "Which two wireless security protocols are considered broken and shouldn't be used? (Choose two.)",
+    "choices": [
+      "WPA3",
+      "WEP",
+      "WPA2 with AES-CCMP",
+      "WPA (TKIP)"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "WEP's RC4 keys can be cracked in minutes and TKIP was a stopgap with known weaknesses. Use WPA2 with AES or, better, WPA3.",
+    "lesson_ref": "d5.wireless_security"
   }
 ]

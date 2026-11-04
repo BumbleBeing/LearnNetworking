@@ -7,6 +7,7 @@ extends Node
 ##   {kind:"tutorial", lesson:id}
 ##   {kind:"drill",    drill:id, guided:bool, count:int, unit:id}
 ##   {kind:"lab",      lab:id}
+##   {kind:"exam",     ids:[question ids], minutes:int, label:String, pass_scaled:int}
 
 const MAX_REVIEWS := 20
 const REVIEW_DRILL_COUNT := 5
@@ -20,6 +21,7 @@ const SCENES := {
 	"tutorial": "res://ui/screens/Tutorial.tscn",
 	"drill": "res://ui/screens/DrillHost.tscn",
 	"lab": "res://ui/screens/Lab.tscn",
+	"exam": "res://ui/screens/MockExam.tscn",
 	"summary": "res://ui/screens/Summary.tscn",
 	"dashboard": "res://ui/screens/Dashboard.tscn",
 	"topics": "res://ui/screens/Topics.tscn",
@@ -31,6 +33,7 @@ var results: Array = []
 var title := ""
 var origin := "dashboard"       # screen to return to: "dashboard" or "topics"
 var _start_ms := 0
+var navigate := true            # tests turn this off to drive screens without scene changes
 
 ## Kept for the dashboard header.
 func build_daily_session(now: int = -1) -> Dictionary:
@@ -117,6 +120,8 @@ func describe(step: Dictionary) -> String:
 			return "%s (%s, %d items)" % [ContentDB.drills[step.drill].title, "guided" if step.guided else "unguided", step.count]
 		"lab":
 			return "Lab: %s" % ContentDB.labs.get(step.lab, {}).get("title", step.lab)
+		"exam":
+			return "%s: %d questions, %d minutes" % [step.label, step.ids.size(), step.minutes]
 	return step.kind
 
 # --- running ---
@@ -159,6 +164,33 @@ func start_quiz(domain_id: String) -> void:
 func start_lab(lab_id: String) -> void:
 	start([{"kind": "lab", "lab": lab_id}], "Lab: " + ContentDB.labs[lab_id].title)
 
+## Mock exam settings from the blueprint: kind is "full" or "quick".
+func mock_config(kind: String) -> Dictionary:
+	var m: Dictionary = ContentDB.blueprint.get("mock", {})
+	var full := {"questions": int(m.get("questions", 100)), "minutes": int(m.get("minutes", 120)),
+		"pass_scaled": int(m.get("pass_scaled", 825)), "label": "Full mock exam"}
+	if kind == "quick":
+		var q: Dictionary = m.get("quick", {})
+		full.questions = int(q.get("questions", 30))
+		full.minutes = int(q.get("minutes", 36))
+		full.label = "Quick mock exam"
+	return full
+
+## A mock exam step with a fresh weighted draw. Pass a seed for repeatable exams.
+func mock_step(kind: String, seed: int = -1) -> Dictionary:
+	var cfg := mock_config(kind)
+	var rng := RandomNumberGenerator.new()
+	if seed >= 0:
+		rng.seed = seed
+	else:
+		rng.randomize()
+	var ids := MockExam.build(ContentDB.questions.values(), ContentDB.domains, cfg.questions, rng, Progress.last_mock_ids)
+	return {"kind": "exam", "ids": ids, "minutes": cfg.minutes, "label": cfg.label, "pass_scaled": cfg.pass_scaled}
+
+func start_mock(kind: String) -> void:
+	var step := mock_step(kind)
+	start([step], step.label)
+
 ## SM-2 quality for a lab attempt: 5 clean, 4 with hints, 1 if the solution was shown or tasks left.
 func lab_quality(done: int, total: int, hints: int, solution_shown: bool) -> int:
 	if solution_shown or done < total:
@@ -197,7 +229,7 @@ func _finish() -> void:
 	_go(SCENES.summary)
 
 func _go(path: String) -> void:
-	if is_inside_tree():
+	if navigate and is_inside_tree():
 		get_tree().change_scene_to_file(path)
 
 # --- grading helpers shared by screens ---

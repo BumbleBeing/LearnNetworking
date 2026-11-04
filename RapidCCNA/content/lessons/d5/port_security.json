@@ -5,7 +5,7 @@
     "5.7"
   ],
   "order": 70,
-  "title": "Port security",
+  "title": "Port security, DHCP snooping and DAI",
   "minutes": 4,
   "cards": [
     {
@@ -27,6 +27,16 @@
       "heading": "Violation modes",
       "body": "When an extra MAC address shows up: protect drops its traffic silently; restrict drops it, logs it and counts the violation; shutdown (the default) puts the port into err-disabled. Recover an err-disabled port with shutdown then no shutdown.",
       "example": "protect   drop                    port stays up\nrestrict  drop + log + counter    port stays up\nshutdown  err-disabled            port goes down (default)"
+    },
+    {
+      "heading": "DHCP snooping",
+      "body": "DHCP snooping stops rogue DHCP servers. Every port is untrusted by default: the switch drops DHCP server messages (OFFER, ACK) that arrive on an untrusted port. Trust only the ports toward the real server. The switch also records each lease (MAC, IP, VLAN, port) in its binding table.",
+      "example": "ip dhcp snooping\nip dhcp snooping vlan 10\n!\ninterface g0/1\n ip dhcp snooping trust\n!\nshow ip dhcp snooping binding"
+    },
+    {
+      "heading": "Dynamic ARP Inspection",
+      "body": "DAI stops ARP spoofing. On untrusted ports the switch checks each ARP message's sender MAC and IP against the DHCP snooping binding table and drops any that don't match. Trust the uplinks. DAI needs DHCP snooping (or static ARP ACLs) to have something to check against.",
+      "example": "ip arp inspection vlan 10\n!\ninterface g0/1\n ip arp inspection trust"
     }
   ],
   "recall": [

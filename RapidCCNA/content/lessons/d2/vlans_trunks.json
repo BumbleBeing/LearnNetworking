@@ -33,6 +33,11 @@
       "heading": "Verify",
       "body": "'show vlan brief' lists VLANs and their access ports (trunk ports aren't listed). 'show interfaces trunk' shows trunk mode, native VLAN and which VLANs are allowed and active.",
       "example": "SW1#show interfaces trunk\nPort   Mode  Encapsulation  Status    Native vlan\nGi0/1  on    802.1q         trunking  99"
+    },
+    {
+      "heading": "Voice VLANs and allowed lists",
+      "body": "An access port can also carry a voice VLAN: the PC's frames stay untagged in the access VLAN and the IP phone tags its own frames with the voice VLAN. On a trunk, 'switchport trunk allowed vlan 10,20' replaces the whole list, so use 'add' or 'remove' to change it. Set the same unused native VLAN on both ends; a mismatch leaks frames between the two VLANs, and CDP reports it.",
+      "example": "interface fa0/5\n switchport mode access\n switchport access vlan 10\n switchport voice vlan 20\n!\ninterface g0/1\n switchport trunk allowed vlan add 40\n switchport trunk native vlan 99"
     }
   ],
   "recall": [
