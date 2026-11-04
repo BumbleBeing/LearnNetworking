@@ -1,0 +1,54 @@
+{
+  "id": "d4.network_services",
+  "domain": "d4",
+  "subtopics": [
+    "4.4",
+    "4.5",
+    "4.9"
+  ],
+  "order": 40,
+  "title": "SNMP, syslog, TFTP and FTP",
+  "minutes": 8,
+  "cards": [
+    {
+      "heading": "SNMP",
+      "body": "An SNMP manager (NMS) polls agents on network devices (Get, GetNext, GetBulk) and can change values (Set) on UDP 161. Agents send unsolicited Traps, or acknowledged Informs, to the manager on UDP 162. The objects are defined in MIBs, each identified by an OID."
+    },
+    {
+      "heading": "SNMP versions",
+      "body": "SNMPv1 and v2c authenticate with a community string sent in clear text: RO for read-only, RW for read-write. SNMPv3 adds users with authentication and encryption (noAuthNoPriv, authNoPriv, authPriv).",
+      "example": "snmp-server community NETMON ro 10   ! read-only, managers allowed by ACL 10\nsnmp-server location HQ-Rack-3"
+    },
+    {
+      "heading": "Syslog",
+      "body": "Devices send event messages to a syslog server on UDP 514. Every message has a facility, a severity (0-7) and a mnemonic. The trap level sends that level and everything more severe.",
+      "example": "%LINK-3-UPDOWN: Interface Gi0/1, changed state to down\n  facility LINK, severity 3 (errors)\n\nlogging host 10.0.0.50\nlogging trap warnings      ! sends 0-4"
+    },
+    {
+      "heading": "Severity levels",
+      "body": "Remember them in order.",
+      "example": "0 emergencies   1 alerts   2 critical   3 errors\n4 warnings      5 notifications\n6 informational 7 debugging"
+    },
+    {
+      "heading": "Where logs go",
+      "body": "Console (on by default), the VTY session (terminal monitor), the RAM buffer (logging buffered, read with show logging) and external servers (logging host). Add timestamps so logs can be correlated.",
+      "example": "service timestamps log datetime msec\nlogging buffered 16384 informational"
+    },
+    {
+      "heading": "TFTP and FTP",
+      "body": "Both copy files such as IOS images and configs. TFTP (UDP 69) is simple: no login, no directory listing, and it does its own acknowledgements. FTP (TCP 21 control, TCP 20 data in active mode) has usernames and passwords but sends them in clear text.",
+      "example": "copy running-config tftp:\ncopy ftp: flash:\nip ftp username admin\nip ftp password s3cret"
+    }
+  ],
+  "recall": [
+    "q.d4.svc.001",
+    "q.d4.svc.002",
+    "q.d4.svc.003"
+  ],
+  "drills": [
+    "service_desk"
+  ],
+  "labs": [
+    "lab.mgmt_services"
+  ]
+}

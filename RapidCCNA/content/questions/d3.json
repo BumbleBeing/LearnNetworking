@@ -249,5 +249,118 @@
     "answer": "router ospf 1 / network 10.0.0.0 0.0.0.3 area 0",
     "explanation": "A network statement whose wildcard matches Gi0/0's address enables OSPF on it in area 0. R2 is already in area 0 with default timers, so they become neighbours.",
     "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.fhrp.001",
+    "domain": "d3",
+    "subtopic": "3.5",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What do hosts use as their default gateway when HSRP is deployed?",
+    "choices": [
+      "The active router's interface address",
+      "The standby router's interface address",
+      "The HSRP virtual IP address",
+      "Both routers' addresses"
+    ],
+    "answer": 2,
+    "explanation": "Hosts point at the virtual IP, which the active router answers for with the virtual MAC.",
+    "lesson_ref": "d3.fhrp"
+  },
+  {
+    "id": "q.d3.fhrp.002",
+    "domain": "d3",
+    "subtopic": "3.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "R2 has HSRP priority 120 and R1 (currently active) has 100. Neither has preempt. What happens?",
+    "choices": [
+      "R1 stays active and R2 is standby",
+      "R2 becomes active immediately",
+      "Both become active",
+      "HSRP stops working until priorities match"
+    ],
+    "answer": 0,
+    "explanation": "Without preempt, a higher-priority router doesn't take over from a working active router.",
+    "lesson_ref": "d3.fhrp"
+  },
+  {
+    "id": "q.d3.fhrp.003",
+    "domain": "d3",
+    "subtopic": "3.5",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "What is the HSRPv1 virtual MAC address for group 10?",
+    "answer": [
+      "0000.0c07.ac0a",
+      "0000.0C07.AC0A"
+    ],
+    "explanation": "HSRPv1 uses 0000.0c07.acXX with the group in hex: 10 = 0x0a.",
+    "lesson_ref": "d3.fhrp"
+  },
+  {
+    "id": "q.d3.fhrp.004",
+    "domain": "d3",
+    "subtopic": "3.5",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each protocol to its description.",
+    "distractors": [
+      "Spanning tree for routers"
+    ],
+    "answer": {
+      "HSRP": "Cisco; one active and one standby router",
+      "VRRP": "Open standard; master and backup routers",
+      "GLBP": "Cisco; several routers forward for one virtual IP"
+    },
+    "explanation": "HSRP and GLBP are Cisco; VRRP is the IETF standard. Only GLBP load-balances with a single group.",
+    "lesson_ref": "d3.fhrp"
+  },
+  {
+    "id": "q.d3.fhrp.005",
+    "domain": "d3",
+    "subtopic": "3.5",
+    "type": "exhibit",
+    "difficulty": 3,
+    "stem": "R1 is active. Its uplink Gi0/1 fails. Based on the exhibit, which router is active afterwards?",
+    "exhibit": "R1: interface g0/0\n  standby 1 ip 10.1.1.1\n  standby 1 priority 110\n  standby 1 preempt\n  standby 1 track g0/1 20\n\nR2: interface g0/0\n  standby 1 ip 10.1.1.1\n  standby 1 preempt",
+    "choices": [
+      "R1, because it has the higher configured priority",
+      "R2, because R1's priority falls to 90 and R2 preempts",
+      "Neither; the group goes down",
+      "R1, because tracking only affects the standby router"
+    ],
+    "answer": 1,
+    "explanation": "R1 drops to 110 - 20 = 90, below R2's 100, and R2 has preempt, so R2 takes over.",
+    "lesson_ref": "d3.fhrp"
+  },
+  {
+    "id": "q.d3.fhrp.006",
+    "domain": "d3",
+    "subtopic": "3.5",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "When HSRP priorities are equal, which router becomes active?",
+    "choices": [
+      "The one with the lowest IP",
+      "The one that booted last",
+      "The one with the lowest MAC",
+      "The one with the highest interface IP"
+    ],
+    "answer": 3,
+    "explanation": "Ties go to the highest IP address on the HSRP interface.",
+    "lesson_ref": "d3.fhrp"
+  },
+  {
+    "id": "q.d3.fhrp.cli.001",
+    "domain": "d3",
+    "subtopic": "3.5",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the R1 command line. R2 is already the HSRP active router for group 5 (virtual IP 10.5.5.1, priority 100). Add R1's Gi0/0 to the group so that R1 becomes active.",
+    "lab": "lab.mini_hsrp",
+    "answer": "interface g0/0 / standby 5 ip 10.5.5.1 / standby 5 priority 150 / standby 5 preempt",
+    "explanation": "R1 needs a higher priority AND preempt: without preempt it stays standby because R2 is already active.",
+    "lesson_ref": "d3.fhrp"
   }
 ]

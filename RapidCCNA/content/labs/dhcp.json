@@ -1,0 +1,154 @@
+{
+  "id": "lab.dhcp",
+  "title": "DHCP server and relay",
+  "domain": "d4",
+  "unit": "d4.dhcp_dns",
+  "subtopics": [
+    "4.3",
+    "4.6"
+  ],
+  "description": "Make R1 the DHCP server for both LANs. PC1 is on R1's own LAN; PC2 is behind R2, which has to relay its requests.",
+  "topology": "   [PC1] ── Gi0/1 [R1] Gi0/0 ── 10.0.12.0/30 ── Gi0/0 [R2] Gi0/1 ── [PC2]\n   192.168.10.0/24   .1        .1          .2           .1   192.168.20.0/24\n\n  Static routes between the routers are already in place.\n  192.168.10.1 - .10 and 192.168.20.1 - .10 are for static devices.",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.12.1 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 192.168.10.1 255.255.255.0",
+        "no shutdown",
+        "ip route 192.168.20.0 255.255.255.0 10.0.12.2"
+      ]
+    },
+    {
+      "name": "R2",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.12.2 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 192.168.20.1 255.255.255.0",
+        "no shutdown",
+        "ip route 0.0.0.0 0.0.0.0 10.0.12.1"
+      ]
+    },
+    {
+      "name": "PC1",
+      "type": "host",
+      "editable": false,
+      "dhcp": true,
+      "interfaces": [
+        {
+          "name": "eth0"
+        }
+      ]
+    },
+    {
+      "name": "PC2",
+      "type": "host",
+      "editable": false,
+      "dhcp": true,
+      "interfaces": [
+        {
+          "name": "eth0"
+        }
+      ]
+    }
+  ],
+  "links": [
+    [
+      "PC1",
+      "eth0",
+      "R1",
+      "g0/1"
+    ],
+    [
+      "R1",
+      "g0/0",
+      "R2",
+      "g0/0"
+    ],
+    [
+      "R2",
+      "g0/1",
+      "PC2",
+      "eth0"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "On R1, exclude 192.168.10.1 - 192.168.10.10 and create pool LAN10 for 192.168.10.0/24 with gateway 192.168.10.1 and DNS server 8.8.8.8. PC1 should get an address.",
+      "hint": "ip dhcp excluded-address 192.168.10.1 192.168.10.10 → ip dhcp pool LAN10 → network 192.168.10.0 255.255.255.0 → default-router 192.168.10.1 → dns-server 8.8.8.8",
+      "checks": [
+        {
+          "device": "PC1",
+          "check": "dhcp_lease",
+          "args": {
+            "subnet": "192.168.10.0/24",
+            "gateway": "192.168.10.1",
+            "dns": "8.8.8.8",
+            "not_below": "192.168.10.11"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Serve PC2 too: add pool LAN20 on R1 (192.168.20.0/24, gateway 192.168.20.1, DNS 8.8.8.8, excluding .1 - .10), then make R2 relay PC2's requests to R1.",
+      "hint": "R1: pool LAN20 as before. R2: interface g0/1 → ip helper-address 10.0.12.1 (the relay goes on the interface facing the clients).",
+      "checks": [
+        {
+          "device": "PC2",
+          "check": "dhcp_lease",
+          "args": {
+            "subnet": "192.168.20.0/24",
+            "gateway": "192.168.20.1",
+            "dns": "8.8.8.8",
+            "not_below": "192.168.20.11"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "ip dhcp excluded-address 192.168.10.1 192.168.10.10",
+      "ip dhcp excluded-address 192.168.20.1 192.168.20.10",
+      "ip dhcp pool LAN10",
+      "network 192.168.10.0 255.255.255.0",
+      "default-router 192.168.10.1",
+      "dns-server 8.8.8.8",
+      "ip dhcp pool LAN20",
+      "network 192.168.20.0 255.255.255.0",
+      "default-router 192.168.20.1",
+      "dns-server 8.8.8.8",
+      "end"
+    ],
+    "R2": [
+      "interface g0/1",
+      "ip helper-address 10.0.12.1",
+      "end"
+    ]
+  }
+}

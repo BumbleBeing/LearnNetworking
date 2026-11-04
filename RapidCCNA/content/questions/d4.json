@@ -51,5 +51,440 @@
     ],
     "explanation": "Inside local is the PC's own address, inside global is the PC after translation (R1's outside address), and outside global is the server's real address.",
     "lesson_ref": "d4.nat_basics"
+  },
+  {
+    "id": "q.d4.ntp.001",
+    "domain": "d4",
+    "subtopic": "4.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What does a lower NTP stratum number mean?",
+    "choices": [
+      "The server is closer to an authoritative time source",
+      "The server is less trustworthy",
+      "The server is newer",
+      "The server uses TCP"
+    ],
+    "answer": 0,
+    "explanation": "Stratum counts hops from an authoritative clock: stratum 1 is directly attached to one. Lower is more accurate; 16 means unsynchronised.",
+    "lesson_ref": "d4.ntp"
+  },
+  {
+    "id": "q.d4.ntp.002",
+    "domain": "d4",
+    "subtopic": "4.2",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Which global command makes a router get its time from the NTP server 10.0.0.100? (full command)",
+    "answer": [
+      "ntp server 10.0.0.100"
+    ],
+    "explanation": "'ntp server <address>' makes the router an NTP client of that server.",
+    "lesson_ref": "d4.ntp"
+  },
+  {
+    "id": "q.d4.ntp.003",
+    "domain": "d4",
+    "subtopic": "4.2",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, which statement is true?",
+    "exhibit": "R1#show ntp associations\n  address         ref clock       st   when   poll reach  delay  offset   disp\n*~10.0.0.100      10.9.9.1        2    33     64   377  1.204   0.512   0.950\n ~10.0.0.101      .INIT.          16   -      64   0    0.000   0.000   15937.\n * sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured",
+    "choices": [
+      "R1 is synchronised to 10.0.0.101",
+      "R1 is a stratum 1 server",
+      "R1 is synchronised to 10.0.0.100, a stratum 2 server",
+      "Neither server is reachable"
+    ],
+    "answer": 2,
+    "explanation": "The asterisk marks the server the router is synchronised to (sys.peer); stratum 2 means that server is itself synced to a stratum 1 clock.",
+    "lesson_ref": "d4.ntp"
+  },
+  {
+    "id": "q.d4.ntp.004",
+    "domain": "d4",
+    "subtopic": "4.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which transport and port does NTP use?",
+    "choices": [
+      "TCP 123",
+      "UDP 161",
+      "TCP 37",
+      "UDP 123"
+    ],
+    "answer": 3,
+    "explanation": "NTP uses UDP 123.",
+    "lesson_ref": "d4.ntp"
+  },
+  {
+    "id": "q.d4.dhcp.001",
+    "domain": "d4",
+    "subtopic": "4.3",
+    "type": "drag_order",
+    "difficulty": 1,
+    "stem": "Put the DHCP messages in order.",
+    "answer": [
+      "DISCOVER",
+      "OFFER",
+      "REQUEST",
+      "ACK"
+    ],
+    "explanation": "DORA: the client discovers, the server offers, the client requests, the server acknowledges.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.dhcp.002",
+    "domain": "d4",
+    "subtopic": "4.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "PCs in VLAN 20 can't get addresses from the DHCP server at 10.0.0.10 on another subnet. What should be configured?",
+    "choices": [
+      "ip dhcp pool on every switch",
+      "ip helper-address 10.0.0.10 on the VLAN 20 gateway interface",
+      "A static route on the DHCP server to 255.255.255.255",
+      "ip address dhcp on the PCs' switch ports"
+    ],
+    "answer": 1,
+    "explanation": "The clients' gateway interface must relay their broadcasts: 'ip helper-address 10.0.0.10' on the VLAN 20 SVI or router subinterface.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.dhcp.003",
+    "domain": "d4",
+    "subtopic": "4.3",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each DNS record type to what it holds.",
+    "answer": {
+      "A": "An IPv4 address for a name",
+      "AAAA": "An IPv6 address for a name",
+      "CNAME": "An alias pointing to another name",
+      "MX": "The mail server for a domain",
+      "PTR": "A name for an address (reverse lookup)"
+    },
+    "explanation": "A/AAAA forward lookups, CNAME aliases, MX mail, PTR reverse.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.dhcp.004",
+    "domain": "d4",
+    "subtopic": "4.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Why would you configure 'ip dhcp excluded-address 192.168.10.1 192.168.10.10'?",
+    "choices": [
+      "So the router doesn't lease addresses used by statically addressed devices",
+      "To block those hosts from the network",
+      "To reserve them for DHCP relay agents",
+      "To make those the DNS servers"
+    ],
+    "answer": 0,
+    "explanation": "Exclusions stop the pool leasing addresses already assigned statically, such as the gateway and servers.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.dhcp.005",
+    "domain": "d4",
+    "subtopic": "4.6",
+    "type": "mcq_single",
+    "difficulty": 3,
+    "stem": "How does a DHCP server know which pool to use for a relayed request?",
+    "choices": [
+      "From the client's MAC address",
+      "From the source port",
+      "From the relay agent address (giaddr)",
+      "From the client's hostname"
+    ],
+    "answer": 2,
+    "explanation": "The relay agent writes its receiving interface address into the giaddr field; the server picks the pool that contains it.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.dhcp.006",
+    "domain": "d4",
+    "subtopic": "4.6",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "Which interface command makes a router interface get its own IP address from a DHCP server? (full command)",
+    "answer": [
+      "ip address dhcp"
+    ],
+    "explanation": "'ip address dhcp' makes the interface a DHCP client, common on links to an ISP.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.svc.001",
+    "domain": "d4",
+    "subtopic": "4.5",
+    "type": "drag_order",
+    "difficulty": 1,
+    "stem": "Put the syslog severities in order from most to least severe.",
+    "answer": [
+      "emergencies",
+      "alerts",
+      "critical",
+      "errors",
+      "warnings",
+      "notifications",
+      "informational",
+      "debugging"
+    ],
+    "explanation": "0 emergencies to 7 debugging.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.002",
+    "domain": "d4",
+    "subtopic": "4.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "With 'logging trap warnings', which message is sent to the syslog server?",
+    "choices": [
+      "%SYS-5-CONFIG_I: Configured from console",
+      "%LINK-3-UPDOWN: Interface Gi0/1, changed state to down",
+      "%SEC-6-IPACCESSLOGP: list 101 denied tcp",
+      "%SYS-7-DEBUG: ICMP echo reply sent"
+    ],
+    "answer": 1,
+    "explanation": "warnings = 4, so levels 0-4 are sent. LINK-3 is severity 3 (errors).",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.003",
+    "domain": "d4",
+    "subtopic": "4.4",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two statements about SNMP are true? (Choose two.)",
+    "choices": [
+      "The manager polls agents on UDP 161",
+      "SNMPv2c encrypts community strings",
+      "Traps are sent by the manager to agents",
+      "Agents send traps to the manager on UDP 162"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "Managers poll agents on UDP 161; agents send traps to UDP 162. SNMPv3 (not v2c) adds encryption.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.004",
+    "domain": "d4",
+    "subtopic": "4.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which SNMP version should be used to authenticate and encrypt management traffic?",
+    "choices": [
+      "SNMPv1",
+      "SNMPv2c",
+      "SNMPv3",
+      "Any version with an RW community"
+    ],
+    "answer": 2,
+    "explanation": "Only SNMPv3 offers authentication and encryption (authPriv).",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.005",
+    "domain": "d4",
+    "subtopic": "4.9",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each statement to TFTP or FTP.",
+    "answer": {
+      "Uses UDP 69": "TFTP",
+      "Requires a username and password": "FTP",
+      "Uses TCP 21 for control": "FTP",
+      "Can't list directories": "TFTP"
+    },
+    "explanation": "TFTP is minimal (UDP 69, no authentication or listing). FTP uses TCP 21/20 and logs in (in clear text).",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.006",
+    "domain": "d4",
+    "subtopic": "4.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which command saves the running configuration to a TFTP server?",
+    "choices": [
+      "copy running-config tftp:",
+      "copy tftp: running-config",
+      "write tftp",
+      "tftp put startup-config"
+    ],
+    "answer": 0,
+    "explanation": "copy <source> <destination>: the router then asks for the server address and file name.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.qos.001",
+    "domain": "d4",
+    "subtopic": "4.7",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "What decimal DSCP value is EF (Expedited Forwarding)?",
+    "answer": "46",
+    "explanation": "EF = 46, the standard marking for voice.",
+    "lesson_ref": "d4.qos"
+  },
+  {
+    "id": "q.d4.qos.002",
+    "domain": "d4",
+    "subtopic": "4.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What is the difference between policing and shaping?",
+    "choices": [
+      "Policing buffers excess traffic; shaping drops it",
+      "Policing drops or re-marks excess traffic; shaping buffers it and sends it later",
+      "Shaping only works inbound",
+      "They're the same"
+    ],
+    "answer": 1,
+    "explanation": "Policing drops or re-marks traffic above the rate; shaping queues it and sends it later.",
+    "lesson_ref": "d4.qos"
+  },
+  {
+    "id": "q.d4.qos.003",
+    "domain": "d4",
+    "subtopic": "4.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which queuing method gives voice a strict-priority queue on top of class-based bandwidth guarantees?",
+    "choices": [
+      "FIFO",
+      "WRED",
+      "CBWFQ",
+      "LLQ"
+    ],
+    "answer": 3,
+    "explanation": "LLQ = CBWFQ plus a policed strict-priority queue.",
+    "lesson_ref": "d4.qos"
+  },
+  {
+    "id": "q.d4.qos.004",
+    "domain": "d4",
+    "subtopic": "4.7",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "What decimal DSCP value is AF31?",
+    "answer": "26",
+    "explanation": "AFxy = 8x + 2y = 8 × 3 + 2 × 1 = 26.",
+    "lesson_ref": "d4.qos"
+  },
+  {
+    "id": "q.d4.qos.005",
+    "domain": "d4",
+    "subtopic": "4.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does WRED do?",
+    "choices": [
+      "Prioritises voice above all other traffic",
+      "Encrypts queued packets",
+      "Drops packets early and selectively to avoid tail drop and TCP global synchronisation",
+      "Shapes traffic to a contracted rate"
+    ],
+    "answer": 2,
+    "explanation": "WRED randomly drops some packets before a queue is full, more for higher drop-probability markings, so TCP senders slow down gradually instead of all at once.",
+    "lesson_ref": "d4.qos"
+  },
+  {
+    "id": "q.d4.qos.006",
+    "domain": "d4",
+    "subtopic": "4.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "How many bits does the 802.1Q CoS field have?",
+    "choices": [
+      "3",
+      "6",
+      "8",
+      "12"
+    ],
+    "answer": 0,
+    "explanation": "CoS (802.1p priority) is 3 bits, values 0-7. DSCP is 6 bits.",
+    "lesson_ref": "d4.qos"
+  },
+  {
+    "id": "q.d4.ssh.001",
+    "domain": "d4",
+    "subtopic": "4.8",
+    "type": "drag_order",
+    "difficulty": 2,
+    "stem": "Put the SSH setup steps in a working order.",
+    "answer": [
+      "hostname R1",
+      "ip domain name example.com",
+      "crypto key generate rsa modulus 2048",
+      "username admin secret Str0ng!",
+      "line vty 0 4 / login local / transport input ssh"
+    ],
+    "explanation": "The RSA key needs the hostname and domain name first; the VTY lines then use the local user and SSH only.",
+    "lesson_ref": "d4.ssh"
+  },
+  {
+    "id": "q.d4.ssh.002",
+    "domain": "d4",
+    "subtopic": "4.8",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "'crypto key generate rsa' returns '% Please define a domain-name first.' What's missing?",
+    "choices": [
+      "A local username",
+      "ip domain name",
+      "transport input ssh",
+      "ip ssh version 2"
+    ],
+    "answer": 1,
+    "explanation": "The key is named hostname.domain, so 'ip domain name' must be set first.",
+    "lesson_ref": "d4.ssh"
+  },
+  {
+    "id": "q.d4.ssh.003",
+    "domain": "d4",
+    "subtopic": "4.8",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which line configuration allows only SSH logins checked against the local user database?",
+    "choices": [
+      "login / transport input all",
+      "password cisco / login",
+      "login local / transport input telnet ssh",
+      "login local / transport input ssh"
+    ],
+    "answer": 3,
+    "explanation": "login local uses the username database; transport input ssh blocks Telnet.",
+    "lesson_ref": "d4.ssh"
+  },
+  {
+    "id": "q.d4.ssh.004",
+    "domain": "d4",
+    "subtopic": "4.8",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "What is the minimum RSA modulus size, in bits, for SSH version 2 on IOS?",
+    "answer": [
+      "768"
+    ],
+    "explanation": "SSHv2 needs a key of at least 768 bits; 2048 is the usual choice.",
+    "lesson_ref": "d4.ssh"
+  },
+  {
+    "id": "q.d4.dhcp.cli.001",
+    "domain": "d4",
+    "subtopic": "4.6",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the R1 command line. A PC on Gi0/1 (192.168.30.0/24) needs an address from the DHCP server at 10.0.0.10. Configure R1 to relay the requests.",
+    "lab": "lab.mini_helper",
+    "answer": "interface g0/1 / ip helper-address 10.0.0.10",
+    "explanation": "The relay goes on the interface in the clients' subnet; it forwards their broadcasts as unicast to the server.",
+    "lesson_ref": "d4.dhcp_dns"
   }
 ]

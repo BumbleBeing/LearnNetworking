@@ -12,7 +12,7 @@ All question content is original and written in exam style. The game does not us
 | M2 | Networking logic engine (IPv4/IPv6, routing, ACL, NAT) + its drills | ✅ |
 | M3 | Scoped IOS CLI simulator + config labs | ✅ |
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | ✅ |
-| M5 | All tutorials and remaining mini-games | in progress (part 1 of 3: domains 1-2 done) |
+| M5 | All tutorials and remaining mini-games | in progress (parts 1-2 of 3: domains 1-4 done) |
 | M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | |
 | M7 | Accessibility, web tuning, content QA | |
 
@@ -43,6 +43,8 @@ Every answer shows an explanation. A miss always shows the worked solution. Dril
 | IPv6 Workshop | IPv6 addressing | Compress (strict RFC 5952: a valid but longer form is marked wrong, with the reason) and expand addresses, address types, /48-/64 prefixes, EUI-64 addresses |
 | Interface Doctor | Cabling and interface problems | Straight-through, crossover or rollover; UTP vs multimode vs single-mode by distance; autonegotiation fallback; diagnosing `show interfaces` (shutdown, no link, duplex mismatch from either side, bad cable, err-disabled) |
 | Wi-Fi Channel Planner | Wireless principles | Pick the free 2.4 GHz channel for a new AP on a floor plan, channel overlap, 2.4 vs 5 GHz, 802.11 standards, SSID/BSSID/BSS/ESS |
+| HSRP Election | First hop redundancy | Who's active (priority, then IP), preempt timelines, whether a tracking decrement really hands over, virtual MACs (HSRPv1/v2, VRRP) both ways, HSRP vs VRRP vs GLBP |
+| Service Desk | SNMP, syslog, TFTP and FTP | Service ports (with same-number wrong-transport distractors), syslog severities, whether a real log message passes `logging trap`, DSCP/AF arithmetic, DHCP DORA and relay, SNMP |
 | OSPF Navigator | Single-area OSPFv2 | Router ID order, DR/BDR election, why two routers won't peer, interface cost and reference bandwidth, best path and ECMP, network statements, the neighbour table |
 
 Generated drills share one screen (`minigames/GenDrill.gd`). A drill is a `drills.json` entry plus a generator script with `make_item(rng)` (and `check()` for typed answers), so adding one needs no UI code.
@@ -63,6 +65,9 @@ The M4 puzzles sit on pure engines in `core/net`: `STP` (bridge IDs, root and de
 - **Show commands:** `running-config [interface]`, `ip interface brief`, `vlan brief`, `interfaces trunk`, `ip route [ospf]`, `access-lists`, `ip nat translations`, `port-security [interface]`, `ip ospf neighbor`, `ip ospf interface [brief | <if>]`, `ip protocols`, `spanning-tree [vlan N]`, `etherchannel summary`.
 - **Realistic behaviour:** IOS-like rejections such as "Bad mask", "overlaps with", "is a dynamic port" and "Access VLAN does not exist. Creating vlan".
 - **CDP and LLDP:** `cdp run`, `lldp run`, per-port `cdp enable` and `lldp transmit/receive`; `show cdp [neighbors [detail]]`, `show lldp [neighbors]`. Neighbours come from the lab's cabling. Lab devices can be non-Cisco (LLDP-only APs, phones) with their own platform and capabilities.
+- **HSRP:** `standby N ip/priority/preempt/track`, `standby version 2`; `show standby [brief]`. Elections are stateful and advance after every command: a higher-priority router that joins later stays standby until it has `preempt`, and tracking hands the role over when an uplink fails. The active router answers for the virtual IP.
+- **DHCP:** pools (`network`, `default-router`, `dns-server`), `ip dhcp excluded-address`, `ip helper-address`; `show ip dhcp binding/pool`. DHCP-client hosts lease addresses from their gateway's pool or through a relay, which works only if relay and server can reach each other both ways.
+- **Management services:** `ip domain name`, `crypto key generate rsa` (with the IOS hostname/domain prerequisites), `ip ssh version 2`, `username ... secret`, `ntp server`, `logging host/trap`, `service timestamps`, `snmp-server community/location/contact`; `show ip ssh`, `show ntp associations`, `show logging`.
 - **`ping`:** follows each device's routing table hop by hop across the lab's links, so it fails if either direction is missing a route.
 
 A lab (`content/labs/*.json`) defines devices, startup config, links, tasks and a model solution. Tasks are checked live against device **behaviour** (`route_to`, `ping`, `nat_translates`, `access_port`, `ospf_neighbor`, `etherchannel`, `stp_root`, `stp_role`...), so any valid configuration passes. Tests apply every lab's solution and require all tasks to pass, and require none to pass beforehand. `cli_task` questions embed a small lab in a question for the mock exam.
@@ -78,6 +83,10 @@ A lab (`content/labs/*.json`) defines devices, startup config, links, tasks and 
 | Single-area OSPF (router ID, network statements, passive LAN, default-information originate) | Single-area OSPFv2 (3.4) |
 | Fix an OSPF adjacency (troubleshooting: area and Hello mismatch) | Single-area OSPFv2 (3.4) |
 | Map the network with CDP and LLDP (unlabelled ports, a non-Cisco AP, a public kiosk port) | CDP and LLDP (2.3) |
+| HSRP with preempt and tracking | First hop redundancy (3.5) |
+| DHCP server and relay | DHCP and DNS (4.3, 4.6) |
+| Time, logs and monitoring (NTP, syslog, read-only SNMP limited by an ACL) | SNMP, syslog, TFTP and FTP (4.2, 4.4, 4.5) |
+| SSH-only remote access | SSH remote access (4.8) |
 
 ![M3 labs](docs/ui/m3.png)
 

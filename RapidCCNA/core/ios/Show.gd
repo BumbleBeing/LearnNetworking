@@ -61,6 +61,20 @@ static func _iface_block(d: Device, n: String) -> PackedStringArray:
 			b.append(" ip access-group %s in" % i.acl_in)
 		if not i.acl_out.is_empty():
 			b.append(" ip access-group %s out" % i.acl_out)
+		for h in i.helpers:
+			b.append(" ip helper-address " + h)
+		if i.hsrp_version != 1:
+			b.append(" standby version %d" % i.hsrp_version)
+		for g in i.hsrp:
+			var c: Dictionary = i.hsrp[g]
+			if not c.ip.is_empty():
+				b.append(" standby %d ip %s" % [int(g), c.ip])
+			if int(c.priority) != HsrpSim.DEFAULT_PRIORITY:
+				b.append(" standby %d priority %d" % [int(g), int(c.priority)])
+			if c.preempt:
+				b.append(" standby %d preempt" % int(g))
+			for t in c.track:
+				b.append(" standby %d track %s %d" % [int(g), t[0], int(t[1])])
 		if i.ospf_hello != 10:
 			b.append(" ip ospf hello-interval %d" % i.ospf_hello)
 		if i.ospf_dead != 4 * i.ospf_hello:
@@ -85,6 +99,27 @@ static func running_config(d: Device) -> String:
 	var out := PackedStringArray(["Building configuration...", "", "Current configuration:", "!", "hostname " + d.hostname, "!"])
 	if d.password_encryption:
 		out.append_array(["service password-encryption", "!"])
+	if d.log_timestamps:
+		out.append_array(["service timestamps log datetime msec", "!"])
+	if not d.domain_name.is_empty():
+		out.append("ip domain name " + d.domain_name)
+	for ex in d.dhcp_excluded:
+		out.append("ip dhcp excluded-address %s%s" % [IPv4.to_str(ex[0]), "" if ex[0] == ex[1] else " " + IPv4.to_str(ex[1])])
+	for name in d.dhcp_pools:
+		var p: Dictionary = d.dhcp_pools[name]
+		out.append("ip dhcp pool " + name)
+		if not p.network.is_empty():
+			out.append(" network %s %s" % [p.network, p.mask])
+		if not p.router.is_empty():
+			out.append(" default-router " + p.router)
+		if not p.dns.is_empty():
+			out.append(" dns-server " + p.dns)
+	for u in d.users:
+		var usr: Dictionary = d.users[u]
+		out.append("username %s%s secret 9 $9$nhEmQVczB7dqsO$X.HsgL6x1il0RxkOSSvyQYwucySCt7qFm4v7pqCxkKM" % [u, " privilege %d" % usr.privilege if usr.privilege != 1 else ""])
+	if d.ssh_version != 0:
+		out.append("ip ssh version %d" % d.ssh_version)
+	out.append("!")
 	if not d.cdp_run:
 		out.append_array(["no cdp run", "!"])
 	if d.lldp_run:
@@ -141,6 +176,17 @@ static func running_config(d: Device) -> String:
 			out.append("ip access-list %s %s" % ["standard" if acl.standard else "extended", name])
 			for e in acl.entries:
 				out.append(" " + ACL.to_str(e))
+	for h in d.logging_hosts:
+		out.append("logging host " + h)
+	if d.logging_trap != "informational":
+		out.append("logging trap " + d.logging_trap)
+	for c in d.snmp_communities:
+		var sc: Dictionary = d.snmp_communities[c]
+		out.append("snmp-server community %s %s%s" % [c, sc.access.to_upper(), " " + sc.acl if not sc.acl.is_empty() else ""])
+	if not d.snmp_location.is_empty():
+		out.append("snmp-server location " + d.snmp_location)
+	if not d.snmp_contact.is_empty():
+		out.append("snmp-server contact " + d.snmp_contact)
 	out.append("!")
 	for key in d.lines:
 		var l: Dictionary = d.lines[key]
@@ -152,6 +198,8 @@ static func running_config(d: Device) -> String:
 		if not l.transport.is_empty():
 			out.append(" transport input " + l.transport)
 	out.append("!")
+	for ntp in d.ntp_servers:
+		out.append("ntp server " + ntp)
 	out.append("end")
 	return "\n".join(out)
 

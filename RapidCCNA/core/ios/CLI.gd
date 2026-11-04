@@ -5,7 +5,7 @@ extends RefCounted
 
 var device: Device
 var network: Network
-var mode := "user"              # user | priv | config | if | vlan | line | nacl | router
+var mode := "user"              # user | priv | config | if | vlan | line | nacl | router | dhcp
 var ctx: Dictionary = {}        # ifaces:Array, range:bool, vlan:int, acl:String, line:String
 var history: Array = []
 var cmds := Commands.new()
@@ -24,6 +24,7 @@ func prompt() -> String:
 		"vlan": return h + "(config-vlan)#"
 		"line": return h + "(config-line)#"
 		"router": return h + "(config-router)#"
+		"dhcp": return h + "(dhcp-config)#"
 		"nacl": return h + ("(config-std-nacl)#" if device.acls.get(ctx.get("acl", ""), {}).get("standard", false) else "(config-ext-nacl)#")
 	return h + ">"
 
@@ -32,6 +33,12 @@ static func tokenize(line: String) -> Array:
 
 ## Runs one command line and returns its output ("" for silent success).
 func execute(line: String) -> String:
+	var out := _execute(line)
+	if network != null:
+		HsrpSim.settle(network)   # protocols react to each change in order
+	return out
+
+func _execute(line: String) -> String:
 	var raw := line.strip_edges()
 	if raw.is_empty():
 		return ""

@@ -5,6 +5,7 @@ extends RefCounted
 
 var devices: Dictionary = {}   # hostname -> Device
 var links: Array = []          # [devA, ifA, devB, ifB]
+var hsrp_state: Dictionary = {} # HSRP group key -> active router (see HsrpSim)
 
 static func build(lab: Dictionary) -> Network:
 	var net := Network.new()
@@ -29,7 +30,7 @@ func owns(dev: String, ip: String) -> bool:
 		var i: Dictionary = d.interfaces[n]
 		if i.ip == ip and d.is_up(i):
 			return true
-	return false
+	return d.type == "router" and HsrpSim.owns_vip(self, dev, ip)
 
 ## Follows routes from `from` towards dest. Returns {ok, path, reason}.
 func forward(from: String, dest: String) -> Dictionary:

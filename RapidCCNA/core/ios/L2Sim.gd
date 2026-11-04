@@ -61,7 +61,7 @@ static func show_summary(net: Network, dev: String) -> String:
 static func _logical(net: Network, d: Device, n: String) -> String:
 	var i: Dictionary = d.interfaces[n]
 	if i.channel_group > 0:
-		var c := channel(net, d.hostname, i.channel_group)
+		var c := channel(net, d.key, i.channel_group)
 		var mine: Array = c.members.filter(func(m): return m.port == n)
 		if mine.size() > 0 and mine[0].flag == "P":
 			return "Port-channel%d" % i.channel_group
@@ -87,7 +87,7 @@ static func port_id(d: Device, n: String) -> int:
 	return STP.port_id(128, "x%d" % (d.iface_order.find(n) + 1))
 
 static func bridge(d: Device, vlan: int) -> Dictionary:
-	return {"name": d.hostname, "priority": STP.bridge_priority(int(d.stp_priority.get(vlan, DEFAULT_PRIORITY)), vlan), "mac": d.mac}
+	return {"name": d.key, "priority": STP.bridge_priority(int(d.stp_priority.get(vlan, DEFAULT_PRIORITY)), vlan), "mac": d.mac}
 
 ## Spanning tree for a VLAN over every switch: STP.solve() result plus per-switch port lists.
 static func stp(net: Network, vlan: int) -> Dictionary:

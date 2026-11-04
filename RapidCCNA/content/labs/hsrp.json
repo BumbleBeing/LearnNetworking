@@ -1,0 +1,194 @@
+{
+  "id": "lab.hsrp",
+  "title": "HSRP with preempt and tracking",
+  "domain": "d3",
+  "unit": "d3.fhrp",
+  "subtopics": [
+    "3.5"
+  ],
+  "description": "R2 already runs HSRP for the LAN on its own. Add R1 so it takes over as the active gateway, and hands back to R2 if its uplink fails.",
+  "topology": "              ISP-A               ISP-B\n                │ .1                  │ .1\n   203.0.113.0/30 │ Gi0/1    198.51.100.0/30 │ Gi0/1\n             [R1] .2              [R2] .2\n          Gi0/0 .2 ╲            ╱ Gi0/0 .3\n                    [SW1]  LAN 10.1.1.0/24\n                     PCs: gateway 10.1.1.1 (virtual)\n\n  R2 (already set): standby 1 ip 10.1.1.1, standby 1 preempt",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.1.1.2 255.255.255.0",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 203.0.113.2 255.255.255.252",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "R2",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.1.1.3 255.255.255.0",
+        "standby 1 ip 10.1.1.1",
+        "standby 1 preempt",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 198.51.100.2 255.255.255.252",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ]
+    },
+    {
+      "name": "ISP-A",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 203.0.113.1 255.255.255.252",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "ISP-B",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 198.51.100.1 255.255.255.252",
+        "no shutdown"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/0",
+      "SW1",
+      "g0/1"
+    ],
+    [
+      "R2",
+      "g0/0",
+      "SW1",
+      "g0/2"
+    ],
+    [
+      "R1",
+      "g0/1",
+      "ISP-A",
+      "g0/0"
+    ],
+    [
+      "R2",
+      "g0/1",
+      "ISP-B",
+      "g0/0"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Add R1's Gi0/0 to HSRP group 1 with virtual IP 10.1.1.1.",
+      "hint": "interface g0/0 → standby 1 ip 10.1.1.1. Check with do show standby brief.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "hsrp",
+          "args": {
+            "iface": "g0/0",
+            "group": 1,
+            "vip": "10.1.1.1"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Make R1 the active router by giving it priority 110. (Watch what happens before and after you add preempt.)",
+      "hint": "standby 1 priority 110 isn't enough: R2 is already active. Add standby 1 preempt.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "hsrp",
+          "args": {
+            "iface": "g0/0",
+            "group": 1,
+            "state": "Active"
+          }
+        },
+        {
+          "device": "R2",
+          "check": "hsrp",
+          "args": {
+            "iface": "g0/0",
+            "group": 1,
+            "state": "Standby"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Track R1's uplink Gi0/1 so that if it fails, R2 (priority 100) takes over.",
+      "hint": "standby 1 track g0/1 20: 110 - 20 = 90, below R2's 100. A decrement of 10 or less wouldn't be enough.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "hsrp",
+          "args": {
+            "iface": "g0/0",
+            "group": 1,
+            "state": "Active",
+            "track": "g0/1",
+            "track_below": 100
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "interface g0/0",
+      "standby 1 ip 10.1.1.1",
+      "standby 1 priority 110",
+      "standby 1 preempt",
+      "standby 1 track g0/1 20",
+      "end"
+    ]
+  }
+}

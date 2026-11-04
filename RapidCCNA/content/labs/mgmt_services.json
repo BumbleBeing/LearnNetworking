@@ -1,0 +1,127 @@
+{
+  "id": "lab.mgmt_services",
+  "title": "Time, logs and monitoring",
+  "domain": "d4",
+  "unit": "d4.network_services",
+  "subtopics": [
+    "4.2",
+    "4.4",
+    "4.5"
+  ],
+  "description": "Hook R1 up to the management servers: NTP for time, syslog for logs and SNMP for read-only monitoring.",
+  "topology": "   [R1] Gi0/0 10.0.99.1/24 ── [MGMT-SRV] 10.0.99.10\n                               NTP, syslog and SNMP manager",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.99.1 255.255.255.0",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "MGMT-SRV",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "cdp": false,
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.99.10 255.255.255.0",
+        "no shutdown"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/0",
+      "MGMT-SRV",
+      "g0/0"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Synchronise R1's clock with the NTP server 10.0.99.10.",
+      "hint": "ntp server 10.0.99.10, then do show ntp associations",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "ntp_server",
+          "args": {
+            "ip": "10.0.99.10"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Send log messages of severity warnings (4) and more severe to the syslog server 10.0.99.10, with date and time stamps.",
+      "hint": "logging host 10.0.99.10 → logging trap warnings → service timestamps log datetime msec",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "logging_host",
+          "args": {
+            "ip": "10.0.99.10",
+            "trap": "warnings",
+            "timestamps": true
+          }
+        }
+      ]
+    },
+    {
+      "text": "Let the monitoring server read (not change) R1 over SNMP with community NETMON, limited by standard ACL 10 to 10.0.99.10 only.",
+      "hint": "access-list 10 permit host 10.0.99.10 → snmp-server community NETMON ro 10",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "snmp_community",
+          "args": {
+            "name": "NETMON",
+            "access": "ro",
+            "acl": "10"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "acl_permits",
+          "args": {
+            "acl": "10",
+            "src": "10.0.99.10"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "acl_permits",
+          "args": {
+            "acl": "10",
+            "src": "10.0.99.20",
+            "action": "deny"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "ntp server 10.0.99.10",
+      "logging host 10.0.99.10",
+      "logging trap warnings",
+      "service timestamps log datetime msec",
+      "access-list 10 permit host 10.0.99.10",
+      "snmp-server community NETMON ro 10",
+      "end"
+    ]
+  }
+}

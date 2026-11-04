@@ -1,0 +1,39 @@
+{
+  "id": "d4.ssh",
+  "domain": "d4",
+  "subtopics": [
+    "4.8"
+  ],
+  "order": 60,
+  "title": "SSH remote access",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Why SSH",
+      "body": "Telnet sends passwords in clear text. SSH (TCP 22) encrypts the whole session. SSHv2 is the version to use."
+    },
+    {
+      "heading": "What SSH needs",
+      "body": "A hostname other than the default, a domain name (together they name the RSA key), an RSA key pair (768 bits or more for SSHv2), a local user to log in as, and VTY lines that use local login and accept only SSH.",
+      "example": "hostname R1\nip domain name example.com\ncrypto key generate rsa modulus 2048\nusername admin secret Str0ng!Pass\nip ssh version 2\nline vty 0 4\n login local\n transport input ssh"
+    },
+    {
+      "heading": "Order and errors",
+      "body": "The key needs the hostname and domain first. IOS refuses otherwise.",
+      "example": "Router(config)#crypto key generate rsa\n% Please define a hostname other than Router.\nR1(config)#crypto key generate rsa\n% Please define a domain-name first."
+    },
+    {
+      "heading": "Verify and harden",
+      "body": "'show ip ssh' shows the version and key size. Restrict which hosts may connect with an ACL on the VTY lines (access-class), and set exec-timeout so idle sessions close.",
+      "example": "access-list 10 permit 10.0.99.0 0.0.0.255\nline vty 0 4\n access-class 10 in\n exec-timeout 10 0"
+    }
+  ],
+  "recall": [
+    "q.d4.ssh.001",
+    "q.d4.ssh.002",
+    "q.d4.ssh.003"
+  ],
+  "labs": [
+    "lab.ssh"
+  ]
+}

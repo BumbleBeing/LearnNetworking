@@ -1,0 +1,97 @@
+{
+  "id": "lab.mini_hsrp",
+  "title": "HSRP active router",
+  "hidden": true,
+  "domain": "d3",
+  "subtopics": [
+    "3.5"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "   [R1] Gi0/0 10.5.5.2 ── [SW1] ── 10.5.5.3 Gi0/0 [R2]\n  R2: standby 5 ip 10.5.5.1 (active, priority 100)",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.5.5.2 255.255.255.0",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "R2",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.5.5.3 255.255.255.0",
+        "standby 5 ip 10.5.5.1",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ]
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/0",
+      "SW1",
+      "g0/1"
+    ],
+    [
+      "R2",
+      "g0/0",
+      "SW1",
+      "g0/2"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Configure R1 in HSRP group 5 (virtual IP 10.5.5.1) so that it becomes the active router.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "hsrp",
+          "args": {
+            "iface": "g0/0",
+            "group": 5,
+            "vip": "10.5.5.1",
+            "state": "Active"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "interface g0/0",
+      "standby 5 ip 10.5.5.1",
+      "standby 5 priority 150",
+      "standby 5 preempt",
+      "end"
+    ]
+  }
+}
