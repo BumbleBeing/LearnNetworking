@@ -148,5 +148,502 @@
     "answer": 1,
     "explanation": "Port security can't be enabled on a port in dynamic (DTP) mode. Make it a static access port first.",
     "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.sec.001",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each term to its definition.",
+    "answer": {
+      "Vulnerability": "A weakness that could be used against a system",
+      "Threat": "A potential danger that could take advantage of a weakness",
+      "Exploit": "The technique or code that actually uses a weakness",
+      "Mitigation": "A measure that reduces the risk"
+    },
+    "explanation": "Vulnerability = weakness, threat = potential danger, exploit = the actual attack technique, mitigation = the defence.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.sec.002",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "An attacker sends small DNS queries with the victim's address as the source to many open resolvers, which send large replies to the victim. What is this?",
+    "choices": [
+      "A man-in-the-middle attack",
+      "A brute-force attack",
+      "A reflection and amplification attack",
+      "A trojan"
+    ],
+    "answer": 2,
+    "explanation": "Spoofed source (reflection) plus replies much larger than the requests (amplification).",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.sec.003",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which type of malware spreads across a network by itself without a user running anything?",
+    "choices": [
+      "Virus",
+      "Worm",
+      "Trojan",
+      "Adware"
+    ],
+    "answer": 1,
+    "explanation": "Worms self-propagate; viruses need a host file to run; trojans pose as legitimate software.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.sec.004",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each social engineering attack to its description.",
+    "distractors": [
+      "Flooding a server with traffic"
+    ],
+    "answer": {
+      "Spear phishing": "A targeted email to a specific person",
+      "Vishing": "Phishing by phone call",
+      "Smishing": "Phishing by text message",
+      "Tailgating": "Following someone through a secured door"
+    },
+    "explanation": "Phishing variants are named by target or channel; tailgating is physical.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.sec.005",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "An attacker sends forged ARP replies so hosts send their gateway traffic to the attacker's MAC. Which attack is this?",
+    "choices": [
+      "Man-in-the-middle via ARP poisoning",
+      "DHCP starvation",
+      "A DDoS",
+      "Reconnaissance"
+    ],
+    "answer": 0,
+    "explanation": "ARP poisoning puts the attacker in the middle of the hosts' traffic.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.prog.001",
+    "domain": "d5",
+    "subtopic": "5.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "A company sends staff fake phishing emails and shows those who click how to spot them. Which program element is this?",
+    "choices": [
+      "User awareness",
+      "Physical access control",
+      "Accounting",
+      "Network segmentation"
+    ],
+    "answer": 0,
+    "explanation": "Simulated phishing is a user awareness activity.",
+    "lesson_ref": "d5.security_program"
+  },
+  {
+    "id": "q.d5.prog.002",
+    "domain": "d5",
+    "subtopic": "5.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which physical control lets only one person through at a time, with one door closed before the next opens?",
+    "choices": [
+      "A badge reader",
+      "A CCTV camera",
+      "A locked rack",
+      "An access control vestibule (mantrap)"
+    ],
+    "answer": 3,
+    "explanation": "An access control vestibule (mantrap) prevents tailgating.",
+    "lesson_ref": "d5.security_program"
+  },
+  {
+    "id": "q.d5.prog.003",
+    "domain": "d5",
+    "subtopic": "5.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Why does physical security matter even when every device has strong passwords?",
+    "choices": [
+      "It doesn't, if passwords are strong",
+      "Console access allows password recovery and direct tampering",
+      "Passwords stop working when a rack is open",
+      "Physical access disables encryption"
+    ],
+    "answer": 1,
+    "explanation": "With console access an attacker can use password recovery, or simply steal or unplug the device.",
+    "lesson_ref": "d5.security_program"
+  },
+  {
+    "id": "q.d5.pw.001",
+    "domain": "d5",
+    "subtopic": "5.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A router has both 'enable password cisco' and 'enable secret Str0ng!'. What must you type to enter privileged EXEC mode?",
+    "choices": [
+      "cisco",
+      "Str0ng!",
+      "Either one",
+      "Both, one after the other"
+    ],
+    "answer": 1,
+    "explanation": "When both exist, the enable secret takes precedence.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.002",
+    "domain": "d5",
+    "subtopic": "5.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does 'service password-encryption' do?",
+    "choices": [
+      "Hashes all passwords with SHA-256",
+      "Encrypts passwords as they cross the network",
+      "Applies weak type 7 encryption to clear-text passwords in the configuration",
+      "Forces users to choose complex passwords"
+    ],
+    "answer": 2,
+    "explanation": "It applies weak, reversible type 7 encryption to clear-text passwords in the config. Secrets are already hashed.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.003",
+    "domain": "d5",
+    "subtopic": "5.3",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which line command makes the console ask for a username and password from the local user database?",
+    "choices": [
+      "login",
+      "password local",
+      "transport input local",
+      "login local"
+    ],
+    "answer": 3,
+    "explanation": "'login' uses the line password; 'login local' uses the username/secret database.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.004",
+    "domain": "d5",
+    "subtopic": "5.4",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each authentication factor to its category.",
+    "answer": {
+      "Password": "Something you know",
+      "Hardware token": "Something you have",
+      "Fingerprint": "Something you are",
+      "Smart card": "Something you have"
+    },
+    "explanation": "MFA combines factors from different categories.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.005",
+    "domain": "d5",
+    "subtopic": "5.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which is an example of multi-factor authentication?",
+    "choices": [
+      "A password plus a code from an authenticator app",
+      "A password plus a PIN",
+      "Two different passwords",
+      "A long passphrase"
+    ],
+    "answer": 0,
+    "explanation": "A password (know) plus a one-time code from a phone app (have) uses two different categories. Two passwords are still one factor.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.006",
+    "domain": "d5",
+    "subtopic": "5.3",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "Which global command sets a minimum password length of 10 on IOS? (full command)",
+    "answer": [
+      "security passwords min-length 10"
+    ],
+    "explanation": "'security passwords min-length' rejects shorter passwords and secrets.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.vpn.001",
+    "domain": "d5",
+    "subtopic": "5.5",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which VPN type connects two office networks through their edge routers, with no software on the hosts?",
+    "choices": [
+      "Site-to-site IPsec VPN",
+      "Remote access VPN",
+      "Clientless SSL VPN",
+      "802.1X"
+    ],
+    "answer": 0,
+    "explanation": "A site-to-site VPN is built between gateways; hosts send traffic normally.",
+    "lesson_ref": "d5.vpn"
+  },
+  {
+    "id": "q.d5.vpn.002",
+    "domain": "d5",
+    "subtopic": "5.5",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each IPsec component to its role.",
+    "distractors": [
+      "Assigns IP addresses to clients"
+    ],
+    "answer": {
+      "IKE": "Negotiates the security associations and keys",
+      "ESP": "Encrypts and authenticates the payload",
+      "AH": "Authenticates packets without encryption",
+      "AES": "The encryption algorithm"
+    },
+    "explanation": "IKE sets up SAs; ESP does the protection (with AES for encryption); AH only authenticates.",
+    "lesson_ref": "d5.vpn"
+  },
+  {
+    "id": "q.d5.vpn.003",
+    "domain": "d5",
+    "subtopic": "5.5",
+    "type": "mcq_single",
+    "difficulty": 3,
+    "stem": "Why is GRE over IPsec used between two routers running OSPF?",
+    "choices": [
+      "GRE encrypts traffic better than IPsec",
+      "IPsec can't carry TCP",
+      "Plain IPsec doesn't carry the multicast routing protocols use",
+      "GRE is required for NAT"
+    ],
+    "answer": 2,
+    "explanation": "OSPF uses multicast, which plain IPsec tunnels don't carry; GRE encapsulates it and IPsec then encrypts the GRE packets.",
+    "lesson_ref": "d5.vpn"
+  },
+  {
+    "id": "q.d5.vpn.004",
+    "domain": "d5",
+    "subtopic": "5.5",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two security services does IPsec provide? (Choose two.)",
+    "choices": [
+      "Confidentiality through encryption",
+      "Malware scanning",
+      "Data integrity",
+      "DHCP address assignment"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "IPsec gives confidentiality, integrity, peer authentication and anti-replay. It doesn't assign addresses or filter malware.",
+    "lesson_ref": "d5.vpn"
+  },
+  {
+    "id": "q.d5.aaa.001",
+    "domain": "d5",
+    "subtopic": "5.8",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each statement to RADIUS or TACACS+.",
+    "answer": {
+      "Uses TCP 49": "TACACS+",
+      "Encrypts only the password": "RADIUS",
+      "Separates authentication and authorisation": "TACACS+",
+      "Open standard used for 802.1X": "RADIUS"
+    },
+    "explanation": "TACACS+ (TCP 49) encrypts everything and separates AAA, suiting device admin. RADIUS (UDP 1812/1813) is the standard for network access.",
+    "lesson_ref": "d5.aaa"
+  },
+  {
+    "id": "q.d5.aaa.002",
+    "domain": "d5",
+    "subtopic": "5.8",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each 802.1X role to its device.",
+    "answer": {
+      "Supplicant": "The user's laptop",
+      "Authenticator": "The access switch or WLC",
+      "Authentication server": "The RADIUS server (e.g. ISE)"
+    },
+    "explanation": "The supplicant talks EAPOL to the authenticator, which relays to the RADIUS authentication server.",
+    "lesson_ref": "d5.aaa"
+  },
+  {
+    "id": "q.d5.aaa.003",
+    "domain": "d5",
+    "subtopic": "5.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which part of AAA records what commands an administrator ran?",
+    "choices": [
+      "Authentication",
+      "Authorisation",
+      "Accounting",
+      "Auditing"
+    ],
+    "answer": 2,
+    "explanation": "Accounting logs what users did.",
+    "lesson_ref": "d5.aaa"
+  },
+  {
+    "id": "q.d5.aaa.004",
+    "domain": "d5",
+    "subtopic": "5.8",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which protocol carries EAP between the supplicant and the authenticator in 802.1X?",
+    "choices": [
+      "RADIUS",
+      "EAPOL",
+      "TACACS+",
+      "CAPWAP"
+    ],
+    "answer": 1,
+    "explanation": "EAP over LAN (EAPOL) on the access link; RADIUS between authenticator and server.",
+    "lesson_ref": "d5.aaa"
+  },
+  {
+    "id": "q.d5.wsec.001",
+    "domain": "d5",
+    "subtopic": "5.9",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which encryption does WPA2 use?",
+    "choices": [
+      "RC4",
+      "TKIP",
+      "AES-CCMP",
+      "DES"
+    ],
+    "answer": 2,
+    "explanation": "WPA2 uses AES with CCMP. TKIP was WPA's; RC4 was WEP's.",
+    "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.wsec.002",
+    "domain": "d5",
+    "subtopic": "5.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does WPA3-Personal use instead of WPA2's pre-shared key handshake?",
+    "choices": [
+      "TKIP",
+      "802.1X",
+      "WEP keys",
+      "SAE"
+    ],
+    "answer": 3,
+    "explanation": "SAE (Simultaneous Authentication of Equals) resists offline dictionary attacks and provides forward secrecy.",
+    "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.wsec.003",
+    "domain": "d5",
+    "subtopic": "5.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What is the main advantage of WPA2-Enterprise over WPA2-Personal?",
+    "choices": [
+      "Each user authenticates with their own credentials through a RADIUS server",
+      "It uses a longer pre-shared key",
+      "It doesn't need encryption",
+      "It works without an AP"
+    ],
+    "answer": 0,
+    "explanation": "Enterprise mode authenticates each user via 802.1X/RADIUS, so access is individual and revocable; Personal mode shares one key.",
+    "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.wsec.004",
+    "domain": "d5",
+    "subtopic": "5.10",
+    "type": "drag_order",
+    "difficulty": 2,
+    "stem": "Put the steps for configuring WPA2-PSK on a WLAN in the WLC GUI in order.",
+    "answer": [
+      "Open WLANs and select the WLAN",
+      "Go to Security > Layer 2",
+      "Choose WPA+WPA2, WPA2 Policy and AES",
+      "Set Auth Key Mgmt to PSK and enter the passphrase",
+      "Apply and save the configuration"
+    ],
+    "explanation": "Select the WLAN, then the Layer 2 security tab, choose WPA2/AES, set PSK and the key, apply.",
+    "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.wsec.005",
+    "domain": "d5",
+    "subtopic": "5.10",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "What is the minimum length of a WPA2 pre-shared key passphrase, in characters?",
+    "answer": "8",
+    "explanation": "WPA2 passphrases are 8 to 63 ASCII characters.",
+    "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.pw.cli.001",
+    "domain": "d5",
+    "subtopic": "5.3",
+    "type": "cli_task",
+    "difficulty": 1,
+    "stem": "Use the R1 command line. R1 only has 'enable password cisco' and a clear-text VTY password. Protect privileged mode with a hashed enable secret and encrypt the clear-text passwords in the configuration.",
+    "lab": "lab.mini_enable_secret",
+    "answer": "enable secret <password> / service password-encryption",
+    "explanation": "The enable secret is hashed and overrides the enable password; service password-encryption hides the remaining clear-text passwords (weakly, as type 7).",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.007",
+    "domain": "d5",
+    "subtopic": "5.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which password policy is most effective against brute-force guessing?",
+    "choices": [
+      "Changing passwords every 30 days",
+      "Long passphrases plus lockout after repeated failures",
+      "Using only uppercase letters",
+      "Writing passwords on the device label"
+    ],
+    "answer": 1,
+    "explanation": "Length adds the most guessing work; account lockout limits online attempts.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.wsec.006",
+    "domain": "d5",
+    "subtopic": "5.10",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "In the WLC GUI, which Auth Key Management option is used for WPA2-Personal?",
+    "choices": [
+      "PSK",
+      "802.1X",
+      "CCKM",
+      "Open"
+    ],
+    "answer": 0,
+    "explanation": "PSK is Personal mode; 802.1X is Enterprise mode with a RADIUS server.",
+    "lesson_ref": "d5.wireless_security"
   }
 ]

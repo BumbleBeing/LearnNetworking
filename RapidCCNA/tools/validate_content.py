@@ -15,7 +15,8 @@ LAB_CHECKS = {"hostname", "vlan_exists", "access_port", "trunk_port", "iface_ip"
               "acl_permits", "acl_decides", "stp_mode", "stp_root", "stp_role", "portfast", "etherchannel",
               "ospf_rid", "ospf_enabled", "ospf_passive", "ospf_neighbor", "cdp_run", "lldp_run", "cdp_iface",
               "lldp_iface", "iface_description", "discovers", "ssh_ready", "local_user", "ntp_server", "logging_host",
-              "snmp_community", "dhcp_lease", "hsrp", "rsa_key", "ssh_version"}
+              "snmp_community", "dhcp_lease", "hsrp", "rsa_key", "ssh_version",
+              "enable_secret", "password_encryption", "line_auth"}
 QUESTION_REQUIRED = {"id", "domain", "subtopic", "type", "stem", "answer", "explanation"}
 LESSON_REQUIRED = {"id", "domain", "subtopics", "title", "cards"}
 

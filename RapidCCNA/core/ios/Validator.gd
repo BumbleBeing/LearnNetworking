@@ -248,6 +248,25 @@ static func run(net: Network, c: Dictionary) -> Dictionary:
 				if a.has("track_below") and after >= int(a.track_below):
 					return _fail("if %s fails, the priority only drops to %d, not below %d" % [a.track, after, a.track_below])
 			return _ok()
+		"enable_secret":
+			if d.enable_secret.is_empty():
+				return _fail("there's no enable secret" + (" (an enable password is only stored with weak or no encryption)" if not d.enable_password.is_empty() else ""))
+			return _ok()
+		"password_encryption":
+			return _res(d.password_encryption, "line passwords are stored in clear text (service password-encryption is off)")
+		"line_auth":
+			var l: Dictionary = d.lines.get(a.line, {})
+			if l.is_empty():
+				return _fail("line %s isn't configured" % a.line)
+			if a.get("password", false) and l.password.is_empty():
+				return _fail("line %s has no password" % a.line)
+			if a.has("login") and l.login != a.login:
+				return _fail("line %s uses %s" % [a.line, "no login check" if l.login.is_empty() else "'%s'" % l.login])
+			if a.has("transport") and l.transport != a.transport:
+				return _fail("line %s allows %s" % [a.line, "every transport (Telnet included)" if l.transport.is_empty() else l.transport])
+			if a.has("timeout") and l.get("timeout", -1) != int(a.timeout):
+				return _fail("line %s's exec-timeout is %s" % [a.line, "the default (10 minutes)" if l.get("timeout", -1) < 0 else "%d minutes" % l.timeout])
+			return _ok()
 		"ssh_version":
 			if d.ssh_version == int(a.version):
 				return _ok()

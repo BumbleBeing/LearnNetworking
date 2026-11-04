@@ -123,4 +123,6 @@ func test_quiz_ids_come_from_one_area():
 	assert_gt(ids.size(), 3)
 	for id in ids:
 		assert_eq(ContentDB.questions[id].domain, "d5")
-	assert_eq(SessionManager.quiz_ids("d6"), [])
+	assert_eq(SessionManager.quiz_ids("d9"), [], "an area without questions gives an empty quiz")
+	for id in SessionManager.quiz_ids("d6"):
+		assert_eq(ContentDB.questions[id].domain, "d6")

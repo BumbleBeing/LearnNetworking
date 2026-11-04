@@ -1,0 +1,43 @@
+{
+  "id": "d6.rest_apis",
+  "domain": "d6",
+  "subtopics": [
+    "6.5"
+  ],
+  "order": 30,
+  "title": "REST APIs",
+  "minutes": 7,
+  "cards": [
+    {
+      "heading": "What makes an API RESTful",
+      "body": "REST APIs use HTTP between a client and a server. They're stateless (every request carries everything needed, including authentication), cacheable where appropriate, and use a uniform interface: resources identified by URIs and manipulated with standard methods."
+    },
+    {
+      "heading": "CRUD and HTTP methods",
+      "body": "Create → POST. Read → GET. Update → PUT (replace the whole resource) or PATCH (change part of it). Delete → DELETE.",
+      "example": "GET    /api/v1/devices          list devices\nPOST   /api/v1/vlans            create a VLAN\nPATCH  /api/v1/interfaces/Gi0%2F1  change one field\nDELETE /api/v1/vlans/30         remove VLAN 30"
+    },
+    {
+      "heading": "Anatomy of a request",
+      "body": "A request has a method, a URI (scheme, host, path, optional ?query parameters), headers (Authorization, Content-Type, Accept) and, for POST/PUT/PATCH, a body, usually JSON.",
+      "example": "POST https://dnac.example.com/api/v1/vlans\nAuthorization: Bearer eyJhbGci...\nContent-Type: application/json\n\n{\"id\": 30, \"name\": \"VOICE\"}"
+    },
+    {
+      "heading": "Response codes",
+      "body": "2xx success (200 OK, 201 Created, 204 No Content), 3xx redirection, 4xx client errors (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found), 5xx server errors (500 Internal Server Error)."
+    },
+    {
+      "heading": "Authentication",
+      "body": "Basic authentication sends a username and password (base64, so only safe over HTTPS). Many APIs exchange credentials once for a token that later requests send in an 'Authorization: Bearer' header. Others use an API key or OAuth."
+    },
+    {
+      "heading": "Data formats",
+      "body": "JSON is the most common. XML (tags, used by NETCONF) and YAML (indentation-based, used by Ansible) carry the same kinds of data."
+    }
+  ],
+  "recall": [
+    "q.d6.rest.001",
+    "q.d6.rest.002",
+    "q.d6.rest.003"
+  ]
+}

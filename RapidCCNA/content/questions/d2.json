@@ -589,5 +589,70 @@
     "answer": "interface g0/1 / no cdp enable",
     "explanation": "'no cdp enable' on the interface turns CDP off for that port only. 'no cdp run' would also cut off SW1.",
     "lesson_ref": "d2.discovery"
+  },
+  {
+    "id": "q.d2.vlan.004",
+    "domain": "d2",
+    "subtopic": "2.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Hosts in VLAN 10 and VLAN 20 are on the same switch. What do they need to communicate?",
+    "choices": [
+      "Nothing: they share the switch",
+      "A trunk between their access ports",
+      "A layer 3 device to route between the VLANs",
+      "The same native VLAN"
+    ],
+    "answer": 2,
+    "explanation": "Each VLAN is a separate broadcast domain and subnet; traffic between them must be routed (router-on-a-stick, an SVI on a layer 3 switch, or a router).",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.005",
+    "domain": "d2",
+    "subtopic": "2.1",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Which command shows the VLANs on a switch and their access ports? (full command)",
+    "answer": [
+      "show vlan brief",
+      "show vlan"
+    ],
+    "explanation": "'show vlan brief' lists each VLAN with its access ports (trunk ports aren't listed).",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.wlc.008",
+    "domain": "d2",
+    "subtopic": "2.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A branch AP must keep serving local clients if its WAN link to the WLC goes down. Which AP mode fits?",
+    "choices": [
+      "Local",
+      "FlexConnect",
+      "Monitor",
+      "Sniffer"
+    ],
+    "answer": 1,
+    "explanation": "FlexConnect switches client traffic locally and keeps working when the WLC is unreachable.",
+    "lesson_ref": "d2.wireless_arch"
+  },
+  {
+    "id": "q.d2.wlc.009",
+    "domain": "d2",
+    "subtopic": "2.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "On the WLC GUI, which tab of a WLAN maps it to the VLAN its clients use?",
+    "choices": [
+      "General (Interface/Interface Group)",
+      "Security",
+      "QoS",
+      "Advanced"
+    ],
+    "answer": 0,
+    "explanation": "The General tab selects the interface (dynamic interface/VLAN) for the WLAN; Security, QoS and Advanced cover the rest.",
+    "lesson_ref": "d2.wireless_arch"
   }
 ]

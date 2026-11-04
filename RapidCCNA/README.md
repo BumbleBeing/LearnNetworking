@@ -4,7 +4,7 @@ A Godot 4 study game for the **CCNA 200-301** exam. Each unit runs **tutorial �
 
 All question content is original and written in exam style. The game does not use real Cisco exam items.
 
-## Status: milestone M4 (STP, OSPF, EtherChannel and MAC table puzzles)
+## Status: milestone M5 (all tutorials and remaining mini-games)
 | Milestone | Scope | State |
 |---|---|---|
 | M0 | Project, autoloads, save/load, content loader + validator, tests, export presets, menu → dashboard | ✅ |
@@ -12,9 +12,11 @@ All question content is original and written in exam style. The game does not us
 | M2 | Networking logic engine (IPv4/IPv6, routing, ACL, NAT) + its drills | ✅ |
 | M3 | Scoped IOS CLI simulator + config labs | ✅ |
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | ✅ |
-| M5 | All tutorials and remaining mini-games | in progress (parts 1-2 of 3: domains 1-4 done) |
-| M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | |
+| M5 | All tutorials and remaining mini-games | ✅ |
+| M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | next |
 | M7 | Accessibility, web tuning, content QA | |
+
+**Content:** 42 lessons covering all 53 blueprint subtopics, 221 questions (at least 3 per subtopic, enforced in CI), 16 drills and 14 labs (plus 9 hidden mini-labs behind `cli_task` questions).
 
 ## How a study session works
 The dashboard plans each day's session:
@@ -45,6 +47,7 @@ Every answer shows an explanation. A miss always shows the worked solution. Dril
 | Wi-Fi Channel Planner | Wireless principles | Pick the free 2.4 GHz channel for a new AP on a floor plan, channel overlap, 2.4 vs 5 GHz, 802.11 standards, SSID/BSSID/BSS/ESS |
 | HSRP Election | First hop redundancy | Who's active (priority, then IP), preempt timelines, whether a tracking decrement really hands over, virtual MACs (HSRPv1/v2, VRRP) both ways, HSRP vs VRRP vs GLBP |
 | Service Desk | SNMP, syslog, TFTP and FTP | Service ports (with same-number wrong-transport distractors), syslog severities, whether a real log message passes `logging trap`, DSCP/AF arithmetic, DHCP DORA and relay, SNMP |
+| JSON & REST Inspector | JSON-encoded data | Is this JSON valid and why not (trailing comma, single quotes, unquoted key, missing comma, `True`, comments), values at a path like `interfaces[1].ipv4.prefix`, JSON types, CRUD to HTTP methods, status codes, reading an API request |
 | OSPF Navigator | Single-area OSPFv2 | Router ID order, DR/BDR election, why two routers won't peer, interface cost and reference bandwidth, best path and ECMP, network statements, the neighbour table |
 
 Generated drills share one screen (`minigames/GenDrill.gd`). A drill is a `drills.json` entry plus a generator script with `make_item(rng)` (and `check()` for typed answers), so adding one needs no UI code.
@@ -67,6 +70,7 @@ The M4 puzzles sit on pure engines in `core/net`: `STP` (bridge IDs, root and de
 - **CDP and LLDP:** `cdp run`, `lldp run`, per-port `cdp enable` and `lldp transmit/receive`; `show cdp [neighbors [detail]]`, `show lldp [neighbors]`. Neighbours come from the lab's cabling. Lab devices can be non-Cisco (LLDP-only APs, phones) with their own platform and capabilities.
 - **HSRP:** `standby N ip/priority/preempt/track`, `standby version 2`; `show standby [brief]`. Elections are stateful and advance after every command: a higher-priority router that joins later stays standby until it has `preempt`, and tracking hands the role over when an uplink fails. The active router answers for the virtual IP.
 - **DHCP:** pools (`network`, `default-router`, `dns-server`), `ip dhcp excluded-address`, `ip helper-address`; `show ip dhcp binding/pool`. DHCP-client hosts lease addresses from their gateway's pool or through a relay, which works only if relay and server can reach each other both ways.
+- **Device access:** `enable secret` / `enable password`, `service password-encryption` (type 7 in the config), line `password`, `login` / `login local`, `exec-timeout`.
 - **Management services:** `ip domain name`, `crypto key generate rsa` (with the IOS hostname/domain prerequisites), `ip ssh version 2`, `username ... secret`, `ntp server`, `logging host/trap`, `service timestamps`, `snmp-server community/location/contact`; `show ip ssh`, `show ntp associations`, `show logging`.
 - **`ping`:** follows each device's routing table hop by hop across the lab's links, so it fails if either direction is missing a route.
 
@@ -87,10 +91,13 @@ A lab (`content/labs/*.json`) defines devices, startup config, links, tasks and 
 | DHCP server and relay | DHCP and DNS (4.3, 4.6) |
 | Time, logs and monitoring (NTP, syslog, read-only SNMP limited by an ACL) | SNMP, syslog, TFTP and FTP (4.2, 4.4, 4.5) |
 | SSH-only remote access | SSH remote access (4.8) |
+| Lock down device access (enable secret, console and VTY login, password encryption) | Device passwords and password policy (5.3, 5.4) |
 
 ![M3 labs](docs/ui/m3.png)
 
 ![M4 drills and labs](docs/ui/m4.png)
+
+![M5 topics, drills and labs](docs/ui/m5.png)
 
 ## UI looks (prototype)
 Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Night Ops is the default. Switch looks from the dropdown on the main menu or the dashboard.
@@ -122,7 +129,7 @@ godot --path .                                            # play
 godot --headless --path . -s addons/gut/gut_cmdln.gd      # unit tests
 python3 tools/validate_content.py                         # content checks
 godot --headless --path . -s res://tools/smoke_session.gd # plays a full session end to end
-python3 tools/validate_content.py --min-per-subtopic 5    # coverage gate (later)
+python3 tools/validate_content.py --min-per-subtopic 3    # coverage gate (run in CI)
 godot --headless --path . --export-release Linux          # export (needs export templates)
 ```
 Saves go to `user://save.json` (on Linux: `~/.local/share/godot/app_userdata/RapidCCNA/`).

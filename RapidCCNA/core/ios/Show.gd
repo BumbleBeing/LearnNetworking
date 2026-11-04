@@ -124,6 +124,8 @@ static func running_config(d: Device) -> String:
 		out.append_array(["no cdp run", "!"])
 	if d.lldp_run:
 		out.append_array(["lldp run", "!"])
+	if not d.enable_password.is_empty():
+		out.append_array(["enable password " + ("7 13061E010803" if d.password_encryption else d.enable_password), "!"])
 	if not d.enable_secret.is_empty():
 		out.append_array(["enable secret 5 $1$mERr$hx5rVt7rPNoS4wqbXKX7m0", "!"])
 	if d.type == "switch":
@@ -197,6 +199,8 @@ static func running_config(d: Device) -> String:
 			out.append(" " + l.login)
 		if not l.transport.is_empty():
 			out.append(" transport input " + l.transport)
+		if l.has("timeout"):
+			out.append(" exec-timeout %d %d" % [l.timeout, l.get("timeout_s", 0)])
 	out.append("!")
 	for ntp in d.ntp_servers:
 		out.append("ntp server " + ntp)

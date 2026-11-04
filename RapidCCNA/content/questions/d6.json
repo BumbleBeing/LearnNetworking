@@ -1,0 +1,438 @@
+[
+  {
+    "id": "q.d6.auto.001",
+    "domain": "d6",
+    "subtopic": "6.2",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each function to its plane.",
+    "answer": {
+      "Forwarding a frame out the right port": "Data plane",
+      "Running OSPF to build the routing table": "Control plane",
+      "An administrator logging in over SSH": "Management plane"
+    },
+    "explanation": "Data plane forwards, control plane builds forwarding information, management plane manages the device.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.002",
+    "domain": "d6",
+    "subtopic": "6.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "In a controller-based network, what does the northbound API connect?",
+    "choices": [
+      "The controller to applications and scripts",
+      "The controller to the network devices",
+      "Two controllers to each other",
+      "Switches to routers"
+    ],
+    "answer": 0,
+    "explanation": "Northbound faces applications and scripts (usually REST/JSON); southbound faces the network devices.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.003",
+    "domain": "d6",
+    "subtopic": "6.3",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each SD-Access component to its role.",
+    "answer": {
+      "Underlay": "The physical routed network the fabric runs on",
+      "VXLAN": "The overlay's data plane encapsulation",
+      "LISP": "The overlay's control plane",
+      "Catalyst Center": "The controller that manages the fabric"
+    },
+    "explanation": "SD-Access: an IS-IS underlay, a VXLAN/LISP overlay, TrustSec policy, all managed by Catalyst Center (formerly DNA Center).",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.004",
+    "domain": "d6",
+    "subtopic": "6.1",
+    "type": "mcq_multi",
+    "difficulty": 1,
+    "stem": "Which two are benefits of network automation? (Choose two.)",
+    "choices": [
+      "No need to test changes",
+      "Fewer configuration errors from manual typing",
+      "Devices no longer need a control plane",
+      "Changes applied consistently to many devices quickly"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Automation gives consistent changes with fewer human errors and lets you scale changes quickly. It doesn't remove the need for skills or testing.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.005",
+    "domain": "d6",
+    "subtopic": "6.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which is a southbound protocol?",
+    "choices": [
+      "A REST API used by a ticketing system",
+      "HTTP between a browser and the controller GUI",
+      "SMTP",
+      "NETCONF"
+    ],
+    "answer": 3,
+    "explanation": "NETCONF, RESTCONF, OpenFlow and OpFlex are southbound. REST APIs offered to applications are northbound.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.ai.001",
+    "domain": "d6",
+    "subtopic": "6.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which task is a typical use of machine learning in network operations?",
+    "choices": [
+      "Replacing OSPF",
+      "Assigning VLAN numbers",
+      "Detecting traffic that deviates from a learned baseline",
+      "Encrypting VPN traffic"
+    ],
+    "answer": 2,
+    "explanation": "ML learns a baseline from telemetry and flags deviations; it doesn't replace routing protocols or cabling.",
+    "lesson_ref": "d6.ai_ops"
+  },
+  {
+    "id": "q.d6.ai.002",
+    "domain": "d6",
+    "subtopic": "6.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What is the main difference between supervised and unsupervised machine learning?",
+    "choices": [
+      "Supervised learning trains on labelled data; unsupervised finds patterns in unlabelled data",
+      "Unsupervised learning needs a human to approve every result",
+      "Supervised learning can only run in the cloud",
+      "There is no difference"
+    ],
+    "answer": 0,
+    "explanation": "Supervised learning trains on labelled examples; unsupervised learning finds patterns in unlabelled data.",
+    "lesson_ref": "d6.ai_ops"
+  },
+  {
+    "id": "q.d6.ai.003",
+    "domain": "d6",
+    "subtopic": "6.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A generative AI assistant produces a configuration for a core switch. What should happen before it's applied?",
+    "choices": [
+      "Nothing: AI output is always correct",
+      "An engineer reviews and tests it like any other change",
+      "It should be applied at once to save time",
+      "It must be converted to JSON"
+    ],
+    "answer": 1,
+    "explanation": "Generated output can be wrong; review and test it, as with any change.",
+    "lesson_ref": "d6.ai_ops"
+  },
+  {
+    "id": "q.d6.ai.004",
+    "domain": "d6",
+    "subtopic": "6.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which capability forecasts that a link will run out of capacity next month?",
+    "choices": [
+      "Syslog",
+      "NetFlow sampling",
+      "Port security",
+      "Predictive analytics"
+    ],
+    "answer": 3,
+    "explanation": "Predictive analytics uses trends in historical data to forecast future problems.",
+    "lesson_ref": "d6.ai_ops"
+  },
+  {
+    "id": "q.d6.rest.001",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each CRUD action to its HTTP method.",
+    "distractors": [
+      "CONNECT"
+    ],
+    "answer": {
+      "Create": "POST",
+      "Read": "GET",
+      "Update part of a resource": "PATCH",
+      "Delete": "DELETE"
+    },
+    "explanation": "Create POST, Read GET, Update PUT/PATCH, Delete DELETE.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.rest.002",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "An API call returns HTTP 401. What's wrong?",
+    "choices": [
+      "The resource doesn't exist",
+      "The request lacked valid credentials",
+      "The server crashed",
+      "The request succeeded with no content"
+    ],
+    "answer": 1,
+    "explanation": "401 Unauthorized: authentication is missing or invalid. 403 means authenticated but not permitted.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.rest.003",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does it mean that REST is stateless?",
+    "choices": [
+      "Responses are never cached",
+      "The server stores each client's session",
+      "Each request carries everything the server needs, including credentials",
+      "Only GET requests are allowed"
+    ],
+    "answer": 2,
+    "explanation": "The server keeps no session state between requests, so each request includes its authentication and all needed information.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.rest.004",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each HTTP status code to its meaning.",
+    "distractors": [
+      "Moved permanently"
+    ],
+    "answer": {
+      "200": "OK",
+      "201": "Created",
+      "404": "Not Found",
+      "500": "Internal Server Error"
+    },
+    "explanation": "2xx success, 4xx client error, 5xx server error.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.cm.001",
+    "domain": "d6",
+    "subtopic": "6.6",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two statements describe Ansible? (Choose two.)",
+    "choices": [
+      "It's agentless and connects over SSH",
+      "It needs an agent on every device",
+      "Its playbooks are written in YAML",
+      "It uses Ruby recipes and cookbooks"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "Ansible is agentless and pushes changes; playbooks are YAML. Puppet and Chef use agents that pull.",
+    "lesson_ref": "d6.config_mgmt"
+  },
+  {
+    "id": "q.d6.cm.002",
+    "domain": "d6",
+    "subtopic": "6.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which tool provisions infrastructure declaratively with HCL files and a plan/apply workflow?",
+    "choices": [
+      "Ansible",
+      "Chef",
+      "Puppet",
+      "Terraform"
+    ],
+    "answer": 3,
+    "explanation": "Terraform uses HashiCorp Configuration Language, shows changes with plan and makes them with apply.",
+    "lesson_ref": "d6.config_mgmt"
+  },
+  {
+    "id": "q.d6.cm.003",
+    "domain": "d6",
+    "subtopic": "6.6",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each tool to its file type.",
+    "answer": {
+      "Ansible": "Playbook (YAML)",
+      "Terraform": "Configuration (HCL)",
+      "Puppet": "Manifest",
+      "Chef": "Recipe in a cookbook (Ruby)"
+    },
+    "explanation": "Each tool has its own format for describing the desired state.",
+    "lesson_ref": "d6.config_mgmt"
+  },
+  {
+    "id": "q.d6.cm.004",
+    "domain": "d6",
+    "subtopic": "6.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is a benefit of keeping device configurations as code in version control?",
+    "choices": [
+      "Changes can be reviewed, repeated and rolled back",
+      "Devices no longer need passwords",
+      "It removes the need for testing",
+      "Configurations become encrypted"
+    ],
+    "answer": 0,
+    "explanation": "Changes are reviewable, repeatable and can be rolled back.",
+    "lesson_ref": "d6.config_mgmt"
+  },
+  {
+    "id": "q.d6.json.001",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, why is this not valid JSON?",
+    "exhibit": "{\n  \"hostname\": \"R1\",\n  \"vlans\": [10, 20],\n}",
+    "choices": [
+      "Keys must not be quoted",
+      "Arrays can't hold numbers",
+      "There's a trailing comma after the last item",
+      "Objects need square brackets"
+    ],
+    "answer": 2,
+    "explanation": "JSON doesn't allow a comma after the last item in an object or array.",
+    "lesson_ref": "d6.json"
+  },
+  {
+    "id": "q.d6.json.002",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each JSON value to its type.",
+    "distractors": [
+      "Tuple"
+    ],
+    "answer": {
+      "\"GigabitEthernet0/1\"": "String",
+      "1500": "Number",
+      "true": "Boolean",
+      "[10, 20, 30]": "Array",
+      "{\"id\": 10}": "Object"
+    },
+    "explanation": "Quotes = string, bare digits = number, true/false = boolean, [ ] = array, { } = object.",
+    "lesson_ref": "d6.json"
+  },
+  {
+    "id": "q.d6.json.003",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, what is the value of interfaces[1].mtu?",
+    "exhibit": "{\n  \"interfaces\": [\n    {\"name\": \"Gi0/0\", \"mtu\": 1500},\n    {\"name\": \"Gi0/1\", \"mtu\": 9000}\n  ]\n}",
+    "choices": [
+      "1500",
+      "9000",
+      "Gi0/1",
+      "It doesn't exist"
+    ],
+    "answer": 1,
+    "explanation": "Arrays count from 0, so interfaces[1] is the second object, whose mtu is 9000.",
+    "lesson_ref": "d6.json"
+  },
+  {
+    "id": "q.d6.json.004",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which is a valid JSON key/value pair?",
+    "choices": [
+      "\"enabled\": true",
+      "'enabled': true",
+      "enabled: true",
+      "\"enabled\": True"
+    ],
+    "answer": 0,
+    "explanation": "Keys and strings use double quotes; booleans are lowercase without quotes.",
+    "lesson_ref": "d6.json"
+  },
+  {
+    "id": "q.d6.auto.006",
+    "domain": "d6",
+    "subtopic": "6.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which problem does network automation directly address?",
+    "choices": [
+      "Cable faults",
+      "RF interference",
+      "Configuration drift and errors from manual, device-by-device changes",
+      "Power failures"
+    ],
+    "answer": 2,
+    "explanation": "Manual box-by-box changes are slow and inconsistent and cause configuration drift; automation applies changes consistently.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.007",
+    "domain": "d6",
+    "subtopic": "6.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which is a challenge of adopting network automation?",
+    "choices": [
+      "Devices stop supporting the CLI",
+      "It makes changes slower",
+      "It requires more devices",
+      "Engineers need new skills, and a wrong change can spread to many devices fast"
+    ],
+    "answer": 3,
+    "explanation": "Teams need new skills (APIs, data formats, programming, tools); a bad automated change can also spread quickly.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.008",
+    "domain": "d6",
+    "subtopic": "6.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "In SD-Access, what is the underlay?",
+    "choices": [
+      "The VXLAN tunnels between fabric nodes",
+      "The physical routed network the fabric is built on",
+      "The policy defined in Catalyst Center",
+      "The wireless network"
+    ],
+    "answer": 1,
+    "explanation": "The underlay is the physical network of switches and routed links (IS-IS) that carries the overlay tunnels.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.009",
+    "domain": "d6",
+    "subtopic": "6.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does Catalyst Center (DNA Center) offer compared with traditional device-by-device management?",
+    "choices": [
+      "Central policy, automation and assurance, with a REST API",
+      "A faster console port",
+      "It replaces the data plane on switches",
+      "Free licences for all devices"
+    ],
+    "answer": 0,
+    "explanation": "Central intent-based policy and automation, assurance analytics, software image management and a REST API.",
+    "lesson_ref": "d6.automation"
+  }
+]

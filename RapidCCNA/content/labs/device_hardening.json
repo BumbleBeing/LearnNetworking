@@ -1,0 +1,107 @@
+{
+  "id": "lab.device_hardening",
+  "title": "Lock down device access",
+  "domain": "d5",
+  "unit": "d5.device_passwords",
+  "subtopics": [
+    "5.3"
+  ],
+  "description": "R1 still has a weak 'enable password' and an open console. Protect privileged mode, the console and the VTY lines, and stop passwords showing in the config.",
+  "topology": "   [Laptop] ── console ── [R1] Gi0/0 10.0.0.1/24 ── LAN",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.0.1 255.255.255.0",
+        "no shutdown",
+        "enable password cisco"
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "Protect privileged EXEC mode with a hashed enable secret.",
+      "hint": "enable secret <something strong>. It overrides the old 'enable password'.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "enable_secret",
+          "args": {}
+        }
+      ]
+    },
+    {
+      "text": "Require a password on the console, and log idle console sessions out after 5 minutes.",
+      "hint": "line console 0 → password <pw> → login → exec-timeout 5 0",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "line_auth",
+          "args": {
+            "line": "console 0",
+            "password": true,
+            "login": "login",
+            "timeout": 5
+          }
+        }
+      ]
+    },
+    {
+      "text": "Create a local user 'admin' and make VTY lines 0-4 ask for a username and password.",
+      "hint": "username admin secret <pw> → line vty 0 4 → login local",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "local_user",
+          "args": {
+            "name": "admin"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "line_auth",
+          "args": {
+            "line": "vty 0 4",
+            "login": "login local"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Make sure clear-text passwords no longer appear in the running configuration.",
+      "hint": "service password-encryption (then: do show run | look for 'password 7')",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "password_encryption",
+          "args": {}
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "enable secret Sup3r$ecret",
+      "line console 0",
+      "password C0nsole!",
+      "login",
+      "exec-timeout 5 0",
+      "exit",
+      "username admin secret Adm1n!Pass",
+      "line vty 0 4",
+      "login local",
+      "exit",
+      "service password-encryption",
+      "end"
+    ]
+  }
+}
