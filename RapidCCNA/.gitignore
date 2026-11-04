@@ -4,3 +4,4 @@ build/
 *.import
 export_credentials.cfg
 __pycache__/
+gut.log

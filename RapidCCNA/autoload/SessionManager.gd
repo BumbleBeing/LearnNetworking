@@ -143,10 +143,10 @@ func start_drill(drill_id: String, guided: bool) -> void:
 ## Free training: any unit, tutorial or exam area, regardless of the daily plan.
 func start_unit(lesson_id: String) -> void:
 	var unit: Dictionary = ContentDB.lessons[lesson_id]
-	var steps := unit_steps(unit, true)
-	if steps.is_empty():
-		steps = [{"kind": "tutorial", "lesson": lesson_id}]
-	start(steps, "Study: " + unit.title)
+	var unit_plan := unit_steps(unit, true)
+	if unit_plan.is_empty():
+		unit_plan = [{"kind": "tutorial", "lesson": lesson_id}]
+	start(unit_plan, "Study: " + unit.title)
 
 func start_tutorial(lesson_id: String) -> void:
 	start([{"kind": "tutorial", "lesson": lesson_id}], "Tutorial: " + ContentDB.lessons[lesson_id].title)
@@ -177,21 +177,17 @@ func mock_config(kind: String) -> Dictionary:
 	return full
 
 ## A mock exam step with a fresh weighted draw. Pass a seed for repeatable exams.
-func mock_step(kind: String, seed: int = -1) -> Dictionary:
+func mock_step(kind: String, rng_seed: int = -1) -> Dictionary:
 	var cfg := mock_config(kind)
 	var rng := RandomNumberGenerator.new()
-	if seed >= 0:
-		rng.seed = seed
+	if rng_seed >= 0:
+		rng.seed = rng_seed
 	else:
 		rng.randomize()
 	var ids := MockExam.build(ContentDB.questions.values(), ContentDB.domains, cfg.questions, rng, Progress.last_mock_ids)
 	var extra := int(Settings.exam_extra_time)
-	return {"kind": "exam", "ids": ids, "minutes": exam_minutes(cfg.minutes, extra), "extra_time": extra,
+	return {"kind": "exam", "ids": ids, "minutes": MockExam.exam_minutes(cfg.minutes, extra), "extra_time": extra,
 		"label": cfg.label, "pass_scaled": cfg.pass_scaled}
-
-## Exam length with an extra-time accommodation (percent), rounded up to a minute.
-static func exam_minutes(minutes: int, extra_percent: int) -> int:
-	return int(ceil(minutes * (100 + extra_percent) / 100.0))
 
 func start_mock(kind: String) -> void:
 	var step := mock_step(kind)

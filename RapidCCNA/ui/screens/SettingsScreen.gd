@@ -40,7 +40,7 @@ func _ready() -> void:
 	extra_opt.item_selected.connect(func(i): _apply("exam_extra_time", Settings.EXTRA_TIME[i]))
 	var full := SessionManager.mock_config("full")
 	_row(exam, "Extra time", "For learners with an exam accommodation. A full mock becomes %d minutes with +25%%, %d with +50%%. (Extra time on the real exam is arranged with Pearson VUE.)" % [
-		SessionManager.exam_minutes(full.minutes, 25), SessionManager.exam_minutes(full.minutes, 50)], extra_opt)
+		MockExam.exam_minutes(full.minutes, 25), MockExam.exam_minutes(full.minutes, 50)], extra_opt)
 
 	var preview := UI.card(v, "Preview")
 	_preview(preview)

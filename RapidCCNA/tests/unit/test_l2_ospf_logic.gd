@@ -1,8 +1,8 @@
 extends GutTest
 ## Pure M4 logic: STP elections and roles, OSPF rules, EtherChannel negotiation, MAC learning.
 
-func _sw(name: String, pri: int, mac: String) -> Dictionary:
-	return {"name": name, "priority": pri, "mac": mac}
+func _sw(sw_name: String, pri: int, mac: String) -> Dictionary:
+	return {"name": sw_name, "priority": pri, "mac": mac}
 
 func _l(a: String, ap: String, b: String, bp: String, cost: int = 4) -> Dictionary:
 	return {"a": a, "ap": ap, "b": b, "bp": bp, "cost": cost}

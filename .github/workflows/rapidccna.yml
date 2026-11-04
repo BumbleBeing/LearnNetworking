@@ -31,8 +31,13 @@ jobs:
         run: tools/install_gut.sh
       - name: Import project
         run: godot --headless --import --path . || true
+      - name: GDScript warnings (what the editor would show)
+        run: python3 tools/check_gdscript_warnings.py godot
       - name: Run unit tests
-        run: godot --headless --path . -s addons/gut/gut_cmdln.gd
+        run: |
+          set -o pipefail
+          godot --headless --path . -s addons/gut/gut_cmdln.gd | tee gut.log
+          if grep -q "Orphans" gut.log; then echo "::error::Tests left orphan nodes (see the GUT output above)"; exit 1; fi
       - name: End-to-end session smoke test
         run: godot --headless --path . -s res://tools/smoke_session.gd
       - name: Web export

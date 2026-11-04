@@ -241,10 +241,10 @@ static func run(net: Network, c: Dictionary) -> Dictionary:
 			if a.has("preempt") and st.cfg.preempt != a.preempt:
 				return _fail("preempt is %s on %s" % ["on" if st.cfg.preempt else "off", d.key])
 			if a.has("track"):
-				var tr: Array = st.cfg.track.filter(func(t): return t[0] == Device.canon_iface(a.track))
-				if tr.is_empty():
+				var tracked: Array = st.cfg.track.filter(func(t): return t[0] == Device.canon_iface(a.track))
+				if tracked.is_empty():
 					return _fail("%s doesn't track %s" % [d.key, a.track])
-				var after: int = int(st.cfg.priority) - int(tr[0][1])
+				var after: int = int(st.cfg.priority) - int(tracked[0][1])
 				if a.has("track_below") and after >= int(a.track_below):
 					return _fail("if %s fails, the priority only drops to %d, not below %d" % [a.track, after, a.track_below])
 			return _ok()

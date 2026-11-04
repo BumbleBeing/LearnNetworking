@@ -131,6 +131,7 @@ func summary() -> Dictionary:
 	var total_ms := 0
 	for r in results:
 		total_ms += int(r.ms)
+	@warning_ignore("integer_division")
 	return {"items": n, "correct": c, "accuracy": float(c) / n if n > 0 else 0.0,
 		"avg_ms": total_ms / n if n > 0 else 0, "results": results, "guided": guided}
 

@@ -114,7 +114,7 @@ static func _summary(rng: RandomNumberGenerator) -> Dictionary:
 	for i in 4:
 		members.append({"port": "Gi0/%d" % (first + i), "flag": flags[rng.randi() % flags.size()]})
 	members[rng.randi() % 4].flag = "P"
-	var up := members.any(func(m): return m.flag == "P")
+	var up := members.any(func(mem): return mem.flag == "P")
 	var text := EtherChannel.show_summary([{"group": 1, "protocol": proto, "layer": "S", "up": up, "members": members}])
 	var m: Dictionary = members[rng.randi() % 4]
 	var choices: Array = EtherChannel.FLAG_TEXT.values()

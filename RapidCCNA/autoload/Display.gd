@@ -24,15 +24,15 @@ func css_size() -> Vector2:
 	return Vector2(get_tree().root.size) / (scale if scale > 0.0 else 1.0)
 
 ## Logical canvas size for a window of `css` pixels.
-static func logical_base(css: Vector2) -> Vector2i:
+func logical_base(css: Vector2) -> Vector2i:
 	return Vector2i(clampi(int(css.x), MIN_SIZE.x, BASE.x), clampi(int(css.y), MIN_SIZE.y, BASE.y))
 
 ## How many CSS pixels one logical pixel takes (1.0 = crisp 1:1).
-static func ui_scale(css: Vector2) -> float:
+func ui_scale(css: Vector2) -> float:
 	var b := logical_base(css)
 	return min(css.x / b.x, css.y / b.y)
 
-static func wants_rotation(css: Vector2) -> bool:
+func wants_rotation(css: Vector2) -> bool:
 	return css.y > css.x and css.x < PORTRAIT_MAX_WIDTH
 
 func apply() -> void:

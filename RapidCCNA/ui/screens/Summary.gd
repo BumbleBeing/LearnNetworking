@@ -29,10 +29,10 @@ func _ready() -> void:
 	var list := UI.card(v, "What you did")
 	for r in SessionManager.results:
 		var row := UI.hbox(list, 12)
-		var name := str(r.get("title", r.kind))
+		var title := str(r.get("title", r.kind))
 		if r.kind == "drill":
-			name += "  (guided)" if r.get("guided", false) else "  (unguided)"
-		UI.label(row, name, "Body").size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			title += "  (guided)" if r.get("guided", false) else "  (unguided)"
+		UI.label(row, title, "Body").size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var detail := "%d / %d" % [int(r.get("correct", 0)), int(r.get("items", 0))]
 		if r.has("avg_ms") and int(r.items) > 0:
 			detail += "   ·   %.1fs avg" % (r.avg_ms / 1000.0)

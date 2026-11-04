@@ -42,13 +42,13 @@ static func hbox(parent: Node, sep: int = 12) -> HBoxContainer:
 	parent.add_child(h)
 	return h
 
-## wrap=true only for labels inside vertical containers; wrapping labels in an
+## wrap_text=true only for labels inside vertical containers; wrapping labels in an
 ## HBox collapse to zero width.
-static func label(parent: Node, text: String, variation: String = "", wrap: bool = false) -> Label:
+static func label(parent: Node, text: String, variation: String = "", wrap_text: bool = false) -> Label:
 	var l := Label.new()
 	l.text = text
 	l.theme_type_variation = variation
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if wrap else TextServer.AUTOWRAP_OFF
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if wrap_text else TextServer.AUTOWRAP_OFF
 	parent.add_child(l)
 	return l
 
@@ -123,6 +123,7 @@ static func look_picker(parent: Node) -> OptionButton:
 static func mark_choice(b: Button, right: bool) -> void:
 	var look := Palette.current()
 	var col: Color = look.good if right else look.accent2
+	@warning_ignore("integer_division")
 	var r: int = max(2, int(look.radius) / 2)
 	b.add_theme_stylebox_override("disabled", ThemeFactory.box(Color(col, 0.16), col, r, 3, 16, 12))
 	b.text += "   (correct answer)" if right else "   (your answer)"

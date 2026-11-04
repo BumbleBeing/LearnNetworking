@@ -63,6 +63,7 @@ static func usable_hosts(prefix: int) -> int:
 
 ## The "interesting" octet (0-based) and the block size within it.
 static func block_info(prefix: int) -> Dictionary:
+	@warning_ignore("integer_division")
 	var idx := clampi((prefix - 1) / 8, 0, 3)
 	var mask_octet := (mask(prefix) >> (8 * (3 - idx))) & 255
 	return {"octet": idx, "block": 256 - mask_octet}

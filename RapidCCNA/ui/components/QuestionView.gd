@@ -186,7 +186,11 @@ func _build_fields() -> void:
 		order.append(le)
 	for i in order.size():
 		var next: LineEdit = order[i + 1] if i + 1 < order.size() else null
-		order[i].text_submitted.connect(func(_t): next.grab_focus() if next else _on_submit())
+		order[i].text_submitted.connect(func(_t):
+			if next:
+				next.grab_focus()
+			else:
+				_on_submit())
 	if order.size() > 0:
 		UI.focus_later(order[0])
 	_get_response = func():

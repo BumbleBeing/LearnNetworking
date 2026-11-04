@@ -160,7 +160,7 @@ minigames/  DrillBase + SubnetSprint, BitFlipper, GenDrill (generator-driven dri
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures
 tools/      validate_content.py, qa_content.py (+ test), install_gut.sh, smoke_session.gd (end-to-end),
-            fetch_web_templates.py
+            fetch_web_templates.py, check_gdscript_warnings.py
 ```
 
 ## Running
@@ -168,7 +168,8 @@ Requires Godot 4.7. The tests use GUT 9.7.1, the GUT release for Godot 4.7; `too
 ```bash
 tools/install_gut.sh                                      # once, for tests
 godot --path .                                            # play
-godot --headless --path . -s addons/gut/gut_cmdln.gd      # unit tests
+godot --headless --path . -s addons/gut/gut_cmdln.gd      # unit tests (CI also fails if they leave orphan nodes)
+python3 tools/check_gdscript_warnings.py                  # editor warnings, checked headless (CI)
 python3 tools/validate_content.py                         # content checks
 godot --headless --path . -s res://tools/smoke_session.gd # plays a daily session and a quick mock end to end
 python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600  # coverage + mock-exam gate (CI)
