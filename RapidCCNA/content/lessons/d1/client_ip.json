@@ -6,7 +6,7 @@
   ],
   "order": 66,
   "title": "Checking IP settings on clients",
-  "minutes": 5,
+  "minutes": 6,
   "cards": [
     {
       "heading": "What to check",
@@ -24,7 +24,7 @@
     },
     {
       "heading": "Sanity checks",
-      "body": "Is the gateway inside the host's subnet? Is the mask the same as the router's? Is the host using the network or broadcast address? Each mistake stops traffic leaving the subnet."
+      "body": "Is the gateway inside the host's subnet? Is the mask the same as the router's? Is the host using the network or broadcast address? Each mistake stops traffic leaving the subnet. If the PC can ping an internet IP address such as 8.8.8.8 but not a name such as www.example.com, the address, mask and gateway are fine and the DNS server setting is the likely fault (test with nslookup). ipconfig /flushdns clears the DNS cache."
     }
   ],
   "recall": [

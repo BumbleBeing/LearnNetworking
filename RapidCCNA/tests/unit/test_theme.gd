@@ -1,7 +1,7 @@
 extends GutTest
 
 const REQUIRED := ["title", "bg_top", "bg_bottom", "panel", "border", "text", "muted",
-	"accent", "accent2", "good", "warn", "on_accent", "button", "button_hover", "input",
+	"accent", "accent2", "good", "warn", "acronym", "on_accent", "button", "button_hover", "input",
 	"track", "chip", "line", "node", "radius", "pattern", "topology", "animate", "mono", "domains"]
 
 func test_every_look_has_required_keys_and_six_domain_colors():
@@ -28,8 +28,8 @@ func test_font_scale_applies():
 
 ## WCAG 2.1: body text needs 4.5:1 (AA); high contrast aims for 7:1 (AAA).
 ## Every colour drawn as text on a card is checked: feedback (good/accent2),
-## the exam clock warning, muted captions and the primary button label.
-const TEXT_KEYS := ["text", "muted", "accent", "accent2", "good", "warn"]
+## the exam clock warning, muted captions, highlighted acronyms and the primary button label.
+const TEXT_KEYS := ["text", "muted", "accent", "accent2", "good", "warn", "acronym"]
 
 func _check_look(l: Dictionary, min_ratio: float) -> void:
 	var panel := Palette.panel_color(l)

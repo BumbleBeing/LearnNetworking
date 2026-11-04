@@ -6,16 +6,16 @@
   ],
   "order": 20,
   "title": "EtherChannel",
-  "minutes": 6,
+  "minutes": 9,
   "cards": [
     {
       "heading": "Why bundle links",
-      "body": "Spanning tree blocks all but one of several parallel links between two switches. An EtherChannel bundles up to 8 active physical links into one logical port-channel interface, so STP sees a single link: all members forward, and losing one member doesn't change the topology.",
+      "body": "Spanning tree blocks all but one of several parallel links between two switches. An EtherChannel bundles up to 8 active physical links into one logical port-channel interface, so STP sees a single link: all members forward, and losing one member doesn't change the topology. LACP can hold up to 8 more links in hot-standby.",
       "example": "SW1 Gi0/1 ═╗           ╔═ Gi0/1 SW2\nSW1 Gi0/2 ═╩═ Po1 ════ ╩═ Gi0/2"
     },
     {
       "heading": "LACP, PAgP or static",
-      "body": "LACP (802.3ad, open standard) uses modes active and passive. PAgP (Cisco) uses desirable and auto. Mode on forces the bundle with no negotiation at all. You can't mix protocols, and 'on' only works with 'on'.",
+      "body": "LACP (802.3ad, open standard) uses modes active and passive. PAgP (Cisco) uses desirable and auto. Mode on forces the bundle with no negotiation at all. You can't mix protocols, and 'on' only works with 'on'. LACP is IEEE 802.3ad (now 802.1AX); PAgP is Cisco-proprietary. Active and desirable start negotiation; passive and auto only answer, so at least one side must start it.",
       "example": "active   + active/passive   → LACP\ndesirable + desirable/auto  → PAgP\non + on                    → static\npassive + passive, auto + auto → nothing"
     },
     {
@@ -31,6 +31,11 @@
       "heading": "Verify",
       "body": "show etherchannel summary lists each group, its protocol and every member with a flag: P = bundled, s = suspended, I = stand-alone, D = down. The port-channel shows SU when it's a layer 2 bundle in use.",
       "example": "Group  Port-channel  Protocol    Ports\n1      Po1(SU)       LACP        Gi0/1(P)    Gi0/2(P)"
+    },
+    {
+      "heading": "Load balancing and layer 3 bundles",
+      "body": "An EtherChannel doesn't split one frame across links. It hashes addresses (MAC, IP and optionally ports) to pick one member per flow, which keeps each flow's frames in order; one big flow can't go faster than a single member. 'port-channel load-balance src-dst-ip' hashes the source and destination IPs, so one pair of hosts always uses the same link. A layer 3 EtherChannel uses 'no switchport' on the members and the port-channel, and the IP address goes on the port-channel.",
+      "example": "port-channel load-balance src-dst-ip\ninterface range g1/0/1 - 2\n no switchport\n channel-group 2 mode active\ninterface port-channel 2\n no switchport\n ip address 10.0.12.1 255.255.255.252"
     }
   ],
   "recall": [

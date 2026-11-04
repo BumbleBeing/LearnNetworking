@@ -6,11 +6,11 @@
   ],
   "order": 40,
   "title": "Configuration management: Ansible and Terraform",
-  "minutes": 6,
+  "minutes": 7,
   "cards": [
     {
       "heading": "Infrastructure as code",
-      "body": "Configuration management tools describe the desired state of devices or infrastructure in files kept under version control. The tool makes reality match the files: repeatable, reviewable and consistent."
+      "body": "Configuration management tools describe the desired state of devices or infrastructure in files kept under version control. The tool makes reality match the files: repeatable, reviewable and consistent. Because the files are under version control, every change can be reviewed, repeated and rolled back. The tools aim to be idempotent: a task describes the end state, so re-running it changes nothing if it's already done and only acts where the device differs."
     },
     {
       "heading": "Ansible",

@@ -7,7 +7,7 @@
   ],
   "order": 80,
   "title": "Wireless security",
-  "minutes": 7,
+  "minutes": 12,
   "cards": [
     {
       "heading": "The protocol history",
@@ -16,7 +16,7 @@
     },
     {
       "heading": "Personal and Enterprise",
-      "body": "Personal mode uses a pre-shared key (passphrase) everyone knows. Enterprise mode uses 802.1X/EAP with a RADIUS server, so every user has their own credentials and access can be revoked per user."
+      "body": "Personal mode uses a pre-shared key (passphrase) everyone knows. Enterprise mode uses 802.1X/EAP with a RADIUS server, so every user has their own credentials and access can be revoked per user. In the WLC GUI this is the Auth Key Management setting: PSK for Personal, 802.1X for Enterprise. A weak WPA2-Personal passphrase is vulnerable even though traffic is encrypted, because a captured four-way handshake lets an attacker test guesses offline at high speed."
     },
     {
       "heading": "WPA3 SAE",
@@ -24,8 +24,12 @@
     },
     {
       "heading": "WPA2-PSK in the WLC GUI",
-      "body": "WLANs > select the WLAN > Security > Layer 2. Set Layer 2 Security to WPA+WPA2, tick WPA2 Policy with AES encryption, set Authentication Key Management to PSK, choose the PSK format (ASCII) and enter a passphrase of 8-63 characters. Apply and save.",
+      "body": "WLANs > select the WLAN > Security > Layer 2. Set Layer 2 Security to WPA+WPA2, tick WPA2 Policy with AES encryption, set Authentication Key Management to PSK, choose the PSK format (ASCII) and enter a passphrase of 8-63 characters. Apply and save. The key can be entered in ASCII or hex.",
       "example": "Security > Layer 2\n  Layer 2 Security: WPA+WPA2\n  WPA2 Policy: ✓   Encryption: AES\n  Auth Key Mgmt: PSK   Format: ASCII\n  PSK: ********************"
+    },
+    {
+      "heading": "More WPA3 protections",
+      "body": "Protected Management Frames (802.11w), mandatory in WPA3, stop forged deauthentication and disassociation frames, which attackers otherwise use to kick clients off, for example to capture a handshake. Enhanced Open (OWE, Opportunistic Wireless Encryption) gives every client on an open, password-less SSID such as a café's its own encryption key, so neighbours can't simply sniff traffic. WEP's RC4 keys can be cracked in minutes and TKIP has known weaknesses: neither should be used."
     }
   ],
   "recall": [

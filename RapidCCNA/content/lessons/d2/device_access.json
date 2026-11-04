@@ -6,7 +6,7 @@
   ],
   "order": 50,
   "title": "Device management access",
-  "minutes": 6,
+  "minutes": 10,
   "cards": [
     {
       "heading": "Console",
@@ -15,16 +15,16 @@
     },
     {
       "heading": "Telnet and SSH",
-      "body": "Remote CLI access goes through the VTY lines. Telnet (TCP 23) sends everything, including passwords, in clear text. SSH (TCP 22) encrypts the session; always use SSH and restrict the VTY lines to it.",
+      "body": "Remote CLI access goes through the VTY lines. Telnet (TCP 23) sends everything, including passwords, in clear text. SSH (TCP 22) encrypts the session; always use SSH and restrict the VTY lines to it. 'transport input ssh' controls which protocols may connect in ('transport output' controls sessions started from the device). 'line vty 0 15' configures 16 lines, since the range includes both ends; older devices had only vty 0 4 (5 lines).",
       "example": "line vty 0 4\n login local\n transport input ssh"
     },
     {
       "heading": "HTTP and HTTPS",
-      "body": "Many devices, especially WLCs, offer a web GUI. HTTP (TCP 80) is clear text; HTTPS (TCP 443) is encrypted. Disable plain HTTP: 'no ip http server', 'ip http secure-server'."
+      "body": "Many devices, especially WLCs, offer a web GUI. HTTP (TCP 80) is clear text; HTTPS (TCP 443) is encrypted. Disable plain HTTP: 'no ip http server', 'ip http secure-server'. 'ip http secure-server' turns on the HTTPS web interface."
     },
     {
       "heading": "Centralised authentication",
-      "body": "Instead of local accounts on every device, AAA servers check logins centrally. TACACS+ (Cisco, TCP 49) encrypts the whole payload and separates authorisation, so it suits device administration. RADIUS (UDP 1812/1813) suits network access such as Wi-Fi and 802.1X."
+      "body": "Instead of local accounts on every device, AAA servers check logins centrally. TACACS+ (Cisco, TCP 49) encrypts the whole payload and separates authorisation, so it suits device administration. RADIUS (UDP 1812/1813) suits network access such as Wi-Fi and 802.1X. RADIUS encrypts only the password; TACACS+ encrypts the whole body. With 200 devices, central AAA means one place to add or remove admins, and TACACS+ can authorise individual commands and log what each admin ran. Keep a local account as a fallback."
     },
     {
       "heading": "In-band, out-of-band and cloud",
@@ -34,6 +34,11 @@
       "heading": "Managing a layer 2 switch",
       "body": "A layer 2 switch has no routed ports, so it gets its management address on an SVI in the management VLAN. To be reachable from other subnets it also needs 'ip default-gateway', because it doesn't route.",
       "example": "interface vlan 99\n ip address 10.99.0.11 255.255.255.0\n no shutdown\n!\nip default-gateway 10.99.0.1"
+    },
+    {
+      "heading": "Hardening the VTY lines",
+      "body": "'exec-timeout 5 0' logs out a session after 5 minutes and 0 seconds idle ('0 0' disables the timeout, which isn't recommended). To let only admin hosts connect, permit them in a standard ACL and apply it to the lines with 'access-class': on lines it's access-class, on interfaces it's ip access-group. That protects remote access whichever interface it arrives on.",
+      "example": "access-list 10 permit 10.99.0.0 0.0.0.255\nline vty 0 15\n exec-timeout 5 0\n access-class 10 in\n transport input ssh"
     }
   ],
   "recall": [

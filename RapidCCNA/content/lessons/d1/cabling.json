@@ -7,20 +7,20 @@
   ],
   "order": 20,
   "title": "Cabling and interface problems",
-  "minutes": 8,
+  "minutes": 12,
   "cards": [
     {
       "heading": "Copper UTP",
-      "body": "Twisted-pair copper (UTP) with RJ-45 connectors reaches 100 m. Cat 5e handles 1 Gbps, Cat 6a 10 Gbps. Twisting the pairs cancels interference.",
+      "body": "Twisted-pair copper (UTP) with RJ-45 connectors reaches 100 m. Cat 5e handles 1 Gbps, Cat 6a 10 Gbps. Twisting the pairs cancels interference. Cat 6 only manages 10 Gbps to about 55 m, so Cat 6a is the lowest category for 10GBASE-T over the full 100 m.",
       "example": "10BASE-T, 100BASE-TX, 1000BASE-T, 10GBASE-T: all copper, 100 m"
     },
     {
       "heading": "Straight-through, crossover and Auto-MDIX",
-      "body": "PCs, routers, servers and APs transmit on pins 1,2; switches and hubs transmit on 3,6. Unlike devices use a straight-through cable; like devices need a crossover. Auto-MDIX on modern ports detects and corrects the wrong cable. A rollover cable connects a console port."
+      "body": "PCs, routers, servers and APs transmit on pins 1,2; switches and hubs transmit on 3,6. Unlike devices use a straight-through cable; like devices need a crossover. Auto-MDIX on modern ports detects and corrects the wrong cable. A rollover cable connects a console port. Switch to switch or PC to PC is like-to-like: with Auto-MDIX off, a straight-through cable between them leaves the link down."
     },
     {
       "heading": "Fiber",
-      "body": "Fiber carries light, so it's immune to electrical interference and goes much further. Multimode fiber (wide core, cheaper optics) covers hundreds of metres; single-mode fiber (narrow 9 µm core, lasers) covers kilometres. Common connectors are LC and SC, usually in an SFP module.",
+      "body": "Fiber carries light, so it's immune to electrical interference and goes much further. Multimode fiber (wide core, cheaper optics) covers hundreds of metres; single-mode fiber (narrow 9 µm core, lasers) covers kilometres. Common connectors are LC and SC, usually in an SFP module. An SFP (small form-factor pluggable) is a hot-swappable transceiver module: one SFP slot can take fiber or copper optics as needed, and SFP+ does the same at 10 Gbps. 1000BASE-SX uses short-wavelength lasers on multimode fiber; 1000BASE-LX uses long-wavelength lasers, typically on single-mode fiber.",
       "example": "1000BASE-SX   multimode     ~550 m\n1000BASE-LX   single-mode   ~5-10 km"
     },
     {
@@ -29,12 +29,12 @@
     },
     {
       "heading": "Reading show interfaces",
-      "body": "The first line gives the layer 1 / layer 2 status. 'administratively down' = shut down. 'down/down' = no physical link. The counters show symptoms: runts (frames under 64 bytes), giants (over 1518), CRC errors (corrupted frames), collisions and late collisions.",
+      "body": "The first line gives the layer 1 / layer 2 status. 'administratively down' = shut down. 'down/down' = no physical link. The counters show symptoms: runts (frames under 64 bytes), giants (over 1518), CRC errors (corrupted frames), collisions and late collisions. The reason in brackets helps: (notconnect) means no cable or the far end is off, (err-disabled) means a feature shut the port, and 'up, line protocol is up' means layers 1 and 2 work.",
       "example": "Fa0/1 is up, line protocol is up (connected)\n  Full-duplex, 100Mb/s\n     312 runts, 0 giants\n     4810 input errors, 4497 CRC"
     },
     {
       "heading": "Duplex and speed mismatch",
-      "body": "If one end is hard-coded and the other is auto, the auto end senses the speed but falls back to half duplex (at 10/100). The half-duplex end sees late collisions; the full-duplex end sees CRC errors and runts. A speed mismatch keeps the link down. Fix: configure both ends the same, ideally auto."
+      "body": "If one end is hard-coded and the other is auto, the auto end senses the speed but falls back to half duplex (at 10/100). The half-duplex end sees late collisions; the full-duplex end sees CRC errors and runts. A speed mismatch keeps the link down. Fix: configure both ends the same, ideally auto. Late collisions are collisions after the first 64 bytes of a frame; on a working half-duplex link they never happen, so rising late collisions are the classic sign of a duplex mismatch."
     },
     {
       "heading": "Other symptoms",

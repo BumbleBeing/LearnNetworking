@@ -6,20 +6,20 @@
   ],
   "order": 30,
   "title": "TCP and UDP",
-  "minutes": 6,
+  "minutes": 9,
   "cards": [
     {
       "heading": "Transport layer jobs",
-      "body": "TCP and UDP carry data between applications. Port numbers identify the application: a well-known destination port for the server (such as 443) and a random ephemeral source port (49152 and up) for the client. IP address plus port is a socket.",
+      "body": "TCP and UDP carry data between applications. Port numbers identify the application: a well-known destination port for the server (such as 443) and a random ephemeral source port (49152 and up) for the client. IP address plus port is a socket. A connection is identified by four values: source IP, source port, destination IP and destination port. Two browser tabs to the same server are kept apart by their different ephemeral source ports.",
       "example": "PC 10.1.1.5:51234  →  server 203.0.113.10:443"
     },
     {
       "heading": "TCP: reliable and connection-oriented",
-      "body": "TCP sets up a session with a three-way handshake (SYN, SYN-ACK, ACK), numbers every byte, acknowledges what arrived, retransmits what didn't and reorders segments. Windowing gives flow control: the receiver says how much it can take before the sender must wait for an ACK. A session closes with FIN/ACK."
+      "body": "TCP sets up a session with a three-way handshake (SYN, SYN-ACK, ACK), numbers every byte, acknowledges what arrived, retransmits what didn't and reorders segments. Windowing gives flow control: the receiver says how much it can take before the sender must wait for an ACK. A session closes with FIN/ACK. If a segment isn't acknowledged in time, the sender retransmits it. A graceful close uses the FIN flag (FIN, ACK, FIN, ACK, a four-way close); RST aborts a connection at once."
     },
     {
       "heading": "UDP: fast and connectionless",
-      "body": "UDP just sends datagrams: no handshake, no acknowledgements, no retransmission, no ordering, and an 8-byte header (TCP's is 20+). It suits real-time traffic such as voice and video, where late data is useless, and short query/response exchanges such as DNS."
+      "body": "UDP just sends datagrams: no handshake, no acknowledgements, no retransmission, no ordering, and an 8-byte header (TCP's is 20+). It suits real-time traffic such as voice and video, where late data is useless, and short query/response exchanges such as DNS. Voice uses UDP because retransmitted audio would arrive too late to be useful. TFTP and SNMP use UDP; FTP and SMTP need TCP."
     },
     {
       "heading": "Well-known ports",

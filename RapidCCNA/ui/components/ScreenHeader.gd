@@ -2,12 +2,16 @@ class_name ScreenHeader
 extends RefCounted
 ## Shared header for session screens: kicker, title, subtitle and an Exit button.
 
-static func build(parent: Node, kicker: String, title: String, subtitle: String = "") -> HBoxContainer:
+## rich_title: highlight acronyms in the title (lesson titles) with UI.rich().
+static func build(parent: Node, kicker: String, title: String, subtitle: String = "", rich_title: bool = false) -> HBoxContainer:
 	var head := UI.hbox(parent, 16)
 	var titles := UI.vbox(head, 2)
 	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	UI.label(titles, kicker.to_upper(), "H3")
-	UI.label(titles, title, "H1", true)
+	if rich_title:
+		UI.rich(titles, title, "H1")
+	else:
+		UI.label(titles, title, "H1", true)
 	if not subtitle.is_empty():
 		UI.label(titles, subtitle, "Muted", true)
 	var step_info := ""

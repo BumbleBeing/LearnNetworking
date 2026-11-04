@@ -6,7 +6,7 @@
   ],
   "order": 60,
   "title": "Wildcard masks",
-  "minutes": 4,
+  "minutes": 6,
   "cards": [
     {
       "heading": "A wildcard is an inverted mask",
@@ -27,6 +27,11 @@
       "heading": "Not just ACLs",
       "body": "OSPF network statements use wildcards the same way: they choose which interfaces join OSPF. The logic is the same, so practising one helps with the other.",
       "example": "router ospf 1\n network 10.1.1.0 0.0.0.255 area 0"
+    },
+    {
+      "heading": "Only the 0 bits are checked",
+      "body": "A wildcard compares only the bits where it has a 0; the address bits under a 1 don't matter at all. So with 0.0.0.255 the last octet of the address is ignored: '10.1.1.0 0.0.0.255' and '10.1.1.255 0.0.0.255' match exactly the same addresses, 10.1.1.0 to 10.1.1.255. A wildcard isn't a subnet mask: '10.1.1.0 255.255.255.0' checks only the last octet and matches every address ending in .0.",
+      "example": "/26 = 255.255.255.192 -> wildcard 0.0.0.63\n172.20.16.0 0.0.7.255 -> 172.20.16.0 - 172.20.23.255"
     }
   ],
   "recall": [

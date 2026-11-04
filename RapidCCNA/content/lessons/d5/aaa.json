@@ -6,7 +6,7 @@
   ],
   "order": 75,
   "title": "AAA, RADIUS, TACACS+ and 802.1X",
-  "minutes": 7,
+  "minutes": 10,
   "cards": [
     {
       "heading": "Authentication, authorisation, accounting",
@@ -18,12 +18,12 @@
     },
     {
       "heading": "TACACS+",
-      "body": "Cisco-originated, on TCP 49. It encrypts the whole payload and keeps authentication, authorisation and accounting separate, so it can authorise individual commands. It's the usual choice for device administration.",
+      "body": "Cisco-originated, on TCP 49. It encrypts the whole payload and keeps authentication, authorisation and accounting separate, so it can authorise individual commands. It's the usual choice for device administration. 'aaa new-model' must come first; from then on lines use the default method list unless you assign another. Methods in a list are tried in order, and the next one is used only if the previous one doesn't respond: 'group radius local' falls back to local users only when no RADIUS server answers, not when RADIUS rejects the login.",
       "example": "aaa new-model\ntacacs server ISE\n address ipv4 10.0.0.20\n key T@csKey\naaa authentication login default group tacacs+ local"
     },
     {
       "heading": "802.1X",
-      "body": "Port-based network access control. The supplicant (the user's device) talks EAP over LAN (EAPOL) to the authenticator (switch or WLC), which relays it in RADIUS to the authentication server (such as Cisco ISE). The port only passes traffic once the server says yes.",
+      "body": "Port-based network access control. The supplicant (the user's device) talks EAP over LAN (EAPOL) to the authenticator (switch or WLC), which relays it in RADIUS to the authentication server (such as Cisco ISE). The port only passes traffic once the server says yes. Cisco ISE (Identity Services Engine) is the usual AAA server: RADIUS for network access and TACACS+ for device administration.",
       "example": "[PC: supplicant] ─EAPOL─ [Switch: authenticator] ─RADIUS─ [ISE: auth server]"
     }
   ],

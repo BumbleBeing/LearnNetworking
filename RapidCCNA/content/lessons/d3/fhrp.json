@@ -6,7 +6,7 @@
   ],
   "order": 40,
   "title": "First hop redundancy (HSRP)",
-  "minutes": 7,
+  "minutes": 11,
   "cards": [
     {
       "heading": "The problem",
@@ -19,7 +19,7 @@
     },
     {
       "heading": "Election",
-      "body": "Highest priority wins (default 100, range 0-255). If priorities tie, the highest interface IP wins.",
+      "body": "Highest priority wins (default 100, range 0-255). If priorities tie, the highest interface IP wins. Priority ranges 0-255 with a default of 100.",
       "example": "interface g0/0\n ip address 10.1.1.2 255.255.255.0\n standby 1 ip 10.1.1.1\n standby 1 priority 110"
     },
     {
@@ -38,7 +38,12 @@
     },
     {
       "heading": "VRRP and GLBP",
-      "body": "VRRP is the open standard (RFC 5798): master and backup routers, preempt on by default, and the virtual IP may be a real router's address. GLBP (Cisco) load-balances: one active virtual gateway (AVG) hands out different virtual MACs so several forwarders (AVFs) share the traffic."
+      "body": "VRRP is the open standard (RFC 5798): master and backup routers, preempt on by default, and the virtual IP may be a real router's address. GLBP (Cisco) load-balances: one active virtual gateway (AVG) hands out different virtual MACs so several forwarders (AVFs) share the traffic. If the VRRP virtual IP is one router's real address, that address owner gets priority 255 and is always master; HSRP needs a separate virtual address. In GLBP the AVG answers ARP for the virtual IP with the MACs of up to four AVFs, spreading hosts across them. HSRP and GLBP are Cisco-proprietary; VRRP is the open standard."
+    },
+    {
+      "heading": "HSRP states, versions and addresses",
+      "body": "A group has one active and one standby router; any others wait in the Listen state and only speak up if the active or standby fails. Only the active router forwards for the virtual IP, so sharing load needs several groups or GLBP. When hosts ARP for the virtual IP, the reply carries the group's virtual MAC; that MAC moves with the active role, so after a failover hosts keep the same gateway MAC and don't need to ARP again. 'show standby brief' lists each group's priority, P for preempt, state, active and standby routers and virtual IP.",
+      "example": "HSRPv1  groups 0-255   hellos to 224.0.0.2    MAC 0000.0c07.acXX\nHSRPv2  groups 0-4095  hellos to 224.0.0.102  MAC 0000.0c9f.fXXX  (IPv6 too)\nVRRP    hellos to 224.0.0.18                   MAC 0000.5e00.01XX\nGLBP    MAC 0007.b4XX.XXYY"
     }
   ],
   "recall": [

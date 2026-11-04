@@ -7,7 +7,7 @@
   ],
   "order": 64,
   "title": "IPv6 addressing",
-  "minutes": 9,
+  "minutes": 12,
   "cards": [
     {
       "heading": "128 bits in hex",
@@ -16,12 +16,12 @@
     },
     {
       "heading": "Shortening addresses",
-      "body": "Two rules: drop leading zeros in each group, and replace one run of consecutive all-zero groups with ::. Use :: only once (otherwise the address is ambiguous), on the longest run; if two runs tie, the first. A single zero group stays as 0.",
+      "body": "Two rules: drop leading zeros in each group, and replace one run of consecutive all-zero groups with ::. Use :: only once (otherwise the address is ambiguous), on the longest run; if two runs tie, the first. A single zero group stays as 0. This is the RFC 5952 canonical form: leading zeros must go, letters are lower case, and :: replaces the longest run (the first run on a tie).",
       "example": "2001:0db8:0000:0000:0000:ff00:0042:8329\n2001:db8::ff00:42:8329"
     },
     {
       "heading": "Global unicast and unique local",
-      "body": "Global unicast addresses (2000::/3, so they start with 2 or 3) are public and routable, like public IPv4. Unique local addresses (FC00::/7, in practice FDxx) are private, like RFC 1918."
+      "body": "Global unicast addresses (2000::/3, so they start with 2 or 3) are public and routable, like public IPv4. Unique local addresses (FC00::/7, in practice FDxx) are private, like RFC 1918. Unique local addresses with the L bit set fall in FD00::/8, followed by a random 40-bit global ID. LAN subnets normally use a /64, which leaves the 64-bit interface ID that SLAAC and EUI-64 need; /48 and /56 are typical site allocations, and /128 is a single address."
     },
     {
       "heading": "Link-local",
@@ -38,7 +38,7 @@
     },
     {
       "heading": "Configuring a router",
-      "body": "Routing IPv6 must be turned on globally. Interfaces can get a manual address, an EUI-64 address or just a link-local address. Hosts can learn their prefix from Router Advertisements (SLAAC) or use DHCPv6.",
+      "body": "Routing IPv6 must be turned on globally. Interfaces can get a manual address, an EUI-64 address or just a link-local address. Hosts can learn their prefix from Router Advertisements (SLAAC) or use DHCPv6. With SLAAC the host takes the /64 prefix from the Router Advertisement and adds its own interface ID (EUI-64 or random). Neighbor Discovery (NDP) replaces ARP for finding MAC addresses.",
       "example": "ipv6 unicast-routing\ninterface g0/0\n ipv6 address 2001:db8:acad:1::1/64\ninterface g0/1\n ipv6 address 2001:db8:acad:2::/64 eui-64"
     },
     {

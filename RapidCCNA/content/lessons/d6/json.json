@@ -6,7 +6,7 @@
   ],
   "order": 50,
   "title": "JSON-encoded data",
-  "minutes": 6,
+  "minutes": 10,
   "cards": [
     {
       "heading": "Objects and key/value pairs",
@@ -15,16 +15,16 @@
     },
     {
       "heading": "Value types",
-      "body": "A value is a string (\"text\" in double quotes), a number (42, 3.5, no quotes), a boolean (true or false, lowercase), null, an array ([ ] an ordered list) or another object.",
+      "body": "A value is a string (\"text\" in double quotes), a number (42, 3.5, no quotes), a boolean (true or false, lowercase), null, an array ([ ] an ordered list) or another object. Those six are the only types. There's no date type: dates are sent as strings such as \"2026-11-04T10:00:00Z\". Note that \"true\" in quotes is a string, and True with a capital T is Python, not JSON.",
       "example": "\"vlans\": [10, 20, 30]\n\"enabled\": true\n\"location\": null\n\"ipv4\": {\"address\": \"10.1.1.1\", \"prefix\": 24}"
     },
     {
       "heading": "Nesting and reading paths",
-      "body": "Objects and arrays nest, so you follow a path one step at a time. interfaces[1].ipv4.address means: the key interfaces, its second item (arrays count from 0), then ipv4, then address."
+      "body": "Objects and arrays nest, so you follow a path one step at a time. interfaces[1].ipv4.address means: the key interfaces, its second item (arrays count from 0), then ipv4, then address. When counting the key/value pairs of an object, only count its own keys: the values inside a nested array or object don't count at that level."
     },
     {
       "heading": "Strict rules",
-      "body": "Double quotes only, never single. A comma between items but not after the last one. Lowercase true/false/null. No comments. Whitespace and line breaks don't matter."
+      "body": "Double quotes only, never single. A comma between items but not after the last one. Lowercase true/false/null. No comments. Whitespace and line breaks don't matter. Other formats carry the same kinds of data: XML uses tags, and YAML (used by Ansible) uses indentation instead of braces."
     }
   ],
   "recall": [

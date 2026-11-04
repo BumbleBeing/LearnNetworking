@@ -14,21 +14,13 @@ func _ready() -> void:
 	ccna.add_theme_color_override("font_color", look.accent)
 	UI.label(col, "Pass the CCNA 200-301, one concept at a time.", "Muted")
 
-	var chips := UI.hbox(col, 8)
-	for t in ["6 exam domains", "Spaced repetition", "Timed mock exams"]:
-		UI.chip(chips, t)
-
 	var gap := Control.new()
 	gap.custom_minimum_size.y = 12
 	col.add_child(gap)
 	var start := UI.button(col, "Start studying", _go_dashboard, true)
 	start.custom_minimum_size.x = 320
 	var row := UI.hbox(col, 10)
-	var look_label := UI.label(row, "Look", "Muted")
-	look_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	UI.hide_from_screen_readers(look_label)   # the dropdown itself is read as "Look: Night Ops"
-	UI.look_picker(row)
-	UI.button(row, "Settings", _go_settings).custom_minimum_size.x = 0
+	UI.button(row, "Settings", _go_settings).custom_minimum_size.x = 0   # the look is chosen in Settings
 	if OS.get_name() != "Web":   # browsers can't close the tab from the page
 		UI.button(row, "Quit", func(): get_tree().quit()).custom_minimum_size.x = 0
 

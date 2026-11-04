@@ -6,7 +6,7 @@
   ],
   "order": 15,
   "title": "CDP and LLDP",
-  "minutes": 6,
+  "minutes": 8,
   "cards": [
     {
       "heading": "What discovery protocols do",
@@ -19,12 +19,12 @@
     },
     {
       "heading": "LLDP",
-      "body": "Link Layer Discovery Protocol (IEEE 802.1AB) is the open standard, so non-Cisco devices such as many phones, APs and servers speak it. It's off by default on Cisco devices. It sends every 30 seconds with a 120-second hold time. Transmit and receive can be controlled separately per interface.",
+      "body": "Link Layer Discovery Protocol (IEEE 802.1AB) is the open standard, so non-Cisco devices such as many phones, APs and servers speak it. It's off by default on Cisco devices. It sends every 30 seconds with a 120-second hold time. Transmit and receive can be controlled separately per interface. Its hold time is 4 x the timer. Once 'lldp run' is on globally, 'lldp transmit' and 'lldp receive' are on for each port. CDP, VTP and DTP are all Cisco-proprietary; to discover another vendor's device, use LLDP.",
       "example": "lldp run\ninterface g0/1\n no lldp transmit\n no lldp receive"
     },
     {
       "heading": "Detail and verification",
-      "body": "'show cdp neighbors detail' adds the neighbour's IP address and software version: handy for finding the address of a device you need to manage. 'show cdp' and 'show lldp' report whether the protocol is running.",
+      "body": "'show cdp neighbors detail' adds the neighbour's IP address and software version: handy for finding the address of a device you need to manage. 'show cdp' and 'show lldp' report whether the protocol is running. 'show cdp entry <name>' gives the same detail for one neighbour. In the summary, 'Local Intrfce' (or 'Interface' in the detail view) is your own port and 'Port ID' is the neighbour's port.",
       "example": "SW1#show cdp neighbors detail\nDevice ID: R1\n  IP address: 10.0.0.1\nPlatform: cisco ISR4321,  Capabilities: Router ...\nInterface: GigabitEthernet0/2,  Port ID (outgoing port): GigabitEthernet0/0/0"
     },
     {

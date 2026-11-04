@@ -2,6 +2,7 @@ class_name ThemeFactory
 extends RefCounted
 ## Builds a Godot Theme from a Palette look. Type variations used by screens:
 ## Labels: Display, H1, H2, H3, Big, Muted, ChipText. Buttons: PrimaryButton.
+## Rich text (UI.rich): RichStem, RichBody, RichH1, RichH2, RichMuted, RichChoice, RichCode.
 ## Panels: Card, Chip.
 
 const SANS := {
@@ -71,6 +72,22 @@ static func build(p: Dictionary, scale: float = 1.0) -> Theme:
 	t.set_font("font", "CodeBig", code_bold)
 	t.set_font_size("font_size", "CodeBig", sz.call(38))
 	t.set_color("font_color", "CodeBig", p.text)
+	# Rich text: lesson cards, question stems, choices and explanations. Same sizes as the
+	# Label variations above; acronyms in them get the look's acronym colour and a tooltip.
+	t.set_color("default_color", "RichTextLabel", p.text)
+	t.set_font("normal_font", "RichTextLabel", base)
+	t.set_font_size("normal_font_size", "RichTextLabel", sz.call(17))
+	for v in [["RichStem", 20, base, p.text, 4], ["RichBody", 18, base, p.text, 4], ["RichH1", 40, bold, p.text, 0],
+			["RichH2", 24, bold, p.text, 0], ["RichMuted", 15, base, p.muted, 0], ["RichChoice", 17, base, p.text, 0],
+			["RichCode", 15, code_font, p.text, 3]]:
+		t.set_type_variation(v[0], "RichTextLabel")
+		t.set_font("normal_font", v[0], v[2])
+		t.set_font_size("normal_font_size", v[0], sz.call(v[1]))
+		t.set_color("default_color", v[0], v[3])
+		t.set_constant("line_separation", v[0], v[4])
+	t.set_stylebox("panel", "TooltipPanel", box(Color(p.panel, 1.0), p.acronym, r_small, 1, 10, 6))
+	t.set_color("font_color", "TooltipLabel", p.text)
+	t.set_font_size("font_size", "TooltipLabel", sz.call(15))
 	t.set_type_variation("Exhibit", "PanelContainer")
 	t.set_stylebox("panel", "Exhibit", box(p.input, p.border, r_small, 1, 16, 12))
 

@@ -6,19 +6,19 @@
   ],
   "order": 20,
   "title": "AI and machine learning in network operations",
-  "minutes": 5,
+  "minutes": 9,
   "cards": [
     {
       "heading": "AI and machine learning",
-      "body": "Artificial intelligence is the broad field of systems that perform tasks needing human-like judgement. Machine learning (ML) is the part that learns patterns from data instead of following hand-written rules. Supervised learning trains on labelled examples; unsupervised learning finds structure and anomalies in unlabelled data."
+      "body": "Artificial intelligence is the broad field of systems that perform tasks needing human-like judgement. Machine learning (ML) is the part that learns patterns from data instead of following hand-written rules. Supervised learning trains on labelled examples; unsupervised learning finds structure and anomalies in unlabelled data. Reinforcement learning learns by trial: it tries actions and is rewarded or penalised for the results. Any model is only as good as its training data, so it needs large amounts of good-quality data; incomplete or biased telemetry leads to missed problems or false alarms."
     },
     {
       "heading": "Where it helps operations",
-      "body": "Anomaly detection spots behaviour that departs from a learned baseline (unusual traffic, rising errors). Predictive analytics forecasts failures and capacity needs before they hurt. Correlation reduces thousands of alerts to a probable root cause. Platforms such as Catalyst Center assurance apply these to telemetry."
+      "body": "Anomaly detection spots behaviour that departs from a learned baseline (unusual traffic, rising errors). Predictive analytics forecasts failures and capacity needs before they hurt. Correlation reduces thousands of alerts to a probable root cause. Platforms such as Catalyst Center assurance apply these to telemetry. AIOps is applying AI/ML to operations data: correlating telemetry, logs and events, spotting anomalies, finding root causes and sometimes triggering automated fixes. These are predictive (and classifying) uses: they forecast or flag."
     },
     {
       "heading": "Generative AI",
-      "body": "Large language models can draft configurations, explain logs and answer troubleshooting questions in plain language. They can also be confidently wrong, so a human must review anything before it touches production, and sensitive data shouldn't be pasted into public services."
+      "body": "Large language models can draft configurations, explain logs and answer troubleshooting questions in plain language. They can also be confidently wrong, so a human must review anything before it touches production, and sensitive data shouldn't be pasted into public services. That's the difference from predictive AI: generative models create content such as text, code or configuration, while predictive models forecast or classify. Treat a generated config like any other change: an engineer reviews and tests it first."
     }
   ],
   "recall": [

@@ -29,6 +29,10 @@ The daily plan always follows the exam areas in order. To study anything else, u
 
 Every answer shows an explanation. A miss always shows the worked solution. Drill skills are graded once per round, so a 10-item round doesn't inflate review intervals.
 
+Under every question (outside mock exams), **Submit**, **I don't know** and **Study** sit centred in one row. **Study** opens the question's whole lesson over the screen; Back (or Esc) returns to the question as you left it. Every question can be answered from its lesson's cards.
+
+**Acronyms** in lessons and questions (OSPF, VLAN, DHCP...) are drawn in a contrasting colour from the current look, and hovering one shows what it stands for. The list lives in `core/Glossary.gd`, and CI (`tools/check_acronyms.py`) fails if lesson or question text uses an acronym it doesn't explain.
+
 ![M1 screens](docs/ui/m1.png)
 
 ## Mock exam
@@ -195,7 +199,7 @@ godot --headless --path . --export-release Web build/web/index.html
 Saves go to `user://save.json` (on Linux: `~/.local/share/godot/app_userdata/RapidCCNA/`).
 
 ## Adding content
-- **Lesson** (`content/lessons/<domain>/<unit>.json`): `id, domain, subtopics[], order, title, cards[3-8]{heading, body}, recall[question ids]`.
+- **Lesson** (`content/lessons/<domain>/<unit>.json`): `id, domain, subtopics[], order, title, cards[3-10]{heading, body}, recall[question ids]`.
 - **Questions** (`content/questions/<domain>.json`, an array): `id, domain, subtopic, type, stem, choices?, answer, explanation, lesson_ref, difficulty`.
   - `mcq_single`: `choices`, `answer` is an index. `exhibit` is the same plus an `exhibit` text block (show output, ipconfig and so on).
   - `mcq_multi`: `answer` is a list of 2 or more indices.

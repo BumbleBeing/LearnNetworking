@@ -1546,7 +1546,7 @@
       "To save CPU",
       "Because 802.1Q requires it"
     ],
-    "answer": 3,
+    "answer": 0,
     "explanation": "With PVST+ you can make one switch root for some VLANs and another for the rest, so both uplinks carry traffic instead of one sitting blocked.",
     "lesson_ref": "d2.stp"
   },

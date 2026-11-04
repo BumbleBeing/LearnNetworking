@@ -17,6 +17,7 @@ var _order_items: Array = []
 var _order_list: VBoxContainer
 var _submit: Button
 var _skip: Button
+var _study: Button
 var _notice: Label
 var _feedback: VBoxContainer
 var _start_ms := 0
@@ -36,12 +37,12 @@ func _ready() -> void:
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var d := ContentDB.get_domain(q.get("domain", ""))
 	UI.label(self, ("%s  ·  %s" % [d.get("name", ""), q.get("subtopic", "")]).to_upper(), "H3")
-	UI.label(self, str(q.get("stem", "")), "Stem", true)
+	UI.rich(self, str(q.get("stem", "")), "Stem")
 	if q.has("exhibit"):
 		var ex := PanelContainer.new()
 		ex.theme_type_variation = "Exhibit"
 		add_child(ex)
-		UI.label(ex, str(q.exhibit), "Code")
+		UI.rich(ex, str(q.exhibit), "Code", false)
 	match q.get("type", ""):
 		"mcq_single", "exhibit":
 			_build_choices(false)
@@ -61,10 +62,16 @@ func _ready() -> void:
 			UI.label(self, "Unsupported question type: %s" % q.get("type", "?"), "Muted")
 			_get_response = func(): return null
 	var row := UI.hbox(self, 12)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	_submit = UI.button(row, "Submit", _on_submit, true)
 	_skip = UI.button(row, "I don't know" if show_feedback else "Skip", _on_submit.bind(true))
-	_notice = UI.label(row, "", "Muted")
-	_notice.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# Study reopens the question's lesson. Not in mock exams (no feedback), like the real exam.
+	if show_feedback and ContentDB.lessons.has(_lesson_ref()):
+		_study = UI.button(row, "Study", _open_study)
+		_study.tooltip_text = "Read the lesson: " + str(ContentDB.lessons[_lesson_ref()].get("title", ""))
+	_notice = UI.label(self, "", "Muted")
+	_notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_notice.visible = false
 	_feedback = UI.vbox(self, 8)
 	_feedback.visible = false
 	_start_ms = Time.get_ticks_msec()
@@ -87,6 +94,7 @@ func _build_choices(multi: bool) -> void:
 		# Digits + Enter still work; Tab reaches each choice too, so screen readers can.
 		b.focus_mode = Control.FOCUS_ALL
 		box.add_child(b)
+		UI.rich_button(b)
 		_choice_buttons.append(b)
 		_lockables.append(b)
 	_get_response = func():
@@ -113,7 +121,7 @@ func _build_match() -> void:
 	var opts := {}
 	for left in q.answer.keys():
 		var row := UI.hbox(self, 12)
-		var l := UI.label(row, str(left), "Body")
+		var l := UI.rich(row, str(left), "Body", false)
 		l.custom_minimum_size.x = 280
 		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		var ob := OptionButton.new()
@@ -121,6 +129,7 @@ func _build_match() -> void:
 		ob.add_item("Choose...")
 		for r in rights:
 			ob.add_item(str(r))
+			ob.set_item_tooltip(ob.item_count - 1, Glossary.tooltip(str(r)))
 		ob.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(ob)
 		opts[left] = ob
@@ -158,6 +167,7 @@ func _render_order(focus_at: int = -1, focus_dir: int = 0) -> void:
 		item.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		item.disabled = _done
 		row.add_child(item)
+		UI.rich_button(item)
 		item.focus_mode = Control.FOCUS_NONE   # the item itself does nothing; its arrows move it
 		item.set_meta("display_only", true)
 		var up := UI.button(row, "↑", _move.bind(i, -1))
@@ -194,7 +204,7 @@ func _build_fields() -> void:
 	var inputs := {}
 	var order: Array[LineEdit] = []
 	for f in q.get("fields", []):
-		var l := UI.label(grid, str(f.label), "Body")
+		var l := UI.rich(grid, str(f.label), "Body", false)
 		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		var le := _line_edit(str(f.get("placeholder", "")))
 		le.accessibility_name = str(f.label)
@@ -223,7 +233,7 @@ func _build_cli() -> void:
 		var ex := PanelContainer.new()
 		ex.theme_type_variation = "Exhibit"
 		add_child(ex)
-		UI.label(ex, lab.topology, "Code")
+		UI.rich(ex, str(lab.topology), "Code", false)
 	var dev: String = _lab.sessions.keys()[0]
 	_term = Terminal.new().setup(_lab.sessions[dev], "%s console. Type your commands, then press Submit." % dev)
 	_term.custom_minimum_size.y = 300
@@ -241,7 +251,7 @@ func _line_edit(placeholder: String) -> LineEdit:
 # --- answering ---
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if not event is InputEventKey or not event.pressed or event.echo:
+	if not event is InputEventKey or not event.pressed or event.echo or StudyOverlay.is_open():
 		return
 	if _done:
 		if event.keycode in [KEY_ENTER, KEY_KP_ENTER] and show_feedback:
@@ -264,6 +274,7 @@ func _on_submit(skip: bool = false) -> void:
 	var response = _get_response.call()
 	if not skip and _is_blank(response):
 		_notice.text = "Answer first, or choose \"I don't know\"."
+		_notice.visible = true
 		UI.announce(_notice.text)
 		return
 	_done = true
@@ -279,8 +290,9 @@ func _on_submit(skip: bool = false) -> void:
 	if _term:
 		_term.lock()
 	_submit.visible = false
-	_skip.visible = false
+	_skip.visible = false   # Study stays, to read up on the answer
 	_notice.text = ""
+	_notice.visible = false
 	answered.emit({"id": q.get("id", ""), "correct": correct, "response": response, "ms": ms, "skipped": skip})
 	if show_feedback:
 		_show_feedback(correct)
@@ -322,16 +334,16 @@ func _show_feedback(correct: bool) -> void:
 	var head := UI.label(card, "Correct" if correct else "Not quite", "H2")
 	head.add_theme_color_override("font_color", good if correct else bad)
 	if not correct:
-		UI.label(card, "Answer: " + Grader.answer_text(q), "Body", true)
+		UI.rich(card, "Answer: " + Grader.answer_text(q), "Body")
 		if _lab:
 			for res in _lab.results():
 				if not res.ok and not res.msg.is_empty():
-					UI.label(card, "On the device: " + res.msg, "Muted", true)
+					UI.rich(card, "On the device: " + res.msg, "Muted")
 					break
-	UI.label(card, str(q.get("explanation", "")), "Body", true)
-	var ref := str(q.get("lesson_ref", ""))
+	UI.rich(card, str(q.get("explanation", "")), "Body")
+	var ref := _lesson_ref()
 	if ContentDB.lessons.has(ref):
-		UI.label(card, "From the lesson: " + ContentDB.lessons[ref].title, "Muted")
+		UI.rich(card, "From the lesson: " + ContentDB.lessons[ref].title, "Muted")
 	var cont := UI.button(_feedback, "Continue", _continue, true)
 	UI.focus_later(cont)
 	UI.scroll_into_view(cont)
@@ -341,3 +353,16 @@ func _show_feedback(correct: bool) -> void:
 		spoken.append("Answer: %s." % Grader.answer_text(q))
 	spoken.append(str(q.get("explanation", "")))
 	UI.announce(" ".join(spoken))
+
+# --- studying ---
+
+func _lesson_ref() -> String:
+	return str(q.get("lesson_ref", ""))
+
+## Opens the lesson over the screen; the question waits underneath, unchanged.
+func _open_study() -> StudyOverlay:
+	var o := StudyOverlay.open(self, ContentDB.lessons.get(_lesson_ref(), {}))
+	o.closed.connect(func():
+		if is_instance_valid(_study):
+			UI.focus_later(_study))
+	return o

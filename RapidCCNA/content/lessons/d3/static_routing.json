@@ -6,11 +6,11 @@
   ],
   "order": 20,
   "title": "Static routing",
-  "minutes": 5,
+  "minutes": 11,
   "cards": [
     {
       "heading": "The ip route command",
-      "body": "A static route names a destination prefix and mask, then either a next-hop address or an exit interface. Next-hop routes are the usual choice on Ethernet. The route only goes into the table if the router can reach the next hop.",
+      "body": "A static route names a destination prefix and mask, then either a next-hop address or an exit interface. Next-hop routes are the usual choice on Ethernet. The route only goes into the table if the router can reach the next hop. Masks are written dotted: /12 is 255.240.0.0, /32 is 255.255.255.255. In show ip route, '[1/0]' on a static route means AD 1 (the default) and metric 0.",
       "example": "ip route 192.168.3.0 255.255.255.0 10.0.12.2\nip route 192.168.3.0 255.255.255.0 GigabitEthernet0/0"
     },
     {
@@ -20,23 +20,33 @@
     },
     {
       "heading": "Floating static routes",
-      "body": "Add an administrative distance at the end of the command to make a backup route. Because its AD is higher than the primary route's, it stays out of the routing table until the primary disappears.",
+      "body": "Add an administrative distance at the end of the command to make a backup route. Because its AD is higher than the primary route's, it stays out of the routing table until the primary disappears. The backup's AD must be higher than the route it backs up: OSPF is 110, so 'ip route 10.50.0.0 255.255.0.0 172.16.2.2 120' (any value 111-254) floats behind OSPF, while AD 1 or 100 would replace the OSPF route. The same works for two ISPs: 'ip route 0.0.0.0 0.0.0.0 198.51.100.1 5' backs up a default route with AD 1.",
       "example": "ip route 192.168.3.0 255.255.255.0 10.0.12.2       ← primary (AD 1)\nip route 192.168.3.0 255.255.255.0 10.0.13.3 10    ← backup (AD 10)"
     },
     {
       "heading": "Verify with show ip route and ping",
-      "body": "Check that the route is installed with code S, then ping. A ping needs routes in both directions: the far end must know how to reach your source address too.",
+      "body": "Check that the route is installed with code S, then ping. A ping needs routes in both directions: the far end must know how to reach your source address too. 'show ip route static' and 'show ipv6 route static' filter to static routes. If a traceroute bounces between the same two addresses until the TTL runs out, there's a routing loop: each router's route points at the other.",
       "example": "R1#show ip route static\nS    192.168.3.0/24 [1/0] via 10.0.12.2\nR1#ping 192.168.3.1\n!!!!!"
     },
     {
       "heading": "IPv6 static routes",
-      "body": "IPv6 works the same way with 'ipv6 route'. Enable routing first with 'ipv6 unicast-routing'. The default route is ::/0.",
+      "body": "IPv6 works the same way with 'ipv6 route'. Enable routing first with 'ipv6 unicast-routing'. The default route is ::/0. Without 'ipv6 unicast-routing', the router acts as an IPv6 host and forwards nothing. Prefix lengths are written as /48 or /64; there are no dotted masks in IPv6.",
       "example": "ipv6 unicast-routing\nipv6 route 2001:db8:3::/64 2001:db8:12::2\nipv6 route ::/0 2001:db8:12::2"
     },
     {
       "heading": "Next hop, exit interface or both",
-      "body": "With only a next-hop IP, the router looks up that address to find the exit interface (a recursive route). With only an exit interface on Ethernet, the router ARPs for every destination and relies on proxy ARP from the next router, so avoid that. A fully specified route names both. A host route uses mask 255.255.255.255 (/128 in IPv6). An IPv6 route with a link-local next hop must name the interface too, because link-local addresses are only unique on one link.",
+      "body": "With only a next-hop IP, the router looks up that address to find the exit interface (a recursive route). With only an exit interface on Ethernet, the router ARPs for every destination and relies on proxy ARP from the next router, so avoid that. A fully specified route names both. A host route uses mask 255.255.255.255 (/128 in IPv6). An IPv6 route with a link-local next hop must name the interface too, because link-local addresses are only unique on one link. An exit-interface-only route is fine on a point-to-point link such as a serial link, where there's only one device at the other end.",
       "example": "ip route 10.8.8.8 255.255.255.255 10.0.0.2\nip route 10.30.0.0 255.255.0.0 g0/1 10.0.0.2\nipv6 route 2001:db8:5::/64 g0/0 fe80::2"
+    },
+    {
+      "heading": "When static routes appear and disappear",
+      "body": "A static route is withdrawn from the table (but stays in the config) when its exit interface or the path to its next hop goes down, which lets a floating backup take over; it returns when the interface comes back. Two static routes to the same prefix with the same AD and metric are both installed, and traffic is shared between them.",
+      "example": "R1(config)# interface g0/1\nR1(config-if)# shutdown\n! S 10.30.0.0/16 via g0/1 leaves the table; the floating route appears"
+    },
+    {
+      "heading": "Summary routes and when to use static",
+      "body": "One static route can cover several networks if they're contiguous and line up on a boundary: 10.4.0.0/16 to 10.7.0.0/16 are four /16s starting at a multiple of 4, so they summarise to 10.4.0.0/14 (255.252.0.0). A /13 would also cover 10.0-10.3. Static routes suit stub networks with one way out (a branch's default route to its only ISP) and floating backups for dynamic routes. They send no updates and use no CPU, but they don't adapt to failures and every change is a manual edit, so large or changing networks need a routing protocol.",
+      "example": "ip route 10.4.0.0 255.252.0.0 10.0.0.2   ! 10.4.0.0 - 10.7.255.255"
     }
   ],
   "recall": [

@@ -6,11 +6,11 @@
   ],
   "order": 61,
   "title": "Access control lists",
-  "minutes": 6,
+  "minutes": 9,
   "cards": [
     {
       "heading": "Standard vs extended",
-      "body": "Standard ACLs (1-99, 1300-1999) match only the source address. Extended ACLs (100-199, 2000-2699) match protocol, source, destination and optionally ports, so they can be far more precise.",
+      "body": "Standard ACLs (1-99, 1300-1999) match only the source address. Extended ACLs (100-199, 2000-2699) match protocol, source, destination and optionally ports, so they can be far more precise. Neither type matches MAC addresses. In an entry, 'host 10.1.1.10' is the same as '10.1.1.10 0.0.0.0', and IOS knows common ports by name ('eq https' is 'eq 443').",
       "example": "access-list 10 permit 192.168.1.0 0.0.0.255\naccess-list 100 permit tcp 192.168.1.0 0.0.0.255 host 10.1.1.10 eq 443"
     },
     {
@@ -25,12 +25,12 @@
     },
     {
       "heading": "Applying and placing ACLs",
-      "body": "An ACL does nothing until it's applied to an interface in a direction. You can have one ACL per interface, per direction, per protocol. Place extended ACLs close to the source (drop traffic early) and standard ACLs close to the destination (they can't tell destinations apart).",
+      "body": "An ACL does nothing until it's applied to an interface in a direction. You can have one ACL per interface, per direction, per protocol. Place extended ACLs close to the source (drop traffic early) and standard ACLs close to the destination (they can't tell destinations apart). 'in' filters packets as they arrive on the interface, before the routing decision; 'out' filters packets about to leave it, and traffic the router generates itself isn't filtered by an outbound ACL. Applying a second ACL in the same direction replaces the first.",
       "example": "interface GigabitEthernet0/1\n ip access-group 100 in"
     },
     {
       "heading": "Named ACLs and sequence numbers",
-      "body": "Named ACLs are easier to read and let you insert or delete single lines by sequence number without retyping the whole list.",
+      "body": "Named ACLs are easier to read and let you insert or delete single lines by sequence number without retyping the whole list. In a numbered ACL, a new 'access-list 10 ...' line is appended at the bottom; to insert one elsewhere, edit it with 'ip access-list standard 10' and give a sequence number. Inside ACL configuration mode 'no 20' removes one entry, while 'no ip access-list extended BLOCK' deletes the whole ACL.",
       "example": "ip access-list extended WEB-ONLY\n 10 permit tcp any host 10.1.1.10 eq 443\n 15 permit tcp any host 10.1.1.10 eq 80\n no 10"
     }
   ],
