@@ -13,7 +13,7 @@ static func _raw() -> Dictionary:
 			"bg_top": "#0a0f1f", "bg_bottom": "#141c3a",
 			"panel": "#17213fd6", "border": "#2b3a6b", "border_w": 1, "shadow": "#00000080",
 			"text": "#e8eeff", "muted": "#8d9ac2",
-			"accent": "#4cc9f0", "accent2": "#f72585", "good": "#4ade80", "warn": "#fbbf24",
+			"accent": "#4cc9f0", "accent2": "#ff5ca8", "good": "#4ade80", "warn": "#fbbf24",
 			"on_accent": "#06121f", "button": "#1c2850", "button_hover": "#24336a",
 			"input": "#0e1530", "track": "#0e1530", "chip": "#1a2550",
 			"line": "#4cc9f026", "node": "#4cc9f070",
@@ -26,7 +26,7 @@ static func _raw() -> Dictionary:
 			"bg_top": "#0c3a68", "bg_bottom": "#082a4d",
 			"panel": "#0b3560e0", "border": "#7fb8e0", "border_w": 1, "shadow": "#00000040",
 			"text": "#f2f8ff", "muted": "#a6c8e6",
-			"accent": "#ffd166", "accent2": "#ef476f", "good": "#06d6a0", "warn": "#ffd166",
+			"accent": "#ffd166", "accent2": "#ff8aa0", "good": "#06d6a0", "warn": "#ffd166",
 			"on_accent": "#1a1300", "button": "#0f4475", "button_hover": "#155690",
 			"input": "#072645", "track": "#072645", "chip": "#0f4475",
 			"line": "#cfe8ff38", "node": "#cfe8ff80",
@@ -52,7 +52,7 @@ static func _raw() -> Dictionary:
 			"bg_top": "#f4f7fb", "bg_bottom": "#e3e9f3",
 			"panel": "#ffffff", "border": "#dbe3ee", "border_w": 1, "shadow": "#1b243324",
 			"text": "#182233", "muted": "#5d6b82",
-			"accent": "#3a5bff", "accent2": "#ff6b3d", "good": "#16a34a", "warn": "#f59e0b",
+			"accent": "#3a5bff", "accent2": "#c2410c", "good": "#15803d", "warn": "#b45309",
 			"on_accent": "#ffffff", "button": "#ffffff", "button_hover": "#eef2ff",
 			"input": "#f7f9fc", "track": "#e8edf5", "chip": "#eef2ff",
 			"line": "#3a5bff1a", "node": "#3a5bff40",
@@ -80,5 +80,52 @@ static func get_look(look_name: String) -> Dictionary:
 			out[k] = val
 	return out
 
+## The look the player chose, with their accessibility settings applied.
 static func current() -> Dictionary:
-	return get_look(Settings.ui_look)
+	var look := get_look(Settings.ui_look)
+	if Settings.high_contrast:
+		look = high_contrast(look)
+	if Settings.reduce_motion:
+		look.animate = false
+	return look
+
+## High-contrast version of a look: pure black (or white, for light looks)
+## surfaces, solid borders, no backdrop, and every text colour at 7:1 or more
+## (WCAG AAA). Fonts and corner radius stay, so the look is still recognisable.
+static func high_contrast(look: Dictionary) -> Dictionary:
+	var out := look.duplicate()
+	var dark := luminance(look.bg_bottom) < 0.5
+	var c := {
+		"bg_top": "#000000", "bg_bottom": "#000000", "panel": "#000000", "border": "#ffffff", "shadow": "#00000000",
+		"text": "#ffffff", "muted": "#e6e6e6", "accent": "#7dd3fc", "accent2": "#ff9ecb", "good": "#86efac",
+		"warn": "#fde68a", "on_accent": "#000000", "button": "#000000", "button_hover": "#262626",
+		"input": "#000000", "track": "#404040", "chip": "#000000", "line": "#00000000", "node": "#00000000",
+	} if dark else {
+		"bg_top": "#ffffff", "bg_bottom": "#ffffff", "panel": "#ffffff", "border": "#000000", "shadow": "#00000000",
+		"text": "#000000", "muted": "#1a1a1a", "accent": "#0033cc", "accent2": "#b00020", "good": "#006400",
+		"warn": "#7a4a00", "on_accent": "#ffffff", "button": "#ffffff", "button_hover": "#e6e6e6",
+		"input": "#ffffff", "track": "#bfbfbf", "chip": "#ffffff", "line": "#00000000", "node": "#00000000",
+	}
+	for k in c:
+		out[k] = Color(c[k])
+	out.border_w = 2
+	out.pattern = "none"
+	out.topology = false
+	out.animate = false
+	out.high_contrast = true
+	return out
+
+## The card colour as seen on screen (panels can be translucent).
+static func panel_color(look: Dictionary) -> Color:
+	return look.bg_bottom.lerp(Color(look.panel, 1.0), look.panel.a)
+
+## WCAG 2 relative luminance (0 black .. 1 white).
+static func luminance(c: Color) -> float:
+	var f := func(v: float) -> float: return v / 12.92 if v <= 0.03928 else pow((v + 0.055) / 1.055, 2.4)
+	return 0.2126 * f.call(c.r) + 0.7152 * f.call(c.g) + 0.0722 * f.call(c.b)
+
+## WCAG contrast ratio between two opaque colours (1..21).
+static func contrast(a: Color, b: Color) -> float:
+	var la := luminance(a)
+	var lb := luminance(b)
+	return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)

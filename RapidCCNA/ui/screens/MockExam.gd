@@ -28,7 +28,9 @@ func _ready() -> void:
 	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	UI.label(titles, "MOCK EXAM", "H3")
 	UI.label(titles, str(_step.get("label", "Mock exam")), "H1", true)
-	UI.label(titles, "%d questions  ·  %d minutes  ·  pass mark %d" % [_ids.size(), _minutes, int(_step.get("pass_scaled", 825))], "Muted", true)
+	var extra := int(_step.get("extra_time", 0))
+	UI.label(titles, "%d questions  ·  %d minutes%s  ·  pass mark %d" % [_ids.size(), _minutes,
+		" (includes +%d%% extra time)" % extra if extra > 0 else "", int(_step.get("pass_scaled", 825))], "Muted", true)
 	var timer := UI.vbox(head, 0)
 	timer.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	UI.label(timer, "TIME LEFT", "H3").horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT

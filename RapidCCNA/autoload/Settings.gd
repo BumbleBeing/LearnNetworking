@@ -10,6 +10,11 @@ var daily_goal_minutes: int = 60
 var font_scale: float = 1.0
 var high_contrast: bool = false
 var ui_look: String = "noc"         # see ui/theme/Palette.gd
+var reduce_motion: bool = false    # stops the animated backdrop
+var exam_extra_time: int = 0        # % added to mock exam time (accommodation): 0, 25, 50 or 100
+
+const FONT_SCALES := [0.85, 1.0, 1.15, 1.3, 1.5]
+const EXTRA_TIME := [0, 25, 50, 100]
 
 func _ready() -> void:
 	load_settings()
@@ -21,6 +26,8 @@ func to_dict() -> Dictionary:
 		"font_scale": font_scale,
 		"high_contrast": high_contrast,
 		"ui_look": ui_look,
+		"reduce_motion": reduce_motion,
+		"exam_extra_time": exam_extra_time,
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -29,6 +36,11 @@ func from_dict(d: Dictionary) -> void:
 	font_scale = float(d.get("font_scale", font_scale))
 	high_contrast = bool(d.get("high_contrast", high_contrast))
 	ui_look = str(d.get("ui_look", ui_look))
+	reduce_motion = bool(d.get("reduce_motion", reduce_motion))
+	exam_extra_time = int(d.get("exam_extra_time", exam_extra_time))
+	if not exam_extra_time in EXTRA_TIME:
+		exam_extra_time = 0
+	font_scale = clampf(font_scale, FONT_SCALES[0], FONT_SCALES[-1])
 
 func load_settings() -> void:
 	var d = JsonIO.read(PATH)

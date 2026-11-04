@@ -26,22 +26,37 @@ func test_font_scale_applies():
 	var big := ThemeFactory.build(Palette.get_look("noc"), 1.5)
 	assert_eq(big.get_font_size("font_size", "H1"), 60)
 
-func test_text_contrast_on_cards_is_readable():
-	# WCAG-style relative luminance contrast between text and panel colour (opaque approx).
+## WCAG 2.1: body text needs 4.5:1 (AA); high contrast aims for 7:1 (AAA).
+## Every colour drawn as text on a card is checked: feedback (good/accent2),
+## the exam clock warning, muted captions and the primary button label.
+const TEXT_KEYS := ["text", "muted", "accent", "accent2", "good", "warn"]
+
+func _check_look(l: Dictionary, min_ratio: float) -> void:
+	var panel := Palette.panel_color(l)
+	for k in TEXT_KEYS:
+		var ratio := Palette.contrast(l[k], panel)
+		assert_true(ratio >= min_ratio, "%s%s %s on card: %.2f < %.1f" % [l.name, " (HC)" if l.get("high_contrast", false) else "", k, ratio, min_ratio])
+	var btn := Palette.contrast(l.on_accent, l.accent)
+	assert_true(btn >= min_ratio, "%s primary button label: %.2f" % [l.name, btn])
+
+func test_every_look_meets_wcag_aa_for_text():
 	for n in Palette.names():
-		var l := Palette.get_look(n)
-		var panel: Color = l.bg_bottom.lerp(Color(l.panel, 1.0), l.panel.a)
-		assert_gt(_contrast(l.text, panel), 7.0, "%s text contrast" % n)
-		assert_gt(_contrast(l.muted, panel), 3.0, "%s muted contrast" % n)
+		_check_look(Palette.get_look(n), 4.5)
 
-func _lum(c: Color) -> float:
-	var f := func(v: float) -> float: return v / 12.92 if v <= 0.03928 else pow((v + 0.055) / 1.055, 2.4)
-	return 0.2126 * f.call(c.r) + 0.7152 * f.call(c.g) + 0.0722 * f.call(c.b)
+func test_high_contrast_meets_wcag_aaa_and_drops_decoration():
+	for n in Palette.names():
+		var hc := Palette.high_contrast(Palette.get_look(n))
+		_check_look(hc, 7.0)
+		assert_true(Palette.contrast(hc.border, Palette.panel_color(hc)) >= 7.0, "%s HC border" % n)
+		assert_false(hc.animate, n)
+		assert_false(hc.topology, n)
+		assert_eq(hc.panel.a, 1.0, "%s HC cards are opaque" % n)
+		assert_eq(hc.mono, Palette.get_look(n).mono, "%s keeps its font" % n)
 
-func _contrast(a: Color, b: Color) -> float:
-	var la := _lum(a)
-	var lb := _lum(b)
-	return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+func test_contrast_maths():
+	assert_almost_eq(Palette.contrast(Color.BLACK, Color.WHITE), 21.0, 0.01)
+	assert_almost_eq(Palette.contrast(Color.WHITE, Color.WHITE), 1.0, 0.001)
+	assert_almost_eq(Palette.contrast(Color("#767676"), Color.WHITE), 4.54, 0.01, "the classic AA grey")
 
 func test_night_ops_is_default():
 	assert_eq(Palette.DEFAULT, "noc")

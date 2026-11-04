@@ -185,7 +185,13 @@ func mock_step(kind: String, seed: int = -1) -> Dictionary:
 	else:
 		rng.randomize()
 	var ids := MockExam.build(ContentDB.questions.values(), ContentDB.domains, cfg.questions, rng, Progress.last_mock_ids)
-	return {"kind": "exam", "ids": ids, "minutes": cfg.minutes, "label": cfg.label, "pass_scaled": cfg.pass_scaled}
+	var extra := int(Settings.exam_extra_time)
+	return {"kind": "exam", "ids": ids, "minutes": exam_minutes(cfg.minutes, extra), "extra_time": extra,
+		"label": cfg.label, "pass_scaled": cfg.pass_scaled}
+
+## Exam length with an extra-time accommodation (percent), rounded up to a minute.
+static func exam_minutes(minutes: int, extra_percent: int) -> int:
+	return int(ceil(minutes * (100 + extra_percent) / 100.0))
 
 func start_mock(kind: String) -> void:
 	var step := mock_step(kind)

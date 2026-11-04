@@ -175,16 +175,12 @@ func correct_choice() -> int:
 func _mark_choices() -> void:
 	if _choices.is_empty():
 		return
-	var r: int = max(2, int(look.radius) / 2)
 	for i in _choices.size():
-		var col := Color.TRANSPARENT
-		if i == correct_choice():
-			col = look.good
-		elif i == _choice_index:
-			col = look.accent2
 		_choices[i].disabled = true
-		if col.a > 0:
-			_choices[i].add_theme_stylebox_override("disabled", ThemeFactory.box(Color(col, 0.16), col, r, 2, 16, 12))
+		if i == correct_choice():
+			UI.mark_choice(_choices[i], true)
+		elif i == _choice_index:
+			UI.mark_choice(_choices[i], false)
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if _choices.is_empty() or _answered or not event is InputEventKey or not event.pressed or event.echo:
