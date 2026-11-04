@@ -28,25 +28,25 @@ static func _plan(rng: RandomNumberGenerator) -> Dictionary:
 	for r in 3:
 		grid.append([0, 0, 0])
 	# Fill every cell; the target's 4-neighbours draw only from `used`, and both values appear.
-	var tr := 1
-	var tc := rng.randi_range(0, 2)
+	var target_r := 1
+	var target_c := rng.randi_range(0, 2)
 	var nbrs: Array = []
 	for d in [[-1, 0], [1, 0], [0, -1], [0, 1]]:
-		var r: int = tr + d[0]
-		var c: int = tc + d[1]
+		var r: int = target_r + d[0]
+		var c: int = target_c + d[1]
 		if r >= 0 and r < 3 and c >= 0 and c < 3:
 			nbrs.append([r, c])
 	for k in nbrs.size():
 		grid[nbrs[k][0]][nbrs[k][1]] = used[k % 2]
 	for r in 3:
 		for c in 3:
-			if grid[r][c] == 0 and not (r == tr and c == tc):
+			if grid[r][c] == 0 and not (r == target_r and c == target_c):
 				grid[r][c] = CLEAN[rng.randi() % 3]
 	var lines := PackedStringArray(["┌───────┬───────┬───────┐"])
 	for r in 3:
 		var row := "│"
 		for c in 3:
-			var label := "  NEW  " if r == tr and c == tc else (" ch %-2d " % grid[r][c]).rpad(7)
+			var label := "  NEW  " if r == target_r and c == target_c else (" ch %-2d " % grid[r][c]).rpad(7)
 			row += label + "│"
 		lines.append(row)
 		lines.append("├───────┼───────┼───────┤" if r < 2 else "└───────┴───────┴───────┘")

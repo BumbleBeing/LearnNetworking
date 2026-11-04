@@ -42,7 +42,7 @@ static func lease(net: Network, host: String) -> Dictionary:
 				break
 		if found.is_empty():
 			return _no("no server reached by %s's helper address has a pool for %s" % [nb[0], giaddr])
-	var ip := _allocate(net, server, found.name, host, giaddr)
+	var ip := _allocate(net, server, found.name, host)
 	if ip.is_empty():
 		return _no("pool %s on %s has no free addresses" % [found.name, server])
 	return {"ok": true, "ip": ip, "mask": found.pool.mask, "gateway": found.pool.router, "dns": found.pool.dns,
@@ -69,7 +69,7 @@ static func _excluded(d: Device, ip: int) -> bool:
 	return false
 
 ## Clients share a pool in name order, each taking the next free address.
-static func _allocate(net: Network, server: String, pool_name: String, host: String, giaddr: String) -> String:
+static func _allocate(net: Network, server: String, pool_name: String, host: String) -> String:
 	var d: Device = net.devices[server]
 	var p: Dictionary = d.dhcp_pools[pool_name]
 	var plen := IPv4.prefix_from_mask(IPv4.parse(p.mask))

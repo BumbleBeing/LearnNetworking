@@ -60,11 +60,15 @@ static func run(net: Network, c: Dictionary) -> Dictionary:
 					return _fail("%s isn't administratively down" % n)
 			return _ok()
 		"route_to":
-			var r := d.routing_table().lookup(IPv4.parse(a.dest))
+			var rt := d.routing_table()
+			var r := rt.lookup(IPv4.parse(a.dest))
 			if r.is_empty():
 				return _fail("no route to %s" % a.dest)
-			if a.has("next_hop") and r.next_hop != a.next_hop:
+			var hops: Array = rt.paths(IPv4.parse(a.dest)).map(func(x): return x.next_hop)
+			if a.has("next_hop") and not a.next_hop in hops:
 				return _fail("traffic to %s uses %s" % [a.dest, RoutingTable.describe(r)])
+			if a.has("paths") and hops.size() != int(a.paths):
+				return _fail("%s has %d path(s) to %s, not %d" % [d.key, hops.size(), a.dest, int(a.paths)])
 			if a.has("code") and r.code != a.code:
 				return _fail("the route to %s is %s, not %s" % [a.dest, RoutingTable.NAMES.get(r.code, r.code), RoutingTable.NAMES.get(a.code, a.code)])
 			return _ok()
@@ -241,10 +245,10 @@ static func run(net: Network, c: Dictionary) -> Dictionary:
 			if a.has("preempt") and st.cfg.preempt != a.preempt:
 				return _fail("preempt is %s on %s" % ["on" if st.cfg.preempt else "off", d.key])
 			if a.has("track"):
-				var tr: Array = st.cfg.track.filter(func(t): return t[0] == Device.canon_iface(a.track))
-				if tr.is_empty():
+				var tracked: Array = st.cfg.track.filter(func(t): return t[0] == Device.canon_iface(a.track))
+				if tracked.is_empty():
 					return _fail("%s doesn't track %s" % [d.key, a.track])
-				var after: int = int(st.cfg.priority) - int(tr[0][1])
+				var after: int = int(st.cfg.priority) - int(tracked[0][1])
 				if a.has("track_below") and after >= int(a.track_below):
 					return _fail("if %s fails, the priority only drops to %d, not below %d" % [a.track, after, a.track_below])
 			return _ok()

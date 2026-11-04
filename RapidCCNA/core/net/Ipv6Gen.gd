@@ -85,6 +85,7 @@ static func _prefix(rng: RandomNumberGenerator) -> Dictionary:
 	var plen: int = [64, 64, 64, 48, 56][rng.randi() % 5]
 	var addr := IPv6.compress_hextets(h)
 	var net := IPv6.network(addr, plen)
+	@warning_ignore("integer_division")
 	return {"kind": "prefix", "card_id": "gen.ipv6_workshop.prefix", "prompt": "%s/%d" % [addr, plen],
 		"question": "What is the network prefix?", "answer": "%s/%d" % [net, plen], "placeholder": "e.g. 2001:db8:1:1::/64", "wide": true,
 		"plen": plen,

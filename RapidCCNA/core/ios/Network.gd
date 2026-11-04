@@ -6,6 +6,7 @@ extends RefCounted
 var devices: Dictionary = {}   # hostname -> Device
 var links: Array = []          # [devA, ifA, devB, ifB]
 var hsrp_state: Dictionary = {} # HSRP group key -> active router (see HsrpSim)
+var booting := false           # startup configs are loading; protocols start once they're all in
 
 static func build(lab: Dictionary) -> Network:
 	var net := Network.new()

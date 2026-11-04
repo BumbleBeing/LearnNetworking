@@ -6,8 +6,11 @@ func _ready() -> void:
 	col.custom_minimum_size.x = 560
 
 	var logo := UI.hbox(col, 0)
-	UI.label(logo, "Rapid", "Display")
+	var rapid := UI.label(logo, "Rapid", "Display")
 	var ccna := UI.label(logo, "CCNA", "Display")
+	# Screen readers already hear "RapidCCNA" as the window title; the two-colour logo would read as two words.
+	UI.hide_from_screen_readers(rapid)
+	UI.hide_from_screen_readers(ccna)
 	ccna.add_theme_color_override("font_color", look.accent)
 	UI.label(col, "Pass the CCNA 200-301, one concept at a time.", "Muted")
 
@@ -21,7 +24,9 @@ func _ready() -> void:
 	var start := UI.button(col, "Start studying", _go_dashboard, true)
 	start.custom_minimum_size.x = 320
 	var row := UI.hbox(col, 10)
-	UI.label(row, "Look", "Muted").size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var look_label := UI.label(row, "Look", "Muted")
+	look_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	UI.hide_from_screen_readers(look_label)   # the dropdown itself is read as "Look: Night Ops"
 	UI.look_picker(row)
 	UI.button(row, "Settings", _go_settings).custom_minimum_size.x = 0
 	if OS.get_name() != "Web":   # browsers can't close the tab from the page

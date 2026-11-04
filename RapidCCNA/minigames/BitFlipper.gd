@@ -35,7 +35,10 @@ func _build_bits() -> void:
 		b.toggle_mode = true
 		b.theme_type_variation = "Bit"
 		b.custom_minimum_size = Vector2(56, 64)
-		b.focus_mode = Control.FOCUS_NONE
+		b.focus_mode = Control.FOCUS_ALL
+		# Read as a toggle: "Bit worth 128, on". Unguided rounds hide the place values on screen,
+		# so the name gives only the position, as a sighted learner sees it.
+		b.accessibility_name = ("Bit worth %d" % Binary.PLACE[i]) if guided else "Bit %d%s" % [i + 1, ", leftmost" if i == 0 else ", rightmost" if i == 7 else ""]
 		b.toggled.connect(func(on): b.text = "1" if on else "0"; _update_total())
 		col.add_child(b)
 		_bits.append(b)
@@ -64,6 +67,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if n >= 0 and n < 8:
 		_bits[n].button_pressed = not _bits[n].button_pressed
 		get_viewport().set_input_as_handled()
+		# The key doesn't move focus, so say what changed.
+		UI.announce("%s %s%s" % [_bits[n].accessibility_name, "on" if _bits[n].button_pressed else "off",
+			(". " + _total.text) if guided else ""])
 
 func get_response() -> String:
 	if not _bits.is_empty():

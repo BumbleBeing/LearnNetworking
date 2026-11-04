@@ -65,9 +65,11 @@ static func make_topology(rng: RandomNumberGenerator, shape: String = "") -> Dic
 	return {"shape": shape, "switches": make_switches(rng, n, vlan), "links": links, "vlan": vlan}
 
 static func _lbl(mbps: int) -> String:
+	@warning_ignore("integer_division")
 	return "%dG" % (mbps / 1000) if mbps >= 1000 else "%dM" % mbps
 
 static func _dash(text: String, width: int) -> String:
+	@warning_ignore("integer_division")
 	var left := (width - text.length()) / 2
 	return "─".repeat(left) + text + "─".repeat(width - text.length() - left)
 
@@ -152,6 +154,7 @@ static func _bid(rng: RandomNumberGenerator) -> Dictionary:
 			"answer": str(base + vlan), "placeholder": "number",
 			"hint": "PVST+ adds the VLAN number (the extended system ID) to the configured priority.",
 			"explain": "%d (configured) + %d (sys-id-ext = VLAN) = %d." % [base, vlan, base + vlan]}
+	@warning_ignore("integer_division")
 	return {"kind": "bid", "card_id": "gen.stp_solver.bid",
 		"exhibit": "%s#show spanning-tree vlan %d\n  Bridge ID  Priority    %d" % [sw, vlan, base + vlan],
 		"question": "Which priority value was configured on %s for VLAN %d?" % [sw, vlan],

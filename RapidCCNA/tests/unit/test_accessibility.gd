@@ -39,11 +39,11 @@ func test_current_look_applies_high_contrast_and_reduced_motion():
 	assert_eq(Palette.current().bg_bottom, Color.WHITE, "light looks get a white high-contrast version")
 
 func test_extra_time():
-	assert_eq(SessionManager.exam_minutes(120, 0), 120)
-	assert_eq(SessionManager.exam_minutes(120, 25), 150)
-	assert_eq(SessionManager.exam_minutes(120, 50), 180)
-	assert_eq(SessionManager.exam_minutes(36, 25), 45)
-	assert_eq(SessionManager.exam_minutes(30, 25), 38, "rounded up to a whole minute")
+	assert_eq(MockExam.exam_minutes(120, 0), 120)
+	assert_eq(MockExam.exam_minutes(120, 25), 150)
+	assert_eq(MockExam.exam_minutes(120, 50), 180)
+	assert_eq(MockExam.exam_minutes(36, 25), 45)
+	assert_eq(MockExam.exam_minutes(30, 25), 38, "rounded up to a whole minute")
 	Settings.exam_extra_time = 50
 	var step := SessionManager.mock_step("quick", 1)
 	assert_eq(step.minutes, 54)

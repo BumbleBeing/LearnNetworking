@@ -14,6 +14,7 @@ static func cost_for(mbps: int) -> int:
 	return COST.get(mbps, 4)
 
 static func speed_str(mbps: int) -> String:
+	@warning_ignore("integer_division")
 	return "%d Gbps" % (mbps / 1000) if mbps >= 1000 else "%d Mbps" % mbps
 
 ## Bridge priority as advertised: configured priority + VLAN (extended system ID).
@@ -45,6 +46,7 @@ static func port_id(pri: int, port: String) -> int:
 	return pri * 4096 + port_number(port)
 
 static func pid_str(pid: int) -> String:
+	@warning_ignore("integer_division")
 	return "%d.%d" % [pid / 4096, pid % 4096]
 
 ## Ends of every link as seen from each switch: {switch: [{port, peer, peer_port, cost, pid, peer_pid}]}.
@@ -95,7 +97,7 @@ static func solve(switches: Array, links: Array) -> Dictionary:
 		if best.is_empty():
 			continue
 		root_port[sw] = best.port
-		why[sw] = _rp_reason(sw, best, ends[sw], cost, by_name)
+		why[sw] = _rp_reason(sw, best, ends[sw], cost)
 	var roles := {}
 	for l in links:
 		var a_key := "%s %s" % [l.a, l.ap]
@@ -129,7 +131,7 @@ static func _desig_better(a: Array, b: Array) -> bool:
 		return bid_less(a[1], b[1])
 	return a[2] < b[2]
 
-static func _rp_reason(sw: String, best: Dictionary, all: Array, cost: Dictionary, by_name: Dictionary) -> String:
+static func _rp_reason(sw: String, best: Dictionary, all: Array, cost: Dictionary) -> String:
 	var lines := PackedStringArray()
 	for e in all:
 		if cost[e.peer] >= 1 << 30:

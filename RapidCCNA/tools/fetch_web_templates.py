@@ -5,7 +5,7 @@ The official export templates come as one ~1 GB archive. This reads just the
 two single-threaded web templates (~17 MB) out of it with HTTP range requests
 and puts them where Godot looks for them.
 
-Usage: python3 tools/fetch_web_templates.py [godot_version]   (default 4.7)
+Usage: python3 tools/fetch_web_templates.py [godot_version]   (default 4.7.2)
 """
 import io
 import os
@@ -59,7 +59,7 @@ def template_dir(version):
 
 
 def main(argv):
-    version = argv[1] if len(argv) > 1 else "4.7"
+    version = argv[1] if len(argv) > 1 else "4.7.2"
     dest = template_dir(version)
     if all((dest / Path(n).name).exists() for n in NEEDED):
         print(f"web templates already in {dest}")

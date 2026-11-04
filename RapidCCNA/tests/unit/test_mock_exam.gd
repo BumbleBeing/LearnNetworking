@@ -20,10 +20,13 @@ func after_each():
 		DirAccess.remove_absolute("user://test_mock_save.json")
 	Progress.save_path = _orig_path
 	Progress.load_game()
+	# Removed nodes are queue_free()d, which happens at the end of the frame. Let it pass
+	# so GUT's orphan count reports real leaks, not nodes already on their way out.
+	await wait_process_frames(1)
 
-func _rng(seed: int) -> RandomNumberGenerator:
+func _rng(rng_seed: int) -> RandomNumberGenerator:
 	var r := RandomNumberGenerator.new()
-	r.seed = seed
+	r.seed = rng_seed
 	return r
 
 ## n questions per domain, spread over `subs` subtopics.

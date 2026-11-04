@@ -18,6 +18,7 @@ func _ready() -> void:
 
 	var display := UI.card(v, "Display")
 	var size_opt := OptionButton.new()
+	size_opt.accessibility_name = "Text size"
 	for i in Settings.FONT_SCALES.size():
 		size_opt.add_item("%d%%" % int(round(Settings.FONT_SCALES[i] * 100)), i)
 		if is_equal_approx(Settings.FONT_SCALES[i], Settings.font_scale):
@@ -26,12 +27,13 @@ func _ready() -> void:
 	_row(display, "Text size", "Scales every screen, including the command-line terminal.", size_opt)
 	_row(display, "Look", "Colour scheme and background.", UI.look_picker(display))
 	_row(display, "High contrast", "Black or white backgrounds, solid borders and stronger colours (7:1 contrast or more). Works with any look.",
-		_toggle(Settings.high_contrast, func(on): _apply("high_contrast", on)))
+		_toggle("High contrast", Settings.high_contrast, func(on): _apply("high_contrast", on)))
 	_row(display, "Reduce motion", "Stops the moving packets in the background.",
-		_toggle(Settings.reduce_motion, func(on): _apply("reduce_motion", on)))
+		_toggle("Reduce motion", Settings.reduce_motion, func(on): _apply("reduce_motion", on)))
 
 	var exam := UI.card(v, "Mock exam")
 	var extra_opt := OptionButton.new()
+	extra_opt.accessibility_name = "Mock exam extra time"
 	for i in Settings.EXTRA_TIME.size():
 		var pct: int = Settings.EXTRA_TIME[i]
 		extra_opt.add_item("None" if pct == 0 else "+%d%%" % pct, i)
@@ -40,7 +42,7 @@ func _ready() -> void:
 	extra_opt.item_selected.connect(func(i): _apply("exam_extra_time", Settings.EXTRA_TIME[i]))
 	var full := SessionManager.mock_config("full")
 	_row(exam, "Extra time", "For learners with an exam accommodation. A full mock becomes %d minutes with +25%%, %d with +50%%. (Extra time on the real exam is arranged with Pearson VUE.)" % [
-		SessionManager.exam_minutes(full.minutes, 25), SessionManager.exam_minutes(full.minutes, 50)], extra_opt)
+		MockExam.exam_minutes(full.minutes, 25), MockExam.exam_minutes(full.minutes, 50)], extra_opt)
 
 	var preview := UI.card(v, "Preview")
 	_preview(preview)
@@ -58,8 +60,10 @@ func _row(parent: Node, title: String, desc: String, control: Control) -> void:
 	control.custom_minimum_size.x = max(control.custom_minimum_size.x, 160)
 	row.add_child(control)
 
-func _toggle(on: bool, changed: Callable) -> CheckButton:
+## A switch read as e.g. "High contrast, switch, off"; its visible On/Off text is for sighted users.
+func _toggle(title: String, on: bool, changed: Callable) -> CheckButton:
 	var c := CheckButton.new()
+	c.accessibility_name = title
 	c.button_pressed = on
 	c.text = "On" if on else "Off"
 	c.toggled.connect(changed)

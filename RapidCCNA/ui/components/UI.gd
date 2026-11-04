@@ -25,6 +25,7 @@ static func page(root: Control, centered: bool = false) -> VBoxContainer:
 	else:
 		var scroll := ScrollContainer.new()
 		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		scroll.follow_focus = true   # Tab to a control below the fold brings it into view
 		m.add_child(scroll)
 		v = vbox(scroll, 20)
 		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -42,13 +43,13 @@ static func hbox(parent: Node, sep: int = 12) -> HBoxContainer:
 	parent.add_child(h)
 	return h
 
-## wrap=true only for labels inside vertical containers; wrapping labels in an
+## wrap_text=true only for labels inside vertical containers; wrapping labels in an
 ## HBox collapse to zero width.
-static func label(parent: Node, text: String, variation: String = "", wrap: bool = false) -> Label:
+static func label(parent: Node, text: String, variation: String = "", wrap_text: bool = false) -> Label:
 	var l := Label.new()
 	l.text = text
 	l.theme_type_variation = variation
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if wrap else TextServer.AUTOWRAP_OFF
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if wrap_text else TextServer.AUTOWRAP_OFF
 	parent.add_child(l)
 	return l
 
@@ -92,8 +93,10 @@ static func stat(parent: Node, value: String, caption: String, color: Color) -> 
 	center_all(v)
 	return v
 
-static func bar(parent: Node, value: float, color: Color, height: int = 10) -> ProgressBar:
+## a11y_name is what a screen reader calls the bar, e.g. "Network Fundamentals readiness".
+static func bar(parent: Node, value: float, color: Color, height: int = 10, a11y_name: String = "") -> ProgressBar:
 	var b := ProgressBar.new()
+	b.accessibility_name = a11y_name
 	b.max_value = 1.0
 	b.value = value
 	b.show_percentage = false
@@ -106,6 +109,7 @@ static func bar(parent: Node, value: float, color: Color, height: int = 10) -> P
 ## Dropdown that switches the UI look and reloads the current scene.
 static func look_picker(parent: Node) -> OptionButton:
 	var opt := OptionButton.new()
+	opt.accessibility_name = "Look"   # read as "Look: Night Ops"
 	var names := Palette.names()
 	for i in names.size():
 		opt.add_item(Palette.get_look(names[i]).title, i)
@@ -123,6 +127,7 @@ static func look_picker(parent: Node) -> OptionButton:
 static func mark_choice(b: Button, right: bool) -> void:
 	var look := Palette.current()
 	var col: Color = look.good if right else look.accent2
+	@warning_ignore("integer_division")
 	var r: int = max(2, int(look.radius) / 2)
 	b.add_theme_stylebox_override("disabled", ThemeFactory.box(Color(col, 0.16), col, r, 3, 16, 12))
 	b.text += "   (correct answer)" if right else "   (your answer)"
@@ -165,3 +170,37 @@ static func scroll_into_view(c: Control) -> void:
 		p = p.get_parent()
 	if p:
 		p.ensure_control_visible(n)
+
+# --- screen readers ---
+
+## The last text passed to announce() (tests read it).
+static var last_announcement := ""
+
+## Has screen readers speak text that appears away from the keyboard focus: answer feedback,
+## lab progress, exam time warnings. urgent interrupts what is being read. Uses one live
+## label on the root, outside every screen, so it survives scene changes.
+static func announce(text: String, urgent: bool = false) -> void:
+	last_announcement = text
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree == null or tree.root == null:
+		return
+	var l: Label = tree.root.get_node_or_null("Announcer")
+	if l == null:
+		l = Label.new()
+		l.name = "Announcer"
+		l.modulate.a = 0.0                 # never seen, only heard
+		l.position = Vector2(-4000, -4000)
+		l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tree.root.add_child(l)
+	l.accessibility_live = AccessibilityServer.LIVE_ASSERTIVE if urgent else AccessibilityServer.LIVE_POLITE
+	# Clear first, so the same message twice in a row is still a change that gets read.
+	l.text = ""
+	await tree.process_frame
+	if is_instance_valid(l) and last_announcement == text:
+		l.text = text
+
+## Hides a decorative control (no script of its own) from screen readers.
+static func hide_from_screen_readers(c: Control) -> void:
+	assert(c.get_script() == null, "hide_from_screen_readers replaces the node's script")
+	c.set_script(preload("res://ui/components/A11yHidden.gd"))
+

@@ -12,7 +12,9 @@ func _ready() -> void:
 	UI.label(head, "Exam complete" if is_exam else "Session complete", "H1")
 	UI.label(head, SessionManager.title, "Muted")
 	if is_exam:   # the report is long; offer a way out at the top too
-		UI.button(top, "Back to " + dest, _back).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var top_back := UI.button(top, "Back to " + dest, _back)
+		top_back.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		top_back.set_meta("a11y_same_as_another", true)   # same action as the button at the bottom
 	var items := 0
 	var correct := 0
 	for r in SessionManager.results:
@@ -29,10 +31,10 @@ func _ready() -> void:
 	var list := UI.card(v, "What you did")
 	for r in SessionManager.results:
 		var row := UI.hbox(list, 12)
-		var name := str(r.get("title", r.kind))
+		var title := str(r.get("title", r.kind))
 		if r.kind == "drill":
-			name += "  (guided)" if r.get("guided", false) else "  (unguided)"
-		UI.label(row, name, "Body").size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			title += "  (guided)" if r.get("guided", false) else "  (unguided)"
+		UI.label(row, title, "Body").size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var detail := "%d / %d" % [int(r.get("correct", 0)), int(r.get("items", 0))]
 		if r.has("avg_ms") and int(r.items) > 0:
 			detail += "   ·   %.1fs avg" % (r.avg_ms / 1000.0)

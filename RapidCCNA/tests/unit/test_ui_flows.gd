@@ -1,6 +1,11 @@
 extends GutTest
 ## Integration: build real UI nodes, answer them programmatically, check signals.
 
+func after_each():
+	# Removed nodes are queue_free()d, which happens at the end of the frame. Let it pass
+	# so GUT's orphan count reports real leaks, not nodes already on their way out.
+	await wait_process_frames(1)
+
 func before_all():
 	ContentDB.load_all(ContentDB.ROOT)
 

@@ -1,8 +1,8 @@
 extends GutTest
 
-func _rng(seed: int) -> RandomNumberGenerator:
+func _rng(rng_seed: int) -> RandomNumberGenerator:
 	var r := RandomNumberGenerator.new()
-	r.seed = seed
+	r.seed = rng_seed
 	return r
 
 func test_subnet_items_are_deterministic_per_seed():

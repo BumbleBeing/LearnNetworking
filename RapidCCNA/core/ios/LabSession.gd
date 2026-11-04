@@ -10,12 +10,17 @@ static func create(lab: Dictionary) -> LabSession:
 	var ls := LabSession.new()
 	ls.def = lab
 	ls.network = Network.build(lab)
+	# Like a boot: every startup config is read before OSPF picks its router IDs.
+	ls.network.booting = true
 	for dd in lab.get("devices", []):
 		var dev: Device = ls.network.devices[dd.name]
 		if dd.has("config"):
 			ls.apply(dd.name, dd.config)
 		if dd.get("editable", false):
 			ls.sessions[dd.name] = CLISession.new(dev, ls.network)
+	ls.network.booting = false
+	OspfSim.settle(ls.network)
+	HsrpSim.settle(ls.network)
 	return ls
 
 ## Runs config lines on a device from global config mode. Returns any error output.

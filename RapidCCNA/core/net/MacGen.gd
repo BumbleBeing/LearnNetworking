@@ -56,7 +56,7 @@ static func _warm(rng: RandomNumberGenerator, sw: Dictionary, n: int) -> Array:
 
 static func _action(rng: RandomNumberGenerator) -> Dictionary:
 	var sw := make_switch(rng)
-	var learned := _warm(rng, sw, rng.randi_range(2, 5))
+	_warm(rng, sw, rng.randi_range(2, 5))   # earlier traffic fills the MAC table
 	var t: MacTable = sw.table
 	var src: Dictionary = sw.pcs[rng.randi() % 6]
 	var dst := _other_same_vlan(rng, sw.pcs, src)

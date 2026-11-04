@@ -459,8 +459,17 @@ func h_show_route(s: CLISession, _a: Array) -> String: return s.device.routing_t
 ## Header plus OSPF routes only.
 func h_show_route_ospf(s: CLISession, _a: Array) -> String:
 	var out := PackedStringArray()
+	var in_header := true
+	var keep := false   # an indented line continues the line above (codes legend or an equal-cost path)
 	for l in s.device.routing_table().show().split("\n"):
-		if l.begins_with("O") or l.begins_with("Codes") or l.begins_with("  ") or l.is_empty() or l.begins_with("Gateway"):
+		if l.begins_with(" "):
+			if keep:
+				out.append(l)
+			continue
+		if l.is_empty():
+			in_header = false
+		keep = (in_header and l.begins_with("Codes")) or l.begins_with("O")
+		if keep or l.is_empty() or l.begins_with("Gateway"):
 			out.append(l)
 	return "\n".join(out)
 func h_show_acl(s: CLISession, _a: Array) -> String: return Show.access_lists(s.device)
@@ -996,7 +1005,10 @@ func h_show_protocols(s: CLISession, _a: Array) -> String:
 		return ""
 	return OspfSim.show_protocols(s.network, s.device.key)
 func h_clear_ospf(s: CLISession, _a: Array) -> String:
-	return "Reset ALL OSPF processes? [no]: yes" if not s.device.ospf.is_empty() else ""
+	if s.device.ospf.is_empty():
+		return ""
+	s.device.ospf_rid = ""   # the process restarts and picks its router ID again (OspfSim.settle)
+	return "Reset ALL OSPF processes? [no]: yes"
 func h_router_ospf(s: CLISession, a: Array) -> String:
 	if a[0] < 1 or a[0] > 65535:
 		return INVALID + "2"
@@ -1013,11 +1025,9 @@ func h_no_router_ospf(s: CLISession, a: Array) -> String:
 		s.device.ospf = {}
 	return ""
 func h_ospf_rid(s: CLISession, a: Array) -> String:
-	s.device.ospf.router_id = a[0]
-	return ""
+	return OspfSim.change_rid(s.device, a[0])
 func h_ospf_no_rid(s: CLISession, _a: Array) -> String:
-	s.device.ospf.router_id = ""
-	return ""
+	return OspfSim.change_rid(s.device, "")
 func h_ospf_network(s: CLISession, a: Array) -> String:
 	if a[2] < 0 or a[2] > 4294967295:
 		return INVALID + "4"

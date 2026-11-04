@@ -29,9 +29,10 @@ func _ready() -> void:
 		UI.label(dt, "%d%% of the exam  ·  readiness %d%%" % [int(d.weight), int(round(Progress.domain_readiness(d.id) * 100))], "Muted")
 		var nq := ContentDB.questions_for_domain(d.id).size()
 		var quiz := UI.button(dh, "Quiz (%d)" % min(nq, SessionManager.MAX_REVIEWS), SessionManager.start_quiz.bind(d.id))
+		quiz.accessibility_name = d.name   # read as "Network Fundamentals: Quiz (20)"
 		quiz.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		quiz.disabled = nq == 0
-		UI.bar(card, Progress.domain_readiness(d.id), color, 6)
+		UI.bar(card, Progress.domain_readiness(d.id), color, 6, "%s readiness" % d.name)
 
 		var units := ContentDB.lessons_for_domain(d.id)
 		if units.is_empty():
@@ -60,6 +61,7 @@ func _unit_row(parent: Node, u: Dictionary) -> void:
 		UI.label(extras, dd.title, "Muted").size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		for mode in [["Guided", true], ["Unguided", false]]:
 			var b := UI.button(extras, mode[0], SessionManager.start_drill.bind(did, mode[1]))
+			b.accessibility_name = dd.title   # "Bit Flipper: Guided"
 			b.custom_minimum_size.x = 104
 	for lid in u.get("labs", []):
 		var lab: Dictionary = ContentDB.labs.get(lid, {})
@@ -68,7 +70,9 @@ func _unit_row(parent: Node, u: Dictionary) -> void:
 		var lb := UI.button(extras, "Lab" + (" ✓" if Progress.is_lab_done(lid) else ""), SessionManager.start_lab.bind(lid))
 		lb.custom_minimum_size.x = 90
 		lb.tooltip_text = lab.title
+		lb.accessibility_name = lab.title   # "VLANs and trunks: Lab", with a check mark once done
 	for btn in [["Study unit", SessionManager.start_unit.bind(u.id), true], ["Tutorial", SessionManager.start_tutorial.bind(u.id), false]]:
 		var b2 := UI.button(row, btn[0], btn[1], btn[2])
+		b2.accessibility_name = u.title   # "Network components: Study unit"
 		b2.custom_minimum_size.x = 130
 		b2.size_flags_vertical = Control.SIZE_SHRINK_BEGIN

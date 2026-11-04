@@ -182,10 +182,16 @@ static func weighted_fraction(by_domain: Dictionary, domains: Array) -> float:
 static func scale(fraction: float) -> int:
 	return SCALE_MIN + int(round((SCALE_MAX - SCALE_MIN) * clampf(fraction, 0.0, 1.0)))
 
+## Exam length with an extra-time accommodation (percent), rounded up to a minute.
+static func exam_minutes(minutes: int, extra_percent: int) -> int:
+	return int(ceil(minutes * (100 + extra_percent) / 100.0))
+
 ## "1:59:07" / "4:05" countdown text.
+@warning_ignore_start("integer_division")
 static func clock(seconds: int) -> String:
 	seconds = max(0, seconds)
 	var h := seconds / 3600
 	var m := (seconds % 3600) / 60
 	var s := seconds % 60
 	return "%d:%02d:%02d" % [h, m, s] if h > 0 else "%d:%02d" % [m, s]
+@warning_ignore_restore("integer_division")
