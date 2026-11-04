@@ -1,0 +1,79 @@
+{
+  "id": "lab.mini_port_security",
+  "title": "Port security",
+  "hidden": true,
+  "domain": "d5",
+  "subtopics": [
+    "5.7"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [SW1] Fa0/7 ── reception PC (access port, VLAN 10)",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "fa0/3"
+        },
+        {
+          "name": "fa0/4"
+        },
+        {
+          "name": "fa0/5"
+        },
+        {
+          "name": "fa0/6"
+        },
+        {
+          "name": "fa0/7"
+        },
+        {
+          "name": "fa0/8"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "vlan 10",
+        "interface fa0/7",
+        "switchport mode access",
+        "switchport access vlan 10"
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "On Fa0/7, allow only the PC that's plugged in now: one MAC address, learned automatically and saved in the running configuration. Any other device must shut the port down.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "port_security",
+          "args": {
+            "iface": "fa0/7",
+            "maximum": 1,
+            "sticky": true,
+            "violation": "shutdown"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "interface fa0/7",
+      "switchport port-security",
+      "switchport port-security mac-address sticky",
+      "end"
+    ]
+  }
+}

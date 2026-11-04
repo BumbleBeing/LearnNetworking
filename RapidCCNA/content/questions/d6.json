@@ -599,5 +599,427 @@
     "answer": 0,
     "explanation": "Predictive models forecast (capacity, failures) or classify (anomalies). Generative models produce text, code or configuration, which still needs human review before use.",
     "lesson_ref": "d6.ai_ops"
+  },
+  {
+    "id": "q.d6.auto.014",
+    "domain": "d6",
+    "subtopic": "6.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "How does automation reduce outages caused by changes?",
+    "choices": [
+      "It removes the need to test changes",
+      "Changes are applied the same way every time, with fewer typing mistakes",
+      "It turns off logging",
+      "It makes devices reboot faster"
+    ],
+    "answer": 1,
+    "explanation": "Most outages come from human error. Templates and tested scripts apply consistent configuration, and can verify the result.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.015",
+    "domain": "d6",
+    "subtopic": "6.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What is configuration drift?",
+    "choices": [
+      "Routes changing because of a flapping link",
+      "Clock differences between devices",
+      "Devices' configurations slowly diverging from the intended standard through one-off manual changes",
+      "Wireless clients roaming between APs"
+    ],
+    "answer": 2,
+    "explanation": "Automation tools compare devices with the intended state and correct differences, so the network matches its documentation.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.016",
+    "domain": "d6",
+    "subtopic": "6.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which task shows automation's impact on network management?",
+    "choices": [
+      "Drawing the topology by hand",
+      "Typing the same command on each switch's console",
+      "Pushing a new NTP server to 500 switches in minutes and checking each one",
+      "Replacing a failed power supply"
+    ],
+    "answer": 2,
+    "explanation": "Repetitive changes across many devices are where automation saves the most time and avoids inconsistencies.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.017",
+    "domain": "d6",
+    "subtopic": "6.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "In a controller-based network, where is the central view of the whole network kept?",
+    "choices": [
+      "On each switch",
+      "In the DHCP server",
+      "On the controller",
+      "On the WAN router"
+    ],
+    "answer": 2,
+    "explanation": "The controller holds the network-wide view and policy, and programs the devices through southbound interfaces.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.018",
+    "domain": "d6",
+    "subtopic": "6.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which is an example of a northbound interface?",
+    "choices": [
+      "NETCONF to a router",
+      "OpenFlow between the controller and switches",
+      "A REST API that scripts and applications use to talk to the controller",
+      "The console port"
+    ],
+    "answer": 2,
+    "explanation": "Northbound interfaces face up toward applications and admins. Southbound ones (NETCONF, RESTCONF, OpenFlow, CLI/SSH) face the devices.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.019",
+    "domain": "d6",
+    "subtopic": "6.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which southbound protocol carries YANG-modelled data in XML over SSH?",
+    "choices": [
+      "NETCONF",
+      "SNMP",
+      "Syslog",
+      "OpenFlow"
+    ],
+    "answer": 0,
+    "explanation": "NETCONF runs over SSH (port 830) with XML encoding. RESTCONF offers the same YANG data over HTTPS, in JSON or XML.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.020",
+    "domain": "d6",
+    "subtopic": "6.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What is RESTCONF?",
+    "choices": [
+      "A JSON validator",
+      "A routing protocol",
+      "A REST API used only by Catalyst Center",
+      "A REST-style HTTPS API for reading and changing YANG-modelled device data"
+    ],
+    "answer": 3,
+    "explanation": "RESTCONF maps HTTP methods (GET, POST, PUT, PATCH, DELETE) onto YANG data on the device.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.021",
+    "domain": "d6",
+    "subtopic": "6.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "In SD-Access, what does a fabric edge node do?",
+    "choices": [
+      "Connects endpoints to the fabric, much like an access switch",
+      "Connects the fabric to external networks",
+      "Stores endpoint locations",
+      "Runs Catalyst Center"
+    ],
+    "answer": 0,
+    "explanation": "Edge nodes attach users and devices. Border nodes connect to outside networks, and control-plane nodes hold the LISP map server.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.022",
+    "domain": "d6",
+    "subtopic": "6.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does Catalyst Center Assurance do?",
+    "choices": [
+      "Encrypts traffic between sites",
+      "Collects telemetry and uses analytics to show network and client health and suggest fixes",
+      "Assigns IP addresses",
+      "Replaces spanning tree"
+    ],
+    "answer": 1,
+    "explanation": "Assurance turns streaming telemetry, logs and events into health scores, issues and guided remediation.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.023",
+    "domain": "d6",
+    "subtopic": "6.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What are scalable group tags (SGTs) used for in SD-Access?",
+    "choices": [
+      "Marking QoS",
+      "Tagging VLANs on trunks",
+      "Applying policy by user or device group rather than by IP address",
+      "Numbering VXLAN tunnels"
+    ],
+    "answer": 2,
+    "explanation": "SGTs (Cisco TrustSec) classify endpoints into groups; policy says which groups may talk, wherever the endpoints are.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.ai.006",
+    "domain": "d6",
+    "subtopic": "6.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is AIOps?",
+    "choices": [
+      "A routing protocol for AI clusters",
+      "Using AI and machine learning on IT operations data to detect, predict and help fix problems",
+      "A cloud VPN service",
+      "A replacement for SNMP"
+    ],
+    "answer": 1,
+    "explanation": "AIOps platforms correlate telemetry, logs and events, spot anomalies, find root causes and can trigger automated fixes.",
+    "lesson_ref": "d6.ai_ops"
+  },
+  {
+    "id": "q.d6.ai.007",
+    "domain": "d6",
+    "subtopic": "6.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Why does a machine learning model for network operations need large amounts of good-quality data?",
+    "choices": [
+      "Models work the same without data",
+      "Data is only needed for encryption",
+      "It learns patterns from its training data, so poor or too little data gives poor predictions",
+      "To fill the controller's disk"
+    ],
+    "answer": 2,
+    "explanation": "Models are only as good as the data they learn from. Incomplete or biased telemetry leads to missed problems or false alarms.",
+    "lesson_ref": "d6.ai_ops"
+  },
+  {
+    "id": "q.d6.ai.008",
+    "domain": "d6",
+    "subtopic": "6.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "How does reinforcement learning learn?",
+    "choices": [
+      "From labelled examples",
+      "By trying actions and being rewarded or penalised for the results",
+      "By grouping unlabelled data",
+      "From a fixed set of rules written by engineers"
+    ],
+    "answer": 1,
+    "explanation": "Supervised learning uses labelled data, unsupervised finds structure in unlabelled data, and reinforcement learning learns by trial and reward.",
+    "lesson_ref": "d6.ai_ops"
+  },
+  {
+    "id": "q.d6.rest.007",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which HTTP method replaces a whole resource with the representation sent?",
+    "choices": [
+      "GET",
+      "POST",
+      "PATCH",
+      "PUT"
+    ],
+    "answer": 3,
+    "explanation": "PUT replaces (or creates at a known URI); PATCH changes part of a resource; POST creates; GET reads.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.rest.008",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "In https://dnac.example.com/api/v1/network-device, which part identifies the resource?",
+    "choices": [
+      "/api/v1/network-device",
+      "dnac.example.com",
+      "https",
+      "The port number"
+    ],
+    "answer": 0,
+    "explanation": "The scheme is https, the host is dnac.example.com and the path names the resource. A query string (?key=value) can filter it.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.rest.009",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What is the difference between HTTP 401 and 403?",
+    "choices": [
+      "401: success; 403: redirect",
+      "401: not found; 403: server error",
+      "401: not authenticated (missing or bad credentials); 403: authenticated but not allowed",
+      "There is no difference"
+    ],
+    "answer": 2,
+    "explanation": "401 Unauthorized asks you to authenticate. 403 Forbidden means the server knows who you are and refuses anyway.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.rest.010",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Many REST APIs return a token after you log in. How is it usually sent on later requests?",
+    "choices": [
+      "In an HTTP header, such as 'Authorization: Bearer <token>' or a vendor header",
+      "In the URL path",
+      "As a DNS record",
+      "It isn't; you log in on every request"
+    ],
+    "answer": 0,
+    "explanation": "Token-based authentication avoids sending the username and password each time. Catalyst Center, for example, uses an X-Auth-Token header.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.cm.006",
+    "domain": "d6",
+    "subtopic": "6.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which Ansible file lists the devices to manage and groups them?",
+    "choices": [
+      "The inventory",
+      "The playbook",
+      "The module",
+      "The template"
+    ],
+    "answer": 0,
+    "explanation": "The inventory lists hosts and groups (and variables). Playbooks describe the tasks to run against them, using modules.",
+    "lesson_ref": "d6.config_mgmt"
+  },
+  {
+    "id": "q.d6.cm.007",
+    "domain": "d6",
+    "subtopic": "6.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does 'terraform plan' do?",
+    "choices": [
+      "Applies the configuration",
+      "Shows the changes Terraform would make, without making them",
+      "Deletes all resources",
+      "Installs providers on the devices"
+    ],
+    "answer": 1,
+    "explanation": "plan compares the configuration with the current state and lists the changes; apply carries them out.",
+    "lesson_ref": "d6.config_mgmt"
+  },
+  {
+    "id": "q.d6.cm.008",
+    "domain": "d6",
+    "subtopic": "6.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Configuration management tools aim to be idempotent. What does that mean?",
+    "choices": [
+      "Changes can't be rolled back",
+      "Every run makes the same changes again",
+      "Tasks run in parallel",
+      "Running the same task again changes nothing if the device is already in the desired state"
+    ],
+    "answer": 3,
+    "explanation": "Idempotent tasks describe the end state, so they're safe to re-run: they only act where the device differs.",
+    "lesson_ref": "d6.config_mgmt"
+  },
+  {
+    "id": "q.d6.cm.009",
+    "domain": "d6",
+    "subtopic": "6.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "How do Puppet and Chef normally get configuration onto managed nodes?",
+    "choices": [
+      "An agent on each node pulls its configuration from a server",
+      "The server pushes it over SSH with no agent",
+      "Through SNMP sets",
+      "Through syslog"
+    ],
+    "answer": 0,
+    "explanation": "Puppet and Chef are agent-based pull models. Ansible is agentless and pushes over SSH or APIs.",
+    "lesson_ref": "d6.config_mgmt"
+  },
+  {
+    "id": "q.d6.json.007",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "exhibit",
+    "difficulty": 1,
+    "stem": "How many key/value pairs does the top-level object in the exhibit have?",
+    "exhibit": "{\n  \"hostname\": \"core1\",\n  \"interfaces\": [\"g0/0\", \"g0/1\"],\n  \"ospf\": {\"process\": 1, \"area\": 0},\n  \"managed\": false\n}",
+    "choices": [
+      "3",
+      "4",
+      "6",
+      "7"
+    ],
+    "answer": 1,
+    "explanation": "hostname, interfaces, ospf and managed. Values inside the array and the nested object don't count at the top level.",
+    "lesson_ref": "d6.json"
+  },
+  {
+    "id": "q.d6.json.008",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which is a valid JSON boolean value?",
+    "choices": [
+      "True",
+      "\"true\"",
+      "yes",
+      "true"
+    ],
+    "answer": 3,
+    "explanation": "JSON booleans are lowercase true and false with no quotes. \"true\" is a string; True is Python.",
+    "lesson_ref": "d6.json"
+  },
+  {
+    "id": "q.d6.json.009",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which data format uses indentation instead of braces to show structure?",
+    "choices": [
+      "JSON",
+      "XML",
+      "YAML",
+      "CSV"
+    ],
+    "answer": 2,
+    "explanation": "YAML (used by Ansible) relies on indentation. JSON uses braces and brackets; XML uses tags.",
+    "lesson_ref": "d6.json"
+  },
+  {
+    "id": "q.d6.json.010",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "In JSON, which character separates a key from its value?",
+    "answer": [
+      ":"
+    ],
+    "explanation": "\"hostname\": \"core1\". Commas separate pairs; braces wrap objects and brackets wrap arrays.",
+    "lesson_ref": "d6.json"
   }
 ]

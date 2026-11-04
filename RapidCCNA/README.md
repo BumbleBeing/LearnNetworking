@@ -4,7 +4,7 @@ A Godot 4 study game for the **CCNA 200-301** exam. Each unit runs **tutorial �
 
 All question content is original and written in exam style. The game does not use real Cisco exam items.
 
-## Status: milestone M6 in progress (mock exam done; question bank growing)
+## Status: milestone M6 (mock exam and 600-question bank)
 | Milestone | Scope | State |
 |---|---|---|
 | M0 | Project, autoloads, save/load, content loader + validator, tests, export presets, menu → dashboard | ✅ |
@@ -13,10 +13,10 @@ All question content is original and written in exam style. The game does not us
 | M3 | Scoped IOS CLI simulator + config labs | ✅ |
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | ✅ |
 | M5 | All tutorials and remaining mini-games | ✅ |
-| M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | 🚧 parts 1-2: mock exam, 460 questions |
-| M7 | Accessibility, web tuning, content QA | |
+| M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | ✅ |
+| M7 | Accessibility, web tuning, content QA | next |
 
-**Content:** 42 lessons covering all 53 blueprint subtopics, 460 questions (at least 3 per subtopic, and enough in every exam area to fill a full mock exam, both enforced in CI), 16 drills and 14 labs (plus 14 hidden mini-labs behind `cli_task` questions).
+**Content:** 42 lessons covering all 53 blueprint subtopics, 600 questions split by exam weight (120/120/150/60/90/60), with at least 5 per subtopic, 600 in total and enough in every exam area to fill a full mock exam, all enforced in CI, 16 drills and 14 labs (plus 18 hidden mini-labs behind `cli_task` questions).
 
 ## How a study session works
 The dashboard plans each day's session:
@@ -81,7 +81,7 @@ The M4 puzzles sit on pure engines in `core/net`: `STP` (bridge IDs, root and de
 - **CDP and LLDP:** `cdp run`, `lldp run`, per-port `cdp enable` and `lldp transmit/receive`; `show cdp [neighbors [detail]]`, `show lldp [neighbors]`. Neighbours come from the lab's cabling. Lab devices can be non-Cisco (LLDP-only APs, phones) with their own platform and capabilities.
 - **HSRP:** `standby N ip/priority/preempt/track`, `standby version 2`; `show standby [brief]`. Elections are stateful and advance after every command: a higher-priority router that joins later stays standby until it has `preempt`, and tracking hands the role over when an uplink fails. The active router answers for the virtual IP.
 - **DHCP:** pools (`network`, `default-router`, `dns-server`), `ip dhcp excluded-address`, `ip helper-address`; `show ip dhcp binding/pool`. DHCP-client hosts lease addresses from their gateway's pool or through a relay, which works only if relay and server can reach each other both ways.
-- **Device access:** `enable secret` / `enable password`, `service password-encryption` (type 7 in the config), line `password`, `login` / `login local`, `exec-timeout`.
+- **Device access:** `enable secret` / `enable password`, `service password-encryption` (type 7 in the config), line `password`, `login` / `login local`, `exec-timeout`, `transport input` (ssh, telnet, both, all or none).
 - **Management services:** `ip domain name`, `crypto key generate rsa` (with the IOS hostname/domain prerequisites), `ip ssh version 2`, `username ... secret`, `ntp server`, `logging host/trap`, `service timestamps`, `snmp-server community/location/contact`; `show ip ssh`, `show ntp associations`, `show logging`.
 - **`ping`:** follows each device's routing table hop by hop across the lab's links, so it fails if either direction is missing a route.
 
@@ -141,7 +141,7 @@ godot --path .                                            # play
 godot --headless --path . -s addons/gut/gut_cmdln.gd      # unit tests
 python3 tools/validate_content.py                         # content checks
 godot --headless --path . -s res://tools/smoke_session.gd # plays a daily session and a quick mock end to end
-python3 tools/validate_content.py --min-per-subtopic 3    # coverage + mock-exam gate (run in CI)
+python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600  # coverage + mock-exam gate (CI)
 godot --headless --path . --export-release Linux          # export (needs export templates)
 ```
 Saves go to `user://save.json` (on Linux: `~/.local/share/godot/app_userdata/RapidCCNA/`).

@@ -1,0 +1,67 @@
+{
+  "id": "lab.mini_ssh",
+  "title": "SSH-only access",
+  "hidden": true,
+  "domain": "d4",
+  "subtopics": [
+    "4.8"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [Admin PC] ── Gi0/0 10.0.99.1 [EDGE2]\n  Domain name corp.local is already set.",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "hostname EDGE2",
+        "ip domain name corp.local",
+        "interface g0/0",
+        "ip address 10.0.99.1 255.255.255.0",
+        "no shutdown",
+        "line vty 0 4",
+        "password cisco",
+        "login"
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "Make the VTY lines accept only SSH version 2, with logins checked against a new local user 'admin' (privilege 15).",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "ssh_ready",
+          "args": {
+            "version": 2
+          }
+        },
+        {
+          "device": "R1",
+          "check": "local_user",
+          "args": {
+            "name": "admin",
+            "privilege": 15
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "crypto key generate rsa modulus 2048",
+      "ip ssh version 2",
+      "username admin privilege 15 secret Adm1n!Pass",
+      "line vty 0 4",
+      "login local",
+      "transport input ssh",
+      "end"
+    ]
+  }
+}

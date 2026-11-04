@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate content
-        run: python3 tools/validate_content.py --min-per-subtopic 3
+        run: python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600
       - name: Install Godot 4.3
         run: |
           curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip

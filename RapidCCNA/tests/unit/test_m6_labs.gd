@@ -54,8 +54,59 @@ func test_interface_address_needs_the_right_host_and_no_shutdown():
 	ls2.apply("R1", ["interface g0/1", "no shutdown"])
 	assert_true(_ok(ls2))
 
+func test_port_security_must_keep_the_defaults():
+	var ls := _session("lab.mini_port_security")
+	ls.apply("SW1", ["interface fa0/7", "switchport port-security", "switchport port-security maximum 2", "switchport port-security mac-address sticky"])
+	assert_false(_ok(ls), "maximum 2 lets a second device in")
+	var ls2 := _session("lab.mini_port_security")
+	ls2.apply("SW1", ["interface fa0/7", "switchport port-security", "switchport port-security mac-address sticky", "switchport port-security violation restrict"])
+	assert_false(_ok(ls2), "restrict keeps the port up")
+	var ls3 := _session("lab.mini_port_security")
+	ls3.apply("SW1", ["interface fa0/7", "switchport port-security"])
+	assert_false(_ok(ls3), "without sticky nothing is saved")
+
+func test_standard_acl_needs_permit_any_and_the_right_place():
+	var ls := _session("lab.mini_acl")
+	ls.apply("R1", ["access-list 5 deny host 192.168.10.66", "interface g0/1", "ip access-group 5 out"])
+	assert_false(_ok(ls), "the implicit deny blocks everyone else")
+	var ls2 := _session("lab.mini_acl")
+	ls2.apply("R1", ["access-list 5 deny host 192.168.10.66", "access-list 5 permit any", "interface g0/0", "ip access-group 5 in"])
+	assert_false(_ok(ls2), "applied at the source side, not near the servers")
+	var ls3 := _session("lab.mini_acl")
+	ls3.apply("R1", ["access-list 5 permit any", "access-list 5 deny host 192.168.10.66", "interface g0/1", "ip access-group 5 out"])
+	assert_false(_ok(ls3), "the deny after 'permit any' is never reached")
+
+func test_static_nat_needs_both_interfaces_marked():
+	var ls := _session("lab.mini_static_nat")
+	ls.apply("R1", ["ip nat inside source static 192.168.1.20 203.0.113.4", "interface g0/0", "ip nat inside"])
+	assert_false(_ok(ls), "outside interface not marked")
+	var ls2 := _session("lab.mini_static_nat")
+	ls2.apply("R1", ["interface g0/0", "ip nat outside", "interface g0/1", "ip nat inside", "exit", "ip nat inside source static 192.168.1.20 203.0.113.4"])
+	assert_false(_ok(ls2), "inside and outside swapped")
+
+func test_ssh_lab_rejects_telnet_and_version_one():
+	var ls := _session("lab.mini_ssh")
+	ls.apply("R1", ["crypto key generate rsa modulus 2048", "username admin privilege 15 secret x", "line vty 0 4", "login local", "transport input ssh"])
+	assert_false(_ok(ls), "version 2 not enforced")
+	ls.apply("R1", ["ip ssh version 2", "line vty 0 4", "transport input ssh telnet"])
+	assert_false(_ok(ls), "Telnet still allowed")
+	ls.apply("R1", ["line vty 0 4", "transport input ssh"])
+	assert_true(_ok(ls))
+
 func test_every_new_cli_question_points_at_a_hidden_lab():
-	for id in ["q.d1.subnet.cli.001", "q.d2.vlan.cli.002", "q.d2.stp.cli.002", "q.d3.static.cli.002", "q.d3.ospf.cli.002"]:
+	for id in ["q.d1.subnet.cli.001", "q.d2.vlan.cli.002", "q.d2.stp.cli.002", "q.d3.static.cli.002", "q.d3.ospf.cli.002",
+			"q.d5.acl.cli.001", "q.d5.ps.cli.001", "q.d4.nat.cli.001", "q.d4.ssh.cli.001"]:
 		var q: Dictionary = ContentDB.questions[id]
 		assert_eq(q.type, "cli_task", id)
 		assert_true(ContentDB.labs[q.lab].get("hidden", false), id)
+
+func test_transport_input_accepts_several_protocols():
+	var ls := _session("lab.mini_ssh")
+	var d: Device = ls.network.devices["R1"]
+	assert_eq(ls.apply("R1", ["line vty 0 4", "transport input telnet ssh"]).size(), 0)
+	assert_eq(d.lines["vty 0 4"].transport, "ssh telnet", "stored in a fixed order")
+	ls.apply("R1", ["line vty 0 4", "transport input all"])
+	assert_eq(d.lines["vty 0 4"].transport, "all")
+	assert_gt(ls.apply("R1", ["line vty 0 4", "transport input all ssh"], true).size(), 0, "all can't be combined")
+	assert_gt(ls.apply("R1", ["line vty 0 4", "transport input rlogin"], true).size(), 0, "unknown protocol rejected")
+	assert_eq(d.lines["vty 0 4"].transport, "all", "a rejected command changes nothing")

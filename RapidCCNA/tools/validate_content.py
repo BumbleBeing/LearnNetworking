@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate RapidCCNA content: schema, unique ids, answer keys, cross-references, coverage.
 
-Usage: python3 tools/validate_content.py [content_dir] [--min-per-subtopic N]
+Usage: python3 tools/validate_content.py [content_dir] [--min-per-subtopic N] [--min-total N]
 Exit code 0 = valid, 1 = errors found.
 """
 import json
@@ -74,7 +74,7 @@ def allocate(domains, n):
     return {d["id"]: s for d, s in zip(domains, seats)}
 
 
-def validate(root: Path, min_per_subtopic: int = 0):
+def validate(root: Path, min_per_subtopic: int = 0, min_total: int = 0):
     errors = []
     bp = load(root / "blueprint.json", errors)
     if not isinstance(bp, dict):
@@ -220,6 +220,9 @@ def validate(root: Path, min_per_subtopic: int = 0):
             if have < seats:
                 errors.append(f"mock {kind}: domain {d_id} needs {seats} questions (not counting CLI tasks), has {have}")
 
+    if min_total and len(questions) < min_total:
+        errors.append(f"coverage: {len(questions)} questions, need at least {min_total}")
+
     if min_per_subtopic:
         counts = {st: 0 for st in subtopics}
         for q in questions.values():
@@ -232,13 +235,18 @@ def validate(root: Path, min_per_subtopic: int = 0):
 
 
 def main(argv):
-    args = [a for a in argv[1:] if not a.startswith("--")]
-    min_n = 0
-    if "--min-per-subtopic" in argv:
-        min_n = int(argv[argv.index("--min-per-subtopic") + 1])
-        args = [a for a in args if a != str(min_n)]
+    args, opts = [], {"--min-per-subtopic": 0, "--min-total": 0}
+    it = iter(argv[1:])
+    for a in it:
+        if a in opts:
+            opts[a] = int(next(it))
+        elif a.startswith("--"):
+            print(f"unknown option {a}")
+            return 2
+        else:
+            args.append(a)
     root = Path(args[0]) if args else Path(__file__).resolve().parent.parent / "content"
-    errors = validate(root, min_n)
+    errors = validate(root, opts["--min-per-subtopic"], opts["--min-total"])
     for e in errors:
         print("ERROR", e)
     print(f"{'FAIL' if errors else 'OK'}: {len(errors)} error(s) in {root}")
