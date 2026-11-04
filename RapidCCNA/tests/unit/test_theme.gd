@@ -52,6 +52,11 @@ func test_night_ops_is_default():
 
 func test_bundled_inter_is_used():
 	var t := ThemeFactory.build(Palette.get_look("noc"))
-	assert_eq(t.default_font.resource_path, ThemeFactory.FONT_REGULAR)
-	assert_eq(t.get_font("font", "H1").resource_path, ThemeFactory.FONT_BOLD)
-	assert_eq(t.get_font("font", "Button").resource_path, ThemeFactory.FONT_SEMIBOLD)
+	assert_eq(t.default_font.resource_path, ThemeFactory.SANS.regular)
+	assert_eq(t.get_font("font", "H1").resource_path, ThemeFactory.SANS.bold)
+	assert_eq(t.get_font("font", "Button").resource_path, ThemeFactory.SANS.semibold)
+
+func test_mono_look_uses_bundled_jetbrains_mono():
+	var t := ThemeFactory.build(Palette.get_look("terminal"))
+	assert_eq(t.default_font.resource_path, ThemeFactory.MONO.regular)
+	assert_eq(t.get_font("font", "H1").resource_path, ThemeFactory.MONO.bold)

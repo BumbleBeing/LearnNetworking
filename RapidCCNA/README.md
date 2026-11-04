@@ -19,7 +19,7 @@ All question content is original and written in exam style. The game does not us
 ## UI looks (prototype)
 Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Night Ops is the default. Switch looks from the dropdown on the main menu or the dashboard.
 
-The UI font is **Inter** (bundled in `assets/fonts/`, SIL Open Font License, see `Inter-OFL.txt`) in Regular, SemiBold and Bold.
+Fonts are bundled in `assets/fonts/` (SIL Open Font License; licences alongside): **Inter** for most looks and **JetBrains Mono** for Phosphor, each in Regular, SemiBold and Bold.
 
 ![UI looks](docs/ui/looks.png)
 
@@ -27,7 +27,7 @@ The UI font is **Inter** (bundled in `assets/fonts/`, SIL Open Font License, see
 ```
 autoload/   Settings, ContentDB, SRS (SM-2), Progress (save/mastery/streak), SessionManager
 core/       Pure logic (no UI): JsonIO now; net/, ios/, question/ in later milestones
-assets/     fonts/ (Inter + licence)
+assets/     fonts/ (Inter, JetBrains Mono + licences)
 ui/         theme/ (Palette, ThemeFactory), components/ (UI helpers, Backdrop), screens/
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures

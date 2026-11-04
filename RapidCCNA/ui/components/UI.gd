@@ -89,6 +89,7 @@ static func stat(parent: Node, value: String, caption: String, color: Color) -> 
 	var big := label(v, value, "Big")
 	big.add_theme_color_override("font_color", color)
 	label(v, caption, "Muted")
+	center_all(v)
 	return v
 
 static func bar(parent: Node, value: float, color: Color, height: int = 10) -> ProgressBar:
@@ -116,3 +117,19 @@ static func look_picker(parent: Node) -> OptionButton:
 		opt.get_tree().reload_current_scene())
 	parent.add_child(opt)
 	return opt
+
+## Centre-aligns everything under `node`: labels' text, buttons/inputs (shrink to
+## centre) and nested box rows. Call after the subtree is built.
+static func center_all(node: Node) -> void:
+	for c in node.get_children():
+		if c is Label:
+			c.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		elif c is BoxContainer:
+			c.alignment = BoxContainer.ALIGNMENT_CENTER
+			if c is HBoxContainer:
+				c.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			center_all(c)
+		elif c is Button or c is LineEdit or c is PanelContainer:
+			c.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			if c is PanelContainer:
+				center_all(c)

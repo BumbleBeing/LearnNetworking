@@ -4,15 +4,16 @@ extends RefCounted
 ## Labels: Display, H1, H2, H3, Big, Muted, ChipText. Buttons: PrimaryButton.
 ## Panels: Card, Chip.
 
-const FONT_REGULAR := "res://assets/fonts/Inter-Regular.ttf"
-const FONT_SEMIBOLD := "res://assets/fonts/Inter-SemiBold.ttf"
-const FONT_BOLD := "res://assets/fonts/Inter-Bold.ttf"
-
-static func _emboldened(f: Font, amount: float) -> FontVariation:
-	var v := FontVariation.new()
-	v.base_font = f
-	v.variation_embolden = amount
-	return v
+const SANS := {
+	"regular": "res://assets/fonts/Inter-Regular.ttf",
+	"semibold": "res://assets/fonts/Inter-SemiBold.ttf",
+	"bold": "res://assets/fonts/Inter-Bold.ttf",
+}
+const MONO := {
+	"regular": "res://assets/fonts/JetBrainsMono-Regular.ttf",
+	"semibold": "res://assets/fonts/JetBrainsMono-SemiBold.ttf",
+	"bold": "res://assets/fonts/JetBrainsMono-Bold.ttf",
+}
 
 static func box(bg: Color, border: Color, radius: int, bw: int = 1, pad_x: int = 12, pad_y: int = 10) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
@@ -32,18 +33,11 @@ static func build(p: Dictionary, scale: float = 1.0) -> Theme:
 	var r: int = p.radius
 	var sz := func(n: int) -> int: return int(round(n * scale))
 
-	# Inter (bundled, OFL) for every look; mono looks use a system monospace font
-	# with Inter as fallback (e.g. on web, where system fonts are unavailable).
-	var base: Font = load(FONT_REGULAR)
-	var semibold: Font = load(FONT_SEMIBOLD)
-	var bold: Font = load(FONT_BOLD)
-	if p.mono:
-		var sf := SystemFont.new()
-		sf.font_names = PackedStringArray(["JetBrains Mono", "DejaVu Sans Mono", "Liberation Mono", "Consolas", "Menlo", "monospace"])
-		sf.fallbacks = [base]
-		base = sf
-		semibold = _emboldened(sf, 0.5)
-		bold = _emboldened(sf, 0.9)
+	# Bundled OFL fonts: Inter for most looks, JetBrains Mono for mono looks.
+	var fam: Dictionary = MONO if p.mono else SANS
+	var base: Font = load(fam.regular)
+	var semibold: Font = load(fam.semibold)
+	var bold: Font = load(fam.bold)
 	t.default_font = base
 	t.default_font_size = sz.call(17)
 

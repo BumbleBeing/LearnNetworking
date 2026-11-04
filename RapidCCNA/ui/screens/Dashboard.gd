@@ -53,6 +53,7 @@ func _ready() -> void:
 	row.add_child(_exam_input)
 	var set_btn := UI.button(row, "Set", _on_set_date)
 	set_btn.custom_minimum_size.x = 0
+	UI.center_all(left)
 
 	var right := UI.card(main, "Readiness by domain", 1.3)
 	for i in ContentDB.domains.size():
