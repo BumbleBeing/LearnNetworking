@@ -4,6 +4,16 @@ extends RefCounted
 ## Labels: Display, H1, H2, H3, Big, Muted, ChipText. Buttons: PrimaryButton.
 ## Panels: Card, Chip.
 
+const FONT_REGULAR := "res://assets/fonts/Inter-Regular.ttf"
+const FONT_SEMIBOLD := "res://assets/fonts/Inter-SemiBold.ttf"
+const FONT_BOLD := "res://assets/fonts/Inter-Bold.ttf"
+
+static func _emboldened(f: Font, amount: float) -> FontVariation:
+	var v := FontVariation.new()
+	v.base_font = f
+	v.variation_embolden = amount
+	return v
+
 static func box(bg: Color, border: Color, radius: int, bw: int = 1, pad_x: int = 12, pad_y: int = 10) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
 	s.bg_color = bg
@@ -22,15 +32,18 @@ static func build(p: Dictionary, scale: float = 1.0) -> Theme:
 	var r: int = p.radius
 	var sz := func(n: int) -> int: return int(round(n * scale))
 
-	var base: Font = ThemeDB.fallback_font
+	# Inter (bundled, OFL) for every look; mono looks use a system monospace font
+	# with Inter as fallback (e.g. on web, where system fonts are unavailable).
+	var base: Font = load(FONT_REGULAR)
+	var semibold: Font = load(FONT_SEMIBOLD)
+	var bold: Font = load(FONT_BOLD)
 	if p.mono:
 		var sf := SystemFont.new()
 		sf.font_names = PackedStringArray(["JetBrains Mono", "DejaVu Sans Mono", "Liberation Mono", "Consolas", "Menlo", "monospace"])
-		sf.fallbacks = [ThemeDB.fallback_font]
+		sf.fallbacks = [base]
 		base = sf
-	var bold := FontVariation.new()
-	bold.base_font = base
-	bold.variation_embolden = 0.9
+		semibold = _emboldened(sf, 0.5)
+		bold = _emboldened(sf, 0.9)
 	t.default_font = base
 	t.default_font_size = sz.call(17)
 
@@ -43,10 +56,10 @@ static func build(p: Dictionary, scale: float = 1.0) -> Theme:
 		t.set_font_size("font_size", v[0], sz.call(v[1]))
 		t.set_color("font_color", v[0], v[3])
 		if v[2]:
-			t.set_font("font", v[0], bold)
+			t.set_font("font", v[0], semibold if v[0] in ["H3", "ChipText"] else bold)
 
 	# Buttons
-	t.set_font("font", "Button", bold)
+	t.set_font("font", "Button", semibold)
 	t.set_font_size("font_size", "Button", sz.call(16))
 	t.set_stylebox("normal", "Button", box(p.button, p.border, r, 1, 20, 11))
 	t.set_stylebox("hover", "Button", box(p.button_hover, p.accent, r, 1, 20, 11))
@@ -72,6 +85,9 @@ static func build(p: Dictionary, scale: float = 1.0) -> Theme:
 		t.set_color(c, "PrimaryButton", p.on_accent)
 	t.set_color("font_disabled_color", "PrimaryButton", Color(p.on_accent, 0.6))
 	t.set_font_size("font_size", "PrimaryButton", sz.call(18))
+	t.set_font("font", "PrimaryButton", semibold)
+	t.set_font("font", "OptionButton", semibold)
+	t.set_font_size("font_size", "OptionButton", sz.call(16))
 
 	# Panels
 	t.set_type_variation("Card", "PanelContainer")

@@ -42,3 +42,16 @@ func _contrast(a: Color, b: Color) -> float:
 	var la := _lum(a)
 	var lb := _lum(b)
 	return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+
+func test_night_ops_is_default():
+	assert_eq(Palette.DEFAULT, "noc")
+	assert_eq(Palette.get_look("").name, "noc")
+	var fresh := preload("res://autoload/Settings.gd").new()
+	assert_eq(fresh.ui_look, "noc")
+	fresh.free()
+
+func test_bundled_inter_is_used():
+	var t := ThemeFactory.build(Palette.get_look("noc"))
+	assert_eq(t.default_font.resource_path, ThemeFactory.FONT_REGULAR)
+	assert_eq(t.get_font("font", "H1").resource_path, ThemeFactory.FONT_BOLD)
+	assert_eq(t.get_font("font", "Button").resource_path, ThemeFactory.FONT_SEMIBOLD)

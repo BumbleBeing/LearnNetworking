@@ -17,7 +17,9 @@ All question content is original and written in exam style. The game does not us
 | M7 | Accessibility, web tuning, content QA | |
 
 ## UI looks (prototype)
-Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Switch looks from the dropdown on the main menu or the dashboard.
+Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Night Ops is the default. Switch looks from the dropdown on the main menu or the dashboard.
+
+The UI font is **Inter** (bundled in `assets/fonts/`, SIL Open Font License, see `Inter-OFL.txt`) in Regular, SemiBold and Bold.
 
 ![UI looks](docs/ui/looks.png)
 
@@ -25,6 +27,7 @@ Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot 
 ```
 autoload/   Settings, ContentDB, SRS (SM-2), Progress (save/mastery/streak), SessionManager
 core/       Pure logic (no UI): JsonIO now; net/, ios/, question/ in later milestones
+assets/     fonts/ (Inter + licence)
 ui/         theme/ (Palette, ThemeFactory), components/ (UI helpers, Backdrop), screens/
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures
