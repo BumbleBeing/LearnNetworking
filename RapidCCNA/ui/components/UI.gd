@@ -107,14 +107,14 @@ static func rich_button(b: Button) -> void:
 	b.tooltip_text = Glossary.tooltip(b.text)
 
 ## One lesson card: heading, body and the optional example, with acronyms highlighted.
-static func lesson_card(parent: Node, card: Dictionary) -> void:
-	rich(parent, str(card.get("heading", "")), "H2")
-	rich(parent, str(card.get("body", "")), "Body")
-	if card.has("example"):
+static func lesson_card(parent: Node, lesson_card_data: Dictionary) -> void:
+	rich(parent, str(lesson_card_data.get("heading", "")), "H2")
+	rich(parent, str(lesson_card_data.get("body", "")), "Body")
+	if lesson_card_data.has("example"):
 		var ex := PanelContainer.new()
 		ex.theme_type_variation = "Exhibit"
 		parent.add_child(ex)
-		rich(ex, str(card.example), "Code", false)
+		rich(ex, str(lesson_card_data.example), "Code", false)
 
 static func button(parent: Node, text: String, on_press: Callable, primary: bool = false) -> Button:
 	var b := Button.new()
