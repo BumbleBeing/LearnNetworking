@@ -4,7 +4,7 @@ A Godot 4 study game for the **CCNA 200-301** exam. Each unit runs **tutorial �
 
 All question content is original and written in exam style. The game does not use real Cisco exam items.
 
-## Status: milestone M6 (mock exam and 600-question bank)
+## Status: milestone M7 in progress (accessibility done; web tuning and content QA next)
 | Milestone | Scope | State |
 |---|---|---|
 | M0 | Project, autoloads, save/load, content loader + validator, tests, export presets, menu → dashboard | ✅ |
@@ -14,7 +14,7 @@ All question content is original and written in exam style. The game does not us
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | ✅ |
 | M5 | All tutorials and remaining mini-games | ✅ |
 | M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | ✅ |
-| M7 | Accessibility, web tuning, content QA | next |
+| M7 | Accessibility, web tuning, content QA | 🚧 part 1: accessibility |
 
 **Content:** 42 lessons covering all 53 blueprint subtopics, 600 questions split by exam weight (120/120/150/60/90/60), with at least 5 per subtopic, 600 in total and enough in every exam area to fill a full mock exam, all enforced in CI, 16 drills and 14 labs (plus 18 hidden mini-labs behind `cli_task` questions).
 
@@ -110,8 +110,19 @@ A lab (`content/labs/*.json`) defines devices, startup config, links, tasks and 
 
 ![M5 topics, drills and labs](docs/ui/m5.png)
 
+## Accessibility
+**Settings** (from the main menu or the dashboard) apply straight away and are saved separately from progress:
+- **Text size** 85-150%, for every screen including the command-line terminal.
+- **High contrast** turns any look into black or white surfaces with solid 2 px borders and no backdrop. Every text colour is at least 7:1 (WCAG AAA) and keeps the look's font.
+- **Reduce motion** stops the animated packets in the background.
+- **Mock exam extra time** of +25%, +50% or +100%, for learners with an exam accommodation. The exam screen shows when it's included.
+
+Right and wrong answers are never shown by colour alone: answered choices are labelled "(correct answer)" and "(your answer)", in questions and drills alike. Every look meets WCAG AA (4.5:1) for all text colours on cards, including feedback colours and the exam clock warning. `test_theme.gd` checks this for every look and its high-contrast version. Everything can be driven from the keyboard: digits pick choices, Enter submits and continues, and Tab moves focus with a visible ring.
+
+![M7 settings, 150% text and high contrast](docs/ui/m7.png)
+
 ## UI looks (prototype)
-Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Night Ops is the default. Switch looks from the dropdown on the main menu or the dashboard.
+Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Night Ops is the default. Switch looks from the dropdown on the dashboard or in Settings.
 
 Fonts are bundled in `assets/fonts/` (SIL Open Font License; licences alongside): **Inter** for most looks and **JetBrains Mono** for Phosphor, each in Regular, SemiBold and Bold.
 
@@ -126,7 +137,8 @@ core/       Pure logic (no UI): exam/ (MockExam: weighted selection, scaled scor
             OspfSim, L2Sim), question/ (Grader), JsonIO
 assets/     fonts/ (Inter, JetBrains Mono + licences)
 ui/         theme/ (Palette, ThemeFactory), components/ (UI, Backdrop, QuestionView, QuestionRunner, ScreenHeader, Terminal,
-            ExamReport), screens/ (MainMenu, Dashboard, Topics, Tutorial, Review, DrillHost, Lab, MockExam, Summary)
+            ExamReport), screens/ (MainMenu, Dashboard, Topics, Tutorial, Review, DrillHost, Lab, MockExam, Summary,
+            SettingsScreen)
 minigames/  DrillBase + SubnetSprint, BitFlipper, GenDrill (generator-driven drills)
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures

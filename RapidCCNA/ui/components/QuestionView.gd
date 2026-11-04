@@ -286,19 +286,14 @@ func _is_blank(r: Variant) -> bool:
 func _show_feedback(correct: bool) -> void:
 	var good: Color = _look.good
 	var bad: Color = _look.accent2
-	var r: int = max(2, int(_look.radius) / 2)
 	if not _choice_buttons.is_empty():
 		var right: Array = q.answer if q.answer is Array else [q.answer]
 		right = right.map(func(x): return int(x))
 		for i in _choice_buttons.size():
-			var b := _choice_buttons[i]
-			var col := Color.TRANSPARENT
 			if i in right:
-				col = good
-			elif b.button_pressed:
-				col = bad
-			if col.a > 0:
-				b.add_theme_stylebox_override("disabled", ThemeFactory.box(Color(col, 0.16), col, r, 2, 16, 12))
+				UI.mark_choice(_choice_buttons[i], true)
+			elif _choice_buttons[i].button_pressed:
+				UI.mark_choice(_choice_buttons[i], false)
 	_feedback.visible = true
 	var card := UI.card(_feedback)
 	var head := UI.label(card, "Correct" if correct else "Not quite", "H2")

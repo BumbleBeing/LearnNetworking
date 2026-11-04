@@ -20,6 +20,11 @@ func _ready() -> void:
 	UI.label(titles, "Dashboard", "H1")
 	UI.label(titles, "CCNA 200-301 bootcamp  ·  12-week plan", "Muted")
 	UI.look_picker(head).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var settings := UI.button(head, "Settings", func():
+		SettingsScreen.return_to = "res://ui/screens/Dashboard.tscn"
+		get_tree().change_scene_to_file("res://ui/screens/SettingsScreen.tscn"))
+	settings.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	settings.custom_minimum_size.x = 0
 	UI.button(head, "Main menu", func(): get_tree().change_scene_to_file("res://ui/screens/MainMenu.tscn")).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 	# Stat tiles

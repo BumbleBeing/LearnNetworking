@@ -35,3 +35,7 @@ func _next() -> void:
 	add_child(_current)
 	_current.answered.connect(func(r): results.append(r))
 	_current.continued.connect(_next, CONNECT_DEFERRED)
+	# Start each question at its top: with large text the previous answer
+	# buttons may have left the page scrolled down.
+	if _i > 0:
+		UI.scroll_into_view(_progress)

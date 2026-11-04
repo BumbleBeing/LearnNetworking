@@ -118,6 +118,15 @@ static func look_picker(parent: Node) -> OptionButton:
 	parent.add_child(opt)
 	return opt
 
+## Marks an answered choice button as the right answer or the learner's wrong
+## pick. Colour plus a text label, so it doesn't rely on colour vision.
+static func mark_choice(b: Button, right: bool) -> void:
+	var look := Palette.current()
+	var col: Color = look.good if right else look.accent2
+	var r: int = max(2, int(look.radius) / 2)
+	b.add_theme_stylebox_override("disabled", ThemeFactory.box(Color(col, 0.16), col, r, 3, 16, 12))
+	b.text += "   (correct answer)" if right else "   (your answer)"
+
 ## Centre-aligns everything under `node`: labels' text, buttons/inputs (shrink to
 ## centre) and nested box rows. Call after the subtree is built.
 static func center_all(node: Node) -> void:

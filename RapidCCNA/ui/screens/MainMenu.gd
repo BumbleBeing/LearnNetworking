@@ -23,12 +23,18 @@ func _ready() -> void:
 	var row := UI.hbox(col, 10)
 	UI.label(row, "Look", "Muted").size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	UI.look_picker(row)
-	UI.button(row, "Quit", func(): get_tree().quit()).custom_minimum_size.x = 0
+	UI.button(row, "Settings", _go_settings).custom_minimum_size.x = 0
+	if OS.get_name() != "Web":   # browsers can't close the tab from the page
+		UI.button(row, "Quit", func(): get_tree().quit()).custom_minimum_size.x = 0
 
 	if ContentDB.errors.size() > 0:
 		UI.label(col, "Content warnings: %d (see log)" % ContentDB.errors.size(), "Muted").add_theme_color_override("font_color", look.warn)
 	UI.center_all(col)
 	start.grab_focus()
+
+func _go_settings() -> void:
+	SettingsScreen.return_to = "res://ui/screens/MainMenu.tscn"
+	get_tree().change_scene_to_file("res://ui/screens/SettingsScreen.tscn")
 
 func _go_dashboard() -> void:
 	get_tree().change_scene_to_file("res://ui/screens/Dashboard.tscn")
