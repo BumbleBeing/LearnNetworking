@@ -55,7 +55,22 @@ const KEYWORD_HELP := {
 	"originate": "Distribute a default route", "hello-interval": "Time between HELLO packets", "dead-interval": "Interval after which a neighbor is declared dead",
 	"neighbor": "Neighbor list", "neighbors": "CDP/LLDP neighbor entries", "cdp": "CDP information / Global CDP configuration subcommands",
 	"lldp": "LLDP information / Global LLDP configuration subcommands", "run": "Enable the protocol globally", "detail": "Show detailed information",
-	"transmit": "Enable LLDP transmission on interface", "receive": "Enable LLDP reception on interface", "protocols": "IP routing protocol process parameters and statistics", "clear": "Reset functions", "process": "Reset OSPF process",
+	"transmit": "Enable LLDP transmission on interface", "standby": "HSRP interface configuration commands",
+	"preempt": "Overthrow lower priority Active routers", "track": "Priority tracking", "decrement": "Priority decrement",
+	"version": "HSRP / SSH version", "helper-address": "Specify a destination address for UDP broadcasts",
+	"dhcp": "Configure DHCP server and relay parameters", "excluded-address": "Prevent DHCP from assigning certain addresses",
+	"default-router": "Default routers", "dns-server": "DNS servers", "domain-name": "Define the default domain name",
+	"crypto": "Encryption module", "key": "Long term key operations", "generate": "Generate new keys", "rsa": "Generate RSA keys",
+	"modulus": "Provide number of modulus bits on the command line", "general-keys": "Generate a general purpose RSA key pair",
+	"zeroize": "Remove keys", "ssh": "Configure ssh options / Information on SSH", "username": "Establish User Name Authentication",
+	"privilege": "Set user privilege level", "ntp": "Configure NTP / Network time protocol", "server": "Configure NTP server",
+	"associations": "NTP associations", "logging": "Modify message logging facilities / Show the contents of logging buffers",
+	"host": "Set syslog server IP address and parameters", "trap": "Set syslog server logging level",
+	"timestamps": "Timestamp debug/log messages", "log": "Timestamp log messages", "datetime": "Timestamp with date and time",
+	"msec": "Include milliseconds in timestamp", "snmp-server": "Modify SNMP engine parameters", "community": "Enable SNMP; set community string and access privs",
+	"ro": "Read-only access with this community string", "rw": "Read-write access with this community string",
+	"location": "Text for mib object sysLocation", "contact": "Text for mib object sysContact", "binding": "DHCP address bindings",
+	"lease": "Address lease time", "domain": "Domain name system parameters", "receive": "Enable LLDP reception on interface", "protocols": "IP routing protocol process parameters and statistics", "clear": "Reset functions", "process": "Reset OSPF process",
 }
 
 static var TABLE: Array = []
@@ -104,11 +119,18 @@ func _build() -> void:
 	_add(exec, "", "show cdp neighbors detail", "h_show_cdp_detail")
 	_add(exec, "", "show lldp", "h_show_lldp")
 	_add(exec, "", "show lldp neighbors", "h_show_lldp_nbr")
+	_add(exec, "router", "show standby", "h_show_standby")
+	_add(exec, "router", "show standby brief", "h_show_standby_brief")
+	_add(exec, "router", "show ip dhcp binding", "h_show_dhcp_binding")
+	_add(exec, "router", "show ip dhcp pool", "h_show_dhcp_pool")
+	_add(exec, "", "show ip ssh", "h_show_ip_ssh")
+	_add(exec, "", "show ntp associations", "h_show_ntp")
+	_add(exec, "", "show logging", "h_show_logging")
 
-	var sub := "config if vlan line nacl router"
+	var sub := "config if vlan line nacl router dhcp"
 	_add(sub, "", "end", "h_end")
 	_add("config", "", "exit", "h_end")
-	_add("if vlan line nacl router", "", "exit", "h_exit_sub")
+	_add("if vlan line nacl router dhcp", "", "exit", "h_exit_sub")
 	_add("config", "", "hostname <word>", "h_hostname")
 	_add("config", "", "interface <iface>", "h_interface")
 	_add("config", "", "interface range <rest>", "h_interface_range")
@@ -141,6 +163,43 @@ func _build() -> void:
 	_add("config", "switch", "no spanning-tree vlan <word> priority", "h_stp_no_priority")
 	_add("config", "switch", "spanning-tree vlan <word> root primary", "h_stp_root_primary")
 	_add("config", "switch", "spanning-tree vlan <word> root secondary", "h_stp_root_secondary")
+	_add("config", "", "ip domain-name <word>", "h_domain")
+	_add("config", "", "ip domain name <word>", "h_domain")
+	_add("config", "", "crypto key generate rsa", "h_rsa_default")
+	_add("config", "", "crypto key generate rsa modulus <num>", "h_rsa")
+	_add("config", "", "crypto key generate rsa general-keys modulus <num>", "h_rsa_gk")
+	_add("config", "", "crypto key zeroize rsa", "h_rsa_zeroize")
+	_add("config", "", "ip ssh version <num>", "h_ssh_version")
+	_add("config", "", "username <word> secret <word>", "h_user_secret")
+	_add("config", "", "username <word> password <word>", "h_user_secret")
+	_add("config", "", "username <word> privilege <num> secret <word>", "h_user_priv_secret")
+	_add("config", "", "username <word> privilege <num> password <word>", "h_user_priv_secret")
+	_add("config", "", "no username <word>", "h_no_user")
+	_add("config", "", "ntp server <ip>", "h_ntp_server")
+	_add("config", "", "no ntp server <ip>", "h_no_ntp_server")
+	_add("config", "", "logging host <ip>", "h_logging_host")
+	_add("config", "", "logging <ip>", "h_logging_host")
+	_add("config", "", "no logging host <ip>", "h_no_logging_host")
+	_add("config", "", "logging trap <word>", "h_logging_trap")
+	_add("config", "", "service timestamps log datetime", "h_timestamps")
+	_add("config", "", "service timestamps log datetime msec", "h_timestamps")
+	_add("config", "", "snmp-server community <word> ro", "h_snmp_ro")
+	_add("config", "", "snmp-server community <word> rw", "h_snmp_rw")
+	_add("config", "", "snmp-server community <word> ro <word>", "h_snmp_ro")
+	_add("config", "", "snmp-server community <word> rw <word>", "h_snmp_rw")
+	_add("config", "", "no snmp-server community <word>", "h_no_snmp")
+	_add("config", "", "snmp-server location <rest>", "h_snmp_location")
+	_add("config", "", "snmp-server contact <rest>", "h_snmp_contact")
+	_add("config", "router", "ip dhcp excluded-address <ip>", "h_dhcp_excl")
+	_add("config", "router", "ip dhcp excluded-address <ip> <ip>", "h_dhcp_excl")
+	_add("config", "router", "ip dhcp pool <word>", "h_dhcp_pool")
+	_add("config", "router", "no ip dhcp pool <word>", "h_no_dhcp_pool")
+	_add("dhcp", "router", "network <ip> <mask>", "h_pool_network")
+	_add("dhcp", "router", "default-router <ip>", "h_pool_router")
+	_add("dhcp", "router", "dns-server <ip>", "h_pool_dns")
+	_add("dhcp", "router", "domain-name <word>", "h_noop")
+	_add("dhcp", "router", "lease <num>", "h_noop")
+	_add("dhcp", "router", "lease <num> <num>", "h_noop")
 	_add("config", "", "cdp run", "h_cdp_run")
 	_add("config", "", "no cdp run", "h_no_cdp_run")
 	_add("config", "", "lldp run", "h_lldp_run")
@@ -196,6 +255,17 @@ func _build() -> void:
 	_add("if", "switch", "spanning-tree bpduguard enable", "h_bpduguard")
 	_add("if", "switch", "no spanning-tree bpduguard", "h_no_bpduguard")
 	_add("if", "switch", "spanning-tree cost <num>", "h_stp_cost")
+	_add("if", "", "ip helper-address <ip>", "h_helper")
+	_add("if", "", "no ip helper-address <ip>", "h_no_helper")
+	_add("if", "router", "standby version <num>", "h_hsrp_version")
+	_add("if", "router", "standby <num> ip <ip>", "h_hsrp_ip")
+	_add("if", "router", "standby <num> priority <num>", "h_hsrp_priority")
+	_add("if", "router", "standby <num> preempt", "h_hsrp_preempt")
+	_add("if", "router", "no standby <num> preempt", "h_hsrp_no_preempt")
+	_add("if", "router", "standby <num> track <iface>", "h_hsrp_track")
+	_add("if", "router", "standby <num> track <iface> <num>", "h_hsrp_track")
+	_add("if", "router", "standby <num> track <iface> decrement <num>", "h_hsrp_track")
+	_add("if", "router", "no standby <num>", "h_no_hsrp")
 	_add("if", "", "cdp enable", "h_cdp_if")
 	_add("if", "", "no cdp enable", "h_no_cdp_if")
 	_add("if", "", "lldp transmit", "h_lldp_tx")
@@ -374,7 +444,7 @@ func h_write(_s: CLISession, _a: Array) -> String:
 func h_ping(s: CLISession, a: Array) -> String:
 	if s.network == null:
 		return "Type escape sequence to abort.\nSending 5, 100-byte ICMP Echos to %s, timeout is 2 seconds:\n.....\nSuccess rate is 0 percent (0/5)" % a[0]
-	return s.network.ping(s.device.hostname, a[0])
+	return s.network.ping(s.device.key, a[0])
 
 func h_show_run(s: CLISession, _a: Array) -> String: return Show.running_config(s.device)
 func h_show_run_if(s: CLISession, a: Array) -> String:
@@ -762,11 +832,11 @@ func h_ps_mac(s: CLISession, a: Array) -> String:
 # --- spanning tree ---
 
 func h_show_stp(s: CLISession, _a: Array) -> String:
-	return L2Sim.show_all(s.network, s.device.hostname) if s.network else "No spanning tree instance exists."
+	return L2Sim.show_all(s.network, s.device.key) if s.network else "No spanning tree instance exists."
 func h_show_stp_vlan(s: CLISession, a: Array) -> String:
 	if s.network == null or not s.device.vlans.has(a[0]):
 		return "Spanning tree instance(s) for vlan %d does not exist." % a[0]
-	return L2Sim.show_vlan(s.network, s.device.hostname, a[0])
+	return L2Sim.show_vlan(s.network, s.device.key, a[0])
 func h_stp_rapid(s: CLISession, _a: Array) -> String:
 	s.device.stp_mode = "rapid-pvst"
 	return ""
@@ -800,7 +870,7 @@ func h_stp_root_primary(s: CLISession, a: Array) -> String:
 		var target := 24576
 		if s.network:
 			var res := L2Sim.stp(s.network, v)
-			if not res.is_empty() and res.root != s.device.hostname:
+			if not res.is_empty() and res.root != s.device.key:
 				var root_base: int = int(res.by_name[res.root].priority) - v
 				if root_base <= target:
 					target = max(0, root_base - 4096)
@@ -846,7 +916,7 @@ func h_stp_cost(s: CLISession, a: Array) -> String:
 func h_show_ec(s: CLISession, _a: Array) -> String:
 	if s.network == null:
 		return EtherChannel.show_summary([])
-	return L2Sim.show_summary(s.network, s.device.hostname)
+	return L2Sim.show_summary(s.network, s.device.key)
 func h_cg_active(s: CLISession, a: Array) -> String: return _channel_group(s, a[0], "active")
 func h_cg_passive(s: CLISession, a: Array) -> String: return _channel_group(s, a[0], "passive")
 func h_cg_desirable(s: CLISession, a: Array) -> String: return _channel_group(s, a[0], "desirable")
@@ -884,21 +954,21 @@ func h_no_channel_group(s: CLISession, _a: Array) -> String:
 func h_show_ospf_nbr(s: CLISession, _a: Array) -> String:
 	if s.network == null or s.device.ospf.is_empty():
 		return ""
-	return OspfSim.show_neighbors(s.network, s.device.hostname)
+	return OspfSim.show_neighbors(s.network, s.device.key)
 func h_show_ospf_ifb(s: CLISession, _a: Array) -> String:
 	if s.network == null or s.device.ospf.is_empty():
 		return ""
-	return OspfSim.show_iface_brief(s.network, s.device.hostname)
+	return OspfSim.show_iface_brief(s.network, s.device.key)
 func h_show_ospf_if(s: CLISession, a: Array) -> String:
 	if s.network == null or s.device.ospf.is_empty():
 		return ""
 	if not s.device.interfaces.has(a[0]):
 		return INVALID + "4"
-	return OspfSim.show_iface(s.network, s.device.hostname, a[0])
+	return OspfSim.show_iface(s.network, s.device.key, a[0])
 func h_show_protocols(s: CLISession, _a: Array) -> String:
 	if s.network == null:
 		return ""
-	return OspfSim.show_protocols(s.network, s.device.hostname)
+	return OspfSim.show_protocols(s.network, s.device.key)
 func h_clear_ospf(s: CLISession, _a: Array) -> String:
 	return "Reset ALL OSPF processes? [no]: yes" if not s.device.ospf.is_empty() else ""
 func h_router_ospf(s: CLISession, a: Array) -> String:
@@ -1023,11 +1093,11 @@ func h_ospf_no_if_area(s: CLISession, _a: Array) -> String:
 func h_show_cdp(s: CLISession, _a: Array) -> String: return Discovery.show_cdp(s.device)
 func h_show_lldp(s: CLISession, _a: Array) -> String: return Discovery.show_lldp(s.device)
 func h_show_cdp_nbr(s: CLISession, _a: Array) -> String:
-	return Discovery.show_cdp_neighbors(s.network, s.device.hostname) if s.network else Discovery.show_cdp(s.device)
+	return Discovery.show_cdp_neighbors(s.network, s.device.key) if s.network else Discovery.show_cdp(s.device)
 func h_show_cdp_detail(s: CLISession, _a: Array) -> String:
-	return Discovery.show_cdp_detail(s.network, s.device.hostname) if s.network else Discovery.show_cdp(s.device)
+	return Discovery.show_cdp_detail(s.network, s.device.key) if s.network else Discovery.show_cdp(s.device)
 func h_show_lldp_nbr(s: CLISession, _a: Array) -> String:
-	return Discovery.show_lldp_neighbors(s.network, s.device.hostname) if s.network else Discovery.show_lldp(s.device)
+	return Discovery.show_lldp_neighbors(s.network, s.device.key) if s.network else Discovery.show_lldp(s.device)
 func h_cdp_run(s: CLISession, _a: Array) -> String:
 	s.device.cdp_run = true
 	return ""
@@ -1050,3 +1120,219 @@ func h_lldp_tx(s: CLISession, _a: Array) -> String: return _if_flag(s, "lldp_tx"
 func h_no_lldp_tx(s: CLISession, _a: Array) -> String: return _if_flag(s, "lldp_tx", false)
 func h_lldp_rx(s: CLISession, _a: Array) -> String: return _if_flag(s, "lldp_rx", true)
 func h_no_lldp_rx(s: CLISession, _a: Array) -> String: return _if_flag(s, "lldp_rx", false)
+
+# --- management services: SSH, users, NTP, syslog, SNMP ---
+
+func h_domain(s: CLISession, a: Array) -> String:
+	s.device.domain_name = a[0]
+	return ""
+func h_rsa_default(s: CLISession, _a: Array) -> String:
+	var out := h_rsa(s, [1024])
+	if out.begins_with("The name for the keys"):
+		out = "How many bits in the modulus [1024]: 1024\n" + out
+	return out
+func h_rsa(s: CLISession, a: Array) -> String:
+	var d := s.device
+	if d.hostname in ["Router", "Switch"]:
+		return "%% Please define a hostname other than %s." % d.hostname
+	if d.domain_name.is_empty():
+		return "% Please define a domain-name first."
+	if a[0] < 360 or a[0] > 4096:
+		return INVALID + str(a[1] if a.size() > 1 else 5)
+	d.rsa_bits = a[0]
+	return "The name for the keys will be: %s.%s\n%% The key modulus size is %d bits\n%% Generating %d bit RSA keys, keys will be non-exportable...\n[OK] (elapsed time was 1 seconds)" % [d.hostname, d.domain_name, a[0], a[0]]
+func h_rsa_gk(s: CLISession, a: Array) -> String:
+	return h_rsa(s, [a[0], 6])
+func h_rsa_zeroize(s: CLISession, _a: Array) -> String:
+	s.device.rsa_bits = 0
+	return "% All keys will be removed.\n% All router certs issued using these keys will also be removed."
+func h_ssh_version(s: CLISession, a: Array) -> String:
+	if not a[0] in [1, 2]:
+		return INVALID + "3"
+	if a[0] == 2 and s.device.rsa_bits < 768:
+		return "Please create RSA keys to enable SSH (and of atleast 768 bits for SSH v2)."
+	s.device.ssh_version = a[0]
+	return ""
+func h_user_secret(s: CLISession, a: Array) -> String:
+	s.device.users[a[0]] = {"secret": a[1], "privilege": 1}
+	return ""
+func h_user_priv_secret(s: CLISession, a: Array) -> String:
+	if a[1] > 15:
+		return INVALID + "3"
+	s.device.users[a[0]] = {"secret": a[2], "privilege": a[1]}
+	return ""
+func h_no_user(s: CLISession, a: Array) -> String:
+	s.device.users.erase(a[0])
+	return ""
+func h_ntp_server(s: CLISession, a: Array) -> String:
+	if not a[0] in s.device.ntp_servers:
+		s.device.ntp_servers.append(a[0])
+	return ""
+func h_no_ntp_server(s: CLISession, a: Array) -> String:
+	s.device.ntp_servers.erase(a[0])
+	return ""
+func h_logging_host(s: CLISession, a: Array) -> String:
+	if not a[0] in s.device.logging_hosts:
+		s.device.logging_hosts.append(a[0])
+	return ""
+func h_no_logging_host(s: CLISession, a: Array) -> String:
+	s.device.logging_hosts.erase(a[0])
+	return ""
+const SYSLOG_LEVELS := ["emergencies", "alerts", "critical", "errors", "warnings", "notifications", "informational", "debugging"]
+func h_logging_trap(s: CLISession, a: Array) -> String:
+	var w: String = a[0].to_lower()
+	var level := ""
+	if w.is_valid_int() and w.to_int() >= 0 and w.to_int() <= 7:
+		level = SYSLOG_LEVELS[w.to_int()]
+	else:
+		var hits: Array = SYSLOG_LEVELS.filter(func(l): return l.begins_with(w))
+		if hits.size() == 1:
+			level = hits[0]
+	if level.is_empty():
+		return INVALID + "2"
+	s.device.logging_trap = level
+	return ""
+func h_timestamps(s: CLISession, _a: Array) -> String:
+	s.device.log_timestamps = true
+	return ""
+func _snmp(s: CLISession, a: Array, access: String) -> String:
+	s.device.snmp_communities[a[0]] = {"access": access, "acl": a[1] if a.size() > 1 else ""}
+	return ""
+func h_snmp_ro(s: CLISession, a: Array) -> String: return _snmp(s, a, "ro")
+func h_snmp_rw(s: CLISession, a: Array) -> String: return _snmp(s, a, "rw")
+func h_no_snmp(s: CLISession, a: Array) -> String:
+	s.device.snmp_communities.erase(a[0])
+	return ""
+func h_snmp_location(s: CLISession, a: Array) -> String:
+	s.device.snmp_location = a[0]
+	return ""
+func h_snmp_contact(s: CLISession, a: Array) -> String:
+	s.device.snmp_contact = a[0]
+	return ""
+func h_show_ip_ssh(s: CLISession, _a: Array) -> String:
+	var d := s.device
+	if d.rsa_bits == 0:
+		return "SSH Disabled - version 1.99\n%Please create RSA keys to enable SSH (and of atleast 768 bits for SSH v2).\nAuthentication methods:publickey,keyboard-interactive,password"
+	var v := "2.0" if d.ssh_version == 2 else "1.5" if d.ssh_version == 1 else "1.99"
+	return "SSH Enabled - version %s\nAuthentication methods:publickey,keyboard-interactive,password\nAuthentication timeout: 120 secs; Authentication retries: 3\nModulus Size : %d bits" % [v, d.rsa_bits]
+func h_show_ntp(s: CLISession, _a: Array) -> String:
+	var out := PackedStringArray(["  address         ref clock       st   when   poll reach  delay  offset   disp"])
+	for ip in s.device.ntp_servers:
+		var ok: bool = s.network != null and s.network.ping_ok(s.device.key, ip).ok
+		out.append("%s~%-15s %-15s %-4d %-6s %-4d %-5s %-6s %-8s %s" % ["*" if ok else " ", ip, ".GPS." if ok else ".INIT.", 1 if ok else 16, "21" if ok else "-", 64, "377" if ok else "0", "1.204" if ok else "0.000", "0.512" if ok else "0.000", "0.950" if ok else "15937."])
+	out.append(" * sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured")
+	return "\n".join(out)
+func h_show_logging(s: CLISession, _a: Array) -> String:
+	var d := s.device
+	var out := PackedStringArray(["Syslog logging: enabled (0 messages dropped, 0 flushes, 0 overruns)",
+		"    Console logging: level debugging", "    Buffer logging:  level debugging",
+		"    Trap logging: level %s" % d.logging_trap])
+	for h in d.logging_hosts:
+		out.append("        Logging to %s  (udp port 514, audit disabled, link up)" % h)
+	return "\n".join(out)
+
+# --- DHCP server and relay ---
+
+func h_dhcp_excl(s: CLISession, a: Array) -> String:
+	var first := IPv4.parse(a[0])
+	var last := IPv4.parse(a[1]) if a.size() > 1 else first
+	if last < first:
+		return INVALID + "4"
+	s.device.dhcp_excluded.append([first, last])
+	return ""
+func h_dhcp_pool(s: CLISession, a: Array) -> String:
+	if not s.device.dhcp_pools.has(a[0]):
+		s.device.dhcp_pools[a[0]] = {"network": "", "mask": "", "router": "", "dns": ""}
+	s.mode = "dhcp"
+	s.ctx = {"pool": a[0]}
+	return ""
+func h_no_dhcp_pool(s: CLISession, a: Array) -> String:
+	s.device.dhcp_pools.erase(a[0])
+	return ""
+func h_pool_network(s: CLISession, a: Array) -> String:
+	var err := _route_check(a[0], a[1])
+	if not err.is_empty():
+		return "%% %s/%s is an invalid network." % [a[0], a[1]] if err.contains("Inconsistent") else err
+	var p: Dictionary = s.device.dhcp_pools[s.ctx.pool]
+	p.network = a[0]
+	p.mask = a[1]
+	return ""
+func h_pool_router(s: CLISession, a: Array) -> String:
+	s.device.dhcp_pools[s.ctx.pool].router = a[0]
+	return ""
+func h_pool_dns(s: CLISession, a: Array) -> String:
+	s.device.dhcp_pools[s.ctx.pool].dns = a[0]
+	return ""
+func h_helper(s: CLISession, a: Array) -> String:
+	for i in _ifaces(s):
+		if not a[0] in i.helpers:
+			i.helpers.append(a[0])
+	return ""
+func h_no_helper(s: CLISession, a: Array) -> String:
+	for i in _ifaces(s):
+		i.helpers.erase(a[0])
+	return ""
+func h_show_dhcp_binding(s: CLISession, _a: Array) -> String:
+	return DhcpSim.show_binding(s.network, s.device.key) if s.network else ""
+func h_show_dhcp_pool(s: CLISession, _a: Array) -> String:
+	return DhcpSim.show_pool(s.device)
+
+# --- HSRP ---
+
+func _hsrp_cfg(i: Dictionary, g: int) -> Dictionary:
+	if not i.hsrp.has(g):
+		i.hsrp[g] = {"ip": "", "priority": HsrpSim.DEFAULT_PRIORITY, "preempt": false, "track": []}
+	return i.hsrp[g]
+func _hsrp_group_ok(i: Dictionary, g: int) -> bool:
+	return g >= 0 and g <= (4095 if i.hsrp_version == 2 else 255)
+func h_hsrp_version(s: CLISession, a: Array) -> String:
+	if not a[0] in [1, 2]:
+		return INVALID + "2"
+	for i in _ifaces(s):
+		i.hsrp_version = a[0]
+	return ""
+func h_hsrp_ip(s: CLISession, a: Array) -> String:
+	for i in _ifaces(s):
+		if not _hsrp_group_ok(i, a[0]):
+			return INVALID + "1"
+		if i.ip.is_empty():
+			return "% address cannot be configured on an interface without an IP address"
+		var plen := IPv4.prefix_from_mask(IPv4.parse(i.mask))
+		if IPv4.network(IPv4.parse(a[1]), plen) != IPv4.network(IPv4.parse(i.ip), plen) or a[1] == i.ip:
+			return "%% Address %s in group %d is not in the interface's subnet or is the interface address" % [a[1], a[0]]
+		_hsrp_cfg(i, a[0]).ip = a[1]
+	return ""
+func h_hsrp_priority(s: CLISession, a: Array) -> String:
+	if a[1] > 255:
+		return INVALID + "3"
+	for i in _ifaces(s):
+		if not _hsrp_group_ok(i, a[0]):
+			return INVALID + "1"
+		_hsrp_cfg(i, a[0]).priority = a[1]
+	return ""
+func h_hsrp_preempt(s: CLISession, a: Array) -> String:
+	for i in _ifaces(s):
+		_hsrp_cfg(i, a[0]).preempt = true
+	return ""
+func h_hsrp_no_preempt(s: CLISession, a: Array) -> String:
+	for i in _ifaces(s):
+		if i.hsrp.has(a[0]):
+			i.hsrp[a[0]].preempt = false
+	return ""
+func h_hsrp_track(s: CLISession, a: Array) -> String:
+	if not s.device.interfaces.has(a[1]):
+		return INVALID + "3"
+	var dec: int = a[2] if a.size() > 2 else 10
+	for i in _ifaces(s):
+		var cfg := _hsrp_cfg(i, a[0])
+		cfg.track = cfg.track.filter(func(t): return t[0] != a[1])
+		cfg.track.append([a[1], dec])
+	return ""
+func h_no_hsrp(s: CLISession, a: Array) -> String:
+	for i in _ifaces(s):
+		i.hsrp.erase(a[0])
+	return ""
+func h_show_standby(s: CLISession, _a: Array) -> String:
+	return HsrpSim.show_detail(s.network, s.device.key) if s.network else ""
+func h_show_standby_brief(s: CLISession, _a: Array) -> String:
+	return HsrpSim.show_brief(s.network, s.device.key) if s.network else ""

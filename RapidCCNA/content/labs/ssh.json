@@ -1,0 +1,89 @@
+{
+  "id": "lab.ssh",
+  "title": "SSH-only remote access",
+  "domain": "d4",
+  "unit": "d4.ssh",
+  "subtopics": [
+    "4.8"
+  ],
+  "description": "A new router still has its factory hostname and only console access. Set it up for SSH version 2 with a local admin account, and turn Telnet off.",
+  "topology": "   [Admin PC] 10.0.99.50 ── Gi0/0 10.0.99.1 [Router]",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "hostname Router",
+        "interface g0/0",
+        "ip address 10.0.99.1 255.255.255.0",
+        "no shutdown",
+        "line vty 0 4",
+        "password cisco",
+        "login"
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "Name the router EDGE1, set the domain name lab.local and generate a 2048-bit RSA key pair.",
+      "hint": "hostname EDGE1 → ip domain name lab.local → crypto key generate rsa modulus 2048 (try generating the key first to see why the order matters)",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "hostname",
+          "args": {
+            "name": "EDGE1"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "ssh_ready",
+          "args": {
+            "version": 0
+          }
+        }
+      ]
+    },
+    {
+      "text": "Force SSH version 2 and create the local user 'netadmin' with privilege 15 and a secret.",
+      "hint": "ip ssh version 2 → username netadmin privilege 15 secret <something strong>",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "local_user",
+          "args": {
+            "name": "netadmin",
+            "privilege": 15
+          }
+        },
+        {
+          "device": "R1",
+          "check": "ssh_version",
+          "args": {
+            "version": 2
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "hostname EDGE1",
+      "ip domain name lab.local",
+      "crypto key generate rsa modulus 2048",
+      "ip ssh version 2",
+      "username netadmin privilege 15 secret Str0ng!Pass",
+      "line vty 0 4",
+      "login local",
+      "transport input ssh",
+      "end"
+    ]
+  }
+}

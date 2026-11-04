@@ -1,0 +1,35 @@
+{
+  "id": "d4.ntp",
+  "domain": "d4",
+  "subtopics": [
+    "4.2"
+  ],
+  "order": 20,
+  "title": "NTP",
+  "minutes": 5,
+  "cards": [
+    {
+      "heading": "Why time matters",
+      "body": "Log messages, certificates, Kerberos and troubleshooting across devices all depend on every device agreeing on the time. NTP keeps clocks synchronised over UDP 123."
+    },
+    {
+      "heading": "Stratum",
+      "body": "Stratum is the distance from an authoritative clock. A stratum 0 device (GPS, atomic clock) feeds a stratum 1 server; a device synced to stratum 1 becomes stratum 2, and so on. Lower is better; 16 means unsynchronised."
+    },
+    {
+      "heading": "Client, server and peer",
+      "body": "A router can be an NTP client (ntp server X), serve time to others once synchronised, or act as an authoritative source itself with 'ntp master' when there's no external clock. Peers (ntp peer) sync with each other.",
+      "example": "ntp server 10.0.0.100\nclock timezone EST -5\nservice timestamps log datetime msec"
+    },
+    {
+      "heading": "Verify",
+      "body": "'show ntp associations' lists servers; '*' marks the one in use (sys.peer). 'show ntp status' shows whether the clock is synchronised and its stratum.",
+      "example": "R1#show ntp associations\n  address         ref clock       st   when   poll reach\n*~10.0.0.100      .GPS.           1    21     64   377"
+    }
+  ],
+  "recall": [
+    "q.d4.ntp.001",
+    "q.d4.ntp.002",
+    "q.d4.ntp.003"
+  ]
+}

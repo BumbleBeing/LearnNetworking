@@ -1,0 +1,101 @@
+{
+  "id": "lab.mini_helper",
+  "title": "DHCP relay",
+  "hidden": true,
+  "domain": "d4",
+  "subtopics": [
+    "4.6"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "   [PC] ── Gi0/1 192.168.30.1 [R1] Gi0/0 10.0.0.1 ── 10.0.0.10 [DHCP-SRV]\n  DHCP-SRV has a pool for 192.168.30.0/24.",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.0.1 255.255.255.0",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 192.168.30.1 255.255.255.0",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "DHCP-SRV",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.0.10 255.255.255.0",
+        "no shutdown",
+        "ip route 192.168.30.0 255.255.255.0 10.0.0.1",
+        "ip dhcp excluded-address 192.168.30.1",
+        "ip dhcp pool VLAN30",
+        "network 192.168.30.0 255.255.255.0",
+        "default-router 192.168.30.1"
+      ]
+    },
+    {
+      "name": "PC",
+      "type": "host",
+      "editable": false,
+      "dhcp": true,
+      "interfaces": [
+        {
+          "name": "eth0"
+        }
+      ]
+    }
+  ],
+  "links": [
+    [
+      "PC",
+      "eth0",
+      "R1",
+      "g0/1"
+    ],
+    [
+      "R1",
+      "g0/0",
+      "DHCP-SRV",
+      "g0/0"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Make R1 forward the PC's DHCP requests to the server at 10.0.0.10.",
+      "checks": [
+        {
+          "device": "PC",
+          "check": "dhcp_lease",
+          "args": {
+            "subnet": "192.168.30.0/24",
+            "gateway": "192.168.30.1"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "interface g0/1",
+      "ip helper-address 10.0.0.10",
+      "end"
+    ]
+  }
+}

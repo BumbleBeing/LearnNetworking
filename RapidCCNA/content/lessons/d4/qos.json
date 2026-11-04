@@ -1,0 +1,47 @@
+{
+  "id": "d4.qos",
+  "domain": "d4",
+  "subtopics": [
+    "4.7"
+  ],
+  "order": 50,
+  "title": "QoS per-hop behaviour",
+  "minutes": 7,
+  "cards": [
+    {
+      "heading": "Why QoS",
+      "body": "When a link is congested, QoS decides which traffic waits and which is dropped. Voice and video need low delay, jitter and loss: voice wants under 150 ms one way, under 30 ms jitter and under 1% loss."
+    },
+    {
+      "heading": "Classification and marking",
+      "body": "Traffic is classified (by ACL, NBAR application recognition, or incoming markings) and marked as close to the source as possible. Layer 2: 802.1Q CoS (3 bits, 0-7). Layer 3: the DSCP field (6 bits, 0-63) in the IP header's ToS byte.",
+      "example": "EF 46        voice\nAF41 34      video\nAF21-23      business data\nCS0 / 0      best effort\nCS6 48       network control"
+    },
+    {
+      "heading": "AF arithmetic",
+      "body": "Assured Forwarding AFxy: x is the class (1-4, higher is better treatment), y the drop probability (1-3, higher is dropped first). DSCP = 8x + 2y.",
+      "example": "AF31 = 26   AF32 = 28   AF33 = 30"
+    },
+    {
+      "heading": "Trust boundary",
+      "body": "Devices only honour markings they trust. Typically the access switch trusts an IP phone's markings but re-marks traffic from PCs. The trust boundary is where markings start being believed."
+    },
+    {
+      "heading": "Queuing",
+      "body": "Packets wait in queues during congestion. CBWFQ gives each class a guaranteed share of bandwidth; LLQ adds a strict-priority queue for voice, policed so it can't starve the others. Without QoS there's one FIFO queue."
+    },
+    {
+      "heading": "Congestion avoidance",
+      "body": "A full queue tail-drops everything new, which makes many TCP flows back off together and then surge (global synchronisation). WRED drops some packets early, more for higher drop-probability markings, so TCP flows slow down gradually."
+    },
+    {
+      "heading": "Policing and shaping",
+      "body": "Both enforce a rate. Policing drops (or re-marks) excess traffic immediately, often inbound at an ISP edge. Shaping buffers the excess and sends it later, smoothing the rate at the cost of delay; it's used outbound towards a slower provider rate."
+    }
+  ],
+  "recall": [
+    "q.d4.qos.001",
+    "q.d4.qos.002",
+    "q.d4.qos.003"
+  ]
+}

@@ -38,6 +38,8 @@ static func _informational(out: String) -> bool:
 		if not (line.begins_with("%LINK") or line.begins_with("%LINEPROTO") or line.begins_with("% Access VLAN does not exist")
 				or line.begins_with("Enter configuration") or line.begins_with("Creating a port-channel")
 				or line.begins_with("%Warning") or line.begins_with("% OSPF: Reference bandwidth")
+				or line.begins_with("The name for the keys") or line.begins_with("% The key modulus") or line.begins_with("% Generating")
+				or line.begins_with("[OK]") or line.begins_with("How many bits")
 				or line.begins_with(" ") or line.is_empty()):
 			return false
 	return true

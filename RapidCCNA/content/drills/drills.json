@@ -126,5 +126,25 @@
     "generator": "res://core/net/WifiGen.gd",
     "description": "Place APs on non-overlapping channels and keep bands, standards and WLAN terms straight.",
     "target_seconds": 25
+  },
+  {
+    "id": "hsrp_election",
+    "title": "HSRP Election",
+    "domain": "d3",
+    "unit": "d3.fhrp",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/FhrpGen.gd",
+    "description": "Who's active, does preempt or tracking hand over the role, virtual MACs, and HSRP vs VRRP vs GLBP.",
+    "target_seconds": 35
+  },
+  {
+    "id": "service_desk",
+    "title": "Service Desk",
+    "domain": "d4",
+    "unit": "d4.network_services",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/ServiceGen.gd",
+    "description": "Service ports, syslog levels and trap filtering, DSCP and AF values, DHCP and SNMP.",
+    "target_seconds": 25
   }
 ]

@@ -1,0 +1,55 @@
+{
+  "id": "d3.fhrp",
+  "domain": "d3",
+  "subtopics": [
+    "3.5"
+  ],
+  "order": 40,
+  "title": "First hop redundancy (HSRP)",
+  "minutes": 7,
+  "cards": [
+    {
+      "heading": "The problem",
+      "body": "Hosts have a single default gateway. If that router fails, they lose everything off their subnet, even when a second router is right there. A first hop redundancy protocol (FHRP) lets two or more routers share a virtual IP and virtual MAC that hosts use as their gateway."
+    },
+    {
+      "heading": "HSRP active and standby",
+      "body": "HSRP (Cisco) elects one active router, which answers for the virtual IP and MAC, and one standby router ready to take over. Hellos go every 3 seconds; the standby takes over if it hears nothing for 10 (hold time). Hosts notice nothing: the gateway's IP and MAC stay the same.",
+      "example": "        Virtual IP 10.1.1.1 / 0000.0c07.ac01\n   R1 .2 (active)        R2 .3 (standby)\n          \\                /\n               [SW1]\n             PCs: gateway 10.1.1.1"
+    },
+    {
+      "heading": "Election",
+      "body": "Highest priority wins (default 100, range 0-255). If priorities tie, the highest interface IP wins.",
+      "example": "interface g0/0\n ip address 10.1.1.2 255.255.255.0\n standby 1 ip 10.1.1.1\n standby 1 priority 110"
+    },
+    {
+      "heading": "Preempt",
+      "body": "HSRP doesn't take the active role from a working active router, even if a router with a higher priority joins later, unless that router has 'standby 1 preempt'. Without preempt, whoever came up first stays active."
+    },
+    {
+      "heading": "Interface tracking",
+      "body": "If the active router's uplink fails, it still answers hosts but can't forward their traffic anywhere useful. Tracking lowers its priority when the tracked interface goes down, so a peer with preempt takes over. The decrement must push it below the peer.",
+      "example": "standby 1 track g0/1 20     ! 110 - 20 = 90 < 100"
+    },
+    {
+      "heading": "Virtual MACs",
+      "body": "HSRPv1 uses 0000.0c07.acXX and HSRPv2 0000.0c9f.fXXX, where X is the group number in hex. HSRPv2 supports groups 0-4095 and IPv6.",
+      "example": "group 10 v1 → 0000.0c07.ac0a"
+    },
+    {
+      "heading": "VRRP and GLBP",
+      "body": "VRRP is the open standard (RFC 5798): master and backup routers, preempt on by default, and the virtual IP may be a real router's address. GLBP (Cisco) load-balances: one active virtual gateway (AVG) hands out different virtual MACs so several forwarders (AVFs) share the traffic."
+    }
+  ],
+  "recall": [
+    "q.d3.fhrp.001",
+    "q.d3.fhrp.002",
+    "q.d3.fhrp.003"
+  ],
+  "drills": [
+    "hsrp_election"
+  ],
+  "labs": [
+    "lab.hsrp"
+  ]
+}

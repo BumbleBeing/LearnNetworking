@@ -12,6 +12,7 @@ const BANDWIDTH := {"TenGigabitEthernet": 10000.0, "GigabitEthernet": 1000.0, "F
 	"Serial": 1.544, "Loopback": 8000000.0, "Vlan": 1000.0}
 
 var hostname := "Router"
+var key := ""                   # lab name: stable id for Network lookups (hostname can be changed)
 var type := "router"            # router | switch | host
 var interfaces: Dictionary = {} # canonical name -> interface dict
 var iface_order: Array = []
@@ -33,12 +34,27 @@ var cdp_run := true             # CDP on globally (Cisco default); hosts don't r
 var lldp_run := false           # LLDP off globally (Cisco default)
 var platform := ""              # shown by CDP/LLDP
 var capability := ""            # CDP capability letters, e.g. "R B S I"
+var dhcp_client := false        # host gets its address by DHCP (see DhcpSim)
+var dhcp_pools: Dictionary = {} # name -> {network, mask, router, dns, domain}
+var dhcp_excluded: Array = []   # [[first, last]] as ints
+var domain_name := ""
+var rsa_bits := 0               # 0 = no RSA key pair
+var ssh_version := 0            # 0 = default (1.99: v1 and v2), else 1 or 2
+var users: Dictionary = {}      # username -> {secret, privilege}
+var ntp_servers: Array = []
+var logging_hosts: Array = []
+var logging_trap := "informational"
+var log_timestamps := false
+var snmp_communities: Dictionary = {}   # name -> {access: ro|rw, acl}
+var snmp_location := ""
+var snmp_contact := ""
 var _net: WeakRef               # the Network this device belongs to (weak: avoids a reference cycle)
 
 static func create(def: Dictionary) -> Device:
 	var d := Device.new()
 	d.type = def.get("type", "router")
 	d.hostname = def.get("name", "Router")
+	d.key = d.hostname
 	for i in def.get("interfaces", []):
 		var n := canon_iface(i.name)
 		d.add_interface(n, i.get("link", true))
@@ -52,6 +68,7 @@ static func create(def: Dictionary) -> Device:
 	d.lldp_run = def.get("lldp", false)
 	d.platform = def.get("platform", {"router": "ISR4321", "switch": "WS-C2960X", "host": "Host"}.get(d.type, ""))
 	d.capability = def.get("capability", {"router": "R B S I", "switch": "S I", "host": "H"}.get(d.type, ""))
+	d.dhcp_client = def.get("dhcp", false)
 	d.mac = def.get("mac", "00%s.%s.%s" % [("%06x" % (d.hostname.hash() & 0xffffff)).substr(0, 2),
 		("%06x" % (d.hostname.hash() & 0xffffff)).substr(2, 4), "%04x" % ((d.hostname.hash() >> 8) & 0xffff)])
 	return d
@@ -95,7 +112,8 @@ func add_interface(n: String, link: bool = true) -> Dictionary:
 		"ps": {"enabled": false, "maximum": 1, "violation": "shutdown", "sticky": false, "macs": []},
 		"channel_group": 0, "channel_mode": "", "portfast": false, "bpduguard": false, "stp_cost": 0,
 		"ospf_cost": 0, "ospf_priority": 1, "ospf_hello": 10, "ospf_dead": 40, "ospf_area": "", "ospf_pid": 0,
-		"cdp": true, "lldp_tx": true, "lldp_rx": true}
+		"cdp": true, "lldp_tx": true, "lldp_rx": true, "helpers": [],
+		"hsrp": {}, "hsrp_version": 1}   # group -> {ip, priority, preempt, track: [[iface, decrement]]}
 	iface_order.append(n)
 	return interfaces[n]
 
@@ -120,7 +138,7 @@ func is_up(i: Dictionary) -> bool:
 		if i.shutdown:
 			return false
 		var net = network()
-		return net != null and L2Sim.channel(net, hostname, i.name.substr(12).to_int()).up
+		return net != null and L2Sim.channel(net, key, i.name.substr(12).to_int()).up
 	if i.shutdown or not i.link:
 		return false
 	if i.name.begins_with("Vlan"):
@@ -176,7 +194,7 @@ func routing_table(with_ospf: bool = true) -> RoutingTable:
 		rt.add(RoutingTable.route("S", "0.0.0.0", 0, default_gateway))
 	var net = network()
 	if with_ospf and not ospf.is_empty() and net != null:
-		for r in OspfSim.routes(net, hostname):
+		for r in OspfSim.routes(net, key):
 			rt.add(r)
 	return rt
 
