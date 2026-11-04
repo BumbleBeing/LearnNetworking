@@ -1,0 +1,195 @@
+{
+  "id": "lab.static_routes",
+  "title": "Static and floating static routes",
+  "domain": "d3",
+  "unit": "d3.static_routing",
+  "subtopics": [
+    "3.3"
+  ],
+  "description": "Get R1 talking to R3's LAN through R2, with a backup path over the direct link and a default route.",
+  "topology": "  LAN 192.168.1.0/24                          LAN 192.168.3.0/24\n   (R1 Lo0 .1)                                  (R3 Lo0 .1)\n     [R1] Gi0/0 ── 10.0.12.0/30 ── Gi0/0 [R2] Gi0/1 ── 10.0.23.0/30 ── Gi0/0 [R3]\n       Gi0/1 .1 ──────────── 10.0.13.0/30 (backup) ───────────── .2 Gi0/1\n\n  10.0.12.0/30: R1 .1, R2 .2    10.0.23.0/30: R2 .1, R3 .2    10.0.13.0/30: R1 .1, R3 .2",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/1",
+        "ip address 10.0.13.1 255.255.255.252",
+        "no shutdown",
+        "interface loopback0",
+        "ip address 192.168.1.1 255.255.255.0"
+      ]
+    },
+    {
+      "name": "R2",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.12.2 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 10.0.23.1 255.255.255.252",
+        "no shutdown",
+        "ip route 192.168.1.0 255.255.255.0 10.0.12.1",
+        "ip route 192.168.3.0 255.255.255.0 10.0.23.2"
+      ]
+    },
+    {
+      "name": "R3",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.23.2 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 10.0.13.2 255.255.255.252",
+        "no shutdown",
+        "interface loopback0",
+        "ip address 192.168.3.1 255.255.255.0",
+        "ip route 0.0.0.0 0.0.0.0 10.0.23.1"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/0",
+      "R2",
+      "g0/0"
+    ],
+    [
+      "R2",
+      "g0/1",
+      "R3",
+      "g0/0"
+    ],
+    [
+      "R1",
+      "g0/1",
+      "R3",
+      "g0/1"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Give R1 Gi0/0 the address 10.0.12.1/30 and bring the interface up.",
+      "hint": "interface g0/0 → ip address 10.0.12.1 255.255.255.252 → no shutdown",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "iface_ip",
+          "args": {
+            "iface": "g0/0",
+            "ip": "10.0.12.1",
+            "mask": "255.255.255.252"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "iface_up",
+          "args": {
+            "iface": "g0/0"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Add a static route on R1 to 192.168.3.0/24 via R2 (10.0.12.2). R1 should then be able to ping 192.168.3.1.",
+      "hint": "ip route 192.168.3.0 255.255.255.0 10.0.12.2 (then try: do ping 192.168.3.1)",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "route_to",
+          "args": {
+            "dest": "192.168.3.10",
+            "next_hop": "10.0.12.2"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "ping",
+          "args": {
+            "to": "192.168.3.1"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Add a floating static route to 192.168.3.0/24 via R3's direct link (10.0.13.2) with administrative distance 10, so it's used only if the primary route fails.",
+      "hint": "Put the AD at the end: ip route 192.168.3.0 255.255.255.0 10.0.13.2 10",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "static_route",
+          "args": {
+            "net": "192.168.3.0",
+            "len": 24,
+            "next_hop": "10.0.13.2",
+            "ad": 10
+          }
+        },
+        {
+          "device": "R1",
+          "check": "route_to",
+          "args": {
+            "dest": "192.168.3.10",
+            "next_hop": "10.0.12.2"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Add a default route on R1 that points to R2.",
+      "hint": "ip route 0.0.0.0 0.0.0.0 10.0.12.2",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "route_to",
+          "args": {
+            "dest": "8.8.8.8",
+            "next_hop": "10.0.12.2"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "interface g0/0",
+      "ip address 10.0.12.1 255.255.255.252",
+      "no shutdown",
+      "exit",
+      "ip route 192.168.3.0 255.255.255.0 10.0.12.2",
+      "ip route 192.168.3.0 255.255.255.0 10.0.13.2 10",
+      "ip route 0.0.0.0 0.0.0.0 10.0.12.2",
+      "end"
+    ]
+  }
+}

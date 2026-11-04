@@ -1,0 +1,33 @@
+; Engine configuration file.
+config_version=5
+
+[application]
+
+config/name="RapidCCNA"
+config/description="CCNA 200-301 bootcamp: tutorials, drills, spaced repetition and mock exams."
+run/main_scene="res://ui/screens/MainMenu.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+
+[autoload]
+
+Settings="*res://autoload/Settings.gd"
+ContentDB="*res://autoload/ContentDB.gd"
+SRS="*res://autoload/SRS.gd"
+Progress="*res://autoload/Progress.gd"
+SessionManager="*res://autoload/SessionManager.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[editor_plugins]
+
+enabled=PackedStringArray()
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

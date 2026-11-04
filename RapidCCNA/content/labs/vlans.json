@@ -1,0 +1,211 @@
+{
+  "id": "lab.vlans",
+  "title": "VLANs and trunks",
+  "domain": "d2",
+  "unit": "d2.vlans_trunks",
+  "subtopics": [
+    "2.1",
+    "2.2"
+  ],
+  "description": "Split SW1 into Sales and Engineering VLANs and set up a locked-down trunk to SW2.",
+  "topology": "               [SW2]\n                 │ Gi0/1 (trunk)\n               [SW1]\n      ┌──────────┴──────────┐\n  Fa0/1 - 5            Fa0/6 - 10\n  Sales PCs            Engineering PCs\n\n  Fa0/11 - 24: unused",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "fa0/3"
+        },
+        {
+          "name": "fa0/4"
+        },
+        {
+          "name": "fa0/5"
+        },
+        {
+          "name": "fa0/6"
+        },
+        {
+          "name": "fa0/7"
+        },
+        {
+          "name": "fa0/8"
+        },
+        {
+          "name": "fa0/9"
+        },
+        {
+          "name": "fa0/10"
+        },
+        {
+          "name": "fa0/11"
+        },
+        {
+          "name": "fa0/12"
+        },
+        {
+          "name": "fa0/13"
+        },
+        {
+          "name": "fa0/14"
+        },
+        {
+          "name": "fa0/15"
+        },
+        {
+          "name": "fa0/16"
+        },
+        {
+          "name": "fa0/17"
+        },
+        {
+          "name": "fa0/18"
+        },
+        {
+          "name": "fa0/19"
+        },
+        {
+          "name": "fa0/20"
+        },
+        {
+          "name": "fa0/21"
+        },
+        {
+          "name": "fa0/22"
+        },
+        {
+          "name": "fa0/23"
+        },
+        {
+          "name": "fa0/24"
+        },
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "Create VLAN 10 named SALES and VLAN 20 named ENGINEERING.",
+      "hint": "vlan 10 → name SALES, then the same for VLAN 20.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "vlan_exists",
+          "args": {
+            "id": 10,
+            "name": "SALES"
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "vlan_exists",
+          "args": {
+            "id": 20,
+            "name": "ENGINEERING"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Make Fa0/1 - 5 static access ports in VLAN 10.",
+      "hint": "interface range fa0/1 - 5 → switchport mode access → switchport access vlan 10",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "access_port",
+          "args": {
+            "iface": "fa0/1 - 5",
+            "vlan": 10
+          }
+        }
+      ]
+    },
+    {
+      "text": "Make Fa0/6 - 10 static access ports in VLAN 20.",
+      "hint": "Same as before with interface range fa0/6 - 10 and VLAN 20.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "access_port",
+          "args": {
+            "iface": "fa0/6 - 10",
+            "vlan": 20
+          }
+        }
+      ]
+    },
+    {
+      "text": "Create VLAN 99 named NATIVE. Make Gi0/1 a static trunk with native VLAN 99 that allows only VLANs 10, 20 and 99.",
+      "hint": "switchport mode trunk, switchport trunk native vlan 99, switchport trunk allowed vlan 10,20,99",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "vlan_exists",
+          "args": {
+            "id": 99,
+            "name": "NATIVE"
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "trunk_port",
+          "args": {
+            "iface": "g0/1",
+            "native": 99,
+            "allowed": "10,20,99"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Administratively shut down the unused ports Fa0/11 - 24.",
+      "hint": "interface range fa0/11 - 24 → shutdown",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "iface_shutdown",
+          "args": {
+            "iface": "fa0/11 - 24"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "vlan 10",
+      "name SALES",
+      "vlan 20",
+      "name ENGINEERING",
+      "vlan 99",
+      "name NATIVE",
+      "interface range fa0/1 - 5",
+      "switchport mode access",
+      "switchport access vlan 10",
+      "interface range fa0/6 - 10",
+      "switchport mode access",
+      "switchport access vlan 20",
+      "interface g0/1",
+      "switchport mode trunk",
+      "switchport trunk native vlan 99",
+      "switchport trunk allowed vlan 10,20,99",
+      "interface range fa0/11 - 24",
+      "shutdown",
+      "end"
+    ]
+  }
+}

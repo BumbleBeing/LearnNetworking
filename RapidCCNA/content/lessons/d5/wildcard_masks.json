@@ -1,0 +1,40 @@
+{
+  "id": "d5.wildcard_masks",
+  "domain": "d5",
+  "subtopics": [
+    "5.6"
+  ],
+  "order": 60,
+  "title": "Wildcard masks",
+  "minutes": 4,
+  "cards": [
+    {
+      "heading": "A wildcard is an inverted mask",
+      "body": "In a wildcard mask a 0 bit means 'this bit must match' and a 1 bit means 'don't care'. To match a whole subnet, subtract its subnet mask from 255.255.255.255, octet by octet.",
+      "example": "  255.255.255.255\n- 255.255.255.224   (/27)\n= 0.0.0.31"
+    },
+    {
+      "heading": "Reading a wildcard as a range",
+      "body": "Add the wildcard to the base address to get the last address matched. Everything from the base address up to there matches.",
+      "example": "10.4.0.0 0.0.3.255\nfirst 10.4.0.0, last 10.4.0.0 + 0.0.3.255 = 10.4.3.255"
+    },
+    {
+      "heading": "host and any",
+      "body": "Two shortcuts appear everywhere. 'host A' means exactly one address (wildcard 0.0.0.0). 'any' means every address (0.0.0.0 with wildcard 255.255.255.255).",
+      "example": "host 10.1.1.1  =  10.1.1.1 0.0.0.0\nany            =  0.0.0.0 255.255.255.255"
+    },
+    {
+      "heading": "Not just ACLs",
+      "body": "OSPF network statements use wildcards the same way: they choose which interfaces join OSPF. The logic is the same, so practising one helps with the other.",
+      "example": "router ospf 1\n network 10.1.1.0 0.0.0.255 area 0"
+    }
+  ],
+  "recall": [
+    "q.d5.wc.001",
+    "q.d5.wc.002",
+    "q.d5.wc.003"
+  ],
+  "drills": [
+    "wildcard_workshop"
+  ]
+}

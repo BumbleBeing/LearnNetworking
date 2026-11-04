@@ -1,0 +1,60 @@
+[
+  {
+    "id": "bit_flipper",
+    "title": "Bit Flipper",
+    "domain": "d1",
+    "unit": "d1.binary_basics",
+    "script": "res://minigames/BitFlipper.gd",
+    "description": "Convert octets between decimal, binary and hex until it's automatic.",
+    "target_seconds": 20
+  },
+  {
+    "id": "subnet_sprint",
+    "title": "Subnet Sprint",
+    "domain": "d1",
+    "unit": "d1.subnetting_basics",
+    "script": "res://minigames/SubnetSprint.gd",
+    "description": "Network, broadcast, host range, mask and host count. Target: under 30 seconds each.",
+    "target_seconds": 30
+  },
+  {
+    "id": "route_picker",
+    "title": "Route Picker",
+    "domain": "d3",
+    "unit": "d3.routing_table",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/RouteGen.gd",
+    "description": "Read a routing table, pick the route a packet takes, and pick which route source gets installed.",
+    "target_seconds": 30
+  },
+  {
+    "id": "wildcard_workshop",
+    "title": "Wildcard Workshop",
+    "domain": "d5",
+    "unit": "d5.wildcard_masks",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/WildcardGen.gd",
+    "description": "Wildcard masks from prefixes and ranges, and whether an address matches.",
+    "target_seconds": 25
+  },
+  {
+    "id": "acl_gatekeeper",
+    "title": "ACL Gatekeeper",
+    "domain": "d5",
+    "unit": "d5.acl_basics",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/AclGen.gd",
+    "description": "Predict which ACL line decides a packet, and write ACL entries from requirements.",
+    "target_seconds": 45
+  },
+  {
+    "id": "nat_translator",
+    "title": "NAT Translator",
+    "domain": "d4",
+    "unit": "d4.nat_basics",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/NatGen.gd",
+    "description": "NAT address terms, NAT types from config, PAT behaviour and translation tables.",
+    "target_seconds": 40
+  }
+]

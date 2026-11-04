@@ -1,0 +1,41 @@
+{
+  "id": "d1.subnetting_basics",
+  "domain": "d1",
+  "subtopics": [
+    "1.6"
+  ],
+  "order": 60,
+  "title": "Subnetting: network, broadcast, host range",
+  "minutes": 5,
+  "cards": [
+    {
+      "heading": "The mask splits the address",
+      "body": "A prefix like /26 means the first 26 bits identify the network and the remaining 6 bits identify hosts. 2^6 = 64 addresses per subnet, 62 usable.",
+      "example": "/26 = 26 network bits + 6 host bits\n2^6 = 64 addresses, 64 - 2 = 62 usable"
+    },
+    {
+      "heading": "Block size",
+      "body": "Find the 'interesting' octet (where the mask is neither 255 nor 0). Block size = 256 - mask value in that octet. /26 -> mask 255.255.255.192 -> block size 64.",
+      "example": "/26  →  255.255.255.192\nblock size = 256 - 192 = 64  →  subnets .0 .64 .128 .192"
+    },
+    {
+      "heading": "Find the network",
+      "body": "Round the interesting octet DOWN to a multiple of the block size. 192.168.1.130/26 -> 130 rounds down to 128 -> network 192.168.1.128.",
+      "example": "192.168.1.130/26: 130 rounds down to 128\nnetwork = 192.168.1.128"
+    },
+    {
+      "heading": "Broadcast and range",
+      "body": "Broadcast = next network - 1 (192.168.1.191). Usable hosts are everything between: .129 to .190.",
+      "example": "next network = .192, so broadcast = .191\nhosts .129 - .190 (62 usable)"
+    }
+  ],
+  "recall": [
+    "q.d1.subnet.001",
+    "q.d1.subnet.002",
+    "q.d1.subnet.003",
+    "q.d1.subnet.004"
+  ],
+  "drills": [
+    "subnet_sprint"
+  ]
+}

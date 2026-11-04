@@ -1,0 +1,203 @@
+[
+  {
+    "id": "q.d1.subnet.001",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is the network address of host 192.168.1.130/26?",
+    "choices": [
+      "192.168.1.0",
+      "192.168.1.64",
+      "192.168.1.128",
+      "192.168.1.192"
+    ],
+    "answer": 2,
+    "explanation": "/26 has a block size of 64 in the 4th octet. 130 rounds down to 128, so the network is 192.168.1.128.",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.subnet.002",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is the broadcast address of 10.0.0.70/27?",
+    "choices": [
+      "10.0.0.63",
+      "10.0.0.95",
+      "10.0.0.127",
+      "10.0.0.79"
+    ],
+    "answer": 1,
+    "explanation": "/27 has a block size of 32. 70 falls in the 64-95 block, so the broadcast is 10.0.0.95.",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.subnet.003",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which TWO addresses are usable hosts in 172.16.5.0/29?",
+    "choices": [
+      "172.16.5.0",
+      "172.16.5.1",
+      "172.16.5.6",
+      "172.16.5.7",
+      "172.16.5.8"
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "/29 = 8 addresses: .0 is the network, .7 the broadcast, so .1-.6 are usable. .8 is in the next subnet.",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.subnet.004",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "subnet_calc",
+    "difficulty": 2,
+    "stem": "Host 172.16.45.200 is configured with a /20 prefix. Fill in its subnet.",
+    "fields": [
+      {
+        "key": "network",
+        "label": "Network address",
+        "placeholder": "a.b.c.d"
+      },
+      {
+        "key": "broadcast",
+        "label": "Broadcast address",
+        "placeholder": "a.b.c.d"
+      },
+      {
+        "key": "hosts",
+        "label": "Usable hosts",
+        "placeholder": "number"
+      }
+    ],
+    "answer": {
+      "network": "172.16.32.0",
+      "broadcast": "172.16.47.255",
+      "hosts": "4094"
+    },
+    "explanation": "/20 puts the interesting octet in octet 3 with block size 16 (mask 255.255.240.0). 45 falls in the 32-47 block, so the network is 172.16.32.0 and the broadcast is 172.16.47.255. 12 host bits give 2^12 - 2 = 4094 hosts.",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.subnet.005",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "How many usable host addresses does a /28 subnet provide?",
+    "answer": "14",
+    "explanation": "/28 leaves 4 host bits: 2^4 = 16 addresses, minus the network and broadcast addresses = 14.",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.ipparams.001",
+    "domain": "d1",
+    "subtopic": "1.10",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "A user can reach hosts on their own subnet but nothing beyond it. Based on the exhibit, what is the most likely cause?",
+    "exhibit": "Ethernet adapter Ethernet0:\n   IPv4 Address. . . . . . . . . . . : 10.20.30.77\n   Subnet Mask . . . . . . . . . . . : 255.255.255.240\n   Default Gateway . . . . . . . . . : 10.20.30.94",
+    "choices": [
+      "The default gateway is outside the PC's subnet",
+      "The subnet mask is not a valid mask",
+      "The PC's address is the subnet broadcast address",
+      "The default gateway is the subnet's network address"
+    ],
+    "answer": 0,
+    "explanation": "255.255.255.240 is /28, block size 16. 77 sits in the 64-79 subnet (hosts .65-.78). The gateway .94 belongs to the 80-95 subnet, so the PC can't reach it directly and off-subnet traffic fails.",
+    "lesson_ref": "d1.subnetting_basics"
+  },
+  {
+    "id": "q.d1.binary.001",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is 1110 0000 in decimal?",
+    "choices": [
+      "192",
+      "224",
+      "240",
+      "248"
+    ],
+    "answer": 1,
+    "explanation": "128 + 64 + 32 = 224. It's the /27 mask octet.",
+    "lesson_ref": "d1.binary_basics"
+  },
+  {
+    "id": "q.d1.binary.002",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Write 248 as an 8-bit binary number.",
+    "answer": [
+      "11111000",
+      "1111 1000"
+    ],
+    "explanation": "248 = 128 + 64 + 32 + 16 + 8, so the first five bits are 1: 1111 1000.",
+    "lesson_ref": "d1.binary_basics"
+  },
+  {
+    "id": "q.d1.binary.003",
+    "domain": "d1",
+    "subtopic": "1.6",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each subnet mask to its prefix length.",
+    "answer": {
+      "255.255.255.128": "/25",
+      "255.255.255.192": "/26",
+      "255.255.255.224": "/27",
+      "255.255.255.252": "/30"
+    },
+    "distractors": [
+      "/28"
+    ],
+    "explanation": "Count the 1 bits: 24 from the first three octets plus 1 (128), 2 (192), 3 (224) or 6 (252) in the last.",
+    "lesson_ref": "d1.binary_basics"
+  },
+  {
+    "id": "q.d1.tcpudp.001",
+    "domain": "d1",
+    "subtopic": "1.5",
+    "type": "mcq_multi",
+    "difficulty": 1,
+    "stem": "Which TWO statements describe UDP?",
+    "choices": [
+      "It is connectionless",
+      "It uses sequence numbers to reorder segments",
+      "It has low overhead, which suits voice and video",
+      "It sets up sessions with a three-way handshake",
+      "It uses windowing for flow control"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "UDP sends datagrams without setting up a session and has an 8-byte header. Sequencing, acknowledgements, windowing and the three-way handshake are TCP features."
+  },
+  {
+    "id": "q.d1.tcpudp.002",
+    "domain": "d1",
+    "subtopic": "1.5",
+    "type": "drag_order",
+    "difficulty": 1,
+    "stem": "Put the steps of opening and using a TCP connection in order.",
+    "answer": [
+      "Client sends SYN",
+      "Server replies with SYN-ACK",
+      "Client sends ACK",
+      "Data is exchanged"
+    ],
+    "explanation": "TCP's three-way handshake is SYN, SYN-ACK, ACK. Only then does data flow."
+  }
+]

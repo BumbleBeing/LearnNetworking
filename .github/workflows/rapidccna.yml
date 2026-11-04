@@ -1,0 +1,30 @@
+name: RapidCCNA CI
+
+on:
+  push:
+    paths: ["RapidCCNA/**", ".github/workflows/rapidccna.yml"]
+  pull_request:
+    paths: ["RapidCCNA/**", ".github/workflows/rapidccna.yml"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: RapidCCNA
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate content
+        run: python3 tools/validate_content.py
+      - name: Install Godot 4.3
+        run: |
+          curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q godot.zip && mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot && rm godot.zip
+      - name: Install GUT
+        run: tools/install_gut.sh
+      - name: Import project
+        run: godot --headless --import --path . || true
+      - name: Run unit tests
+        run: godot --headless --path . -s addons/gut/gut_cmdln.gd
+      - name: End-to-end session smoke test
+        run: godot --headless --path . -s res://tools/smoke_session.gd

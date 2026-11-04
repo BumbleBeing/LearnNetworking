@@ -1,0 +1,107 @@
+[
+  {
+    "id": "q.d3.route.001",
+    "domain": "d3",
+    "subtopic": "3.2",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "R1 receives a packet for 10.20.30.77. Based on the exhibit, which next hop does it use?",
+    "exhibit": "S*   0.0.0.0/0 [1/0] via 192.0.2.1\nO    10.20.0.0/16 [110/30] via 10.0.0.2\nD    10.20.30.0/24 [90/30720] via 10.0.0.6\nS    10.20.30.64/27 [1/0] via 10.0.0.10",
+    "choices": [
+      "192.0.2.1",
+      "10.0.0.2",
+      "10.0.0.6",
+      "10.0.0.10"
+    ],
+    "answer": 3,
+    "explanation": "All four routes contain 10.20.30.77 (the /27 covers .64-.95). The longest prefix, /27, wins, so the next hop is 10.0.0.10. AD only matters between routes to the same prefix.",
+    "lesson_ref": "d3.routing_table"
+  },
+  {
+    "id": "q.d3.route.002",
+    "domain": "d3",
+    "subtopic": "3.1",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "What is the default administrative distance of OSPF?",
+    "answer": "110",
+    "explanation": "OSPF routes have AD 110. For comparison: connected 0, static 1, eBGP 20, EIGRP 90, RIP 120.",
+    "lesson_ref": "d3.routing_table"
+  },
+  {
+    "id": "q.d3.route.003",
+    "domain": "d3",
+    "subtopic": "3.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "R1 learns 172.16.8.0/22 from OSPF (cost 20), EIGRP (metric 3072) and RIP (2 hops). Which route is installed?",
+    "choices": [
+      "The OSPF route, because cost 20 is the lowest metric",
+      "The EIGRP route, because it has the lowest administrative distance",
+      "The RIP route, because 2 hops is the shortest path",
+      "All three, for load balancing"
+    ],
+    "answer": 1,
+    "explanation": "Metrics from different protocols can't be compared. With the same prefix and length, the lowest AD wins: EIGRP 90 beats OSPF 110 and RIP 120.",
+    "lesson_ref": "d3.routing_table"
+  },
+  {
+    "id": "q.d3.static.001",
+    "domain": "d3",
+    "subtopic": "3.3",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Write the command that sets a default route via next hop 203.0.113.1.",
+    "answer": [
+      "ip route 0.0.0.0 0.0.0.0 203.0.113.1"
+    ],
+    "explanation": "A default route is a static route to 0.0.0.0 with mask 0.0.0.0.",
+    "lesson_ref": "d3.static_routing"
+  },
+  {
+    "id": "q.d3.static.002",
+    "domain": "d3",
+    "subtopic": "3.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "R1 runs OSPF and learns 10.5.0.0/16 from it. An engineer also adds 'ip route 10.5.0.0 255.255.0.0 172.16.1.2 130'. Which route does R1 use for 10.5.0.0/16?",
+    "choices": [
+      "The static route, because static routes always win",
+      "The OSPF route, because 110 is lower than 130",
+      "Both, load-balancing between them",
+      "Neither until the static route is removed"
+    ],
+    "answer": 1,
+    "explanation": "The trailing 130 sets the static route's administrative distance. OSPF's AD of 110 is lower, so the OSPF route is installed and the static route floats as a backup.",
+    "lesson_ref": "d3.static_routing"
+  },
+  {
+    "id": "q.d3.static.003",
+    "domain": "d3",
+    "subtopic": "3.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "An engineer adds 'ip route 172.20.0.0 255.255.0.0 10.9.9.2', but the route doesn't appear in 'show ip route'. What's the most likely cause?",
+    "choices": [
+      "Static routes only appear after 'copy run start'",
+      "R1 has no route to the next hop 10.9.9.2",
+      "The mask must be written as /16",
+      "Static routes are shown only with 'show ip route static'"
+    ],
+    "answer": 1,
+    "explanation": "A next-hop static route is installed only if the next hop can be reached, usually through a connected interface that is up. Check the interface facing 10.9.9.2.",
+    "lesson_ref": "d3.static_routing"
+  },
+  {
+    "id": "q.d3.static.cli.001",
+    "domain": "d3",
+    "subtopic": "3.3",
+    "type": "cli_task",
+    "difficulty": 1,
+    "stem": "Use the R1 command line. Configure a default route via the ISP at 10.0.0.2.",
+    "lab": "lab.mini_default_route",
+    "answer": "ip route 0.0.0.0 0.0.0.0 10.0.0.2",
+    "explanation": "From global configuration mode: ip route 0.0.0.0 0.0.0.0 10.0.0.2.",
+    "lesson_ref": "d3.static_routing"
+  }
+]

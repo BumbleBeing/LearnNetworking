@@ -1,0 +1,43 @@
+{
+  "id": "d4.nat_basics",
+  "domain": "d4",
+  "subtopics": [
+    "4.1"
+  ],
+  "order": 10,
+  "title": "NAT and PAT",
+  "minutes": 5,
+  "cards": [
+    {
+      "heading": "Why NAT exists",
+      "body": "Private RFC 1918 addresses (10/8, 172.16/12, 192.168/16) aren't routed on the internet. At the network edge, NAT rewrites the private source address of outgoing packets to a public one and reverses it for the replies. Mark interfaces as 'ip nat inside' or 'ip nat outside'.",
+      "example": "interface Gi0/0\n ip nat inside\ninterface Gi0/1\n ip nat outside"
+    },
+    {
+      "heading": "The four NAT addresses",
+      "body": "Inside/outside says whose device it is. Local/global says where you're looking from: local is the address as seen on the inside network, global is the address as seen on the outside.",
+      "example": "Inside local    192.168.1.10   the PC's real address\nInside global   198.51.100.2   the PC after translation\nOutside global  203.0.113.80   the server's real address\nOutside local   203.0.113.80   the server as seen inside (usually the same)"
+    },
+    {
+      "heading": "Static, dynamic and PAT",
+      "body": "Static NAT maps one inside address to one public address permanently (servers). Dynamic NAT hands out addresses from a pool. PAT (overload) lets many hosts share one address by also translating port numbers. PAT is what nearly every network uses.",
+      "example": "ip nat inside source static 192.168.1.10 198.51.100.20\nip nat inside source list 1 pool PUB\nip nat inside source list 1 interface Gi0/1 overload"
+    },
+    {
+      "heading": "Reading the translation table",
+      "body": "'show ip nat translations' lists one row per translation. With PAT each row is an ip:port pair, and the inside global port keeps flows from different hosts apart.",
+      "example": "Pro  Inside global       Inside local        Outside local     Outside global\ntcp  198.51.100.2:51000  192.168.1.10:51000  203.0.113.80:443  203.0.113.80:443\ntcp  198.51.100.2:1024   192.168.1.11:51000  203.0.113.80:443  203.0.113.80:443"
+    }
+  ],
+  "recall": [
+    "q.d4.nat.001",
+    "q.d4.nat.002",
+    "q.d4.nat.003"
+  ],
+  "drills": [
+    "nat_translator"
+  ],
+  "labs": [
+    "lab.nat_pat"
+  ]
+}

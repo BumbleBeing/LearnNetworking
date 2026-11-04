@@ -1,0 +1,152 @@
+[
+  {
+    "id": "q.d5.wc.001",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "What wildcard mask matches every address in a /26 subnet?",
+    "answer": "0.0.0.63",
+    "explanation": "/26 = 255.255.255.192. 255 - 192 = 63, so the wildcard is 0.0.0.63.",
+    "lesson_ref": "d5.wildcard_masks"
+  },
+  {
+    "id": "q.d5.wc.002",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which range of addresses does 172.20.16.0 0.0.7.255 match?",
+    "choices": [
+      "172.20.16.0 - 172.20.16.255",
+      "172.20.16.0 - 172.20.23.255",
+      "172.20.16.0 - 172.20.31.255",
+      "172.20.0.0 - 172.20.23.255"
+    ],
+    "answer": 1,
+    "explanation": "Add the wildcard to the base: 16 + 7 = 23 in the third octet and 0 + 255 in the fourth, giving 172.20.23.255.",
+    "lesson_ref": "d5.wildcard_masks"
+  },
+  {
+    "id": "q.d5.wc.003",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which ACL address entry is equivalent to 'host 10.1.1.1'?",
+    "choices": [
+      "10.1.1.1 255.255.255.255",
+      "10.1.1.1 0.0.0.0",
+      "10.1.1.0 0.0.0.255",
+      "10.1.1.1 0.0.0.1"
+    ],
+    "answer": 1,
+    "explanation": "A wildcard of all zeros means every bit must match, so exactly one address. 'host' is shorthand for that.",
+    "lesson_ref": "d5.wildcard_masks"
+  },
+  {
+    "id": "q.d5.acl.001",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "An engineer applies 'access-list 10 deny host 192.168.1.50' inbound on an interface and adds nothing else. What happens?",
+    "choices": [
+      "Only 192.168.1.50 is blocked",
+      "All traffic arriving on that interface is blocked",
+      "Nothing is blocked until a permit line is added",
+      "Only traffic to 192.168.1.50 is blocked"
+    ],
+    "answer": 1,
+    "explanation": "Every ACL ends with an implicit deny any. With no permit line, every packet is denied: 192.168.1.50 by the explicit line, everyone else by the implicit deny.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.002",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each ACL type to the usual placement guideline.",
+    "answer": {
+      "Extended ACL": "As close to the source as possible",
+      "Standard ACL": "As close to the destination as possible"
+    },
+    "distractors": [
+      "On every router interface",
+      "Only on WAN links"
+    ],
+    "explanation": "Extended ACLs match destinations precisely, so they can drop traffic early near the source. Standard ACLs match only the source; placed near the source they would block that source from everything.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.003",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Host 192.168.10.25 sends an SSH (TCP 22) packet to 10.1.1.10. Which line decides it?",
+    "exhibit": "Extended IP access list 110\n    10 permit tcp 192.168.10.0 0.0.0.255 host 10.1.1.10 eq 443\n    20 deny   tcp any host 10.1.1.10 eq 22\n    30 permit ip 192.168.10.0 0.0.0.255 any",
+    "choices": [
+      "Line 10, permitted",
+      "Line 20, denied",
+      "Line 30, permitted",
+      "The implicit deny"
+    ],
+    "answer": 1,
+    "explanation": "Line 10 is for port 443, so it doesn't match. Line 20 matches any source going to 10.1.1.10 on TCP 22, so the packet is denied and line 30 is never checked.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.ps.001",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is the default port security violation mode?",
+    "choices": [
+      "protect",
+      "restrict",
+      "shutdown",
+      "log"
+    ],
+    "answer": 2,
+    "explanation": "By default a violation puts the port into the err-disabled state (shutdown mode).",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.ps.002",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each port security violation mode to what it does.",
+    "answer": {
+      "protect": "Drops frames from unknown MACs silently",
+      "restrict": "Drops them, logs it and counts the violation",
+      "shutdown": "Puts the port into err-disabled"
+    },
+    "distractors": [
+      "Moves the port into VLAN 999"
+    ],
+    "explanation": "protect and restrict both keep the port up; only restrict reports the violation. shutdown, the default, err-disables the port.",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.ps.003",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Typing 'switchport port-security' on Fa0/1 returns 'Command rejected: FastEthernet0/1 is a dynamic port.' What fixes it?",
+    "choices": [
+      "Enable the port with 'no shutdown'",
+      "Configure 'switchport mode access' first",
+      "Create the VLAN first",
+      "Use 'switchport port-security enable'"
+    ],
+    "answer": 1,
+    "explanation": "Port security can't be enabled on a port in dynamic (DTP) mode. Make it a static access port first.",
+    "lesson_ref": "d5.port_security"
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "id": "d3.routing_table",
+  "domain": "d3",
+  "subtopics": [
+    "3.1",
+    "3.2"
+  ],
+  "order": 10,
+  "title": "Reading the routing table",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Anatomy of a route",
+      "body": "Every line in 'show ip route' answers four questions: how the route was learned (the code), which destination prefix it covers, how trustworthy and how good it is [administrative distance/metric], and where to send the packet (next hop or exit interface).",
+      "example": "O    172.16.0.0/16 [110/20] via 10.0.0.2, 00:03:11, Gi0/0\n│    │              │   │       └ next hop\n│    │              │   └ metric (OSPF cost)\n│    │              └ administrative distance\n│    └ destination prefix\n└ code: O = OSPF"
+    },
+    {
+      "heading": "Connected and local routes",
+      "body": "When an interface has an IP address and is up/up, the router adds two routes by itself: C for the connected subnet and L, a /32 for its own address on that interface. Both have administrative distance 0.",
+      "example": "C    10.0.0.0/30 is directly connected, GigabitEthernet0/0\nL    10.0.0.1/32 is directly connected, GigabitEthernet0/0"
+    },
+    {
+      "heading": "Longest prefix match",
+      "body": "To forward a packet the router looks at every route whose prefix contains the destination and uses the most specific one, the longest prefix. AD and metric play no part here; they were already used to decide which routes got into the table.",
+      "example": "Destination 172.16.5.70 matches:\n  172.16.0.0/16   172.16.5.0/24   172.16.5.64/26\nWinner: 172.16.5.64/26 (26 is the longest prefix)"
+    },
+    {
+      "heading": "Administrative distance",
+      "body": "If two sources offer the same prefix and length, only one is installed: the one with the lowest administrative distance. Metrics are compared only between routes from the same protocol. A floating static route gets a deliberately high AD so it's used only as a backup.",
+      "example": "Connected 0   Static 1   eBGP 20   EIGRP 90\nOSPF 110      RIP 120    iBGP 200\nip route 10.9.0.0 255.255.0.0 10.0.0.6 130   ← floating static"
+    },
+    {
+      "heading": "The default route",
+      "body": "0.0.0.0/0 matches every destination but is the least specific route, so it's used only when nothing else matches. It shows up as the 'gateway of last resort'. With no default route, a packet that matches nothing is dropped.",
+      "example": "ip route 0.0.0.0 0.0.0.0 203.0.113.1\nS*   0.0.0.0/0 [1/0] via 203.0.113.1"
+    }
+  ],
+  "recall": [
+    "q.d3.route.001",
+    "q.d3.route.002",
+    "q.d3.route.003"
+  ],
+  "drills": [
+    "route_picker"
+  ]
+}
