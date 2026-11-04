@@ -27,7 +27,7 @@ func _ready() -> void:
 	if ContentDB.errors.size() > 0:
 		UI.label(col, "Content warnings: %d (see log)" % ContentDB.errors.size(), "Muted").add_theme_color_override("font_color", look.warn)
 	UI.center_all(col)
-	start.grab_focus()
+	UI.focus_without_scrolling(start)
 
 func _go_settings() -> void:
 	SettingsScreen.return_to = "res://ui/screens/MainMenu.tscn"

@@ -62,7 +62,8 @@ func _show_card() -> void:
 		_dots.add_child(dot)
 	_back.disabled = _i == 0
 	_next.text = "Start recall check" if _i == cards.size() - 1 else "Next"
-	_next.grab_focus()
+	UI.focus_without_scrolling(_next)
+	UI.scroll_to_top(_body)   # each card starts at its top
 	# Focus stays on Next, so read the new card out.
 	UI.announce("Card %d of %d. %s. %s" % [_i + 1, cards.size(), card.get("heading", ""), card.get("body", "")])
 

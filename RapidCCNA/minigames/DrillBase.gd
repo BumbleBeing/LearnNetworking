@@ -57,6 +57,7 @@ func _ready() -> void:
 	answer_box = UI.vbox(card, 10)
 	_feedback = UI.vbox(card, 6)
 	var row := UI.hbox(self, 12)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	_submit_btn = UI.button(row, "Submit", submit, true)
 	_next_btn = UI.button(row, "Next", next_item, true)
 	_hint_btn = UI.button(row, "Hint", _show_hint)
@@ -89,6 +90,7 @@ func next_item() -> void:
 	_choices.clear()
 	_choice_index = -1
 	present_item()
+	UI.scroll_to_top(self)   # each item starts at the top, not where the last answer left it
 	_submit_btn.visible = _choices.is_empty()   # choices answer on click
 	_item_start = Time.get_ticks_msec()
 	UI.announce("%s. %s" % [_item_chip.text, prompt_text()])
@@ -122,7 +124,7 @@ func submit() -> void:
 		var ex := PanelContainer.new()
 		ex.theme_type_variation = "Exhibit"
 		_feedback.add_child(ex)
-		UI.label(ex, explain(), "Code")
+		UI.label(ex, explain(), "Code", true)
 	_submit_btn.visible = false
 	_hint_btn.disabled = true
 	_next_btn.visible = true
@@ -171,6 +173,7 @@ func add_choices(options: Array) -> void:
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.focus_mode = Control.FOCUS_ALL   # 1-9 still work; Tab reaches them for screen readers
+		UI.wrap_button(b)
 		b.pressed.connect(choose.bind(i))
 		box.add_child(b)
 		_choices.append(b)

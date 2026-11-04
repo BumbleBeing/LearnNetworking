@@ -42,7 +42,7 @@ func _ready() -> void:
 		var ex := PanelContainer.new()
 		ex.theme_type_variation = "Exhibit"
 		add_child(ex)
-		UI.rich(ex, str(q.exhibit), "Code", false)
+		UI.rich(ex, str(q.exhibit), "Code")
 	match q.get("type", ""):
 		"mcq_single", "exhibit":
 			_build_choices(false)
@@ -93,6 +93,7 @@ func _build_choices(multi: bool) -> void:
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		# Digits + Enter still work; Tab reaches each choice too, so screen readers can.
 		b.focus_mode = Control.FOCUS_ALL
+		UI.wrap_button(b)
 		box.add_child(b)
 		UI.rich_button(b)
 		_choice_buttons.append(b)
@@ -121,7 +122,7 @@ func _build_match() -> void:
 	var opts := {}
 	for left in q.answer.keys():
 		var row := UI.hbox(self, 12)
-		var l := UI.rich(row, str(left), "Body", false)
+		var l := UI.rich(row, str(left), "Body")
 		l.custom_minimum_size.x = 280
 		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		var ob := OptionButton.new()
@@ -131,6 +132,8 @@ func _build_match() -> void:
 			ob.add_item(str(r))
 			ob.set_item_tooltip(ob.item_count - 1, Glossary.tooltip(str(r)))
 		ob.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		ob.fit_to_longest_item = false   # don't size the row to the longest option...
+		UI.wrap_button(ob)               # ...wrap the chosen one instead
 		row.add_child(ob)
 		opts[left] = ob
 		_lockables.append(ob)
@@ -167,6 +170,7 @@ func _render_order(focus_at: int = -1, focus_dir: int = 0) -> void:
 		item.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		item.disabled = _done
 		row.add_child(item)
+		UI.wrap_button(item)
 		UI.rich_button(item)
 		item.focus_mode = Control.FOCUS_NONE   # the item itself does nothing; its arrows move it
 		item.set_meta("display_only", true)
@@ -230,10 +234,7 @@ func _build_cli() -> void:
 	var lab: Dictionary = ContentDB.labs.get(q.get("lab", ""), {})
 	_lab = LabSession.create(lab)
 	if lab.has("topology"):
-		var ex := PanelContainer.new()
-		ex.theme_type_variation = "Exhibit"
-		add_child(ex)
-		UI.rich(ex, str(lab.topology), "Code", false)
+		UI.diagram(self, str(lab.topology))
 	var dev: String = _lab.sessions.keys()[0]
 	_term = Terminal.new().setup(_lab.sessions[dev], "%s console. Type your commands, then press Submit." % dev)
 	_term.custom_minimum_size.y = 300
@@ -345,6 +346,7 @@ func _show_feedback(correct: bool) -> void:
 	if ContentDB.lessons.has(ref):
 		UI.rich(card, "From the lesson: " + ContentDB.lessons[ref].title, "Muted")
 	var cont := UI.button(_feedback, "Continue", _continue, true)
+	cont.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	UI.focus_later(cont)
 	UI.scroll_into_view(cont)
 	# Focus jumps to Continue, so read the result out: verdict, the right answer, why.

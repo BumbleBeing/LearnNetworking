@@ -65,6 +65,7 @@ func _intro() -> void:
 	for d in ContentDB.domains:
 		UI.label(split, "%s: %d questions (%d%% of the exam)" % [d.name, int(counts.get(d.id, 0)), int(d.weight)], "Muted")
 	var go := UI.button(_body, "Begin exam", _begin, true)
+	go.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	go.disabled = _ids.is_empty()
 	UI.focus_later(go)
 
