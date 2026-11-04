@@ -40,5 +40,8 @@
   ],
   "drills": [
     "channel_builder"
+  ],
+  "labs": [
+    "lab.etherchannel"
   ]
 }

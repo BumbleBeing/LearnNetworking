@@ -44,5 +44,8 @@
   ],
   "drills": [
     "stp_solver"
+  ],
+  "labs": [
+    "lab.stp"
   ]
 }

@@ -53,7 +53,7 @@ static func describe(r: Dictionary) -> String:
 func show() -> String:
 	var lines := PackedStringArray()
 	lines.append("Codes: L - local, C - connected, S - static, R - RIP, O - OSPF,")
-	lines.append("       D - EIGRP, B - BGP, * - candidate default")
+	lines.append("       D - EIGRP, B - BGP, E2 - OSPF external type 2, * - candidate default")
 	lines.append("")
 	var default := routes.filter(func(r): return r.len == 0)
 	if default.is_empty():
@@ -62,7 +62,7 @@ func show() -> String:
 		lines.append("Gateway of last resort is %s to network 0.0.0.0" % default[0].next_hop)
 	lines.append("")
 	for r in routes:
-		var code: String = r.code + ("*" if r.len == 0 else "")
+		var code: String = r.code + ("*" if r.len == 0 else "") + r.get("ext", "")
 		var body := ""
 		if r.code in ["C", "L"]:
 			body = "%s is directly connected, %s" % [prefix_str(r), r.iface]

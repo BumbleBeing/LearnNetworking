@@ -237,5 +237,17 @@
     ],
     "explanation": "Manual first, then loopbacks, then physical interfaces.",
     "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.ospf.cli.001",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the R1 command line. Enable OSPF process 1 on Gi0/0 (10.0.0.1/30) in area 0 so R1 forms an adjacency with R2 and learns 192.168.2.0/24.",
+    "lab": "lab.mini_ospf",
+    "answer": "router ospf 1 / network 10.0.0.0 0.0.0.3 area 0",
+    "explanation": "A network statement whose wildcard matches Gi0/0's address enables OSPF on it in area 0. R2 is already in area 0 with default timers, so they become neighbours.",
+    "lesson_ref": "d3.ospf"
   }
 ]

@@ -1,0 +1,142 @@
+{
+  "id": "lab.ospf_troubleshoot",
+  "title": "Fix an OSPF adjacency",
+  "domain": "d3",
+  "unit": "d3.ospf",
+  "subtopics": [
+    "3.4"
+  ],
+  "description": "R1 and R2 both run OSPF but never become neighbours. Find out why from the show commands and fix R2.",
+  "topology": "  LAN 192.168.1.0/24                              LAN 192.168.2.0/24\n      Gi0/1 .1                                         Gi0/1 .1\n        [R1] Gi0/0 .1 ── 10.0.12.0/30 ── .2 Gi0/0 [R2]\n\n  Useful: show ip ospf interface g0/0, show ip protocols, show ip ospf neighbor",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.12.1 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 192.168.1.1 255.255.255.0",
+        "no shutdown",
+        "router ospf 1",
+        "router-id 1.1.1.1",
+        "network 10.0.12.0 0.0.0.3 area 0",
+        "network 192.168.1.0 0.0.0.255 area 0",
+        "passive-interface g0/1"
+      ]
+    },
+    {
+      "name": "R2",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.12.2 255.255.255.252",
+        "ip ospf hello-interval 5",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 192.168.2.1 255.255.255.0",
+        "no shutdown",
+        "router ospf 2",
+        "router-id 2.2.2.2",
+        "network 10.0.12.0 0.0.0.3 area 1",
+        "network 192.168.2.0 0.0.0.255 area 0"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/0",
+      "R2",
+      "g0/0"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Make R1 and R2 OSPF neighbours. Change only R2 (its process ID being 2 is fine).",
+      "hint": "Compare 'show ip ospf interface g0/0' on both routers: look at the area and the Hello/Dead timers.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "ospf_neighbor",
+          "args": {
+            "neighbor": "R2"
+          }
+        }
+      ]
+    },
+    {
+      "text": "R1 should reach R2's LAN through OSPF: ping 192.168.2.1 from R1.",
+      "hint": "Once they're neighbours the O route appears. Try do ping 192.168.2.1 on R1.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "route_to",
+          "args": {
+            "dest": "192.168.2.1",
+            "code": "O"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "ping",
+          "args": {
+            "to": "192.168.2.1"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Stop R2 sending Hellos onto its LAN, without removing the LAN from OSPF.",
+      "hint": "On R2, under router ospf 2: passive-interface g0/1",
+      "checks": [
+        {
+          "device": "R2",
+          "check": "ospf_passive",
+          "args": {
+            "iface": "g0/1"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "route_to",
+          "args": {
+            "dest": "192.168.2.1",
+            "code": "O"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R2": [
+      "interface g0/0",
+      "ip ospf hello-interval 10",
+      "exit",
+      "router ospf 2",
+      "no network 10.0.12.0 0.0.0.3 area 1",
+      "network 10.0.12.0 0.0.0.3 area 0",
+      "passive-interface g0/1",
+      "end"
+    ]
+  }
+}

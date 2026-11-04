@@ -84,20 +84,6 @@ static func _dr_bdr(rng: RandomNumberGenerator) -> Dictionary:
 			" > ".join(order.map(func(r): return "%s (%d, %s)" % [r.name, r.priority, r.rid])), res.dr, res.bdr,
 			"\nPriority 0 routers are excluded." if routers.any(func(r): return r.priority == 0) else ""]}
 
-static func _ospf_if(name: String, side: Dictionary) -> String:
-	var lines := PackedStringArray([
-		"%s is up, line protocol is up" % name,
-		"  Internet Address %s/%d, Area %s" % [side.ip, IPv4.prefix_from_mask(IPv4.parse(side.mask)), side.area],
-		"  Process ID %d, Router ID %s, Network Type BROADCAST, Cost: %d" % [side.pid, side.rid, side.cost],
-		"  Transmit Delay is 1 sec, State %s, Priority %d" % ["DR" if side.priority > 0 else "DROTHER", side.priority],
-		"  Timer intervals configured, Hello %d, Dead %d, Wait %d" % [side.hello, side.dead, side.dead],
-	])
-	if side.passive:
-		lines.append("    No Hellos (Passive interface)")
-	if side.mtu != 1500:
-		lines.append("  IP MTU %d" % side.mtu)
-	return "\n".join(lines)
-
 static func _neighbor(rng: RandomNumberGenerator) -> Dictionary:
 	var net := "10.%d.%d.0" % [rng.randi_range(0, 99), rng.randi_range(0, 250)]
 	var base := IPv4.parse(net)
@@ -140,7 +126,7 @@ static func _neighbor(rng: RandomNumberGenerator) -> Dictionary:
 	if harmless.size() > 0:
 		note = "\nThe %s differ, but that never stops an adjacency: those values are local to each router." % " and ".join(harmless.map(func(k): return {"pid": "process IDs", "cost": "costs", "priority": "priorities"}[k]))
 	return {"kind": "neighbor", "card_id": "gen.ospf_navigator.neighbor",
-		"exhibit": "R1#show ip ospf interface g0/0\n%s\n\nR2#show ip ospf interface g0/0\n%s" % [_ospf_if("GigabitEthernet0/0", a), _ospf_if("GigabitEthernet0/0", b)],
+		"exhibit": "R1#show ip ospf interface g0/0\n%s\n\nR2#show ip ospf interface g0/0\n%s" % [OSPF.show_interface("GigabitEthernet0/0", a), OSPF.show_interface("GigabitEthernet0/0", b)],
 		"question": "R1 and R2 don't become OSPF neighbours. Why?", "choices": choices,
 		"answer_index": choices.find(OSPF.ISSUE_TEXT[issue]), "answer": OSPF.ISSUE_TEXT[issue],
 		"hint": "Must match: subnet/mask, area, Hello/Dead timers, MTU (and authentication). Must differ: router IDs. Must not be passive.",

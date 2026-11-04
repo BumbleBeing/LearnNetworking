@@ -278,5 +278,29 @@
     ],
     "explanation": "root primary sets the priority to 24576, or 4096 below the current root's priority if that's already lower.",
     "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.ec.cli.001",
+    "domain": "d2",
+    "subtopic": "2.4",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the SW1 command line. SW2's Gi0/1 and Gi0/2 are in channel-group 2 mode auto. Bundle SW1's Gi0/1 and Gi0/2 into Port-channel 2 so the channel comes up.",
+    "lab": "lab.mini_etherchannel",
+    "answer": "interface range g0/1 - 2 / channel-group 2 mode desirable",
+    "explanation": "auto is PAgP and only responds, so SW1 must actively negotiate PAgP: mode desirable. active/passive (LACP) or on wouldn't form a channel with auto.",
+    "lesson_ref": "d2.etherchannel"
+  },
+  {
+    "id": "q.d2.stp.cli.001",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "cli_task",
+    "difficulty": 1,
+    "stem": "Use the SW1 command line. Make SW1 the root bridge for VLAN 30 by setting its bridge priority to 4096.",
+    "lab": "lab.mini_stp_root",
+    "answer": "spanning-tree vlan 30 priority 4096",
+    "explanation": "4096 + 30 = 4126 beats SW2's default 32768 + 30, so SW1 wins regardless of MAC address. Priorities must be multiples of 4096.",
+    "lesson_ref": "d2.stp"
   }
 ]

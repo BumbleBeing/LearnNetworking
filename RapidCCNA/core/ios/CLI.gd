@@ -5,7 +5,7 @@ extends RefCounted
 
 var device: Device
 var network: Network
-var mode := "user"              # user | priv | config | if | vlan | line | nacl
+var mode := "user"              # user | priv | config | if | vlan | line | nacl | router
 var ctx: Dictionary = {}        # ifaces:Array, range:bool, vlan:int, acl:String, line:String
 var history: Array = []
 var cmds := Commands.new()
@@ -23,6 +23,7 @@ func prompt() -> String:
 		"if": return h + ("(config-if-range)#" if ctx.get("range", false) else "(config-if)#")
 		"vlan": return h + "(config-vlan)#"
 		"line": return h + "(config-line)#"
+		"router": return h + "(config-router)#"
 		"nacl": return h + ("(config-std-nacl)#" if device.acls.get(ctx.get("acl", ""), {}).get("standard", false) else "(config-ext-nacl)#")
 	return h + ">"
 

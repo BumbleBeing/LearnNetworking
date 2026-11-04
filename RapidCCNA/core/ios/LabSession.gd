@@ -34,8 +34,11 @@ func apply(device: String, lines: Array, silent: bool = false) -> PackedStringAr
 ## Normal IOS chatter that isn't an error.
 static func _informational(out: String) -> bool:
 	for line in out.split("\n"):
+		# Indented lines continue a multi-line warning.
 		if not (line.begins_with("%LINK") or line.begins_with("%LINEPROTO") or line.begins_with("% Access VLAN does not exist")
-				or line.begins_with("Enter configuration") or line.is_empty()):
+				or line.begins_with("Enter configuration") or line.begins_with("Creating a port-channel")
+				or line.begins_with("%Warning") or line.begins_with("% OSPF: Reference bandwidth")
+				or line.begins_with(" ") or line.is_empty()):
 			return false
 	return true
 

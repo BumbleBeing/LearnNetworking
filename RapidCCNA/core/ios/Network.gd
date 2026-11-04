@@ -10,6 +10,7 @@ static func build(lab: Dictionary) -> Network:
 	var net := Network.new()
 	for def in lab.get("devices", []):
 		net.devices[def.name] = Device.create(def)
+		net.devices[def.name]._net = weakref(net)
 	for l in lab.get("links", []):
 		net.links.append([l[0], Device.canon_iface(l[1]), l[2], Device.canon_iface(l[3])])
 	return net

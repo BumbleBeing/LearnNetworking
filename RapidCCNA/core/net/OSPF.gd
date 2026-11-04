@@ -116,3 +116,21 @@ static func show_neighbors(rows: Array) -> String:
 	for r in rows:
 		out.append("%-15s %3d   %-15s %-11s %-15s %s" % [r.rid, int(r.pri), "%s/%s" % [r.state, "  -" if r.role == "-" else r.role], "00:00:3%d" % (int(r.pri) % 10), r.address, r.iface])
 	return "\n".join(out)
+
+## "show ip ospf interface X". side: {ip, mask, area, pid, rid, cost, priority, hello, dead, passive, mtu, state?, nbrs?}
+static func show_interface(name: String, side: Dictionary) -> String:
+	var state: String = side.get("state", "DR" if int(side.priority) > 0 else "DROTHER")
+	var lines := PackedStringArray([
+		"%s is up, line protocol is up" % name,
+		"  Internet Address %s/%d, Area %s" % [side.ip, IPv4.prefix_from_mask(IPv4.parse(side.mask)), side.area],
+		"  Process ID %d, Router ID %s, Network Type %s, Cost: %d" % [int(side.pid), side.rid, "LOOPBACK" if name.begins_with("Loopback") else "BROADCAST", int(side.cost)],
+		"  Transmit Delay is 1 sec, State %s, Priority %d" % [state, int(side.priority)],
+		"  Timer intervals configured, Hello %d, Dead %d, Wait %d" % [int(side.hello), int(side.dead), int(side.dead)],
+	])
+	if side.get("passive", false):
+		lines.append("    No Hellos (Passive interface)")
+	if int(side.get("mtu", 1500)) != 1500:
+		lines.append("  IP MTU %d" % int(side.mtu))
+	if side.has("nbrs"):
+		lines.append("  Neighbor Count is %d, Adjacent neighbor count is %d" % [int(side.nbrs), int(side.nbrs)])
+	return "\n".join(lines)

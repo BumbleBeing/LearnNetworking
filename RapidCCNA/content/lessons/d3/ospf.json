@@ -49,5 +49,9 @@
   ],
   "drills": [
     "ospf_navigator"
+  ],
+  "labs": [
+    "lab.ospf",
+    "lab.ospf_troubleshoot"
   ]
 }

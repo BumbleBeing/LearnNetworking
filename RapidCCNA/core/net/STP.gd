@@ -8,6 +8,7 @@ extends RefCounted
 ## Default (short) port costs by speed in Mbps.
 const COST := {10: 100, 100: 19, 1000: 4, 10000: 2}
 const ROLES := ["Root", "Designated", "Alternate"]
+const ABBR := {"Root": "Root", "Designated": "Desg", "Alternate": "Altn"}
 
 static func cost_for(mbps: int) -> int:
 	return COST.get(mbps, 4)
@@ -174,5 +175,5 @@ static func show(res: Dictionary, sw: String, vlan: int, ports: Array) -> String
 	for p in ports:
 		var role: String = res.roles.get("%s %s" % [sw, p.port], "Designated")
 		var sts := "BLK" if role == "Alternate" else "FWD"
-		out.append("%-19s %-4s %-3s %-9d %-8s %s" % [p.port, role.substr(0, 4), sts, int(p.cost), pid_str(int(p.pid)), p.get("type", "P2p")])
+		out.append("%-19s %-4s %-3s %-9d %-8s %s" % [p.port, ABBR.get(role, role), sts, int(p.cost), pid_str(int(p.pid)), p.get("type", "P2p")])
 	return "\n".join(out)
