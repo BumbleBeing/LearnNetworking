@@ -1,0 +1,6 @@
+.godot/
+addons/gut/
+build/
+*.import
+export_credentials.cfg
+__pycache__/

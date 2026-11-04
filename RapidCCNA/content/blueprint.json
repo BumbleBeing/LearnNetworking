@@ -1,0 +1,71 @@
+{
+  "exam": "CCNA 200-301 v1.1",
+  "mock": {"questions": 100, "minutes": 120, "pass_scaled": 825},
+  "domains": [
+    {"id": "d1", "name": "Network Fundamentals", "weight": 20, "subtopics": [
+      {"id": "1.1", "name": "Role and function of network components"},
+      {"id": "1.2", "name": "Characteristics of network topology architectures"},
+      {"id": "1.3", "name": "Physical interface and cabling types"},
+      {"id": "1.4", "name": "Interface and cable issues"},
+      {"id": "1.5", "name": "TCP vs UDP"},
+      {"id": "1.6", "name": "IPv4 addressing and subnetting"},
+      {"id": "1.7", "name": "Private IPv4 addressing"},
+      {"id": "1.8", "name": "IPv6 addressing and prefix"},
+      {"id": "1.9", "name": "IPv6 address types"},
+      {"id": "1.10", "name": "Verify IP parameters for client OS"},
+      {"id": "1.11", "name": "Wireless principles"},
+      {"id": "1.12", "name": "Virtualization fundamentals"},
+      {"id": "1.13", "name": "Switching concepts"}
+    ]},
+    {"id": "d2", "name": "Network Access", "weight": 20, "subtopics": [
+      {"id": "2.1", "name": "VLANs spanning multiple switches"},
+      {"id": "2.2", "name": "Interswitch connectivity (trunks, 802.1Q, native VLAN)"},
+      {"id": "2.3", "name": "Layer 2 discovery protocols (CDP, LLDP)"},
+      {"id": "2.4", "name": "EtherChannel (LACP)"},
+      {"id": "2.5", "name": "Rapid PVST+ Spanning Tree"},
+      {"id": "2.6", "name": "Cisco wireless architectures and AP modes"},
+      {"id": "2.7", "name": "Physical infrastructure connections of WLAN components"},
+      {"id": "2.8", "name": "Network device management access"},
+      {"id": "2.9", "name": "WLAN GUI configuration"}
+    ]},
+    {"id": "d3", "name": "IP Connectivity", "weight": 25, "subtopics": [
+      {"id": "3.1", "name": "Components of the routing table"},
+      {"id": "3.2", "name": "Router forwarding decision by default"},
+      {"id": "3.3", "name": "IPv4 and IPv6 static routing"},
+      {"id": "3.4", "name": "Single area OSPFv2"},
+      {"id": "3.5", "name": "First hop redundancy protocols"}
+    ]},
+    {"id": "d4", "name": "IP Services", "weight": 10, "subtopics": [
+      {"id": "4.1", "name": "Inside source NAT"},
+      {"id": "4.2", "name": "NTP client/server"},
+      {"id": "4.3", "name": "DHCP and DNS"},
+      {"id": "4.4", "name": "SNMP"},
+      {"id": "4.5", "name": "Syslog"},
+      {"id": "4.6", "name": "DHCP client and relay"},
+      {"id": "4.7", "name": "QoS PHB"},
+      {"id": "4.8", "name": "SSH remote access"},
+      {"id": "4.9", "name": "TFTP/FTP"}
+    ]},
+    {"id": "d5", "name": "Security Fundamentals", "weight": 15, "subtopics": [
+      {"id": "5.1", "name": "Key security concepts"},
+      {"id": "5.2", "name": "Security program elements"},
+      {"id": "5.3", "name": "Device access control with local passwords"},
+      {"id": "5.4", "name": "Password policy elements"},
+      {"id": "5.5", "name": "IPsec remote access and site-to-site VPNs"},
+      {"id": "5.6", "name": "Access control lists"},
+      {"id": "5.7", "name": "Layer 2 security features"},
+      {"id": "5.8", "name": "AAA concepts"},
+      {"id": "5.9", "name": "Wireless security protocols"},
+      {"id": "5.10", "name": "WLAN with WPA2 PSK via GUI"}
+    ]},
+    {"id": "d6", "name": "Automation and Programmability", "weight": 10, "subtopics": [
+      {"id": "6.1", "name": "Automation impact on network management"},
+      {"id": "6.2", "name": "Traditional vs controller-based networking"},
+      {"id": "6.3", "name": "Software defined architectures"},
+      {"id": "6.4", "name": "AI and machine learning in network operations"},
+      {"id": "6.5", "name": "REST-based APIs"},
+      {"id": "6.6", "name": "Configuration management mechanisms"},
+      {"id": "6.7", "name": "JSON-encoded data"}
+    ]}
+  ]
+}

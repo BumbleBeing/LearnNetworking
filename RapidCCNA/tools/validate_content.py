@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+"""Validate RapidCCNA content: schema, unique ids, answer keys, cross-references, coverage.
+
+Usage: python3 tools/validate_content.py [content_dir] [--min-per-subtopic N]
+Exit code 0 = valid, 1 = errors found.
+"""
+import json
+import sys
+from pathlib import Path
+
+QUESTION_TYPES = {"mcq_single", "mcq_multi", "drag_match", "drag_order",
+                  "fill_in", "subnet_calc", "cli_task", "exhibit"}
+QUESTION_REQUIRED = {"id", "domain", "subtopic", "type", "stem", "answer", "explanation"}
+LESSON_REQUIRED = {"id", "domain", "subtopics", "title", "cards"}
+
+
+def load(path, errors):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        errors.append(f"{path}: {e}")
+        return None
+
+
+def check_answer(q, where, errors):
+    t, ans, choices = q["type"], q["answer"], q.get("choices")
+    if t in ("mcq_single", "mcq_multi") and not isinstance(choices, list):
+        errors.append(f"{where}: {t} needs a 'choices' list")
+        return
+    if t == "mcq_single":
+        if not isinstance(ans, int) or not 0 <= ans < len(choices):
+            errors.append(f"{where}: answer index out of range")
+    elif t == "mcq_multi":
+        if (not isinstance(ans, list) or len(ans) < 2 or len(set(ans)) != len(ans)
+                or any(not isinstance(a, int) or not 0 <= a < len(choices) for a in ans)):
+            errors.append(f"{where}: mcq_multi answer must be >=2 unique valid indices")
+
+
+def validate(root: Path, min_per_subtopic: int = 0):
+    errors = []
+    bp = load(root / "blueprint.json", errors)
+    if not isinstance(bp, dict):
+        return errors + ["blueprint.json missing or invalid"]
+    domains = {d["id"]: d for d in bp.get("domains", [])}
+    subtopics = {s["id"]: d_id for d_id, d in domains.items() for s in d.get("subtopics", [])}
+    total_weight = sum(d.get("weight", 0) for d in domains.values())
+    if total_weight != 100:
+        errors.append(f"blueprint: domain weights sum to {total_weight}, expected 100")
+
+    ids = {}
+    lessons, questions = {}, {}
+
+    def register(item_id, where):
+        if item_id in ids:
+            errors.append(f"{where}: duplicate id {item_id} (also in {ids[item_id]})")
+        ids[item_id] = where
+
+    for path in sorted((root / "lessons").rglob("*.json")):
+        lesson = load(path, errors)
+        if not isinstance(lesson, dict):
+            continue
+        missing = LESSON_REQUIRED - lesson.keys()
+        if missing:
+            errors.append(f"{path}: missing {sorted(missing)}")
+            continue
+        register(lesson["id"], str(path))
+        lessons[lesson["id"]] = (lesson, path)
+        if lesson["domain"] not in domains:
+            errors.append(f"{path}: unknown domain {lesson['domain']}")
+        for st in lesson["subtopics"]:
+            if subtopics.get(st) != lesson["domain"]:
+                errors.append(f"{path}: subtopic {st} not in domain {lesson['domain']}")
+        if not 3 <= len(lesson["cards"]) <= 8:
+            errors.append(f"{path}: lessons need 3-8 cards, has {len(lesson['cards'])}")
+
+    for path in sorted((root / "questions").rglob("*.json")):
+        arr = load(path, errors)
+        if not isinstance(arr, list):
+            errors.append(f"{path}: must be a JSON array")
+            continue
+        for i, q in enumerate(arr):
+            where = f"{path}[{i}]"
+            if not isinstance(q, dict):
+                errors.append(f"{where}: not an object")
+                continue
+            missing = QUESTION_REQUIRED - q.keys()
+            if missing:
+                errors.append(f"{where}: missing {sorted(missing)}")
+                continue
+            where = f"{path}:{q['id']}"
+            register(q["id"], where)
+            questions[q["id"]] = q
+            if q["type"] not in QUESTION_TYPES:
+                errors.append(f"{where}: unknown type {q['type']}")
+                continue
+            if q["domain"] not in domains:
+                errors.append(f"{where}: unknown domain {q['domain']}")
+            if subtopics.get(q["subtopic"]) != q["domain"]:
+                errors.append(f"{where}: subtopic {q['subtopic']} not in domain {q['domain']}")
+            check_answer(q, where, errors)
+
+    for q in questions.values():
+        ref = q.get("lesson_ref")
+        if ref and ref not in lessons:
+            errors.append(f"question {q['id']}: lesson_ref {ref} does not exist")
+    for lid, (lesson, path) in lessons.items():
+        for qid in lesson.get("recall", []):
+            if qid not in questions:
+                errors.append(f"{path}: recall question {qid} does not exist")
+
+    if min_per_subtopic:
+        counts = {st: 0 for st in subtopics}
+        for q in questions.values():
+            if q["subtopic"] in counts:
+                counts[q["subtopic"]] += 1
+        for st, n in counts.items():
+            if n < min_per_subtopic:
+                errors.append(f"coverage: subtopic {st} has {n} questions, need {min_per_subtopic}")
+    return errors
+
+
+def main(argv):
+    args = [a for a in argv[1:] if not a.startswith("--")]
+    min_n = 0
+    if "--min-per-subtopic" in argv:
+        min_n = int(argv[argv.index("--min-per-subtopic") + 1])
+        args = [a for a in args if a != str(min_n)]
+    root = Path(args[0]) if args else Path(__file__).resolve().parent.parent / "content"
+    errors = validate(root, min_n)
+    for e in errors:
+        print("ERROR", e)
+    print(f"{'FAIL' if errors else 'OK'}: {len(errors)} error(s) in {root}")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
