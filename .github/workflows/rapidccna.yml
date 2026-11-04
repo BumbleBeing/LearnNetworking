@@ -6,6 +6,9 @@ on:
   pull_request:
     paths: ["RapidCCNA/**", ".github/workflows/rapidccna.yml"]
 
+env:
+  GODOT_VERSION: "4.7"
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -20,10 +23,10 @@ jobs:
         run: |
           python3 tools/test_qa_content.py
           python3 tools/qa_content.py --strict
-      - name: Install Godot 4.3
+      - name: Install Godot ${{ env.GODOT_VERSION }}
         run: |
-          curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
-          unzip -q godot.zip && mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot && rm godot.zip
+          curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
+          unzip -q godot.zip && mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 /usr/local/bin/godot && rm godot.zip
       - name: Install GUT
         run: tools/install_gut.sh
       - name: Import project
@@ -34,7 +37,7 @@ jobs:
         run: godot --headless --path . -s res://tools/smoke_session.gd
       - name: Web export
         run: |
-          python3 tools/fetch_web_templates.py 4.3
+          python3 tools/fetch_web_templates.py "$GODOT_VERSION"
           mkdir -p build/web
           godot --headless --path . --export-release Web build/web/index.html
           test -s build/web/index.pck && test -s build/web/index.wasm
