@@ -84,7 +84,8 @@ func _build_choices(multi: bool) -> void:
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.theme_type_variation = "Choice"
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.focus_mode = Control.FOCUS_NONE   # digits + Enter drive choices
+		# Digits + Enter still work; Tab reaches each choice too, so screen readers can.
+		b.focus_mode = Control.FOCUS_ALL
 		box.add_child(b)
 		_choice_buttons.append(b)
 		_lockables.append(b)
@@ -99,6 +100,7 @@ func _build_choices(multi: bool) -> void:
 
 func _build_fill_in() -> void:
 	var le := _line_edit("Type your answer")
+	le.accessibility_name = "Your answer"
 	add_child(le)
 	le.text_submitted.connect(func(_t): _on_submit())
 	_get_response = func(): return le.text
@@ -115,6 +117,7 @@ func _build_match() -> void:
 		l.custom_minimum_size.x = 280
 		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		var ob := OptionButton.new()
+		ob.accessibility_name = str(left)   # read as "HSRP: Choose..." then "HSRP: <pick>"
 		ob.add_item("Choose...")
 		for r in rights:
 			ob.add_item(str(r))
@@ -140,11 +143,13 @@ func _build_order() -> void:
 	_render_order()
 	_get_response = func(): return _order_items.duplicate()
 
-func _render_order() -> void:
+## focus_at/focus_dir: after a move, keep keyboard focus on the moved item's arrow.
+func _render_order(focus_at: int = -1, focus_dir: int = 0) -> void:
 	for c in _order_list.get_children():
 		_order_list.remove_child(c)
 		c.queue_free()
-	for i in _order_items.size():
+	var n := _order_items.size()
+	for i in n:
 		var row := UI.hbox(_order_list, 8)
 		var item := Button.new()
 		item.text = "%d.   %s" % [i + 1, _order_items[i]]
@@ -153,12 +158,22 @@ func _render_order() -> void:
 		item.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		item.disabled = _done
 		row.add_child(item)
+		item.focus_mode = Control.FOCUS_NONE   # the item itself does nothing; its arrows move it
+		item.set_meta("display_only", true)
 		var up := UI.button(row, "↑", _move.bind(i, -1))
 		up.custom_minimum_size.x = 48
 		up.disabled = _done or i == 0
+		up.accessibility_name = "Move up: %s" % _order_items[i]
 		var down := UI.button(row, "↓", _move.bind(i, 1))
 		down.custom_minimum_size.x = 48
-		down.disabled = _done or i == _order_items.size() - 1
+		down.disabled = _done or i == n - 1
+		down.accessibility_name = "Move down: %s" % _order_items[i]
+		if i == focus_at:
+			# At the top or bottom the arrow just used is disabled, so use the other one.
+			var target := up if focus_dir < 0 else down
+			if target.disabled:
+				target = down if target == up else up
+			UI.focus_later(target)
 
 func _move(i: int, d: int) -> void:
 	var j := i + d
@@ -167,7 +182,8 @@ func _move(i: int, d: int) -> void:
 	var tmp = _order_items[i]
 	_order_items[i] = _order_items[j]
 	_order_items[j] = tmp
-	_render_order()
+	_render_order(j, d)
+	UI.announce("%s, position %d of %d" % [_order_items[j], j + 1, _order_items.size()])
 
 func _build_fields() -> void:
 	var grid := GridContainer.new()
@@ -181,6 +197,7 @@ func _build_fields() -> void:
 		var l := UI.label(grid, str(f.label), "Body")
 		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		var le := _line_edit(str(f.get("placeholder", "")))
+		le.accessibility_name = str(f.label)
 		grid.add_child(le)
 		inputs[f.key] = le
 		order.append(le)
@@ -236,6 +253,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		var b := _choice_buttons[n]
 		b.button_pressed = not b.button_pressed if b.button_group == null else true
 		get_viewport().set_input_as_handled()
+		UI.announce(("Selected: " if b.button_pressed else "Cleared: ") + b.text)
 	elif event.keycode in [KEY_ENTER, KEY_KP_ENTER] and not _choice_buttons.is_empty():
 		get_viewport().set_input_as_handled()
 		_on_submit()
@@ -246,6 +264,7 @@ func _on_submit(skip: bool = false) -> void:
 	var response = _get_response.call()
 	if not skip and _is_blank(response):
 		_notice.text = "Answer first, or choose \"I don't know\"."
+		UI.announce(_notice.text)
 		return
 	_done = true
 	var ms := Time.get_ticks_msec() - _start_ms
@@ -316,3 +335,9 @@ func _show_feedback(correct: bool) -> void:
 	var cont := UI.button(_feedback, "Continue", _continue, true)
 	UI.focus_later(cont)
 	UI.scroll_into_view(cont)
+	# Focus jumps to Continue, so read the result out: verdict, the right answer, why.
+	var spoken := PackedStringArray(["Correct." if correct else "Not quite."])
+	if not correct:
+		spoken.append("Answer: %s." % Grader.answer_text(q))
+	spoken.append(str(q.get("explanation", "")))
+	UI.announce(" ".join(spoken))

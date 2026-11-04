@@ -33,6 +33,7 @@ func _next() -> void:
 	_progress.text = "Question %d of %d" % [_i + 1, _ids.size()]
 	_current = QuestionView.new().setup(ContentDB.questions[_ids[_i]], feedback)
 	add_child(_current)
+	UI.announce("%s. %s" % [_progress.text, ContentDB.questions[_ids[_i]].get("stem", "")])
 	_current.answered.connect(func(r): results.append(r))
 	_current.continued.connect(_next, CONNECT_DEFERRED)
 	# Start each question at its top: with large text the previous answer

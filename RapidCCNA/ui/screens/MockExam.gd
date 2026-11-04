@@ -4,6 +4,8 @@ extends Control
 ## anything unanswered counts as wrong.
 
 const WARN_SECONDS := 300
+## Minutes left at which screen readers hear the time (the clock itself is silent).
+const SPOKEN_WARNINGS := [30, 10, 5, 1]
 
 var _step: Dictionary
 var _ids: Array = []
@@ -17,6 +19,7 @@ var _clock: Label
 var _end_btn: Button
 var _body: VBoxContainer
 var _runner: QuestionRunner
+var _spoken := {}   # warnings already announced
 
 func _ready() -> void:
 	_step = SessionManager.current_step()
@@ -87,10 +90,22 @@ func _process(_delta: float) -> void:
 		return
 	var left := seconds_left()
 	_clock.text = MockExam.clock(left)
+	_speak_time(left)
 	if left <= WARN_SECONDS:
 		_clock.add_theme_color_override("font_color", Palette.current().warn)
 	if left <= 0:
 		_finish(true)
+
+## Screen readers hear the time when it crosses 30, 10, 5 and 1 minute(s) left: once each,
+## only those the exam is long enough to reach, and only the latest if several pass at once.
+func _speak_time(left: int) -> void:
+	var latest := 0
+	for m in SPOKEN_WARNINGS:
+		if left > 0 and left <= m * 60 and m < _minutes and not _spoken.has(m):
+			_spoken[m] = true
+			latest = m
+	if latest > 0:
+		UI.announce("%d minute%s left." % [latest, "" if latest == 1 else "s"], true)
 
 func _on_end() -> void:
 	if not _running:

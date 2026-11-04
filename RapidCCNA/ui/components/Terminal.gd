@@ -43,6 +43,7 @@ func _ready() -> void:
 	_prompt = UI.label(row, "", "Code")
 	_prompt.add_theme_font_size_override("font_size", int(14 * Settings.font_scale))
 	_input = LineEdit.new()
+	_input.accessibility_name = "%s command line" % session.device.hostname
 	_input.flat = true
 	_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_input.add_theme_font_override("font", load(ThemeFactory.MONO.regular))
@@ -84,6 +85,8 @@ func run(line: String) -> String:
 	if not out.is_empty():
 		_append(out)
 	_refresh_prompt()
+	# Read the reply, not the whole transcript. The prompt shows a mode change (R1(config)#).
+	UI.announce((out + "\n" if not out.is_empty() else "") + session.prompt())
 	command_run.emit(line, out)
 	return out
 
@@ -97,6 +100,7 @@ func _on_changed(t: String) -> void:
 		return
 	_append(session.prompt() + t)
 	_append(session.help(t))
+	UI.announce(session.help(t))
 	_input.text = t.substr(0, t.length() - 1)
 	_input.caret_column = _input.text.length()
 

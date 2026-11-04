@@ -12,7 +12,9 @@ func _ready() -> void:
 	UI.label(head, "Exam complete" if is_exam else "Session complete", "H1")
 	UI.label(head, SessionManager.title, "Muted")
 	if is_exam:   # the report is long; offer a way out at the top too
-		UI.button(top, "Back to " + dest, _back).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var top_back := UI.button(top, "Back to " + dest, _back)
+		top_back.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		top_back.set_meta("a11y_same_as_another", true)   # same action as the button at the bottom
 	var items := 0
 	var correct := 0
 	for r in SessionManager.results:

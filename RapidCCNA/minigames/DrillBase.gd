@@ -91,6 +91,15 @@ func next_item() -> void:
 	present_item()
 	_submit_btn.visible = _choices.is_empty()   # choices answer on click
 	_item_start = Time.get_ticks_msec()
+	UI.announce("%s. %s" % [_item_chip.text, prompt_text()])
+
+## The item's prompt as plain text (every label in prompt_box), for screen readers.
+func prompt_text() -> String:
+	var parts := PackedStringArray()
+	for l in prompt_box.find_children("*", "Label", true, false):
+		if not l.text.strip_edges().is_empty():
+			parts.append(l.text.strip_edges())
+	return ". ".join(parts)
 
 func submit() -> void:
 	if _answered:
@@ -120,10 +129,12 @@ func submit() -> void:
 	_next_btn.text = "Finish" if index >= count else "Next"
 	_next_btn.grab_focus()
 	UI.scroll_into_view(_next_btn)
+	UI.announce(head.text + (". " + explain() if not ok or guided else ""))
 
 func _show_hint() -> void:
 	_hint_btn.disabled = true
 	UI.label(_feedback, "Hint: " + hint(), "Muted", true)
+	UI.announce("Hint: " + hint())
 
 func summary() -> Dictionary:
 	var n := results.size()
@@ -143,6 +154,7 @@ func answer_input(placeholder: String) -> LineEdit:
 	le.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	le.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	le.add_theme_font_size_override("font_size", 22)
+	le.accessibility_name = "Your answer"   # the question itself is announced with each item
 	le.text_submitted.connect(func(_t): submit())
 	answer_box.add_child(le)
 	UI.focus_later(le)
@@ -158,7 +170,7 @@ func add_choices(options: Array) -> void:
 		b.theme_type_variation = "Choice"
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.focus_mode = Control.FOCUS_NONE
+		b.focus_mode = Control.FOCUS_ALL   # 1-9 still work; Tab reaches them for screen readers
 		b.pressed.connect(choose.bind(i))
 		box.add_child(b)
 		_choices.append(b)

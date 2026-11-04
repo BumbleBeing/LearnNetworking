@@ -4,7 +4,7 @@ A Godot 4 study game for the **CCNA 200-301** exam. Each unit runs **tutorial �
 
 All question content is original and written in exam style. The game does not use real Cisco exam items.
 
-## Status: milestone M7 (accessibility, web build and content QA)
+## Status: milestone M8 (clean code base, simulator gaps, screen readers)
 | Milestone | Scope | State |
 |---|---|---|
 | M0 | Project, autoloads, save/load, content loader + validator, tests, export presets, menu → dashboard | ✅ |
@@ -15,6 +15,7 @@ All question content is original and written in exam style. The game does not us
 | M5 | All tutorials and remaining mini-games | ✅ |
 | M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | ✅ |
 | M7 | Accessibility, web tuning, content QA | ✅ |
+| M8 | Godot 4.7, zero warnings, IOS output filters and OSPF fidelity, screen readers | ✅ |
 
 **Content:** 42 lessons covering all 53 blueprint subtopics, 600 questions split by exam weight (120/120/150/60/90/60), with at least 5 per subtopic, 600 in total and enough in every exam area to fill a full mock exam, all enforced in CI, 16 drills and 14 labs (plus 18 hidden mini-labs behind `cli_task` questions).
 
@@ -120,7 +121,15 @@ A lab (`content/labs/*.json`) defines devices, startup config, links, tasks and 
 - **Reduce motion** stops the animated packets in the background.
 - **Mock exam extra time** of +25%, +50% or +100%, for learners with an exam accommodation. The exam screen shows when it's included.
 
-Right and wrong answers are never shown by colour alone: answered choices are labelled "(correct answer)" and "(your answer)", in questions and drills alike. Every look meets WCAG AA (4.5:1) for all text colours on cards, including feedback colours and the exam clock warning. `test_theme.gd` checks this for every look and its high-contrast version. Everything can be driven from the keyboard: digits pick choices, Enter submits and continues, and Tab moves focus with a visible ring.
+Right and wrong answers are never shown by colour alone: answered choices are labelled "(correct answer)" and "(your answer)", in questions and drills alike. Every look meets WCAG AA (4.5:1) for all text colours on cards, including feedback colours and the exam clock warning. `test_theme.gd` checks this for every look and its high-contrast version. Everything can be driven from the keyboard: digits pick choices, Enter submits and continues, and Tab moves focus with a visible ring. Tab reaches every control, including answer choices and bits, and pages scroll to follow it.
+
+### Screen readers
+Godot's screen-reader support (AccessKit) works in the desktop builds: NVDA or Narrator on Windows, VoiceOver on macOS and Orca on Linux. It isn't available in the web build.
+- **Names that make sense out of context.** Every button, field and dropdown has a name, read before its own text: "Network components: Study unit", "Look: Night Ops", "HSRP: Choose...", "Move up: The router-id command", "SW1 command line", "Bit worth 128". Unguided Bit Flipper rounds name bits by position, not value, so they don't give the answer away. Lab tasks say "Done" in words, not only by colour. The two-colour logo is hidden, since the window title already reads "RapidCCNA".
+- **Things that happen away from the focus are announced:** each new question or drill item with its number, the result with the right answer and explanation, choices picked with number keys, bits flipped with keys 1-8 (plus the running total in guided mode), each command's output in the terminal, lab tasks as they're completed, tutorial cards and an item's new position after a move. The exam clock is silent apart from interrupting at 30, 10, 5 and 1 minutes left.
+- **Checked in CI:** `test_screen_reader.gd` opens every screen, every question type and every drill, before and after answering, and fails if a control has no name, a name with no letters or digits, the same name as another control, or can't be reached with Tab. It also checks each announcement.
+- **Checked against the real thing:** `tools/a11y_tree.sh` prints what Orca receives from each screen, using a virtual display and the AT-SPI bus, so no desktop or speech is needed.
+- **Known engine limits (Godot 4.7.2, Linux):** the tree dump shows that Godot's Linux bridge (`accesskit_unix` 0.22.1) sometimes lists a control without making it readable. This happened to some drill buttons and bits, and to controls that had scrolled out of view, varying from run to run. The game's code isn't the cause; re-run `tools/a11y_tree.sh` after a Godot update to check. Godot 4.7.0 crashed on Linux with a screen reader running as soon as a question was answered, which is why the project needs 4.7.2. Windows and macOS haven't been tested with a real screen reader yet.
 
 ![M7 settings, 150% text and high contrast](docs/ui/m7.png)
 
@@ -140,6 +149,7 @@ When the check was first run, the correct answer was the stand-out longest choic
 - **Small screens:** windows smaller than 1280x720 get a smaller logical canvas, down to 960x360, so text stays readable instead of shrinking. Body text is about 14 px on a phone held sideways, and desktop windows of 1280x720 or more are unchanged. Every screen fits at 960x360. Narrow portrait screens get a "turn your device sideways" prompt, with a "Continue anyway" button. See `autoload/Display.gd`.
 - **Touch** taps and drag-scrolling work through Godot's mouse emulation. Typing into fill-in answers and the CLI on a phone depends on the browser's on-screen keyboard and hasn't been tested on real devices.
 - The Quit button is hidden, because a page can't close its own tab.
+- Screen readers don't work in the browser: Godot's web export has no accessibility support. Use a desktop build.
 
 ## UI looks (prototype)
 Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Night Ops is the default. Switch looks from the dropdown on the dashboard or in Settings.
@@ -163,16 +173,17 @@ minigames/  DrillBase + SubnetSprint, BitFlipper, GenDrill (generator-driven dri
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures
 tools/      validate_content.py, qa_content.py (+ test), install_gut.sh, smoke_session.gd (end-to-end),
-            fetch_web_templates.py, check_gdscript_warnings.py
+            fetch_web_templates.py, check_gdscript_warnings.py, a11y_tree.sh (+ a11y_tour, a11y_dump)
 ```
 
 ## Running
-Requires Godot 4.7. The tests use GUT 9.7.1, the GUT release for Godot 4.7; `tools/install_gut.sh` installs it. Godot writes a `.uid` file next to each script; commit these with the script.
+Requires Godot 4.7.2 (4.7.0 crashes with a screen reader on Linux). The tests use GUT 9.7.1, the GUT release for Godot 4.7; `tools/install_gut.sh` installs it. Godot writes a `.uid` file next to each script; commit these with the script.
 ```bash
 tools/install_gut.sh                                      # once, for tests
 godot --path .                                            # play
 godot --headless --path . -s addons/gut/gut_cmdln.gd      # unit tests (CI also fails if they leave orphan nodes)
 python3 tools/check_gdscript_warnings.py                  # editor warnings, checked headless (CI)
+tools/a11y_tree.sh main topics lab                        # what a screen reader gets (Linux; see the script for packages)
 python3 tools/validate_content.py                         # content checks
 godot --headless --path . -s res://tools/smoke_session.gd # plays a daily session and a quick mock end to end
 python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600  # coverage + mock-exam gate (CI)

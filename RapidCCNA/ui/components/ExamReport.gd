@@ -33,7 +33,7 @@ static func build(parent: Node, r: Dictionary) -> void:
 		UI.label(line, d.name).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var pct: float = float(s.correct) / s.total if int(s.total) > 0 else 0.0
 		UI.label(line, "%d / %d  ·  %d%%  ·  w%d" % [int(s.correct), int(s.total), int(round(pct * 100)), int(d.weight)], "Muted")
-		UI.bar(dom_card, pct, color, 8)
+		UI.bar(dom_card, pct, color, 8, "%s score" % d.name)
 
 	var missed: Array = rep.missed
 	var miss_card := UI.card(parent, "Missed questions (%d)" % missed.size())

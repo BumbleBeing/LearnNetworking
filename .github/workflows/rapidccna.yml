@@ -7,7 +7,7 @@ on:
     paths: ["RapidCCNA/**", ".github/workflows/rapidccna.yml"]
 
 env:
-  GODOT_VERSION: "4.7"
+  GODOT_VERSION: "4.7.2"
 
 jobs:
   test:

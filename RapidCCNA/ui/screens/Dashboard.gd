@@ -60,6 +60,7 @@ func _ready() -> void:
 	var row := UI.hbox(left, 8)
 	_exam_input = LineEdit.new()
 	_exam_input.placeholder_text = "YYYY-MM-DD"
+	_exam_input.accessibility_name = "Exam date, as year-month-day"
 	_exam_input.text = Settings.exam_date
 	_exam_input.custom_minimum_size.x = 180
 	row.add_child(_exam_input)
@@ -80,7 +81,7 @@ func _ready() -> void:
 		name_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var r := _readiness(d.id)
 		UI.label(line, "%d%%  ·  w%d" % [int(round(r * 100)), int(d.weight)], "Muted")
-		UI.bar(right, r, color, 8)
+		UI.bar(right, r, color, 8, "%s readiness" % d.name)
 
 	# Mock exams
 	var mock := UI.card(v, "Mock exam")

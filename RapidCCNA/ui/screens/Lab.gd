@@ -13,6 +13,9 @@ var _terms: Dictionary = {}
 var _hints := 0
 var _solution_shown := false
 
+var _was_done := {}          # task index -> done at the last refresh
+var _announce_progress := false
+
 func _ready() -> void:
 	_look = Palette.current()
 	lab = ContentDB.labs.get(SessionManager.current_step().get("lab", ""), {})
@@ -60,18 +63,19 @@ func _ready() -> void:
 		term.visible = n == names[0]
 		_terms[n] = term
 
+	# Status + Finish right under the tasks and console. Built in place rather than moved there:
+	# a node moved in the frame it's created drops out of Godot 4.7's screen-reader tree.
+	var foot := UI.hbox(v, 12)
+	_status = UI.label(foot, "", "H2")
+	_status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_finish = UI.button(foot, "Finish lab", _on_finish)
 	if lab.has("topology"):
 		var topo := UI.card(v, "Topology")
 		var ex := PanelContainer.new()
 		ex.theme_type_variation = "Exhibit"
 		topo.add_child(ex)
 		UI.label(ex, lab.topology, "Code")
-	var foot := UI.hbox(v, 12)
-	v.move_child(foot, 2)   # status + Finish right under the tasks and console
-	_status = UI.label(foot, "", "H2")
-	_status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_finish = UI.button(foot, "Finish lab", _on_finish)
 	_refresh()
 
 func _show_term(n: String) -> void:
@@ -82,19 +86,27 @@ func _show_term(n: String) -> void:
 func _refresh() -> void:
 	var results := ls.results()
 	var done := 0
+	var newly_done := PackedStringArray()
 	for i in results.size():
 		var ok: bool = results[i].ok
 		done += 1 if ok else 0
 		var row: Array = _rows[i]
 		row[0].add_theme_stylebox_override("panel", ThemeFactory.box(_look.good if ok else _look.track, Color.TRANSPARENT, 999, 0, 0, 0))
 		row[1].add_theme_color_override("font_color", _look.muted if ok else _look.text)
-		row[2].text = ""
+		# Said in words, not only by colour (and screen readers read it after the task).
+		row[2].text = "Done" if ok else ""
+		if ok and not _was_done.get(i, false):
+			newly_done.append("Task %d done." % (i + 1))
+		_was_done[i] = ok
 	_status.text = "%d of %d tasks done" % [done, results.size()]
 	if done == results.size():
 		_status.text = "All tasks complete" + ("" if not _solution_shown else " (solution shown)")
 		_status.add_theme_color_override("font_color", _look.good)
 		_finish.theme_type_variation = "PrimaryButton"
 		UI.focus_later(_finish)
+	if not newly_done.is_empty() and _announce_progress:
+		UI.announce(" ".join(newly_done) + " " + _status.text + ".")
+	_announce_progress = true   # not for tasks a lab starts with already done
 
 func _show_hint() -> void:
 	var results := ls.results()
@@ -103,8 +115,10 @@ func _show_hint() -> void:
 			_hints += 1
 			var why: String = results[i].msg
 			_hint_label.text = "Task %d: %s%s" % [i + 1, lab.tasks[i].get("hint", ""), ("\nRight now: " + why) if not why.is_empty() else ""]
+			UI.announce(_hint_label.text)
 			return
 	_hint_label.text = "Everything is done. Press Finish lab."
+	UI.announce(_hint_label.text)
 
 func _show_solution() -> void:
 	_solution_shown = true
