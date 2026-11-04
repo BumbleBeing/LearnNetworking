@@ -28,3 +28,16 @@ jobs:
         run: godot --headless --path . -s addons/gut/gut_cmdln.gd
       - name: End-to-end session smoke test
         run: godot --headless --path . -s res://tools/smoke_session.gd
+      - name: Web export
+        run: |
+          python3 tools/fetch_web_templates.py 4.3
+          mkdir -p build/web
+          godot --headless --path . --export-release Web build/web/index.html
+          test -s build/web/index.pck && test -s build/web/index.wasm
+          ls -la build/web
+      - name: Upload web build
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapidccna-web
+          path: RapidCCNA/build/web
+          retention-days: 14

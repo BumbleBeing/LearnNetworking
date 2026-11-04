@@ -82,3 +82,18 @@ func test_settings_screen_builds_at_every_text_size_and_contrast():
 			add_child_autofree(scene)
 			assert_eq(scene.theme.get_font_size("font_size", "H1"), int(round(40 * scale)), "scale %s" % scale)
 			scene.queue_free()
+
+func test_small_windows_get_a_smaller_canvas_but_never_below_the_minimum():
+	assert_eq(Display.logical_base(Vector2(1920, 1080)), Display.BASE, "big screens keep the designed canvas")
+	assert_eq(Display.logical_base(Vector2(1280, 720)), Display.BASE)
+	assert_eq(Display.logical_base(Vector2(1024, 600)), Vector2i(1024, 600), "1:1 on a small laptop or tablet")
+	assert_eq(Display.logical_base(Vector2(750, 342)), Display.MIN_SIZE, "phone landscape is clamped to the minimum")
+	assert_almost_eq(Display.ui_scale(Vector2(750, 342)), 750.0 / 960.0, 0.001)
+	assert_gt(Display.ui_scale(Vector2(750, 342)) * 18, 13.5, "body text stays about 14 px on a phone in landscape")
+	assert_almost_eq(Display.ui_scale(Vector2(1920, 1080)), 1.5, 0.001)
+
+func test_rotate_prompt_only_for_narrow_portrait():
+	assert_true(Display.wants_rotation(Vector2(390, 664)), "phone portrait")
+	assert_false(Display.wants_rotation(Vector2(750, 342)), "phone landscape")
+	assert_false(Display.wants_rotation(Vector2(820, 1180)), "tablet portrait is wide enough")
+	assert_false(Display.wants_rotation(Vector2(1280, 720)))
