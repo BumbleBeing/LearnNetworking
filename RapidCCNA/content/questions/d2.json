@@ -24,9 +24,9 @@
     "difficulty": 2,
     "stem": "Two connected switch ports are both left in their default dynamic auto mode. What happens?",
     "choices": [
-      "They negotiate a trunk",
+      "They negotiate a trunk, because both ports run DTP",
       "They stay access ports, because neither side asks to trunk",
-      "The link goes err-disabled",
+      "The link goes err-disabled because of the DTP mismatch",
       "They form an EtherChannel"
     ],
     "answer": 1,
@@ -39,13 +39,13 @@
     "subtopic": "2.2",
     "type": "exhibit",
     "difficulty": 2,
-    "stem": "Hosts in VLAN 30 on SW1 can't reach VLAN 30 hosts on SW2. VLAN 30 exists on both switches. Based on this output from SW1, what's the cause?",
+    "stem": "Hosts in VLAN 30 on SW1 can't reach VLAN 30 hosts on SW2. VLAN 30 exists on both switches. Based on the exhibit from SW1, what's the cause?",
     "exhibit": "SW1#show interfaces trunk\nPort   Mode  Encapsulation  Status    Native vlan\nGi0/1  on    802.1q         trunking  1\n\nPort   Vlans allowed on trunk\nGi0/1  10,20",
     "choices": [
       "VLAN 30 isn't in the trunk's allowed list",
-      "The native VLAN should be 30",
-      "The trunk is using ISL",
-      "Gi0/1 isn't trunking"
+      "The native VLAN on the trunk should be VLAN 30",
+      "The trunk uses ISL, which can't carry VLAN 30",
+      "Gi0/1 isn't trunking, so it's an access port"
     ],
     "answer": 0,
     "explanation": "The trunk is up and trunking, but only VLANs 10 and 20 are allowed. Add VLAN 30 with 'switchport trunk allowed vlan add 30'.",
@@ -124,9 +124,9 @@
     "stem": "Why does a two-link EtherChannel between two switches give more usable bandwidth than two separate links?",
     "choices": [
       "STP treats the bundle as one link, so neither member is blocked",
-      "EtherChannel doubles the speed of each member",
-      "The links negotiate jumbo frames",
-      "Each frame is split across both links"
+      "EtherChannel doubles the line rate of each member link",
+      "The bundled links negotiate jumbo frames automatically",
+      "Each frame is split in half and sent over both links"
     ],
     "answer": 0,
     "explanation": "Without a bundle, STP blocks one of the parallel links. A port-channel is one logical link to STP, so both members forward.",
@@ -416,9 +416,9 @@
     "stem": "Which protocol and ports carry traffic between a lightweight AP and its WLC?",
     "choices": [
       "CAPWAP on UDP 5246 (control) and 5247 (data)",
-      "LWAPP on TCP 12222",
+      "LWAPP on TCP 12222 (control) and 12223 (data)",
       "SSH on TCP 22",
-      "RADIUS on UDP 1812"
+      "RADIUS on UDP 1812 (auth) and 1813 (accounting)"
     ],
     "answer": 0,
     "explanation": "CAPWAP: UDP 5246 for control (DTLS-encrypted) and UDP 5247 for data.",
@@ -515,8 +515,8 @@
     "difficulty": 1,
     "stem": "Why should SSH be used instead of Telnet?",
     "choices": [
-      "SSH is faster",
-      "Telnet needs a console cable",
+      "SSH is faster, because it compresses every session",
+      "Telnet needs a console cable connected to the device",
       "SSH encrypts the session, including credentials",
       "Telnet can't reach VTY lines"
     ],
@@ -552,9 +552,9 @@
     "difficulty": 2,
     "stem": "Which is an example of out-of-band management?",
     "choices": [
-      "SSH to a switch's VLAN 1 SVI",
+      "SSH to a switch's management SVI in VLAN 1",
       "HTTPS to a router's LAN address",
-      "SNMP over the production network",
+      "SNMP polling over the production network from a server",
       "A console server connected to each device's console port"
     ],
     "answer": 3,
@@ -599,9 +599,9 @@
     "stem": "Hosts in VLAN 10 and VLAN 20 are on the same switch. What do they need to communicate?",
     "choices": [
       "Nothing: they share the switch",
-      "A trunk between their access ports",
+      "A trunk between their two access ports",
       "A layer 3 device to route between the VLANs",
-      "The same native VLAN"
+      "The same native VLAN on every switch port"
     ],
     "answer": 2,
     "explanation": "Each VLAN is a separate broadcast domain and subnet; traffic between them must be routed (router-on-a-stick, an SVI on a layer 3 switch, or a router).",
@@ -629,9 +629,9 @@
     "difficulty": 2,
     "stem": "A branch AP must keep serving local clients if its WAN link to the WLC goes down. Which AP mode fits?",
     "choices": [
-      "Local",
+      "Local mode, tunnelling all traffic to the WLC",
       "FlexConnect",
-      "Monitor",
+      "Monitor mode, scanning every channel",
       "Sniffer"
     ],
     "answer": 1,
@@ -647,9 +647,9 @@
     "stem": "On the WLC GUI, which tab of a WLAN maps it to the VLAN its clients use?",
     "choices": [
       "General (Interface/Interface Group)",
-      "Security",
+      "Security (Layer 2 and Layer 3)",
       "QoS",
-      "Advanced"
+      "Advanced (DHCP and session timeout)"
     ],
     "answer": 0,
     "explanation": "The General tab selects the interface (dynamic interface/VLAN) for the WLAN; Security, QoS and Advanced cover the rest.",
@@ -701,8 +701,8 @@
     "stem": "The PC on Fa0/7 should be in SALES but can't reach the other SALES hosts. Based on the exhibit, what fixes it?",
     "exhibit": "SW1#show vlan brief\nVLAN Name                             Status    Ports\n---- -------------------------------- --------- -------------------------------\n1    default                          active    Fa0/7, Fa0/8, Gi0/2\n10   SALES                            active    Fa0/1, Fa0/2, Fa0/3\n20   VOICE                            active    Fa0/4",
     "choices": [
-      "Create VLAN 10",
-      "Run 'no shutdown' on VLAN 10",
+      "Create VLAN 10 and name it SALES",
+      "Run 'no shutdown' under VLAN 10 to activate it",
       "Make Fa0/7 a trunk",
       "Configure 'switchport access vlan 10' on Fa0/7"
     ],
@@ -765,10 +765,10 @@
     "difficulty": 2,
     "stem": "SW1's end of a trunk uses native VLAN 1 and SW2's end uses native VLAN 99. What happens?",
     "choices": [
-      "The trunk goes down until they match",
-      "Untagged frames sent in VLAN 1 on SW1 arrive in VLAN 99 on SW2, and CDP reports a native VLAN mismatch",
+      "The trunk goes down until both ends use the same native VLAN",
+      "Untagged frames cross between VLAN 1 and VLAN 99, and CDP reports a mismatch",
       "Both switches switch to native VLAN 1",
-      "Nothing: the native VLAN only matters for DTP"
+      "Nothing: the native VLAN only matters while DTP negotiates"
     ],
     "answer": 1,
     "explanation": "The trunk stays up, but untagged frames cross between VLAN 1 and VLAN 99, joining two broadcast domains. CDP logs '%CDP-4-NATIVE_VLAN_MISMATCH'.",
@@ -903,10 +903,10 @@
     "difficulty": 2,
     "stem": "What does 'spanning-tree guard root' do on a port?",
     "choices": [
-      "Err-disables the port if any BPDU arrives",
-      "Makes this switch the root bridge",
-      "Blocks the port (root-inconsistent) while it receives superior BPDUs, so the switch behind it can't become root",
-      "Skips the listening and learning states"
+      "Err-disables the port as soon as any BPDU arrives on it",
+      "Makes this switch the root bridge for every VLAN on the port",
+      "Blocks the port while superior BPDUs arrive, so that switch can't become root",
+      "Skips the listening and learning states on an edge port"
     ],
     "answer": 2,
     "explanation": "Root Guard keeps the root where you put it. BPDU Guard (any BPDU, err-disable) is for edge ports, root primary sets priority, and PortFast skips to forwarding.",
@@ -988,10 +988,10 @@
     "difficulty": 1,
     "stem": "Where do you put the management IP address of a layer 2 switch?",
     "choices": [
-      "On a physical access port",
+      "On a physical access port in the management VLAN",
       "On an SVI such as interface vlan 99",
-      "On the console line",
-      "On the VTY lines"
+      "On the console line, under line con 0",
+      "On the VTY lines, under line vty 0 15"
     ],
     "answer": 1,
     "explanation": "Layer 2 switch ports have no IP addresses. The switch gets a management address on a switched virtual interface in its management VLAN.",
@@ -1056,8 +1056,8 @@
     "stem": "A host in VLAN 10 on SW1 must reach a host in VLAN 10 on SW2. What does the link between the switches need?",
     "choices": [
       "Nothing: VLANs span switches automatically",
-      "The same native VLAN as VLAN 10",
-      "A router between the switches",
+      "The same native VLAN as VLAN 10 on both switches",
+      "A router between the switches to route VLAN 10",
       "To carry VLAN 10, such as a trunk that allows VLAN 10"
     ],
     "answer": 3,
@@ -1073,8 +1073,8 @@
     "stem": "Which configuration is router-on-a-stick for VLAN 10?",
     "choices": [
       "interface g0/0, ip address 10.1.10.1 255.255.255.0 vlan 10",
-      "interface vlan 10, ip address 10.1.10.1 255.255.255.0",
-      "interface g0/0, switchport access vlan 10",
+      "interface vlan 10, ip address 10.1.10.1 255.255.255.0, no shutdown",
+      "interface g0/0, switchport mode trunk, switchport access vlan 10",
       "interface g0/0.10, encapsulation dot1Q 10, ip address 10.1.10.1 255.255.255.0"
     ],
     "answer": 3,
@@ -1108,9 +1108,9 @@
     "exhibit": "SW1#show interfaces fa0/3 switchport\nName: Fa0/3\nSwitchport: Enabled\nAdministrative Mode: dynamic auto\nOperational Mode: static access\nAdministrative Trunking Encapsulation: dot1q\nNegotiation of Trunking: On\nAccess Mode VLAN: 1 (default)",
     "choices": [
       "Fa0/3 is a trunk",
-      "Fa0/3 can never become a trunk",
-      "Fa0/3 is shut down",
-      "Fa0/3 is an access port in VLAN 1, but would become a trunk if the neighbour asked for one"
+      "Fa0/3 can never become a trunk, because DTP is turned off",
+      "Fa0/3 is shut down, so its operational mode is static",
+      "Fa0/3 is an access port in VLAN 1 that could still negotiate a trunk"
     ],
     "answer": 3,
     "explanation": "Dynamic auto acts as an access port unless the other side actively asks for a trunk (dynamic desirable or trunk). It's left in default VLAN 1.",
@@ -1157,10 +1157,10 @@
     "difficulty": 1,
     "stem": "Which DTP mode actively asks the neighbour to form a trunk?",
     "choices": [
-      "dynamic auto",
-      "access",
+      "dynamic auto (answers only)",
+      "access (switchport mode access)",
       "dynamic desirable",
-      "nonegotiate"
+      "nonegotiate (no DTP frames)"
     ],
     "answer": 2,
     "explanation": "Desirable sends DTP requests and trunks with desirable, auto or trunk. Auto only answers, so two auto ports stay access.",
@@ -1176,9 +1176,9 @@
     "exhibit": "SW1#show interfaces trunk\nPort        Mode         Encapsulation  Status        Native vlan\nGi0/1       on           802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nGi0/1       1-4094\n\nPort        Vlans allowed and active in management domain\nGi0/1       1,10,20\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi0/1       1,10",
     "choices": [
       "VLAN 20 is blocked by spanning tree (or pruned) on Gi0/1",
-      "VLAN 20 doesn't exist on SW1",
-      "VLAN 20 isn't allowed on the trunk",
-      "The native VLAN is mismatched"
+      "VLAN 20 doesn't exist in SW1's VLAN database",
+      "VLAN 20 isn't in the trunk's allowed VLAN list",
+      "The native VLAN on Gi0/1 is mismatched with the neighbour"
     ],
     "answer": 0,
     "explanation": "VLAN 20 is allowed and active, but missing from the last list, so this port isn't forwarding it. Usually that's STP blocking a redundant path for VLAN 20 (or VTP pruning).",
@@ -1192,10 +1192,10 @@
     "difficulty": 2,
     "stem": "Why move the native VLAN off VLAN 1 to an unused VLAN?",
     "choices": [
-      "To make trunks faster",
+      "To make trunks faster by tagging every frame",
       "To limit VLAN hopping attacks that use double-tagged frames",
-      "Because VLAN 1 can't be the native VLAN",
-      "To enable DTP"
+      "Because IOS won't allow VLAN 1 as the native VLAN",
+      "To let DTP negotiate trunks on the native VLAN"
     ],
     "answer": 1,
     "explanation": "An attacker in the native VLAN can send a double-tagged frame: the first switch strips the outer (native) tag and forwards the inner one into another VLAN. An unused native VLAN with no hosts closes this.",
@@ -1223,9 +1223,9 @@
     "stem": "Which command shows a port's administrative and operational trunking mode?",
     "choices": [
       "show interfaces fa0/1 switchport",
-      "show vlan brief",
-      "show ip interface brief",
-      "show cdp neighbors"
+      "show vlan brief | include fa0/1",
+      "show ip interface brief fa0/1",
+      "show cdp neighbors fa0/1 detail"
     ],
     "answer": 0,
     "explanation": "'show interfaces <if> switchport' shows administrative and operational mode, access and native VLAN and the DTP state. 'show interfaces trunk' lists ports that are trunking.",
@@ -1239,10 +1239,10 @@
     "difficulty": 1,
     "stem": "What is ISL?",
     "choices": [
-      "The IEEE trunking standard",
-      "A spanning tree variant",
+      "The IEEE 802.1Q standard for tagging frames on trunks",
+      "A spanning tree variant that runs per VLAN on trunks",
       "An old Cisco-proprietary trunking protocol that encapsulated the whole frame",
-      "A link aggregation protocol"
+      "A link aggregation protocol that bundles parallel links"
     ],
     "answer": 2,
     "explanation": "ISL added a 26-byte header and 4-byte trailer around the frame. It's obsolete; modern switches only support 802.1Q, which inserts a 4-byte tag.",
@@ -1268,8 +1268,8 @@
     "difficulty": 1,
     "stem": "Which information does CDP share with directly connected neighbours?",
     "choices": [
-      "The full routing table",
-      "The running configuration",
+      "The full routing table and each route's next hop",
+      "The running configuration of every interface",
       "The enable secret",
       "Device ID, platform, port ID, IP address and software version"
     ],
@@ -1285,10 +1285,10 @@
     "difficulty": 1,
     "stem": "Which protocol would discover a neighbouring switch from another vendor?",
     "choices": [
-      "LLDP",
-      "CDP",
-      "VTP",
-      "DTP"
+      "LLDP (IEEE 802.1AB)",
+      "CDP (Cisco)",
+      "VTP (Cisco)",
+      "DTP (Cisco)"
     ],
     "answer": 0,
     "explanation": "LLDP (IEEE 802.1AB) is vendor-neutral. CDP, VTP and DTP are Cisco-proprietary.",
@@ -1315,9 +1315,9 @@
     "difficulty": 1,
     "stem": "Why turn CDP off on an interface that faces the internet?",
     "choices": [
-      "It slows the link",
-      "It reveals the device model, software version and addresses to anyone listening",
-      "It conflicts with NAT",
+      "It slows the link by sending large frames every second",
+      "It reveals the device model, software version and addresses",
+      "It conflicts with NAT on the outside interface",
       "It sends spanning tree BPDUs"
     ],
     "answer": 1,
@@ -1351,7 +1351,7 @@
     "stem": "SW1's ports use 'channel-group 1 mode on' and SW2's use 'channel-group 1 mode active'. What happens?",
     "choices": [
       "An LACP EtherChannel forms",
-      "The channel forms but only at half speed",
+      "The channel forms, but each member runs at half speed",
       "A PAgP EtherChannel forms",
       "No channel forms, because 'on' doesn't send LACP"
     ],
@@ -1367,10 +1367,10 @@
     "difficulty": 2,
     "stem": "How does an EtherChannel spread traffic over its member links?",
     "choices": [
-      "By hashing addresses (and sometimes ports), so each flow uses one link",
-      "Round-robin, one frame per link",
-      "Using the fastest link first",
-      "By sending every frame on every link"
+      "By hashing addresses (and sometimes ports), one link per flow",
+      "Round-robin, sending one frame per link in turn",
+      "Using the fastest member first, then the next one",
+      "By sending a copy of every frame on every member link"
     ],
     "answer": 0,
     "explanation": "A hash of MAC/IP (and optionally port) picks the link, which keeps each flow's frames in order. One big flow can't go faster than a single member link.",
@@ -1414,10 +1414,10 @@
     "difficulty": 2,
     "stem": "How do you build a layer 3 EtherChannel on a multilayer switch?",
     "choices": [
-      "Use 'channel-group 1 mode routed'",
-      "Give each member its own IP address",
-      "Put 'no switchport' on the members and Port-channel interface, and give the Port-channel the IP address",
-      "Configure 'ip routing' on each member port"
+      "Use 'channel-group 1 mode routed' on each member port",
+      "Give each member port its own IP address in one subnet",
+      "Use 'no switchport' on the members and Port-channel, and address the Port-channel",
+      "Configure 'ip routing' on each member port, then bundle them"
     ],
     "answer": 2,
     "explanation": "Members and the port-channel must be routed ports. The IP address goes on the Port-channel, not on the members.",
@@ -1432,10 +1432,10 @@
     "stem": "Based on the exhibit, why isn't Gi0/3 carrying traffic?",
     "exhibit": "Flags:  D - down        P - bundled in port-channel\n        I - stand-alone s - suspended\n        S - Layer2      U - in use\n\nGroup  Port-channel  Protocol    Ports\n------+-------------+-----------+---------------------------\n1      Po1(SU)         LACP      Gi0/1(P)    Gi0/2(P)    Gi0/3(s)",
     "choices": [
-      "It's a hot-standby link waiting for a failure",
+      "It's a hot-standby link waiting for another member to fail",
       "It's administratively down",
-      "It's suspended because its settings don't match the bundle, for example speed or VLANs",
-      "It's in a different channel group"
+      "It's suspended: its settings don't match the bundle",
+      "It's in a different channel group from Gi0/1 and Gi0/2"
     ],
     "answer": 2,
     "explanation": "'s' means suspended: the port joined the group but its configuration doesn't match the port-channel. Fix the mismatch and it bundles (P).",
@@ -1450,9 +1450,9 @@
     "stem": "With 'port-channel load-balance src-dst-ip', what decides which member link a packet uses?",
     "choices": [
       "The source and destination IP addresses",
-      "The source MAC only",
-      "The TCP port",
-      "Which link is least busy"
+      "The source MAC address only",
+      "The destination TCP or UDP port",
+      "Which member link is least busy at that moment"
     ],
     "answer": 0,
     "explanation": "The switch hashes the source and destination IPs. Traffic between one pair of hosts always uses the same link.",
@@ -1507,9 +1507,9 @@
     "difficulty": 2,
     "stem": "A non-root switch has two paths to the root with equal root path cost. What decides its root port?",
     "choices": [
-      "The lower port number on this switch first",
+      "The lower port number on this switch, then the faster link",
       "The neighbour with the lowest bridge ID, then the lowest neighbour port ID",
-      "The faster link speed",
+      "The faster link speed, then the lower interface number",
       "The port that came up first"
     ],
     "answer": 1,
@@ -1524,10 +1524,10 @@
     "difficulty": 1,
     "stem": "What is the main advantage of Rapid PVST+ over the original PVST+?",
     "choices": [
-      "It doesn't need a root bridge",
+      "It doesn't need a root bridge, so elections are skipped",
       "Much faster convergence, using proposal/agreement and alternate ports",
-      "It runs one tree for all VLANs",
-      "It needs no BPDUs"
+      "It runs a single tree for all VLANs to save CPU",
+      "It needs no BPDUs, because switches calculate the tree alone"
     ],
     "answer": 1,
     "explanation": "RSTP converges in a second or so instead of 30-50 s, because ports negotiate directly and alternate ports take over immediately.",
@@ -1558,10 +1558,10 @@
     "difficulty": 1,
     "stem": "A port with BPDU Guard receives a BPDU. What happens, and how is it recovered?",
     "choices": [
-      "It blocks until the BPDUs stop; nothing to do",
-      "It drops just that BPDU",
-      "It becomes the root port",
-      "It goes err-disabled; recover with shutdown then no shutdown (or errdisable recovery)"
+      "It blocks until the BPDUs stop, then recovers without any action",
+      "It drops just that BPDU and keeps forwarding user traffic",
+      "It becomes the root port because it hears the BPDU first",
+      "It goes err-disabled until it's bounced (shutdown, no shutdown) or auto-recovered"
     ],
     "answer": 3,
     "explanation": "BPDU Guard err-disables the port immediately. It stays down until an admin bounces it or 'errdisable recovery cause bpduguard' brings it back.",
@@ -1603,9 +1603,9 @@
     "difficulty": 2,
     "stem": "In split-MAC architecture, which functions stay on the lightweight AP?",
     "choices": [
-      "RF management for the whole WLAN",
-      "Client authentication and policy",
-      "Real-time ones such as beacons, probe responses, acknowledgements and encryption",
+      "RF management for the whole WLAN, such as channel and power plans",
+      "Client authentication and policy, such as 802.1X and ACLs",
+      "Real-time ones such as beacons, probe responses and encryption",
       "Roaming decisions between APs"
     ],
     "answer": 2,
@@ -1671,9 +1671,9 @@
     "difficulty": 2,
     "stem": "A lightweight AP is in local mode. How does a client's data reach the wired network?",
     "choices": [
-      "The AP switches it onto its own access VLAN",
+      "The AP switches it onto its own access VLAN at the switch port",
       "It's tunnelled in CAPWAP to the WLC, which puts it on the WLAN's VLAN",
-      "It goes directly to the internet",
+      "It goes directly to the internet through the AP's uplink",
       "Through the AP's console port"
     ],
     "answer": 1,
@@ -1689,8 +1689,8 @@
     "stem": "Which statement about where a WLC can run is true?",
     "choices": [
       "As an appliance, a virtual machine, built into a switch, or on an AP",
-      "Only on a dedicated hardware appliance",
-      "Only in the Meraki cloud",
+      "Only on a dedicated hardware appliance in the data centre",
+      "Only in the Meraki cloud, managed from a web dashboard",
       "Only on a router"
     ],
     "answer": 0,
@@ -1706,8 +1706,8 @@
     "stem": "A FlexConnect AP switches two WLANs locally, in VLANs 10 and 20. What kind of switch port does it need?",
     "choices": [
       "A trunk carrying its management VLAN plus VLANs 10 and 20",
-      "An access port in VLAN 10",
-      "A routed port",
+      "An access port in VLAN 10, with VLAN 20 as the voice VLAN",
+      "A routed port with an IP address in each WLAN's subnet",
       "An EtherChannel"
     ],
     "answer": 0,
@@ -1722,10 +1722,10 @@
     "difficulty": 1,
     "stem": "Why do a WLC's distribution system ports usually connect to switch trunks?",
     "choices": [
-      "They supply PoE to the WLC",
+      "They supply PoE to the WLC and to the APs it manages",
       "They carry the management interface and every dynamic interface VLAN",
-      "Trunks are faster than access ports",
-      "CAPWAP needs DTP"
+      "Trunks are faster than access ports on the same switch",
+      "CAPWAP needs DTP to build tunnels to the APs"
     ],
     "answer": 1,
     "explanation": "The WLC bridges each WLAN's clients onto its own VLAN (dynamic interfaces), so the uplink must carry all of those VLANs plus management.",
@@ -1756,9 +1756,9 @@
     "difficulty": 2,
     "stem": "How can a new lightweight AP on a different subnet find its WLC?",
     "choices": [
-      "A static route to the WLC",
-      "CDP from the switch",
-      "DHCP option 43 (or a DNS record for CISCO-CAPWAP-CONTROLLER)",
+      "A static route to the WLC configured on the AP's console",
+      "CDP from the switch, which advertises the WLC's address",
+      "DHCP option 43, or a DNS name for the controller",
       "It always broadcasts until a WLC answers"
     ],
     "answer": 2,
@@ -1773,9 +1773,9 @@
     "difficulty": 2,
     "stem": "Which power option supplies up to about 60 W per port for high-power APs?",
     "choices": [
-      "802.3af (PoE)",
-      "802.3at (PoE+)",
-      "802.3ab",
+      "802.3af (PoE), Type 1",
+      "802.3at (PoE+), Type 2",
+      "802.3ab over Cat6a cabling",
       "Cisco UPOE / 802.3bt Type 3"
     ],
     "answer": 3,
@@ -1824,10 +1824,10 @@
     "difficulty": 2,
     "stem": "Why use TACACS+ rather than local accounts on 200 network devices?",
     "choices": [
-      "It encrypts only the password",
-      "It needs no network connectivity",
-      "Accounts are managed in one place, with per-command authorisation and accounting",
-      "It's required for SSH"
+      "It encrypts only the password, so it uses less bandwidth",
+      "It works with no network connectivity, from cached accounts",
+      "Accounts are managed centrally, with per-command authorisation and logging",
+      "It's required before SSH can be enabled on any device"
     ],
     "answer": 2,
     "explanation": "Central AAA means one place to add or remove admins. TACACS+ can authorise individual commands and log what each admin ran. Keep a local account as a fallback.",

@@ -4,7 +4,7 @@ A Godot 4 study game for the **CCNA 200-301** exam. Each unit runs **tutorial �
 
 All question content is original and written in exam style. The game does not use real Cisco exam items.
 
-## Status: milestone M7 in progress (accessibility and web build done; content QA next)
+## Status: milestone M7 (accessibility, web build and content QA)
 | Milestone | Scope | State |
 |---|---|---|
 | M0 | Project, autoloads, save/load, content loader + validator, tests, export presets, menu → dashboard | ✅ |
@@ -14,7 +14,7 @@ All question content is original and written in exam style. The game does not us
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | ✅ |
 | M5 | All tutorials and remaining mini-games | ✅ |
 | M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | ✅ |
-| M7 | Accessibility, web tuning, content QA | 🚧 parts 1-2: accessibility, web build |
+| M7 | Accessibility, web tuning, content QA | ✅ |
 
 **Content:** 42 lessons covering all 53 blueprint subtopics, 600 questions split by exam weight (120/120/150/60/90/60), with at least 5 per subtopic, 600 in total and enough in every exam area to fill a full mock exam, all enforced in CI, 16 drills and 14 labs (plus 18 hidden mini-labs behind `cli_task` questions).
 
@@ -121,6 +121,15 @@ Right and wrong answers are never shown by colour alone: answered choices are la
 
 ![M7 settings, 150% text and high contrast](docs/ui/m7.png)
 
+## Content QA
+`tools/qa_content.py` checks the question bank for problems the schema validator can't see. CI runs it with `--strict`.
+- **Answer-key giveaways.** When one choice is clearly the longest (20% longer than every other), it should be right no more often than chance, about 1 in 4. CI allows up to 40%. Correct answers should also be spread across positions, with no position holding more than 35%.
+- **Wording.** A multi-select stem's "(Choose N)" must match its answer count, and single-answer stems mustn't say "choose two". Stems that mention an exhibit must have one, and exhibit questions must refer to theirs. No two choices may be identical, and no two questions may be near-duplicates. Explanations need at least 40 characters and mustn't refer to choices by position, which breaks if choices are reordered.
+- **Links.** A question's subtopic must be covered by its lesson, and a lesson's recall questions must belong to that lesson.
+- **Typed answers.** A fill-in answer that names an interface must accept more than one spelling (`g0/1` and `gigabitethernet0/1`).
+
+When the check was first run, the correct answer was the stand-out longest choice in 58% of such questions, so "pick the long one" was a winning strategy. Rewriting the distractors in 228 questions to be as specific as the key brought that down to 36%. The keys themselves didn't change. `tools/test_qa_content.py` covers each check.
+
 ## Web build
 `godot --headless --path . --export-release Web build/web/index.html` builds a single-threaded web version that needs no special server headers. Godot only needs the two web export templates, and `tools/fetch_web_templates.py` installs just those (about 17 MB, read out of the 1 GB template archive). CI exports the web build on every push and attaches it as the `rapidccna-web` artifact.
 - **Size:** about 37 MB as files (35 MB engine, 2 MB game data) or **9.6 MB gzipped**, so serve it with gzip or Brotli. `docs/` holds a `.gdignore` file, so the README screenshots aren't packed into the game.
@@ -150,7 +159,8 @@ ui/         theme/ (Palette, ThemeFactory), components/ (UI, Backdrop, QuestionV
 minigames/  DrillBase + SubnetSprint, BitFlipper, GenDrill (generator-driven drills)
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures
-tools/      validate_content.py, install_gut.sh, smoke_session.gd (end-to-end), fetch_web_templates.py
+tools/      validate_content.py, qa_content.py (+ test), install_gut.sh, smoke_session.gd (end-to-end),
+            fetch_web_templates.py
 ```
 
 ## Running
@@ -162,6 +172,7 @@ godot --headless --path . -s addons/gut/gut_cmdln.gd      # unit tests
 python3 tools/validate_content.py                         # content checks
 godot --headless --path . -s res://tools/smoke_session.gd # plays a daily session and a quick mock end to end
 python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600  # coverage + mock-exam gate (CI)
+python3 tools/qa_content.py --strict                      # answer-key giveaways, wording, links (CI)
 godot --headless --path . --export-release Linux          # export (needs export templates)
 python3 tools/fetch_web_templates.py                      # once, for the web export
 godot --headless --path . --export-release Web build/web/index.html

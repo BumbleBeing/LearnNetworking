@@ -22,7 +22,7 @@
     "subtopic": "4.1",
     "type": "exhibit",
     "difficulty": 2,
-    "stem": "Which keyword makes this configuration PAT rather than dynamic NAT?",
+    "stem": "Based on the exhibit, which keyword makes this configuration PAT rather than dynamic NAT?",
     "exhibit": "access-list 1 permit 192.168.0.0 0.0.255.255\nip nat inside source list 1 interface GigabitEthernet0/1 overload",
     "choices": [
       "list 1",
@@ -60,9 +60,9 @@
     "difficulty": 1,
     "stem": "What does a lower NTP stratum number mean?",
     "choices": [
-      "The server is closer to an authoritative time source",
-      "The server is less trustworthy",
-      "The server is newer",
+      "It's closer to an authoritative time source",
+      "It's less trustworthy and should be a backup",
+      "It's running a newer version of NTP",
       "The server uses TCP"
     ],
     "answer": 0,
@@ -91,8 +91,8 @@
     "stem": "Based on the exhibit, which statement is true?",
     "exhibit": "R1#show ntp associations\n  address         ref clock       st   when   poll reach  delay  offset   disp\n*~10.0.0.100      10.9.9.1        2    33     64   377  1.204   0.512   0.950\n ~10.0.0.101      .INIT.          16   -      64   0    0.000   0.000   15937.\n * sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured",
     "choices": [
-      "R1 is synchronised to 10.0.0.101",
-      "R1 is a stratum 1 server",
+      "R1 is synchronised to 10.0.0.101, which hasn't answered yet",
+      "R1 is a stratum 1 server for the other routers",
       "R1 is synchronised to 10.0.0.100, a stratum 2 server",
       "Neither server is reachable"
     ],
@@ -114,7 +114,7 @@
       "UDP 123"
     ],
     "answer": 3,
-    "explanation": "NTP uses UDP 123.",
+    "explanation": "NTP uses UDP 123 for both client and server. UDP 161 is SNMP, and TCP 37 is the old Time protocol that NTP replaced.",
     "lesson_ref": "d4.ntp"
   },
   {
@@ -175,10 +175,10 @@
     "difficulty": 2,
     "stem": "Why would you configure 'ip dhcp excluded-address 192.168.10.1 192.168.10.10'?",
     "choices": [
-      "So the router doesn't lease addresses used by statically addressed devices",
-      "To block those hosts from the network",
-      "To reserve them for DHCP relay agents",
-      "To make those the DNS servers"
+      "So the router doesn't lease addresses that are statically assigned",
+      "To block those hosts from getting onto the network",
+      "To reserve those addresses for DHCP relay agents",
+      "To make those addresses the pool's DNS servers"
     ],
     "answer": 0,
     "explanation": "Exclusions stop the pool leasing addresses already assigned statically, such as the gateway and servers.",
@@ -231,7 +231,7 @@
       "informational",
       "debugging"
     ],
-    "explanation": "0 emergencies to 7 debugging.",
+    "explanation": "Levels run from 0 (emergencies) to 7 (debugging); a lower number is more severe. 'logging trap warnings' sends levels 0 to 4.",
     "lesson_ref": "d4.network_services"
   },
   {
@@ -242,10 +242,10 @@
     "difficulty": 2,
     "stem": "With 'logging trap warnings', which message is sent to the syslog server?",
     "choices": [
-      "%SYS-5-CONFIG_I: Configured from console",
+      "%SYS-5-CONFIG_I: Configured from console by admin on vty0",
       "%LINK-3-UPDOWN: Interface Gi0/1, changed state to down",
-      "%SEC-6-IPACCESSLOGP: list 101 denied tcp",
-      "%SYS-7-DEBUG: ICMP echo reply sent"
+      "%SEC-6-IPACCESSLOGP: list 101 denied tcp 10.1.1.5",
+      "%SYS-7-DEBUG: ICMP echo reply sent to 10.1.1.5"
     ],
     "answer": 1,
     "explanation": "warnings = 4, so levels 0-4 are sent. LINK-3 is severity 3 (errors).",
@@ -340,9 +340,9 @@
     "difficulty": 2,
     "stem": "What is the difference between policing and shaping?",
     "choices": [
-      "Policing buffers excess traffic; shaping drops it",
-      "Policing drops or re-marks excess traffic; shaping buffers it and sends it later",
-      "Shaping only works inbound",
+      "Policing queues excess traffic; shaping drops or re-marks it",
+      "Policing drops or re-marks excess traffic; shaping queues it",
+      "Shaping only works inbound; policing only works outbound",
       "They're the same"
     ],
     "answer": 1,
@@ -374,7 +374,7 @@
     "difficulty": 2,
     "stem": "What decimal DSCP value is AF31?",
     "answer": "26",
-    "explanation": "AFxy = 8x + 2y = 8 × 3 + 2 × 1 = 26.",
+    "explanation": "AFxy = 8x + 2y = 8 × 3 + 2 × 1 = 26. The first digit is the class (3), the second the drop precedence (1, the lowest).",
     "lesson_ref": "d4.qos"
   },
   {
@@ -385,10 +385,10 @@
     "difficulty": 2,
     "stem": "What does WRED do?",
     "choices": [
-      "Prioritises voice above all other traffic",
+      "Prioritises voice above all other traffic in one queue",
       "Encrypts queued packets",
-      "Drops packets early and selectively to avoid tail drop and TCP global synchronisation",
-      "Shapes traffic to a contracted rate"
+      "Drops some packets early, before queues fill, to avoid tail drop",
+      "Shapes traffic to a contracted rate by buffering it"
     ],
     "answer": 2,
     "explanation": "WRED randomly drops some packets before a queue is full, more for higher drop-probability markings, so TCP senders slow down gradually instead of all at once.",
@@ -515,7 +515,7 @@
       "TCP 601"
     ],
     "answer": 2,
-    "explanation": "Syslog sends to UDP 514.",
+    "explanation": "Syslog sends to UDP 514 by default. TCP 601 is reliable syslog, which IOS can use if configured; UDP 162 is SNMP traps.",
     "lesson_ref": "d4.network_services"
   },
   {
@@ -527,9 +527,9 @@
     "stem": "Why might you choose FTP over TFTP for copying an IOS image?",
     "choices": [
       "FTP uses TCP and supports authentication",
-      "FTP needs no username",
-      "TFTP can't copy files to flash",
-      "FTP encrypts the transfer"
+      "FTP needs no username or password",
+      "TFTP can't write files to flash",
+      "FTP encrypts the whole transfer, credentials included"
     ],
     "answer": 0,
     "explanation": "FTP runs over TCP (reliable, faster for big files on lossy links) and supports logins; TFTP is simpler but has no authentication.",
@@ -559,10 +559,10 @@
     "difficulty": 2,
     "stem": "Static NAT maps 192.168.1.10 to 203.0.113.10. What does this allow that PAT alone does not?",
     "choices": [
-      "Inside hosts reach the internet",
+      "Inside hosts can reach the internet at the same time",
       "Encrypting traffic to the server",
-      "Saving public addresses",
-      "Hosts on the internet start connections to the server at 203.0.113.10"
+      "Fewer public addresses are needed than with PAT",
+      "Internet hosts can start connections to 203.0.113.10"
     ],
     "answer": 3,
     "explanation": "A static mapping always exists, so outside hosts can reach the inside server. PAT entries are created only by outbound traffic.",
@@ -628,8 +628,8 @@
     "stem": "In a network with Cisco IP phones on the access ports, where should the QoS trust boundary usually be?",
     "choices": [
       "At the IP phone and access switch port",
-      "At the WAN router",
-      "At the core switches",
+      "At the WAN router, where bandwidth is scarce",
+      "At the core switches, where traffic aggregates",
       "At the internet firewall"
     ],
     "answer": 0,
@@ -679,10 +679,10 @@
     "difficulty": 2,
     "stem": "Dynamic NAT (without overload) uses a pool of 5 public addresses. A sixth inside host starts a connection while five translations are active. What happens?",
     "choices": [
-      "It shares an address using ports",
+      "It shares an address with another host by using ports",
       "It uses the outside interface address",
-      "The router adds a sixth address",
-      "Its traffic isn't translated, so the connection fails until an entry times out"
+      "The router borrows a sixth address from the ISP",
+      "It isn't translated, so it fails until an entry times out"
     ],
     "answer": 3,
     "explanation": "Without 'overload', each inside host needs a whole public address. When the pool is used up, new hosts wait until entries expire.",
@@ -711,7 +711,7 @@
       "So DHCP leases work",
       "Because routing protocols need it to form neighbours",
       "So log messages from different devices can be lined up in order",
-      "Because SSH won't start without it"
+      "Because SSH won't start until the clock is synchronised"
     ],
     "answer": 2,
     "explanation": "Correlating events across routers, switches and servers needs consistent timestamps. Certificates and some authentication also depend on correct time.",
@@ -823,10 +823,10 @@
     "difficulty": 1,
     "stem": "What does 'logging buffered' do?",
     "choices": [
-      "Saves logs to flash permanently",
-      "Sends logs to a syslog server",
+      "Saves log messages to flash so they survive a reload",
+      "Sends log messages to a syslog server over UDP",
       "Shows logs on the console only",
-      "Stores log messages in RAM so 'show logging' can display them"
+      "Keeps log messages in RAM for 'show logging'"
     ],
     "answer": 3,
     "explanation": "The buffer survives logging out but not a reload. Console logging and VTY monitor logging are separate destinations.",
@@ -851,9 +851,9 @@
     "difficulty": 2,
     "stem": "A router relays a client's DHCP Discover. Which address does it put in the giaddr field?",
     "choices": [
-      "The DHCP server's address",
-      "The address of the interface that received the client's broadcast",
-      "The client's MAC address",
+      "The DHCP server's address, so the reply comes back",
+      "The address of the interface that heard the client",
+      "The client's MAC address, so the server knows it",
       "0.0.0.0"
     ],
     "answer": 1,
@@ -868,9 +868,9 @@
     "difficulty": 1,
     "stem": "What does 'ip helper-address' do with a client's DHCP Discover?",
     "choices": [
-      "Floods it out every interface",
+      "Floods it out every interface on the router",
       "Forwards it to the configured server as a unicast",
-      "Answers it locally",
+      "Answers it locally from the router's own pool",
       "Drops it"
     ],
     "answer": 1,
@@ -885,10 +885,10 @@
     "difficulty": 2,
     "stem": "Which targets are commonly quoted for good voice quality?",
     "choices": [
-      "Delay up to 10 ms, no loss allowed",
+      "One-way delay up to 10 ms, jitter up to 1 ms, no loss at all",
       "Delay up to 1 s, any jitter, loss up to 10%",
       "One-way delay up to 150 ms, jitter up to 30 ms, loss up to 1%",
-      "Bandwidth of at least 1 Gbps"
+      "At least 1 Gbps of bandwidth reserved for each call"
     ],
     "answer": 2,
     "explanation": "Voice is sensitive to delay, jitter and loss but needs little bandwidth, which is why it gets a priority queue.",
@@ -902,9 +902,9 @@
     "difficulty": 2,
     "stem": "Where is the DSCP value carried?",
     "choices": [
-      "In the 6 high-order bits of the IP header's ToS (DS) byte",
-      "In the 802.1Q tag",
-      "In the TCP header",
+      "In 6 bits of the IP header's ToS (DS) byte",
+      "In the 3-bit priority field of the 802.1Q tag",
+      "In the options field of the TCP or UDP header",
       "In the Ethernet trailer"
     ],
     "answer": 0,
