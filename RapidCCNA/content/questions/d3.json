@@ -103,5 +103,151 @@
     "answer": "ip route 0.0.0.0 0.0.0.0 10.0.0.2",
     "explanation": "From global configuration mode: ip route 0.0.0.0 0.0.0.0 10.0.0.2.",
     "lesson_ref": "d3.static_routing"
+  },
+  {
+    "id": "q.d3.ospf.001",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "R1 has no router-id command. Its Loopback0 is 10.255.0.1 and its highest physical interface address is 192.168.1.1. Both are up. What is R1's OSPF router ID?",
+    "choices": [
+      "192.168.1.1",
+      "10.255.0.1",
+      "0.0.0.0",
+      "The router doesn't run OSPF until a router ID is configured"
+    ],
+    "answer": 1,
+    "explanation": "Without a router-id command, the highest IP on an up loopback is used before any physical interface, even if the physical address is higher.",
+    "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.ospf.002",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two settings must match for two routers to become OSPF neighbours on a link? (Choose two.)",
+    "choices": [
+      "Process ID",
+      "Area ID",
+      "Router ID",
+      "Hello and Dead intervals",
+      "Interface priority"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Area and Hello/Dead timers must match (as must subnet, authentication and MTU). Process IDs and priorities are local and may differ, and router IDs must be different.",
+    "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.ospf.003",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, which route does R1 use for 10.4.4.0/24?",
+    "exhibit": "R1's OSPF database contains two paths to 10.4.4.0/24:\n  via R2 (10.0.12.2): cost 1 + 1 + 1 = 3\n  via R3 (10.0.13.3): cost 64 + 1 + 1 = 66",
+    "choices": [
+      "Via 10.0.12.2, cost 3",
+      "Via 10.0.13.3, cost 66",
+      "Both, load-balanced",
+      "Neither; OSPF prefers the route with the most hops"
+    ],
+    "answer": 0,
+    "explanation": "Both are OSPF routes, so AD is equal (110) and the metric decides. Cost 3 via 10.0.12.2 beats cost 66 via 10.0.13.3; only the best one is installed.",
+    "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.ospf.004",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "With the default reference bandwidth, what OSPF cost does a GigabitEthernet interface get?",
+    "answer": "1",
+    "explanation": "100 Mbps ÷ 1000 Mbps = 0.1, but the minimum cost is 1. That's why reference bandwidth is usually raised.",
+    "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.ospf.005",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Four routers on one Ethernet segment have OSPF priorities 1, 1, 0 and 1 and router IDs 4.4.4.4, 3.3.3.3, 9.9.9.9 and 1.1.1.1 respectively. They start together. Which router ID becomes the DR?",
+    "choices": [
+      "4.4.4.4",
+      "9.9.9.9",
+      "1.1.1.1",
+      "3.3.3.3"
+    ],
+    "answer": 0,
+    "explanation": "Priority 0 (9.9.9.9) can't be elected. The rest tie on priority 1, so the highest router ID, 4.4.4.4, becomes DR and 3.3.3.3 BDR.",
+    "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.ospf.006",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, which interfaces does the network statement enable for OSPF?",
+    "exhibit": "Gi0/0  10.1.1.1/24\nGi0/1  10.1.3.1/24\nGi0/2  10.1.4.1/24\nLo0    172.16.1.1/32\n\nrouter ospf 1\n network 10.1.0.0 0.0.3.255 area 0",
+    "choices": [
+      "Gi0/0 only",
+      "All four interfaces",
+      "Gi0/0 and Gi0/1",
+      "Gi0/0, Gi0/1 and Gi0/2"
+    ],
+    "answer": 2,
+    "explanation": "10.1.0.0 0.0.3.255 matches 10.1.0.0 through 10.1.3.255, so Gi0/0 (10.1.1.1) and Gi0/1 (10.1.3.1) match. 10.1.4.1 and 172.16.1.1 don't.",
+    "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.ospf.007",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What does 'passive-interface g0/2' do under router ospf 1?",
+    "choices": [
+      "Removes Gi0/2's network from OSPF",
+      "Makes Gi0/2 the DR",
+      "Shuts down Gi0/2",
+      "Stops Hellos on Gi0/2 but still advertises its network"
+    ],
+    "answer": 3,
+    "explanation": "A passive interface still has its network advertised, but sends no Hellos, so no neighbours form on it. Use it on LAN interfaces with no other routers.",
+    "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.ospf.008",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "drag_order",
+    "difficulty": 2,
+    "stem": "Put the router ID selection order in sequence, from first choice to last.",
+    "answer": [
+      "The router-id command",
+      "Highest IP on an up loopback interface",
+      "Highest IP on an up physical interface"
+    ],
+    "explanation": "Manual first, then loopbacks, then physical interfaces.",
+    "lesson_ref": "d3.ospf"
+  },
+  {
+    "id": "q.d3.ospf.cli.001",
+    "domain": "d3",
+    "subtopic": "3.4",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the R1 command line. Enable OSPF process 1 on Gi0/0 (10.0.0.1/30) in area 0 so R1 forms an adjacency with R2 and learns 192.168.2.0/24.",
+    "lab": "lab.mini_ospf",
+    "answer": "router ospf 1 / network 10.0.0.0 0.0.0.3 area 0",
+    "explanation": "A network statement whose wildcard matches Gi0/0's address enables OSPF on it in area 0. R2 is already in area 0 with default timers, so they become neighbours.",
+    "lesson_ref": "d3.ospf"
   }
 ]

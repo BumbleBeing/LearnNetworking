@@ -1,0 +1,211 @@
+{
+  "id": "lab.ospf",
+  "title": "Single-area OSPF",
+  "domain": "d3",
+  "unit": "d3.ospf",
+  "subtopics": [
+    "3.4"
+  ],
+  "description": "Bring R1 into area 0 with R2 and R3, keep Hellos off the LAN, and hand the internet default route to the rest of the area.",
+  "topology": "  LAN 192.168.1.0/24                                         LAN 192.168.3.0/24\n      Gi0/1 .1                                                    Gi0/1 .1\n        [R1] Gi0/0 ── 10.0.12.0/30 ── Gi0/0 [R2] Gi0/1 ── 10.0.23.0/30 ── Gi0/0 [R3]\n      Gi0/2 .2                                                 Lo0 3.3.3.3/32\n        │ 203.0.113.0/30\n      [ISP] .1\n\n  10.0.12.0/30: R1 .1, R2 .2      10.0.23.0/30: R2 .1, R3 .2\n  R2 and R3 already run OSPF process 1 in area 0.",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.12.1 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 192.168.1.1 255.255.255.0",
+        "no shutdown",
+        "interface g0/2",
+        "ip address 203.0.113.2 255.255.255.252",
+        "no shutdown",
+        "ip route 0.0.0.0 0.0.0.0 203.0.113.1"
+      ]
+    },
+    {
+      "name": "R2",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.12.2 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 10.0.23.1 255.255.255.252",
+        "no shutdown",
+        "router ospf 1",
+        "router-id 2.2.2.2",
+        "network 10.0.0.0 0.0.255.255 area 0"
+      ]
+    },
+    {
+      "name": "R3",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.23.2 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 192.168.3.1 255.255.255.0",
+        "no shutdown",
+        "interface loopback0",
+        "ip address 3.3.3.3 255.255.255.255",
+        "router ospf 1",
+        "network 10.0.23.0 0.0.0.3 area 0",
+        "network 192.168.3.0 0.0.0.255 area 0",
+        "network 3.3.3.3 0.0.0.0 area 0",
+        "passive-interface g0/1"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/0",
+      "R2",
+      "g0/0"
+    ],
+    [
+      "R2",
+      "g0/1",
+      "R3",
+      "g0/0"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Start OSPF process 1 on R1 with router ID 1.1.1.1.",
+      "hint": "router ospf 1 → router-id 1.1.1.1",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "ospf_rid",
+          "args": {
+            "rid": "1.1.1.1"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Enable OSPF in area 0 on Gi0/0 (10.0.12.0/30) and the LAN Gi0/1 (192.168.1.0/24) so R1 becomes R2's neighbour. Don't enable it towards the ISP.",
+      "hint": "network 10.0.12.0 0.0.0.3 area 0 and network 192.168.1.0 0.0.0.255 area 0. Check with 'do show ip ospf neighbor'.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "ospf_enabled",
+          "args": {
+            "iface": "g0/0",
+            "area": "0"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "ospf_enabled",
+          "args": {
+            "iface": "g0/1",
+            "area": "0"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "ospf_neighbor",
+          "args": {
+            "neighbor": "R2"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Make the LAN interface Gi0/1 passive: still advertised, but no Hellos.",
+      "hint": "Under router ospf 1: passive-interface g0/1",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "ospf_passive",
+          "args": {
+            "iface": "g0/1"
+          }
+        }
+      ]
+    },
+    {
+      "text": "R1 should now learn R3's LAN by OSPF. Ping 192.168.3.1 from R1 to prove it.",
+      "hint": "do show ip route ospf lists the O routes. Then: do ping 192.168.3.1",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "route_to",
+          "args": {
+            "dest": "192.168.3.1",
+            "code": "O"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "ping",
+          "args": {
+            "to": "192.168.3.1"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Advertise R1's default route into OSPF so R3 learns a default route towards R1.",
+      "hint": "Under router ospf 1: default-information originate. R3 shows it as O*E2.",
+      "checks": [
+        {
+          "device": "R3",
+          "check": "route_to",
+          "args": {
+            "dest": "8.8.8.8",
+            "code": "O",
+            "next_hop": "10.0.23.1"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "router ospf 1",
+      "router-id 1.1.1.1",
+      "network 10.0.12.0 0.0.0.3 area 0",
+      "network 192.168.1.0 0.0.0.255 area 0",
+      "passive-interface g0/1",
+      "default-information originate",
+      "end"
+    ]
+  }
+}

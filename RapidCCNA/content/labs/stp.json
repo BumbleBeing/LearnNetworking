@@ -1,0 +1,325 @@
+{
+  "id": "lab.stp",
+  "title": "Root bridges and edge ports",
+  "domain": "d2",
+  "unit": "d2.stp",
+  "subtopics": [
+    "2.5"
+  ],
+  "description": "SW3, an old access switch, has won the root election by having the lowest MAC address. Put the core switches in charge and share the load across VLANs.",
+  "topology": "                 [SW1] (core)\n          Gi0/1 /       \\ Gi0/2\n         Gi0/1 /         \\ Gi0/1\n   (core) [SW2] ─────────── [SW3] (access)\n          Gi0/2           Gi0/2\n\n  All links are 1 Gbps 802.1Q trunks. VLANs 10 and 20 exist everywhere.\n  SW1 Fa0/1 - 10 connect to PCs. Bridge MACs: SW1 0019.e8a1.1100, SW2 0019.e8a1.2200, SW3 0001.4a00.3300",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "mac": "0019.e8a1.1100",
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "fa0/3"
+        },
+        {
+          "name": "fa0/4"
+        },
+        {
+          "name": "fa0/5"
+        },
+        {
+          "name": "fa0/6"
+        },
+        {
+          "name": "fa0/7"
+        },
+        {
+          "name": "fa0/8"
+        },
+        {
+          "name": "fa0/9"
+        },
+        {
+          "name": "fa0/10"
+        },
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ],
+      "config": [
+        "vlan 10",
+        "vlan 20",
+        "interface range g0/1 - 2",
+        "switchport mode trunk"
+      ]
+    },
+    {
+      "name": "SW2",
+      "type": "switch",
+      "editable": true,
+      "mac": "0019.e8a1.2200",
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "fa0/3"
+        },
+        {
+          "name": "fa0/4"
+        },
+        {
+          "name": "fa0/5"
+        },
+        {
+          "name": "fa0/6"
+        },
+        {
+          "name": "fa0/7"
+        },
+        {
+          "name": "fa0/8"
+        },
+        {
+          "name": "fa0/9"
+        },
+        {
+          "name": "fa0/10"
+        },
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ],
+      "config": [
+        "vlan 10",
+        "vlan 20",
+        "interface range g0/1 - 2",
+        "switchport mode trunk"
+      ]
+    },
+    {
+      "name": "SW3",
+      "type": "switch",
+      "editable": false,
+      "mac": "0001.4a00.3300",
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "fa0/3"
+        },
+        {
+          "name": "fa0/4"
+        },
+        {
+          "name": "fa0/5"
+        },
+        {
+          "name": "fa0/6"
+        },
+        {
+          "name": "fa0/7"
+        },
+        {
+          "name": "fa0/8"
+        },
+        {
+          "name": "fa0/9"
+        },
+        {
+          "name": "fa0/10"
+        },
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ],
+      "config": [
+        "vlan 10",
+        "vlan 20",
+        "interface range g0/1 - 2",
+        "switchport mode trunk",
+        "interface range fa0/1 - 10",
+        "switchport mode access",
+        "switchport access vlan 10"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "SW1",
+      "g0/1",
+      "SW2",
+      "g0/1"
+    ],
+    [
+      "SW1",
+      "g0/2",
+      "SW3",
+      "g0/1"
+    ],
+    [
+      "SW2",
+      "g0/2",
+      "SW3",
+      "g0/2"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Run Rapid PVST+ on SW1 and SW2.",
+      "hint": "spanning-tree mode rapid-pvst (on each switch: use the tabs above the console)",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "stp_mode",
+          "args": {
+            "mode": "rapid-pvst"
+          }
+        },
+        {
+          "device": "SW2",
+          "check": "stp_mode",
+          "args": {
+            "mode": "rapid-pvst"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Make SW1 the root bridge for VLAN 10 and SW2 the root bridge for VLAN 20.",
+      "hint": "SW1: spanning-tree vlan 10 root primary (or priority 24576). SW2: the same for VLAN 20. Check with do show spanning-tree vlan 10.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "stp_root",
+          "args": {
+            "vlan": 10
+          }
+        },
+        {
+          "device": "SW2",
+          "check": "stp_root",
+          "args": {
+            "vlan": 20
+          }
+        }
+      ]
+    },
+    {
+      "text": "Make each core switch the backup root for the other VLAN, so losing one core switch never hands the root to SW3.",
+      "hint": "SW1: spanning-tree vlan 20 root secondary (28672). SW2: spanning-tree vlan 10 root secondary.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "stp_root",
+          "args": {
+            "vlan": 10
+          }
+        },
+        {
+          "device": "SW2",
+          "check": "stp_root",
+          "args": {
+            "vlan": 20
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "stp_role",
+          "args": {
+            "iface": "g0/1",
+            "vlan": 20,
+            "role": "Root"
+          }
+        },
+        {
+          "device": "SW2",
+          "check": "stp_role",
+          "args": {
+            "iface": "g0/1",
+            "vlan": 10,
+            "role": "Root"
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "stp_role",
+          "args": {
+            "iface": "g0/2",
+            "vlan": 20,
+            "role": "Designated"
+          }
+        },
+        {
+          "device": "SW2",
+          "check": "stp_role",
+          "args": {
+            "iface": "g0/2",
+            "vlan": 10,
+            "role": "Designated"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Make SW1's PC ports Fa0/1 - 10 access ports in VLAN 10 that skip listening/learning and shut down if they ever receive a BPDU.",
+      "hint": "interface range fa0/1 - 10 → switchport mode access → switchport access vlan 10 → spanning-tree portfast → spanning-tree bpduguard enable",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "access_port",
+          "args": {
+            "iface": "fa0/1 - 10",
+            "vlan": 10
+          }
+        },
+        {
+          "device": "SW1",
+          "check": "portfast",
+          "args": {
+            "iface": "fa0/1 - 10",
+            "bpduguard": true
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "spanning-tree mode rapid-pvst",
+      "spanning-tree vlan 10 root primary",
+      "spanning-tree vlan 20 root secondary",
+      "interface range fa0/1 - 10",
+      "switchport mode access",
+      "switchport access vlan 10",
+      "spanning-tree portfast",
+      "spanning-tree bpduguard enable",
+      "end"
+    ],
+    "SW2": [
+      "spanning-tree mode rapid-pvst",
+      "spanning-tree vlan 20 root primary",
+      "spanning-tree vlan 10 root secondary",
+      "end"
+    ]
+  }
+}

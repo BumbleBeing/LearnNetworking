@@ -3,8 +3,13 @@ extends RefCounted
 ## Configuration state of one simulated device (router, switch or end host).
 
 const TYPES := {"gigabitethernet": "GigabitEthernet", "fastethernet": "FastEthernet", "ethernet": "Ethernet",
-	"serial": "Serial", "vlan": "Vlan", "loopback": "Loopback"}
-const SHORT := {"GigabitEthernet": "Gi", "FastEthernet": "Fa", "Ethernet": "Et", "Serial": "Se", "Vlan": "Vl", "Loopback": "Lo"}
+	"tengigabitethernet": "TenGigabitEthernet", "serial": "Serial", "vlan": "Vlan", "loopback": "Loopback",
+	"port-channel": "Port-channel"}
+const SHORT := {"TenGigabitEthernet": "Te", "GigabitEthernet": "Gi", "FastEthernet": "Fa", "Ethernet": "Et", "Serial": "Se",
+	"Vlan": "Vl", "Loopback": "Lo", "Port-channel": "Po"}
+## Interface bandwidth in Mbps by type (OSPF and STP costs).
+const BANDWIDTH := {"TenGigabitEthernet": 10000.0, "GigabitEthernet": 1000.0, "FastEthernet": 100.0, "Ethernet": 10.0,
+	"Serial": 1.544, "Loopback": 8000000.0, "Vlan": 1000.0}
 
 var hostname := "Router"
 var type := "router"            # router | switch | host
@@ -20,6 +25,11 @@ var default_gateway := ""
 var enable_secret := ""
 var password_encryption := false
 var lines: Dictionary = {}      # "vty 0 4" / "console 0" -> {password, login, transport}
+var mac := ""                   # base MAC (bridge ID)
+var stp_mode := "pvst"          # pvst | rapid-pvst
+var stp_priority: Dictionary = {}   # vlan -> configured base priority (default 32768)
+var ospf: Dictionary = {}       # {} = not running; see Commands.h_router_ospf
+var _net: WeakRef               # the Network this device belongs to (weak: avoids a reference cycle)
 
 static func create(def: Dictionary) -> Device:
 	var d := Device.new()
@@ -34,7 +44,12 @@ static func create(def: Dictionary) -> Device:
 		if i.has("shutdown"):
 			d.interfaces[n].shutdown = i.shutdown
 	d.default_gateway = def.get("gateway", "")
+	d.mac = def.get("mac", "00%s.%s.%s" % [("%06x" % (d.hostname.hash() & 0xffffff)).substr(0, 2),
+		("%06x" % (d.hostname.hash() & 0xffffff)).substr(2, 4), "%04x" % ((d.hostname.hash() >> 8) & 0xffff)])
 	return d
+
+func network():
+	return _net.get_ref() if _net else null
 
 ## Canonical interface name from any common abbreviation, or "" if invalid.
 ## "g0/0", "gi 0/0", "GigabitEthernet0/0", "fa0/1", "lo0", "vlan 10", "s0/0/0".
@@ -64,12 +79,14 @@ static func short_name(n: String) -> String:
 func add_interface(n: String, link: bool = true) -> Dictionary:
 	if interfaces.has(n):
 		return interfaces[n]
-	var virtual := n.begins_with("Vlan") or n.begins_with("Loopback")
+	var virtual := n.begins_with("Vlan") or n.begins_with("Loopback") or n.begins_with("Port-channel")
 	interfaces[n] = {"name": n, "ip": "", "mask": "", "link": link or n.begins_with("Loopback"),
 		"shutdown": (type == "router" and not n.begins_with("Loopback")) or n.begins_with("Vlan"),
 		"physical": not virtual, "description": "", "mode": "", "access_vlan": 1, "native": 1,
 		"allowed": "all", "nonegotiate": false, "nat": "", "acl_in": "", "acl_out": "",
-		"ps": {"enabled": false, "maximum": 1, "violation": "shutdown", "sticky": false, "macs": []}}
+		"ps": {"enabled": false, "maximum": 1, "violation": "shutdown", "sticky": false, "macs": []},
+		"channel_group": 0, "channel_mode": "", "portfast": false, "bpduguard": false, "stp_cost": 0,
+		"ospf_cost": 0, "ospf_priority": 1, "ospf_hello": 10, "ospf_dead": 40, "ospf_area": "", "ospf_pid": 0}
 	iface_order.append(n)
 	return interfaces[n]
 
@@ -77,9 +94,24 @@ func iface(n: String) -> Dictionary:
 	return interfaces.get(canon_iface(n), {})
 
 func is_switchport(i: Dictionary) -> bool:
-	return type == "switch" and i.physical
+	return type == "switch" and (i.physical or i.name.begins_with("Port-channel"))
+
+func bandwidth(n: String) -> float:
+	for t in BANDWIDTH:
+		if n.begins_with(t):
+			return BANDWIDTH[t]
+	return 1000.0
+
+## Member ports of channel group g.
+func members(g: int) -> Array:
+	return iface_order.filter(func(n): return interfaces[n].channel_group == g)
 
 func is_up(i: Dictionary) -> bool:
+	if i.name.begins_with("Port-channel"):
+		if i.shutdown:
+			return false
+		var net = network()
+		return net != null and L2Sim.channel(net, hostname, i.name.substr(12).to_int()).up
 	if i.shutdown or not i.link:
 		return false
 	if i.name.begins_with("Vlan"):
@@ -87,7 +119,7 @@ func is_up(i: Dictionary) -> bool:
 		var vid: int = i.name.substr(4).to_int()
 		if not vlans.has(vid):
 			return false
-		return interfaces.values().any(func(p): return p.physical and not p.shutdown and p.link and (p.mode == "trunk" or p.access_vlan == vid))
+		return interfaces.values().any(func(p): return is_switchport(p) and is_up(p) and (p.mode == "trunk" or p.access_vlan == vid))
 	return true
 
 ## [status, protocol] as shown by show ip interface brief.
@@ -112,8 +144,8 @@ static func parse_vlan_list(s: String) -> Array:
 			out.append(part.to_int())
 	return out
 
-## Connected, local and resolvable static routes (plus a default for hosts).
-func routing_table() -> RoutingTable:
+## Connected, local and resolvable static routes (plus a default for hosts), then OSPF.
+func routing_table(with_ospf: bool = true) -> RoutingTable:
 	var rt := RoutingTable.new()
 	for n in iface_order:
 		var i: Dictionary = interfaces[n]
@@ -133,6 +165,10 @@ func routing_table() -> RoutingTable:
 			rt.add(RoutingTable.route("S", IPv4.to_str(r.net), r.len, r.next_hop, "", 0, r.ad))
 	if type == "host" and not default_gateway.is_empty() and not connected.lookup(IPv4.parse(default_gateway)).is_empty():
 		rt.add(RoutingTable.route("S", "0.0.0.0", 0, default_gateway))
+	var net = network()
+	if with_ospf and not ospf.is_empty() and net != null:
+		for r in OspfSim.routes(net, hostname):
+			rt.add(r)
 	return rt
 
 ## Which inside global address would NAT give this inside local address? "" = not translated.

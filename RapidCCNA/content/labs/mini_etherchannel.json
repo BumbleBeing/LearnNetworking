@@ -1,0 +1,82 @@
+{
+  "id": "lab.mini_etherchannel",
+  "title": "PAgP EtherChannel",
+  "hidden": true,
+  "domain": "d2",
+  "subtopics": [
+    "2.4"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "   [SW1] Gi0/1 ════ Gi0/1 [SW2]\n         Gi0/2 ════ Gi0/2\n  SW2: channel-group 2 mode auto on both ports.",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "mac": "0019.e8a1.1100",
+      "interfaces": [
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ]
+    },
+    {
+      "name": "SW2",
+      "type": "switch",
+      "editable": false,
+      "mac": "0019.e8a1.2200",
+      "interfaces": [
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ],
+      "config": [
+        "interface range g0/1 - 2",
+        "channel-group 2 mode auto"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "SW1",
+      "g0/1",
+      "SW2",
+      "g0/1"
+    ],
+    [
+      "SW1",
+      "g0/2",
+      "SW2",
+      "g0/2"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Bundle Gi0/1 and Gi0/2 into Port-channel 2 with SW2 using PAgP.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "etherchannel",
+          "args": {
+            "group": 2,
+            "protocol": "PAgP",
+            "members": 2
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "interface range g0/1 - 2",
+      "channel-group 2 mode desirable",
+      "end"
+    ]
+  }
+}

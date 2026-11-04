@@ -1,0 +1,89 @@
+{
+  "id": "lab.mini_ospf",
+  "title": "Enable OSPF",
+  "hidden": true,
+  "domain": "d3",
+  "subtopics": [
+    "3.4"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [R1] Gi0/0 10.0.0.1/30 ── 10.0.0.2 [R2] ── LAN 192.168.2.0/24\n  R2 runs OSPF process 1 in area 0.",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.0.1 255.255.255.252",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "R2",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.0.2 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 192.168.2.1 255.255.255.0",
+        "no shutdown",
+        "router ospf 1",
+        "network 10.0.0.0 0.0.0.3 area 0",
+        "network 192.168.2.0 0.0.0.255 area 0"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/0",
+      "R2",
+      "g0/0"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Enable OSPF on R1 Gi0/0 in area 0 so R1 becomes R2's neighbour and learns 192.168.2.0/24.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "ospf_neighbor",
+          "args": {
+            "neighbor": "R2"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "route_to",
+          "args": {
+            "dest": "192.168.2.1",
+            "code": "O"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "router ospf 1",
+      "network 10.0.0.0 0.0.0.3 area 0",
+      "end"
+    ]
+  }
+}

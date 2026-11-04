@@ -1,0 +1,73 @@
+{
+  "id": "lab.mini_stp_root",
+  "title": "Root bridge",
+  "hidden": true,
+  "domain": "d2",
+  "subtopics": [
+    "2.5"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "   [SW1] Gi0/1 ── Gi0/1 [SW2]   (trunk; SW2 has the lower MAC address)",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "mac": "0019.e8a1.1100",
+      "interfaces": [
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "vlan 30",
+        "interface g0/1",
+        "switchport mode trunk"
+      ]
+    },
+    {
+      "name": "SW2",
+      "type": "switch",
+      "editable": false,
+      "mac": "0001.4a00.2200",
+      "interfaces": [
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "vlan 30",
+        "interface g0/1",
+        "switchport mode trunk"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "SW1",
+      "g0/1",
+      "SW2",
+      "g0/1"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Make SW1 the root bridge for VLAN 30 by setting its priority to 4096.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "stp_root",
+          "args": {
+            "vlan": 30
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "spanning-tree vlan 30 priority 4096",
+      "end"
+    ]
+  }
+}

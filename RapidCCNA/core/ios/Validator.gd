@@ -12,6 +12,8 @@ static func run(net: Network, c: Dictionary) -> Dictionary:
 	if d == null:
 		return _fail("unknown device %s" % c.get("device", ""))
 	var a: Dictionary = c.get("args", {})
+	if a.has("iface") and _ifaces(d, a.iface).is_empty():
+		return _fail("%s has no interface %s" % [d.hostname, a.iface])
 	match c.get("check", ""):
 		"hostname":
 			return _res(d.hostname == a.name, "hostname is %s" % d.hostname)
@@ -63,6 +65,8 @@ static func run(net: Network, c: Dictionary) -> Dictionary:
 				return _fail("no route to %s" % a.dest)
 			if a.has("next_hop") and r.next_hop != a.next_hop:
 				return _fail("traffic to %s uses %s" % [a.dest, RoutingTable.describe(r)])
+			if a.has("code") and r.code != a.code:
+				return _fail("the route to %s is %s, not %s" % [a.dest, RoutingTable.NAMES.get(r.code, r.code), RoutingTable.NAMES.get(a.code, a.code)])
 			return _ok()
 		"static_route":
 			var net_i := IPv4.parse(a.net)
@@ -105,6 +109,62 @@ static func run(net: Network, c: Dictionary) -> Dictionary:
 			var pkt := {"proto": a.proto, "src": IPv4.parse(a.src), "dst": IPv4.parse(a.dst), "dport": int(a.get("dport", -1))}
 			var verdict := ACL.evaluate(d.acls[name].entries, pkt)
 			return _res(verdict == a.action, "that packet is %sed" % verdict)
+		"stp_mode":
+			return _res(d.stp_mode == a.mode, "spanning tree mode is %s" % d.stp_mode)
+		"stp_root":
+			var res := L2Sim.stp(net, int(a.vlan))
+			if res.is_empty():
+				return _fail("VLAN %d has no spanning tree" % a.vlan)
+			return _res(res.root == d.hostname, "%s is the root bridge for VLAN %d" % [res.root, a.vlan])
+		"stp_role":
+			var n := Device.canon_iface(a.iface)
+			var role := L2Sim.role(net, d.hostname, n, int(a.vlan))
+			return _res(role == a.role, "%s %s is %s in VLAN %d" % [d.hostname, Device.short_name(n), role.to_lower() if not role.is_empty() else "not forwarding", a.vlan])
+		"portfast":
+			for n in _ifaces(d, a.iface):
+				var i: Dictionary = d.interfaces[n]
+				if not i.portfast:
+					return _fail("PortFast isn't enabled on %s" % n)
+				if a.get("bpduguard", false) and not i.bpduguard:
+					return _fail("BPDU Guard isn't enabled on %s" % n)
+			return _ok()
+		"etherchannel":
+			var ch := L2Sim.channel(net, d.hostname, int(a.group))
+			if ch.members.is_empty():
+				return _fail("no ports are in channel group %d" % a.group)
+			if a.has("protocol") and ch.protocol != a.protocol:
+				return _fail("channel group %d uses %s" % [a.group, ch.protocol if ch.protocol != "static" else "mode on (no protocol)"])
+			var bundled: Array = ch.members.filter(func(m): return m.flag == "P")
+			if bundled.size() < int(a.get("members", 1)):
+				var bad: Array = ch.members.filter(func(m): return m.flag != "P")
+				return _fail("%d of %d members bundled%s" % [bundled.size(), ch.members.size(), (": " + bad[0].why) if bad.size() > 0 else ""])
+			return _res(ch.up, "Port-channel%d is down" % a.group)
+		"ospf_rid":
+			if d.ospf.is_empty():
+				return _fail("OSPF isn't running")
+			var rid := OspfSim.router_id(d)
+			return _res(rid == a.rid, "router ID is %s" % rid)
+		"ospf_enabled":
+			var en := OspfSim.enabled(d)
+			var n := Device.canon_iface(a.iface)
+			if not en.has(n):
+				return _fail("OSPF isn't enabled on %s" % n)
+			if a.has("area") and str(en[n].area) != str(a.area):
+				return _fail("%s is in area %s" % [n, en[n].area])
+			return _ok()
+		"ospf_passive":
+			var en := OspfSim.enabled(d)
+			var n := Device.canon_iface(a.iface)
+			if not en.has(n):
+				return _fail("OSPF isn't enabled on %s" % n)
+			return _res(en[n].passive == a.get("passive", true), "%s is %spassive" % [n, "" if en[n].passive else "not "])
+		"ospf_neighbor":
+			if OspfSim.neighbors(net, d.hostname).any(func(x): return x.name == a.neighbor):
+				return _ok()
+			for adj in OspfSim.adjacencies(net):
+				if (adj.a == d.hostname and adj.b == a.neighbor) or (adj.b == d.hostname and adj.a == a.neighbor):
+					return _fail("no adjacency with %s: %s" % [a.neighbor, ", ".join(adj.issues.map(func(k): return OSPF.ISSUE_TEXT[k].to_lower()))])
+			return _fail("%s has no OSPF neighbour %s" % [d.hostname, a.neighbor])
 	return _fail("unknown check %s" % c.get("check", ""))
 
 static func _ok() -> Dictionary:

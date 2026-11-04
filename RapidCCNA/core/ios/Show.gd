@@ -45,6 +45,14 @@ static func _iface_block(d: Device, n: String) -> PackedStringArray:
 				b.append(" switchport port-security mac-address sticky")
 		for m in i.ps.macs:
 			b.append(" switchport port-security mac-address " + m)
+		if i.channel_group > 0:
+			b.append(" channel-group %d mode %s" % [i.channel_group, i.channel_mode])
+		if i.stp_cost > 0:
+			b.append(" spanning-tree cost %d" % i.stp_cost)
+		if i.portfast:
+			b.append(" spanning-tree portfast")
+		if i.bpduguard:
+			b.append(" spanning-tree bpduguard enable")
 	else:
 		b.append(" ip address %s %s" % [i.ip, i.mask] if not i.ip.is_empty() else " no ip address")
 		if not i.nat.is_empty():
@@ -53,6 +61,16 @@ static func _iface_block(d: Device, n: String) -> PackedStringArray:
 			b.append(" ip access-group %s in" % i.acl_in)
 		if not i.acl_out.is_empty():
 			b.append(" ip access-group %s out" % i.acl_out)
+		if i.ospf_hello != 10:
+			b.append(" ip ospf hello-interval %d" % i.ospf_hello)
+		if i.ospf_dead != 4 * i.ospf_hello:
+			b.append(" ip ospf dead-interval %d" % i.ospf_dead)
+		if i.ospf_priority != 1:
+			b.append(" ip ospf priority %d" % i.ospf_priority)
+		if i.ospf_cost > 0:
+			b.append(" ip ospf cost %d" % i.ospf_cost)
+		if not i.ospf_area.is_empty():
+			b.append(" ip ospf %d area %s" % [i.ospf_pid, i.ospf_area])
 	if i.shutdown:
 		b.append(" shutdown")
 	return b
@@ -63,8 +81,30 @@ static func running_config(d: Device) -> String:
 		out.append_array(["service password-encryption", "!"])
 	if not d.enable_secret.is_empty():
 		out.append_array(["enable secret 5 $1$mERr$hx5rVt7rPNoS4wqbXKX7m0", "!"])
+	if d.type == "switch":
+		out.append("spanning-tree mode " + d.stp_mode)
+		var vl := d.stp_priority.keys()
+		vl.sort()
+		for v in vl:
+			out.append("spanning-tree vlan %d priority %d" % [v, d.stp_priority[v]])
+		out.append("!")
 	for n in d.iface_order:
 		out.append_array(_iface_block(d, n))
+		out.append("!")
+	if not d.ospf.is_empty():
+		out.append("router ospf %d" % int(d.ospf.pid))
+		if not d.ospf.router_id.is_empty():
+			out.append(" router-id " + d.ospf.router_id)
+		if int(d.ospf.ref_bw) != 100:
+			out.append(" auto-cost reference-bandwidth %d" % int(d.ospf.ref_bw))
+		if d.ospf.passive_default:
+			out.append(" passive-interface default")
+		for n in d.ospf.passive:
+			out.append(" %spassive-interface %s" % ["no " if d.ospf.passive_default else "", n])
+		for st in d.ospf.networks:
+			out.append(" network %s %s area %s" % [st.net, st.wc, st.area])
+		if d.ospf.default_originate:
+			out.append(" default-information originate")
 		out.append("!")
 	if not d.default_gateway.is_empty() and d.type == "switch":
 		out.append_array(["ip default-gateway " + d.default_gateway, "!"])
@@ -141,8 +181,15 @@ static func vlan_brief(d: Device) -> String:
 		out.append("%-4d %-32s %-9s" % [extra[0], extra[1], "act/unsup"])
 	return "\n".join(out)
 
+## Up trunks, except bundled members (they're listed through their port-channel).
+static func _lists_as_trunk(d: Device, n: String) -> bool:
+	var i: Dictionary = d.interfaces[n]
+	if i.mode != "trunk" or not d.is_up(i):
+		return false
+	return not (i.channel_group > 0 and d.interfaces.has("Port-channel%d" % i.channel_group))
+
 static func trunks(d: Device) -> String:
-	var t: Array = d.iface_order.filter(func(n): return d.interfaces[n].mode == "trunk" and d.is_up(d.interfaces[n]))
+	var t: Array = d.iface_order.filter(func(n): return _lists_as_trunk(d, n))
 	if t.is_empty():
 		return ""
 	var out := PackedStringArray(["%-12s %-16s %-14s %-13s %s" % ["Port", "Mode", "Encapsulation", "Status", "Native vlan"]])

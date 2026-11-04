@@ -1,0 +1,44 @@
+{
+  "id": "d1.switching",
+  "domain": "d1",
+  "subtopics": [
+    "1.13"
+  ],
+  "order": 70,
+  "title": "How a switch forwards frames",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Learning: source addresses only",
+      "body": "When a frame arrives, the switch records its source MAC address against the port (and VLAN) it came in on. It never learns from destination addresses. Entries age out after 5 minutes of silence by default, and an address seen on a new port simply moves.",
+      "example": "Frame in on Fa0/3: src 0050.7966.ac05 → dst 0050.7966.610c\nLearned: VLAN 10  0050.7966.ac05  Fa0/3"
+    },
+    {
+      "heading": "Forwarding: known unicast",
+      "body": "The switch looks up the destination MAC in the table for the frame's VLAN. If it finds it on another port, the frame goes out that one port only.",
+      "example": "Vlan    Mac Address       Type        Ports\n  10    0050.7966.610c    DYNAMIC     Fa0/4\n→ a VLAN 10 frame for 0050.7966.610c leaves on Fa0/4 only"
+    },
+    {
+      "heading": "Flooding: unknown unicast and broadcast",
+      "body": "If the destination isn't in the table for that VLAN, or it is the broadcast address ffff.ffff.ffff, the switch floods the frame out every port in the same VLAN except the one it arrived on. Trunks carrying the VLAN are included; ports in other VLANs never see it.",
+      "example": "PC1 (Fa0/1, VLAN 10) → unknown MAC\nFlooded to: Fa0/4, Fa0/5 (VLAN 10) and Gi0/1 (trunk)\nNot to: Fa0/2, Fa0/3 (VLAN 20)"
+    },
+    {
+      "heading": "Filtering",
+      "body": "If the table says the destination is on the same port the frame arrived on (for example, two hosts behind a hub), the switch drops it: the destination has already received it."
+    },
+    {
+      "heading": "The table is per VLAN",
+      "body": "A MAC learned in VLAN 10 is no help for a frame in VLAN 20; that lookup misses and the frame floods in VLAN 20. Many MACs on one port usually mean another switch is behind it, such as on a trunk.",
+      "example": "SW1#show mac address-table\nSW1#show mac address-table dynamic interface gi0/1\nSW1#clear mac address-table dynamic"
+    }
+  ],
+  "recall": [
+    "q.d1.switch.001",
+    "q.d1.switch.002",
+    "q.d1.switch.003"
+  ],
+  "drills": [
+    "frame_forwarder"
+  ]
+}
