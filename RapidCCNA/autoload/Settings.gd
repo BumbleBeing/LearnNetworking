@@ -9,6 +9,7 @@ var exam_date: String = ""        # ISO yyyy-mm-dd, empty = not set
 var daily_goal_minutes: int = 60
 var font_scale: float = 1.0
 var high_contrast: bool = false
+var ui_look: String = "noc"         # see ui/theme/Palette.gd
 
 func _ready() -> void:
 	load_settings()
@@ -19,6 +20,7 @@ func to_dict() -> Dictionary:
 		"daily_goal_minutes": daily_goal_minutes,
 		"font_scale": font_scale,
 		"high_contrast": high_contrast,
+		"ui_look": ui_look,
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -26,6 +28,7 @@ func from_dict(d: Dictionary) -> void:
 	daily_goal_minutes = int(d.get("daily_goal_minutes", daily_goal_minutes))
 	font_scale = float(d.get("font_scale", font_scale))
 	high_contrast = bool(d.get("high_contrast", high_contrast))
+	ui_look = str(d.get("ui_look", ui_look))
 
 func load_settings() -> void:
 	var d = JsonIO.read(PATH)

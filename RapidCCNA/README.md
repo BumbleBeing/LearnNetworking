@@ -16,11 +16,16 @@ All question content is original and written in exam style. The game does not us
 | M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | |
 | M7 | Accessibility, web tuning, content QA | |
 
+## UI looks (prototype)
+Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Switch looks from the dropdown on the main menu or the dashboard.
+
+![UI looks](docs/ui/looks.png)
+
 ## Layout
 ```
 autoload/   Settings, ContentDB, SRS (SM-2), Progress (save/mastery/streak), SessionManager
 core/       Pure logic (no UI): JsonIO now; net/, ios/, question/ in later milestones
-ui/         components/ (UI helpers) and screens/ (MainMenu, Dashboard)
+ui/         theme/ (Palette, ThemeFactory), components/ (UI helpers, Backdrop), screens/
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures
 tools/      validate_content.py, install_gut.sh

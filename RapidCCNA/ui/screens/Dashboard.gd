@@ -1,52 +1,85 @@
 extends Control
 ## Home screen: exam countdown, streak, today's session, per-domain readiness.
 
+## Screenshot/preview hook: domain_id -> readiness override (0..1). Empty in normal play.
+static var preview_readiness: Dictionary = {}
+
 var _exam_input: LineEdit
 
 func _ready() -> void:
 	Progress.mark_studied()
 	Progress.save_game()
+	var look := Palette.current()
 	var v := UI.page(self)
-	UI.label(v, "Dashboard", 36)
 
-	var days := Settings.days_until_exam()
-	var countdown := "Exam date not set" if days < 0 else "%d days until exam" % days
-	UI.label(v, "%s  ·  Streak: %d day(s)" % [countdown, Progress.streak_days], 20)
+	# Header
+	var head := UI.hbox(v, 16)
+	var titles := UI.vbox(head, 2)
+	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	UI.label(titles, "Dashboard", "H1")
+	UI.label(titles, "CCNA 200-301 bootcamp  ·  12-week plan", "Muted")
+	UI.look_picker(head).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	UI.button(head, "Main menu", func(): get_tree().change_scene_to_file("res://ui/screens/MainMenu.tscn")).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
-	var row := HBoxContainer.new()
-	v.add_child(row)
-	_exam_input = LineEdit.new()
-	_exam_input.placeholder_text = "Exam date (YYYY-MM-DD)"
-	_exam_input.text = Settings.exam_date
-	_exam_input.custom_minimum_size.x = 260
-	row.add_child(_exam_input)
-	var save_btn := Button.new()
-	save_btn.text = "Set date"
-	save_btn.pressed.connect(_on_set_date)
-	row.add_child(save_btn)
-
+	# Stat tiles
 	var session := SessionManager.build_daily_session()
-	UI.label(v, "Today's session", 26)
-	UI.label(v, "Reviews due: %d" % session.reviews.size())
+	var days := Settings.days_until_exam()
+	var stats := UI.hbox(v, 16)
+	UI.stat(stats, "--" if days < 0 else str(days), "days until exam", look.accent)
+	UI.stat(stats, str(Progress.streak_days), "day streak", look.warn)
+	UI.stat(stats, str(session.reviews.size()), "reviews due", look.accent2)
+	UI.stat(stats, "%d%%" % int(round(_overall_readiness() * 100)), "weighted readiness", look.good)
+
+	# Session + readiness
+	var main := UI.hbox(v, 16)
+	var left := UI.card(main, "Today's session", 1.0)
 	var next: Dictionary = session.next_unit
-	UI.label(v, "Next unit: %s" % (next.get("title", "All units mastered!")))
-	UI.label(v, "(Tutorials and drills arrive in milestone M1.)", 14).modulate = Color(1, 1, 1, 0.6)
+	UI.label(left, next.get("title", "All units mastered!"), "H2", true)
+	if not next.is_empty():
+		var d := ContentDB.get_domain(next.domain)
+		UI.label(left, "%s  ·  ~%d min tutorial, then drills and recall" % [d.get("name", ""), int(next.get("minutes", 5))], "Muted", true)
+	var go := UI.button(left, "Start session", func(): pass, true)
+	go.disabled = true
+	go.tooltip_text = "Playable sessions arrive in milestone M1"
+	var spacer := Control.new()
+	spacer.custom_minimum_size.y = 8
+	left.add_child(spacer)
+	UI.label(left, "EXAM DATE", "H3")
+	var row := UI.hbox(left, 8)
+	_exam_input = LineEdit.new()
+	_exam_input.placeholder_text = "YYYY-MM-DD"
+	_exam_input.text = Settings.exam_date
+	_exam_input.custom_minimum_size.x = 180
+	row.add_child(_exam_input)
+	var set_btn := UI.button(row, "Set", _on_set_date)
+	set_btn.custom_minimum_size.x = 0
 
-	UI.label(v, "Readiness by domain", 26)
+	var right := UI.card(main, "Readiness by domain", 1.3)
+	for i in ContentDB.domains.size():
+		var d: Dictionary = ContentDB.domains[i]
+		var color: Color = look.domains[i % look.domains.size()]
+		var line := UI.hbox(right, 10)
+		var dot := ColorRect.new()
+		dot.color = color
+		dot.custom_minimum_size = Vector2(10, 10)
+		dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		line.add_child(dot)
+		var name_l := UI.label(line, d.name)
+		name_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var r := _readiness(d.id)
+		UI.label(line, "%d%%  ·  w%d" % [int(round(r * 100)), int(d.weight)], "Muted")
+		UI.bar(right, r, color, 8)
+
+func _readiness(domain_id: String) -> float:
+	if preview_readiness.has(domain_id):
+		return preview_readiness[domain_id]
+	return Progress.domain_readiness(domain_id)
+
+func _overall_readiness() -> float:
+	var total := 0.0
 	for d in ContentDB.domains:
-		var line := HBoxContainer.new()
-		v.add_child(line)
-		var name_l := UI.label(line, "%s (%d%%)" % [d.name, d.weight])
-		name_l.custom_minimum_size.x = 380
-		name_l.autowrap_mode = TextServer.AUTOWRAP_OFF
-		var bar := ProgressBar.new()
-		bar.max_value = 1.0
-		bar.value = Progress.domain_readiness(d.id)
-		bar.custom_minimum_size = Vector2(300, 24)
-		bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		line.add_child(bar)
-
-	UI.button(v, "Back", func(): get_tree().change_scene_to_file("res://ui/screens/MainMenu.tscn"))
+		total += _readiness(d.id) * float(d.weight) / 100.0
+	return total
 
 func _on_set_date() -> void:
 	var t := _exam_input.text.strip_edges()
@@ -56,4 +89,4 @@ func _on_set_date() -> void:
 		Settings.save_settings()
 		get_tree().reload_current_scene()
 	else:
-		_exam_input.modulate = Color.RED
+		_exam_input.add_theme_color_override("font_color", Color.RED)
