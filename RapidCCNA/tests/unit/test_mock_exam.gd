@@ -204,9 +204,9 @@ func test_exam_screen_runs_scores_and_records():
 	assert_false(qv.show_feedback, "no feedback during the exam")
 	qv._get_response = func(): return "14"
 	qv._on_submit()
-	await wait_frames(2)
+	await wait_process_frames(2)
 	scene._runner._current._on_submit(true)   # skip the second
-	await wait_frames(2)
+	await wait_process_frames(2)
 	scene._on_end()
 	assert_false(scene._finished, "first press only asks to confirm")
 	scene._on_end()

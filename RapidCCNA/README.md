@@ -132,7 +132,7 @@ When the check was first run, the correct answer was the stand-out longest choic
 
 ## Web build
 `godot --headless --path . --export-release Web build/web/index.html` builds a single-threaded web version that needs no special server headers. Godot only needs the two web export templates, and `tools/fetch_web_templates.py` installs just those (about 17 MB, read out of the 1 GB template archive). CI exports the web build on every push and attaches it as the `rapidccna-web` artifact.
-- **Size:** about 37 MB as files (35 MB engine, 2 MB game data) or **9.6 MB gzipped**, so serve it with gzip or Brotli. `docs/` holds a `.gdignore` file, so the README screenshots aren't packed into the game.
+- **Size:** about 42 MB as files (39.5 MB engine, 2 MB game data) or **11.8 MB gzipped**, so serve it with gzip or Brotli. The Godot 4.7 engine is about 4 MB larger than 4.3's was (9.8 MB gzipped). `docs/` holds a `.gdignore` file, so the README screenshots aren't packed into the game.
 - **Progress** saves to the browser's IndexedDB and survives reloads. It's tied to the site's address, and clearing site data erases it.
 - **Small screens:** windows smaller than 1280x720 get a smaller logical canvas, down to 960x360, so text stays readable instead of shrinking. Body text is about 14 px on a phone held sideways, and desktop windows of 1280x720 or more are unchanged. Every screen fits at 960x360. Narrow portrait screens get a "turn your device sideways" prompt, with a "Continue anyway" button. See `autoload/Display.gd`.
 - **Touch** taps and drag-scrolling work through Godot's mouse emulation. Typing into fill-in answers and the CLI on a phone depends on the browser's on-screen keyboard and hasn't been tested on real devices.
@@ -164,7 +164,7 @@ tools/      validate_content.py, qa_content.py (+ test), install_gut.sh, smoke_s
 ```
 
 ## Running
-Requires Godot 4.3+.
+Requires Godot 4.7. The tests use GUT 9.7.1, the GUT release for Godot 4.7; `tools/install_gut.sh` installs it. Godot writes a `.uid` file next to each script; commit these with the script.
 ```bash
 tools/install_gut.sh                                      # once, for tests
 godot --path .                                            # play
