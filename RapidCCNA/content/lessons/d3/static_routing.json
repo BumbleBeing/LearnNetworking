@@ -32,6 +32,11 @@
       "heading": "IPv6 static routes",
       "body": "IPv6 works the same way with 'ipv6 route'. Enable routing first with 'ipv6 unicast-routing'. The default route is ::/0.",
       "example": "ipv6 unicast-routing\nipv6 route 2001:db8:3::/64 2001:db8:12::2\nipv6 route ::/0 2001:db8:12::2"
+    },
+    {
+      "heading": "Next hop, exit interface or both",
+      "body": "With only a next-hop IP, the router looks up that address to find the exit interface (a recursive route). With only an exit interface on Ethernet, the router ARPs for every destination and relies on proxy ARP from the next router, so avoid that. A fully specified route names both. A host route uses mask 255.255.255.255 (/128 in IPv6). An IPv6 route with a link-local next hop must name the interface too, because link-local addresses are only unique on one link.",
+      "example": "ip route 10.8.8.8 255.255.255.255 10.0.0.2\nip route 10.30.0.0 255.255.0.0 g0/1 10.0.0.2\nipv6 route 2001:db8:5::/64 g0/0 fe80::2"
     }
   ],
   "recall": [

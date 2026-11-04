@@ -35,6 +35,11 @@
       "heading": "PortFast and BPDU Guard",
       "body": "Access ports to end hosts can skip listening and learning with PortFast. BPDU Guard err-disables a PortFast port if a BPDU arrives, so nobody can plug in a switch and change the tree.",
       "example": "interface fa0/5\n spanning-tree portfast\n spanning-tree bpduguard enable"
+    },
+    {
+      "heading": "Root Guard",
+      "body": "Root Guard protects the root you chose. Put it on designated ports facing switches that must never become root. If a superior BPDU arrives there, the port goes root-inconsistent (blocked) until those BPDUs stop, so a newly connected switch can't take over. BPDU Guard is the edge-port tool: any BPDU err-disables the port.",
+      "example": "interface g0/5\n spanning-tree guard root"
     }
   ],
   "recall": [

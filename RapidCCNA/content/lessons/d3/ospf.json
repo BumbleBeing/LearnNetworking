@@ -40,6 +40,11 @@
       "heading": "Default route",
       "body": "A router with a default route to the internet can advertise it to the area with default-information originate. Others see it as O*E2 0.0.0.0/0.",
       "example": "ip route 0.0.0.0 0.0.0.0 203.0.113.1\nrouter ospf 1\n default-information originate"
+    },
+    {
+      "heading": "Neighbour states",
+      "body": "Down, Init (a Hello arrived), 2-Way (each router sees itself in the other's Hello), ExStart, Exchange (database summaries), Loading (requesting missing LSAs), Full. On a broadcast segment two DROthers stop at 2-Way, which is normal: everyone goes Full with the DR and BDR. Hellos go every 10 s on Ethernet and a neighbour is dead after 40 s.",
+      "example": "Neighbor ID  Pri  State          Dead Time  Address   Interface\n2.2.2.2        1  FULL/DR        00:00:35   10.0.0.2  Gi0/0\n4.4.4.4        1  2WAY/DROTHER   00:00:33   10.0.0.4  Gi0/0"
     }
   ],
   "recall": [

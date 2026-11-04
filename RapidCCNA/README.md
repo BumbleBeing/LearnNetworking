@@ -4,7 +4,7 @@ A Godot 4 study game for the **CCNA 200-301** exam. Each unit runs **tutorial �
 
 All question content is original and written in exam style. The game does not use real Cisco exam items.
 
-## Status: milestone M5 (all tutorials and remaining mini-games)
+## Status: milestone M6 in progress (mock exam done; question bank growing)
 | Milestone | Scope | State |
 |---|---|---|
 | M0 | Project, autoloads, save/load, content loader + validator, tests, export presets, menu → dashboard | ✅ |
@@ -13,10 +13,10 @@ All question content is original and written in exam style. The game does not us
 | M3 | Scoped IOS CLI simulator + config labs | ✅ |
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | ✅ |
 | M5 | All tutorials and remaining mini-games | ✅ |
-| M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | next |
+| M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | 🚧 part 1: mock exam, 321 questions |
 | M7 | Accessibility, web tuning, content QA | |
 
-**Content:** 42 lessons covering all 53 blueprint subtopics, 221 questions (at least 3 per subtopic, enforced in CI), 16 drills and 14 labs (plus 9 hidden mini-labs behind `cli_task` questions).
+**Content:** 42 lessons covering all 53 blueprint subtopics, 321 questions (at least 3 per subtopic, and enough in every exam area to fill a full mock exam, both enforced in CI), 16 drills and 14 labs (plus 9 hidden mini-labs behind `cli_task` questions).
 
 ## How a study session works
 The dashboard plans each day's session:
@@ -29,6 +29,17 @@ The daily plan always follows the exam areas in order. To study anything else, u
 Every answer shows an explanation. A miss always shows the worked solution. Drill skills are graded once per round, so a 10-item round doesn't inflate review intervals.
 
 ![M1 screens](docs/ui/m1.png)
+
+## Mock exam
+Start it from the dashboard: a **full exam** (100 questions, 120 minutes) or a **quick exam** (30 questions, 36 minutes), both set in `content/blueprint.json`.
+- **Weighted like the real exam:** each exam area gets seats by its blueprint weight (20/20/25/10/15/10; largest remainder, so a 30-question exam is 6/6/8/3/4/3). Within an area, questions are dealt round-robin across subtopics so one big subtopic can't crowd out the rest. Questions from your previous mock are used only once fresh ones run out. CLI tasks are capped at 5% because they take longer.
+- **Exam conditions:** a countdown, no feedback, no going back. "Skip" and anything left when time runs out count as wrong. "End exam" asks for a second press.
+- **Score:** Cisco doesn't publish its scaling, so the score is the weight-adjusted fraction correct mapped onto 300-1000. 825 passes, which is about 75%.
+- **Report:** pass or fail, the score, a per-area breakdown, the area costing you the most points, and every missed question with your answer, the right answer and the explanation. Answers feed spaced repetition and unit mastery like any review. The last 30 results are saved and the dashboard shows the latest and best scores.
+
+The selection and scoring live in `core/exam/MockExam.gd` (pure logic, unit-tested). The validator fails if any area has too few questions to fill a full mock.
+
+![M6 mock exam](docs/ui/m6.png)
 
 ## Drills
 | Drill | Unit | What you practise |
@@ -109,12 +120,13 @@ Fonts are bundled in `assets/fonts/` (SIL Open Font License; licences alongside)
 ## Layout
 ```
 autoload/   Settings, ContentDB, SRS (SM-2), Progress (save/mastery/streak), SessionManager
-core/       Pure logic (no UI): net/ (IPv4, IPv6, RoutingTable, ACL, NAT, STP, OSPF, EtherChannel, MacTable
+core/       Pure logic (no UI): exam/ (MockExam: weighted selection, scaled scoring),
+            net/ (IPv4, IPv6, RoutingTable, ACL, NAT, STP, OSPF, EtherChannel, MacTable
             + item generators), ios/ (Device, Network, CLI, Commands, Show, Validator, LabSession,
             OspfSim, L2Sim), question/ (Grader), JsonIO
 assets/     fonts/ (Inter, JetBrains Mono + licences)
-ui/         theme/ (Palette, ThemeFactory), components/ (UI, Backdrop, QuestionView, QuestionRunner, ScreenHeader, Terminal),
-            screens/ (MainMenu, Dashboard, Topics, Tutorial, Review, DrillHost, Lab, Summary)
+ui/         theme/ (Palette, ThemeFactory), components/ (UI, Backdrop, QuestionView, QuestionRunner, ScreenHeader, Terminal,
+            ExamReport), screens/ (MainMenu, Dashboard, Topics, Tutorial, Review, DrillHost, Lab, MockExam, Summary)
 minigames/  DrillBase + SubnetSprint, BitFlipper, GenDrill (generator-driven drills)
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures
@@ -128,8 +140,8 @@ tools/install_gut.sh                                      # once, for tests
 godot --path .                                            # play
 godot --headless --path . -s addons/gut/gut_cmdln.gd      # unit tests
 python3 tools/validate_content.py                         # content checks
-godot --headless --path . -s res://tools/smoke_session.gd # plays a full session end to end
-python3 tools/validate_content.py --min-per-subtopic 3    # coverage gate (run in CI)
+godot --headless --path . -s res://tools/smoke_session.gd # plays a daily session and a quick mock end to end
+python3 tools/validate_content.py --min-per-subtopic 3    # coverage + mock-exam gate (run in CI)
 godot --headless --path . --export-release Linux          # export (needs export templates)
 ```
 Saves go to `user://save.json` (on Linux: `~/.local/share/godot/app_userdata/RapidCCNA/`).

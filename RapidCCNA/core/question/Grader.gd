@@ -80,3 +80,31 @@ static func answer_text(q: Dictionary) -> String:
 				labels[f.key] = f.label
 			return ", ".join(q.answer.keys().map(func(k): return "%s: %s" % [labels.get(k, k), q.answer[k]]))
 	return ""
+
+## Human-readable form of a learner's response, for exam reports.
+static func response_text(q: Dictionary, response: Variant) -> String:
+	if response == null:
+		return "Not answered"
+	match q.get("type", ""):
+		"mcq_single", "exhibit":
+			var i := int(response) if (response is int or response is float) else -1
+			return str(q.choices[i]) if i >= 0 and i < q.choices.size() else "Skipped"
+		"mcq_multi":
+			if not response is Array or response.is_empty():
+				return "Skipped"
+			return ", ".join(response.map(func(i): return str(q.choices[int(i)])))
+		"fill_in":
+			return "Skipped" if str(response).strip_edges().is_empty() else str(response).strip_edges()
+		"drag_match":
+			if not response is Dictionary or response.values().all(func(v): return str(v).is_empty()):
+				return "Skipped"
+			return ", ".join(response.keys().map(func(k): return "%s → %s" % [k, response[k] if str(response[k]) != "" else "?"]))
+		"drag_order":
+			return " → ".join(response) if response is Array else "Skipped"
+		"cli_task":
+			return "Configuration did not pass the checks" if response is Dictionary else "Skipped"
+		"subnet_calc":
+			if not response is Dictionary or response.values().all(func(v): return str(v).strip_edges().is_empty()):
+				return "Skipped"
+			return ", ".join(response.keys().map(func(k): return "%s: %s" % [k, response[k]]))
+	return str(response)

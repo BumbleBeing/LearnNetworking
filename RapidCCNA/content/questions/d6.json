@@ -434,5 +434,170 @@
     "answer": 0,
     "explanation": "Central intent-based policy and automation, assurance analytics, software image management and a REST API.",
     "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.010",
+    "domain": "d6",
+    "subtopic": "6.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Where does the control plane run in a traditional network?",
+    "choices": [
+      "On a central controller",
+      "Separately on every device",
+      "Only on the core switches",
+      "In the cloud"
+    ],
+    "answer": 1,
+    "explanation": "Traditionally every router and switch runs its own control plane (OSPF, STP and so on). Controller-based networks centralise much of that logic.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.011",
+    "domain": "d6",
+    "subtopic": "6.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "In SD-Access, which technology builds the overlay tunnels that carry user traffic across the fabric?",
+    "choices": [
+      "GRE",
+      "VXLAN",
+      "IPsec",
+      "MPLS"
+    ],
+    "answer": 1,
+    "explanation": "The SD-Access data plane is VXLAN, the control plane is LISP and policy uses Cisco TrustSec (SGTs). The underlay is the routed physical network.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.012",
+    "domain": "d6",
+    "subtopic": "6.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which SD-Access control-plane protocol tracks where each endpoint is located in the fabric?",
+    "choices": [
+      "VXLAN",
+      "OSPF",
+      "BGP",
+      "LISP"
+    ],
+    "answer": 3,
+    "explanation": "LISP's map server keeps endpoint-to-location mappings, so fabric edge nodes ask it where to tunnel traffic.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.auto.013",
+    "domain": "d6",
+    "subtopic": "6.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What is intent-based networking?",
+    "choices": [
+      "Writing every device configuration by hand",
+      "Replacing routing protocols with static routes",
+      "Using only open-source routers",
+      "Stating the outcome you want and letting a controller turn it into device configuration and verify it"
+    ],
+    "answer": 3,
+    "explanation": "You declare intent (for example 'guests can't reach finance'). The controller translates it into configuration, deploys it and checks that the network behaves that way.",
+    "lesson_ref": "d6.automation"
+  },
+  {
+    "id": "q.d6.rest.005",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which HTTP header tells the server what format the request body is in?",
+    "choices": [
+      "Accept",
+      "Authorization",
+      "Content-Type",
+      "Host"
+    ],
+    "answer": 2,
+    "explanation": "Content-Type describes the body being sent (for example application/json). Accept lists the formats the client wants back.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.rest.006",
+    "domain": "d6",
+    "subtopic": "6.5",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Which HTTP status code means a new resource was created?",
+    "answer": "201",
+    "explanation": "200 OK, 201 Created, 204 No Content; 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found; 500 Internal Server Error.",
+    "lesson_ref": "d6.rest_apis"
+  },
+  {
+    "id": "q.d6.json.005",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "exhibit",
+    "difficulty": 1,
+    "stem": "Based on the exhibit, what type is the value of \"vlans\"?",
+    "exhibit": "{\n  \"device\": \"sw1\",\n  \"vlans\": [\n    {\"id\": 10, \"name\": \"users\"},\n    {\"id\": 20, \"name\": \"voice\"}\n  ],\n  \"managed\": true\n}",
+    "choices": [
+      "Object",
+      "Array",
+      "String",
+      "Number"
+    ],
+    "answer": 1,
+    "explanation": "Square brackets make an array, here an array of two objects. Curly braces make an object, as each VLAN entry and the whole document are.",
+    "lesson_ref": "d6.json"
+  },
+  {
+    "id": "q.d6.json.006",
+    "domain": "d6",
+    "subtopic": "6.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which of these is not a JSON data type?",
+    "choices": [
+      "Boolean",
+      "Date",
+      "Null",
+      "Array"
+    ],
+    "answer": 1,
+    "explanation": "JSON has string, number, boolean, null, object and array. Dates are sent as strings, for example \"2026-11-04T10:00:00Z\".",
+    "lesson_ref": "d6.json"
+  },
+  {
+    "id": "q.d6.cm.005",
+    "domain": "d6",
+    "subtopic": "6.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What does it mean that Ansible is agentless?",
+    "choices": [
+      "It needs no software installed on the managed devices; it connects over SSH or APIs",
+      "It runs without a control node",
+      "It can only read configurations",
+      "It pulls its configuration from devices on a schedule"
+    ],
+    "answer": 0,
+    "explanation": "The Ansible control node pushes changes over SSH (or NETCONF/REST). Puppet and Chef traditionally use agents that pull from a server.",
+    "lesson_ref": "d6.config_mgmt"
+  },
+  {
+    "id": "q.d6.ai.005",
+    "domain": "d6",
+    "subtopic": "6.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "How does generative AI differ from predictive AI in network operations?",
+    "choices": [
+      "Generative AI creates new content such as configs or summaries; predictive AI forecasts or classifies from past data",
+      "Generative AI only works on wireless networks",
+      "Predictive AI writes configurations; generative AI detects anomalies",
+      "There is no difference"
+    ],
+    "answer": 0,
+    "explanation": "Predictive models forecast (capacity, failures) or classify (anomalies). Generative models produce text, code or configuration, which still needs human review before use.",
+    "lesson_ref": "d6.ai_ops"
   }
 ]

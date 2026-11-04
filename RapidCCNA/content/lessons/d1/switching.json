@@ -31,6 +31,11 @@
       "heading": "The table is per VLAN",
       "body": "A MAC learned in VLAN 10 is no help for a frame in VLAN 20; that lookup misses and the frame floods in VLAN 20. Many MACs on one port usually mean another switch is behind it, such as on a trunk.",
       "example": "SW1#show mac address-table\nSW1#show mac address-table dynamic interface gi0/1\nSW1#clear mac address-table dynamic"
+    },
+    {
+      "heading": "Aging",
+      "body": "A dynamic MAC entry is removed after 300 seconds (the default) without a frame from that address, so moved or idle hosts drop out and get relearned. Static entries never age out.",
+      "example": "SW1#show mac address-table aging-time\nGlobal Aging Time:  300"
     }
   ],
   "recall": [

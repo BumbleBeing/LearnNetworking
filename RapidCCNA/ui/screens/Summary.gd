@@ -4,9 +4,15 @@ extends Control
 func _ready() -> void:
 	var look := Palette.current()
 	var v := UI.page(self)
-	var head := UI.vbox(v, 2)
-	UI.label(head, "Session complete", "H1")
+	var is_exam := SessionManager.results.any(func(r): return r.has("exam"))
+	var dest: String = SessionManager.origin
+	var top := UI.hbox(v, 16)
+	var head := UI.vbox(top, 2)
+	head.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	UI.label(head, "Exam complete" if is_exam else "Session complete", "H1")
 	UI.label(head, SessionManager.title, "Muted")
+	if is_exam:   # the report is long; offer a way out at the top too
+		UI.button(top, "Back to " + dest, _back).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var items := 0
 	var correct := 0
 	for r in SessionManager.results:
@@ -17,6 +23,9 @@ func _ready() -> void:
 	UI.stat(stats, "%d%%" % (int(round(100.0 * correct / items)) if items > 0 else 0), "accuracy", look.good)
 	UI.stat(stats, str(Progress.streak_days), "day streak", look.warn)
 	UI.stat(stats, str(SRS.due_cards(int(Time.get_unix_time_from_system()) + 86400).size()), "due by tomorrow", look.accent2)
+	for r in SessionManager.results:
+		if r.has("exam"):
+			ExamReport.build(v, r)
 	var list := UI.card(v, "What you did")
 	for r in SessionManager.results:
 		var row := UI.hbox(list, 12)
@@ -30,6 +39,8 @@ func _ready() -> void:
 		UI.label(row, detail, "Muted")
 	if SessionManager.results.is_empty():
 		UI.label(list, "Nothing completed.", "Muted")
-	var dest: String = SessionManager.origin
-	var back := UI.button(v, "Back to " + ("topics" if dest == "topics" else "dashboard"), func(): get_tree().change_scene_to_file(SessionManager.SCENES[dest]), true)
-	back.grab_focus()
+	var back := UI.button(v, "Back to " + dest, _back, true)
+	UI.focus_later(back)
+
+func _back() -> void:
+	get_tree().change_scene_to_file(SessionManager.SCENES[SessionManager.origin])

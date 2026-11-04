@@ -3,9 +3,10 @@ extends Node
 
 signal saved
 
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 const MASTERY_WINDOW := 20
 const MASTERY_THRESHOLD := 0.85
+const MOCK_HISTORY_MAX := 30
 
 var save_path := "user://save.json"
 var attempts: Dictionary = {}     # unit_id -> Array[bool], last MASTERY_WINDOW unguided results
@@ -14,6 +15,8 @@ var last_study_day: String = ""   # yyyy-mm-dd
 var total_minutes: float = 0.0
 var tutorials_done: Dictionary = {}  # lesson_id -> unix time completed
 var labs_done: Dictionary = {}       # lab_id -> unix time first completed
+var mock_history: Array = []         # oldest first: {when, label, total, correct, scaled, passed, seconds, by_domain}
+var last_mock_ids: Array = []        # questions on the latest mock; the next one prefers others
 
 func _ready() -> void:
 	load_game()
@@ -25,6 +28,8 @@ func reset() -> void:
 	total_minutes = 0.0
 	tutorials_done = {}
 	labs_done = {}
+	mock_history = []
+	last_mock_ids = []
 	SRS.reset()
 
 func record_attempt(unit_id: String, correct: bool) -> void:
@@ -55,6 +60,24 @@ func mark_lab_done(lab_id: String) -> void:
 
 func is_lab_done(lab_id: String) -> bool:
 	return labs_done.has(lab_id)
+
+## Stores a finished mock exam (a MockExam.score report plus label/seconds).
+func record_mock(report: Dictionary, label: String, seconds: int, ids: Array, when: int = -1) -> void:
+	if when < 0:
+		when = int(Time.get_unix_time_from_system())
+	mock_history.append({"when": when, "label": label, "total": int(report.total), "correct": int(report.correct),
+		"scaled": int(report.scaled), "passed": bool(report.passed), "seconds": seconds,
+		"by_domain": report.by_domain.duplicate(true)})
+	while mock_history.size() > MOCK_HISTORY_MAX:
+		mock_history.pop_front()
+	last_mock_ids = ids.duplicate()
+
+## Highest scaled score so far, or -1.
+func best_mock_score() -> int:
+	var best := -1
+	for m in mock_history:
+		best = max(best, int(m.scaled))
+	return best
 
 func is_mastered(unit_id: String) -> bool:
 	var arr: Array = attempts.get(unit_id, [])
@@ -91,6 +114,8 @@ func to_dict() -> Dictionary:
 		"total_minutes": total_minutes,
 		"tutorials_done": tutorials_done,
 		"labs_done": labs_done,
+		"mock_history": mock_history,
+		"last_mock_ids": last_mock_ids,
 		"srs": SRS.to_dict(),
 	}
 
@@ -102,6 +127,8 @@ func from_dict(d: Dictionary) -> void:
 	total_minutes = float(d.get("total_minutes", 0.0))
 	tutorials_done = d.get("tutorials_done", {})
 	labs_done = d.get("labs_done", {})
+	mock_history = d.get("mock_history", [])
+	last_mock_ids = d.get("last_mock_ids", [])
 	SRS.from_dict(d.get("srs", {}))
 
 func save_game() -> bool:
@@ -121,6 +148,9 @@ func _migrate(d: Dictionary) -> Dictionary:
 	var v := int(d.get("version", 0))
 	if v > SAVE_VERSION:
 		push_warning("Save is from a newer version (%d); loading best-effort" % v)
+	if v < 2:
+		d["mock_history"] = []      # v2 adds mock exams
+		d["last_mock_ids"] = []
 	return d
 
 static func _day_diff(a: String, b: String) -> int:
