@@ -1,0 +1,92 @@
+{
+  "id": "lab.mini_trunk",
+  "title": "Trunk with native VLAN",
+  "hidden": true,
+  "domain": "d2",
+  "subtopics": [
+    "2.2"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [SW1] Gi0/1 ── Gi0/1 [SW2]\n  VLANs 10 (USERS), 20 (VOICE) and 99 (NATIVE) exist on both switches.",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ],
+      "config": [
+        "vlan 10",
+        "name USERS",
+        "vlan 20",
+        "name VOICE",
+        "vlan 99",
+        "name NATIVE"
+      ]
+    },
+    {
+      "name": "SW2",
+      "type": "switch",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "vlan 10",
+        "vlan 20",
+        "vlan 99",
+        "interface g0/1",
+        "switchport mode trunk",
+        "switchport trunk native vlan 99",
+        "switchport trunk allowed vlan 10,20,99"
+      ]
+    }
+  ],
+  "links": [
+    [
+      "SW1",
+      "g0/1",
+      "SW2",
+      "g0/1"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Make SW1 Gi0/1 a static 802.1Q trunk with native VLAN 99 that carries only VLANs 10, 20 and 99.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "trunk_port",
+          "args": {
+            "iface": "g0/1",
+            "native": 99,
+            "allowed": "10,20,99"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "interface g0/1",
+      "switchport mode trunk",
+      "switchport trunk native vlan 99",
+      "switchport trunk allowed vlan 10,20,99",
+      "end"
+    ]
+  }
+}

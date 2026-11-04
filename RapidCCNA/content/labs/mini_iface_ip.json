@@ -1,0 +1,83 @@
+{
+  "id": "lab.mini_iface_ip",
+  "title": "Interface addressing",
+  "hidden": true,
+  "domain": "d1",
+  "subtopics": [
+    "1.6"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [R1] Gi0/1 ── SW1 ── LAN 192.168.50.64/26",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/1",
+        "shutdown"
+      ]
+    },
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ],
+      "config": []
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/1",
+      "SW1",
+      "g0/1"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Give R1 Gi0/1 the first usable address of 192.168.50.64/26 and bring the interface up.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "iface_ip",
+          "args": {
+            "iface": "g0/1",
+            "ip": "192.168.50.65",
+            "mask": "255.255.255.192"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "iface_up",
+          "args": {
+            "iface": "g0/1"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "interface g0/1",
+      "ip address 192.168.50.65 255.255.255.192",
+      "no shutdown",
+      "end"
+    ]
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "id": "lab.mini_floating",
+  "title": "Floating static route",
+  "hidden": true,
+  "domain": "d3",
+  "subtopics": [
+    "3.3"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [R1] Gi0/0 10.0.12.1 ── 10.0.12.2 [R2] ── LAN 10.50.0.0/16 (OSPF)\n  [R1] Gi0/1 10.0.13.1 ── 10.0.13.2 [R3] (backup path, no OSPF)",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.12.1 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 10.0.13.1 255.255.255.252",
+        "no shutdown",
+        "router ospf 1",
+        "network 10.0.12.0 0.0.0.3 area 0"
+      ]
+    },
+    {
+      "name": "R2",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.12.2 255.255.255.252",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 10.50.0.1 255.255.0.0",
+        "no shutdown",
+        "router ospf 1",
+        "network 10.0.12.0 0.0.0.3 area 0",
+        "network 10.50.0.0 0.0.255.255 area 0"
+      ]
+    },
+    {
+      "name": "R3",
+      "type": "router",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.13.2 255.255.255.252",
+        "no shutdown"
+      ]
+    },
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": false,
+      "interfaces": [
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ],
+      "config": []
+    }
+  ],
+  "links": [
+    [
+      "R1",
+      "g0/0",
+      "R2",
+      "g0/0"
+    ],
+    [
+      "R1",
+      "g0/1",
+      "R3",
+      "g0/0"
+    ],
+    [
+      "R2",
+      "g0/1",
+      "SW1",
+      "g0/1"
+    ]
+  ],
+  "tasks": [
+    {
+      "text": "Add a backup route on R1 to 10.50.0.0/16 via R3 (10.0.13.2) that is used only if the OSPF route is lost.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "static_route",
+          "args": {
+            "net": "10.50.0.0",
+            "len": 16,
+            "next_hop": "10.0.13.2"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "route_to",
+          "args": {
+            "dest": "10.50.1.1",
+            "code": "O"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "ip route 10.50.0.0 255.255.0.0 10.0.13.2 120",
+      "end"
+    ]
+  }
+}

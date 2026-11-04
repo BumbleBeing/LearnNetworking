@@ -918,5 +918,589 @@
     ],
     "explanation": "WEP's RC4 keys can be cracked in minutes and TKIP was a stopgap with known weaknesses. Use WPA2 with AES or, better, WPA3.",
     "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.sec.008",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Hashing a file and checking the hash later protects which part of the CIA triad?",
+    "choices": [
+      "Integrity",
+      "Confidentiality",
+      "Availability",
+      "Authentication"
+    ],
+    "answer": 0,
+    "explanation": "A matching hash shows the data hasn't changed: integrity. Encryption protects confidentiality; redundancy protects availability.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.sec.009",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "An attacker runs ping sweeps and port scans to find live hosts and open services. What kind of attack is this?",
+    "choices": [
+      "Denial of service",
+      "Reconnaissance",
+      "Phishing",
+      "Buffer overflow"
+    ],
+    "answer": 1,
+    "explanation": "Reconnaissance gathers information for a later attack: which hosts exist, which ports are open, which versions run.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.sec.010",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which password attack tries words from a list of common passwords?",
+    "choices": [
+      "Brute force",
+      "Shoulder surfing",
+      "Dictionary attack",
+      "Pretexting"
+    ],
+    "answer": 2,
+    "explanation": "A dictionary attack uses a word list; brute force tries every combination. Long, uncommon passphrases and lockouts defeat both.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.sec.011",
+    "domain": "d5",
+    "subtopic": "5.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does a TCP SYN flood do?",
+    "choices": [
+      "Sends many SYNs and never completes the handshake, filling the server's table of half-open connections",
+      "Floods the network with ARP replies",
+      "Guesses TCP sequence numbers to hijack a session",
+      "Sends oversized ICMP packets"
+    ],
+    "answer": 0,
+    "explanation": "It's a denial-of-service attack on availability: the server waits on half-open connections until it can't accept real ones.",
+    "lesson_ref": "d5.security_concepts"
+  },
+  {
+    "id": "q.d5.prog.004",
+    "domain": "d5",
+    "subtopic": "5.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is the difference between user awareness and user training in a security program?",
+    "choices": [
+      "Awareness is general reminders for everyone, like posters and emails; training is formal, structured instruction",
+      "They are the same thing",
+      "Training is only for IT staff; awareness is only for managers",
+      "Awareness is technical; training is physical"
+    ],
+    "answer": 0,
+    "explanation": "Awareness keeps security in mind day to day. Training teaches specific skills and policies, often with tests or certification.",
+    "lesson_ref": "d5.security_program"
+  },
+  {
+    "id": "q.d5.prog.005",
+    "domain": "d5",
+    "subtopic": "5.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which of these is a physical access control?",
+    "choices": [
+      "An ACL on the edge router",
+      "A badge reader on the server room door",
+      "A password policy",
+      "Port security"
+    ],
+    "answer": 1,
+    "explanation": "Physical access controls keep people away from equipment: locks, badges, mantraps, guards and biometric readers.",
+    "lesson_ref": "d5.security_program"
+  },
+  {
+    "id": "q.d5.prog.006",
+    "domain": "d5",
+    "subtopic": "5.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Someone follows an employee through a badge-controlled door without badging in. What is this called?",
+    "choices": [
+      "Whaling",
+      "Phishing",
+      "Spoofing",
+      "Tailgating"
+    ],
+    "answer": 3,
+    "explanation": "Tailgating (or piggybacking) defeats badge readers. Mantraps and staff awareness counter it.",
+    "lesson_ref": "d5.security_program"
+  },
+  {
+    "id": "q.d5.pw.009",
+    "domain": "d5",
+    "subtopic": "5.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Why shouldn't you rely on type 7 password encryption?",
+    "choices": [
+      "It only works on the console",
+      "It slows the router down",
+      "It can be reversed easily with freely available tools",
+      "It stops SSH working"
+    ],
+    "answer": 2,
+    "explanation": "Type 7 (from service password-encryption) only hides passwords from casual view. Use 'enable secret' and 'username ... secret', which store a hash.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.010",
+    "domain": "d5",
+    "subtopic": "5.3",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Write the global command that creates local user 'admin' with the hashed secret Cisco123!",
+    "answer": [
+      "username admin secret Cisco123!"
+    ],
+    "explanation": "'secret' stores a one-way hash; 'password' stores clear text (or type 7). Add 'privilege 15' to give the user full access.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.011",
+    "domain": "d5",
+    "subtopic": "5.3",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which commands make the console port ask for the password Con$ole?",
+    "choices": [
+      "line console 0, password Con$ole, login",
+      "line console 0, login local",
+      "enable secret Con$ole",
+      "line vty 0 4, password Con$ole, login"
+    ],
+    "answer": 0,
+    "explanation": "The line needs both a password and 'login' to check it. 'login local' would use usernames instead.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.012",
+    "domain": "d5",
+    "subtopic": "5.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A VTY line is configured with 'no login'. What happens when someone connects?",
+    "choices": [
+      "They get in without being asked for any password",
+      "They are asked for the line password",
+      "The connection is refused",
+      "They are asked for a username"
+    ],
+    "answer": 0,
+    "explanation": "'no login' turns off authentication on the line completely. Use 'login' with a password, or 'login local' with user accounts.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.013",
+    "domain": "d5",
+    "subtopic": "5.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which of these can replace or supplement passwords for authentication?",
+    "choices": [
+      "Digital certificates",
+      "Longer ACLs",
+      "VLANs",
+      "Syslog"
+    ],
+    "answer": 0,
+    "explanation": "Certificates, biometrics and hardware tokens are password alternatives, and are often combined with a password for MFA.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.pw.014",
+    "domain": "d5",
+    "subtopic": "5.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which of these is the strongest password?",
+    "choices": [
+      "P@ssw0rd1",
+      "Admin2026!",
+      "correct-horse-battery-staple-92",
+      "qwerty123"
+    ],
+    "answer": 2,
+    "explanation": "Length adds the most strength. A long passphrase is easy to remember and resists brute force; short passwords with symbol substitutions are in every dictionary.",
+    "lesson_ref": "d5.device_passwords"
+  },
+  {
+    "id": "q.d5.vpn.006",
+    "domain": "d5",
+    "subtopic": "5.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which IPsec protocol provides encryption?",
+    "choices": [
+      "AH",
+      "ESP",
+      "IKE",
+      "GRE"
+    ],
+    "answer": 1,
+    "explanation": "ESP (protocol 50) encrypts and can authenticate. AH (protocol 51) authenticates only. IKE negotiates keys and GRE is an unencrypted tunnel.",
+    "lesson_ref": "d5.vpn"
+  },
+  {
+    "id": "q.d5.vpn.007",
+    "domain": "d5",
+    "subtopic": "5.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does IKE do in IPsec?",
+    "choices": [
+      "Authenticates the peers and negotiates the security associations and keys",
+      "Encrypts the user data",
+      "Compresses the traffic",
+      "Assigns IP addresses to remote users"
+    ],
+    "answer": 0,
+    "explanation": "IKE (UDP 500, or 4500 through NAT) builds the secure channel and agrees on algorithms and keys; ESP then protects the data.",
+    "lesson_ref": "d5.vpn"
+  },
+  {
+    "id": "q.d5.vpn.008",
+    "domain": "d5",
+    "subtopic": "5.5",
+    "type": "mcq_single",
+    "difficulty": 3,
+    "stem": "What makes DMVPN useful for many branch sites?",
+    "choices": [
+      "Branches need only a tunnel to the hub, and spoke-to-spoke tunnels are built on demand",
+      "It doesn't use encryption",
+      "It replaces routing protocols",
+      "It needs a separate tunnel configured for every pair of sites"
+    ],
+    "answer": 0,
+    "explanation": "DMVPN uses multipoint GRE over IPsec. Spokes register with the hub and build direct tunnels to each other only when needed.",
+    "lesson_ref": "d5.vpn"
+  },
+  {
+    "id": "q.d5.acl.009",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "The ACL is applied inbound on R1's LAN interface. A user opens http://10.1.1.10 (TCP 80). Based on the exhibit, what happens?",
+    "exhibit": "ip access-list extended WEB\n 10 permit tcp any host 10.1.1.10 eq 443\n 20 deny   ip any host 10.1.1.10\n 30 permit ip any any",
+    "choices": [
+      "Permitted by line 10",
+      "Denied by line 20",
+      "Permitted by line 30",
+      "Denied by the implicit deny"
+    ],
+    "answer": 1,
+    "explanation": "Line 10 only permits TCP 443. TCP 80 to 10.1.1.10 matches line 20, which denies it. Line 30 is never reached for that server.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.010",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "Write the extended ACL 120 entry that lets any host reach web server 10.1.1.10 on TCP 443.",
+    "answer": [
+      "access-list 120 permit tcp any host 10.1.1.10 eq 443",
+      "access-list 120 permit tcp any host 10.1.1.10 eq https",
+      "access-list 120 permit tcp any 10.1.1.10 0.0.0.0 eq 443"
+    ],
+    "explanation": "Extended entries list protocol, source, destination and then the port condition. 'host X' equals 'X 0.0.0.0', and IOS knows 443 as https.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.011",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "How many IPv4 ACLs can you apply to one interface?",
+    "choices": [
+      "One per direction (in and out)",
+      "One in total",
+      "Up to four",
+      "As many as you like"
+    ],
+    "answer": 0,
+    "explanation": "One ACL per protocol per direction per interface. Applying a second ACL in the same direction replaces the first.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.012",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which commands delete only entry 20 from extended named ACL BLOCK?",
+    "choices": [
+      "ip access-list extended BLOCK, then delete 20",
+      "no ip access-list extended BLOCK",
+      "access-list BLOCK no 20",
+      "ip access-list extended BLOCK, then no 20"
+    ],
+    "answer": 3,
+    "explanation": "Inside ACL configuration mode, 'no <sequence>' removes one entry. 'no ip access-list extended BLOCK' would delete the whole ACL.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.013",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which numbered ACL ranges are extended IPv4 ACLs?",
+    "choices": [
+      "1-99 and 1300-1999",
+      "100-199 and 2000-2699",
+      "200-299",
+      "1-199"
+    ],
+    "answer": 1,
+    "explanation": "Standard: 1-99 and 1300-1999. Extended: 100-199 and 2000-2699. Named ACLs say 'standard' or 'extended' explicitly.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.acl.014",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "mcq_multi",
+    "difficulty": 3,
+    "stem": "Which two ACL address entries match every address from 10.1.1.0 to 10.1.1.255? (Choose two.)",
+    "choices": [
+      "10.1.1.255 0.0.0.255",
+      "10.1.1.0 255.255.255.0",
+      "10.1.0.0 0.0.0.255",
+      "10.1.1.0 0.0.0.255"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "A wildcard only checks the bits that are 0, so with 0.0.0.255 the last octet of the address doesn't matter. 255.255.255.0 checks only the last octet and matches every address ending in .0.",
+    "lesson_ref": "d5.wildcard_masks"
+  },
+  {
+    "id": "q.d5.acl.cli.001",
+    "domain": "d5",
+    "subtopic": "5.6",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the R1 command line. With a standard ACL, stop host 192.168.10.66 reaching the server LAN (Gi0/1, 10.1.1.0/24) while allowing all other traffic. Apply it as close to the servers as possible.",
+    "lab": "lab.mini_acl",
+    "answer": "access-list 5 deny host 192.168.10.66 / access-list 5 permit any / interface g0/1 / ip access-group 5 out",
+    "explanation": "Standard ACLs match only the source, so place them near the destination: outbound on Gi0/1. Without 'permit any', the implicit deny would block everyone.",
+    "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.l2.004",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which switch ports should be trusted for DHCP snooping?",
+    "choices": [
+      "Every access port",
+      "Ports toward the legitimate DHCP server, such as uplinks",
+      "Only ports with IP phones",
+      "None"
+    ],
+    "answer": 1,
+    "explanation": "Trust only the paths to real DHCP servers. Leaving user ports untrusted blocks rogue servers there.",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.l2.005",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does the DHCP snooping binding table record?",
+    "choices": [
+      "ARP entries learned from routers",
+      "Every DHCP server on the network",
+      "The DHCP pools",
+      "Each client's MAC address, leased IP, lease time, VLAN and port"
+    ],
+    "answer": 3,
+    "explanation": "The bindings are learned from DHCP exchanges on untrusted ports. DAI and IP Source Guard use them to check traffic.",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.l2.006",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, what happened on Fa0/5, and how is it recovered?",
+    "exhibit": "SW1#show port-security interface fa0/5\nPort Security              : Enabled\nPort Status                : Secure-shutdown\nViolation Mode             : Shutdown\nMaximum MAC Addresses      : 1\nTotal MAC Addresses        : 1\nSticky MAC Addresses       : 1\nLast Source Address:Vlan   : 0050.7966.6802:10\nSecurity Violation Count   : 1",
+    "choices": [
+      "Nothing: the port is working normally",
+      "Sticky learning failed, so the port needs a reload",
+      "The port is in the wrong VLAN",
+      "A second device was seen, so the port went err-disabled; remove the device, then shutdown and no shutdown"
+    ],
+    "answer": 3,
+    "explanation": "Secure-shutdown with a violation count of 1 means an unexpected MAC arrived while the one allowed address was already learned. The port is err-disabled until bounced (or errdisable recovery).",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.ps.cli.001",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the SW1 command line. On Fa0/7, allow only the PC that's plugged in now: one MAC address, learned automatically and saved in the running configuration. Any other device must shut the port down.",
+    "lab": "lab.mini_port_security",
+    "answer": "interface fa0/7 / switchport port-security / switchport port-security mac-address sticky",
+    "explanation": "The defaults already give maximum 1 and violation shutdown, so enabling port security and sticky learning is enough. Setting them explicitly is fine too.",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.aaa.007",
+    "domain": "d5",
+    "subtopic": "5.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which global command must come first before AAA method lists can be configured on IOS?",
+    "choices": [
+      "aaa enable",
+      "aaa new-model",
+      "radius-server enable",
+      "login local"
+    ],
+    "answer": 1,
+    "explanation": "'aaa new-model' turns on AAA. From then on, lines use the default method list unless you assign another.",
+    "lesson_ref": "d5.aaa"
+  },
+  {
+    "id": "q.d5.aaa.008",
+    "domain": "d5",
+    "subtopic": "5.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which Cisco product is commonly used as the AAA server for RADIUS and TACACS+?",
+    "choices": [
+      "Cisco ISE (Identity Services Engine)",
+      "Catalyst Center",
+      "Cisco Prime Infrastructure",
+      "Meraki Dashboard"
+    ],
+    "answer": 0,
+    "explanation": "ISE provides RADIUS for network access (802.1X, VPN) and TACACS+ for device administration.",
+    "lesson_ref": "d5.aaa"
+  },
+  {
+    "id": "q.d5.aaa.009",
+    "domain": "d5",
+    "subtopic": "5.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which part of AAA decides which commands an authenticated administrator may run?",
+    "choices": [
+      "Authorisation",
+      "Authentication",
+      "Accounting",
+      "Auditing"
+    ],
+    "answer": 0,
+    "explanation": "Authentication proves who you are, authorisation decides what you may do, and accounting records what you did.",
+    "lesson_ref": "d5.aaa"
+  },
+  {
+    "id": "q.d5.wsec.008",
+    "domain": "d5",
+    "subtopic": "5.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does WPA3's Enhanced Open (OWE) add for networks with no password, such as a café?",
+    "choices": [
+      "It requires 802.1X",
+      "It adds a captive portal",
+      "It encrypts each client's traffic without needing a password",
+      "Nothing: open networks stay unencrypted"
+    ],
+    "answer": 2,
+    "explanation": "Opportunistic Wireless Encryption gives every client its own encryption key on an open SSID, so neighbours can't simply sniff traffic.",
+    "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.wsec.009",
+    "domain": "d5",
+    "subtopic": "5.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "What does Protected Management Frames (802.11w), required in WPA3, protect against?",
+    "choices": [
+      "Weak passwords",
+      "Forged deauthentication and disassociation frames",
+      "Rogue DHCP servers",
+      "Channel interference"
+    ],
+    "answer": 1,
+    "explanation": "Without PMF an attacker can spoof deauthentication frames to kick clients off, for example to capture a handshake.",
+    "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.wsec.010",
+    "domain": "d5",
+    "subtopic": "5.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Why is a weak WPA2-Personal passphrase vulnerable even though traffic is encrypted?",
+    "choices": [
+      "A captured four-way handshake can be attacked offline with password guesses",
+      "WPA2 sends the PSK in clear text",
+      "WPA2 uses RC4",
+      "WPA2 has no encryption"
+    ],
+    "answer": 0,
+    "explanation": "The handshake gives an attacker enough to test guesses offline at high speed. WPA3's SAE stops this offline attack.",
+    "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.wsec.011",
+    "domain": "d5",
+    "subtopic": "5.10",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "When configuring WPA2-Personal on a WLC WLAN, which encryption should be selected?",
+    "choices": [
+      "WEP 104-bit",
+      "TKIP",
+      "AES (CCMP)",
+      "None"
+    ],
+    "answer": 2,
+    "explanation": "WPA2 uses AES-CCMP. TKIP is the old WPA cipher and shouldn't be used.",
+    "lesson_ref": "d5.wireless_security"
+  },
+  {
+    "id": "q.d5.wsec.012",
+    "domain": "d5",
+    "subtopic": "5.10",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Where in the WLC GUI do you enter the pre-shared key for a WPA2-Personal WLAN?",
+    "choices": [
+      "Security > AAA > RADIUS",
+      "Controller > General",
+      "WLANs > edit the WLAN > Security > Layer 2, with Auth Key Mgmt set to PSK",
+      "Wireless > Access Points"
+    ],
+    "answer": 2,
+    "explanation": "On the Layer 2 security tab, choose WPA2 and AES, set Auth Key Management to PSK, then pick ASCII or hex and enter the key.",
+    "lesson_ref": "d5.wireless_security"
   }
 ]

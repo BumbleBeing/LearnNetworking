@@ -286,7 +286,7 @@ func _build() -> void:
 	_add("line", "", "password <word>", "h_line_pw")
 	_add("line", "", "login", "h_line_login")
 	_add("line", "", "login local", "h_line_login_local")
-	_add("line", "", "transport input <word>", "h_line_transport")
+	_add("line", "", "transport input <rest>", "h_line_transport")
 	_add("line", "", "exec-timeout <num> <num>", "h_exec_timeout")
 	_add("line", "", "exec-timeout <num>", "h_exec_timeout")
 	_add("nacl", "", "permit <rest>", "h_nacl_permit")
@@ -686,10 +686,19 @@ func h_line_login(s: CLISession, _a: Array) -> String:
 func h_line_login_local(s: CLISession, _a: Array) -> String:
 	s.device.lines[s.ctx.line].login = "login local"
 	return ""
+## transport input ssh | telnet | ssh telnet | all | none. Several protocols are
+## stored in a fixed order ("ssh telnet"), so checks can compare the text.
 func h_line_transport(s: CLISession, a: Array) -> String:
-	if not a[0] in ["ssh", "telnet", "all", "none"]:
+	var words: Array = []
+	for w in str(a[0]).to_lower().split(" ", false):
+		if not w in ["ssh", "telnet", "all", "none"]:
+			return INVALID + "2"
+		if not w in words:
+			words.append(w)
+	if words.size() > 1 and ("all" in words or "none" in words):
 		return INVALID + "2"
-	s.device.lines[s.ctx.line].transport = a[0]
+	words.sort_custom(func(x, y): return ["ssh", "telnet", "all", "none"].find(x) < ["ssh", "telnet", "all", "none"].find(y))
+	s.device.lines[s.ctx.line].transport = " ".join(words)
 	return ""
 
 # --- interface config ---

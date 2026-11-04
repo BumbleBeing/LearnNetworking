@@ -1,0 +1,75 @@
+{
+  "id": "lab.mini_acl",
+  "title": "Standard ACL",
+  "hidden": true,
+  "domain": "d5",
+  "subtopics": [
+    "5.6"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  Users 192.168.10.0/24 ── Gi0/0 [R1] Gi0/1 ── Servers 10.1.1.0/24",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 192.168.10.1 255.255.255.0",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 10.1.1.1 255.255.255.0",
+        "no shutdown"
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "With a standard ACL, stop host 192.168.10.66 reaching the server LAN while allowing all other traffic. Apply it as close to the servers as possible.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "acl_decides",
+          "args": {
+            "iface": "g0/1",
+            "dir": "out",
+            "proto": "ip",
+            "src": "192.168.10.66",
+            "dst": "10.1.1.10",
+            "action": "deny"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "acl_decides",
+          "args": {
+            "iface": "g0/1",
+            "dir": "out",
+            "proto": "ip",
+            "src": "192.168.10.67",
+            "dst": "10.1.1.10",
+            "action": "permit"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "access-list 5 deny host 192.168.10.66",
+      "access-list 5 permit any",
+      "interface g0/1",
+      "ip access-group 5 out",
+      "end"
+    ]
+  }
+}

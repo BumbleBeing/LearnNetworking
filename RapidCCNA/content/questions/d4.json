@@ -652,5 +652,326 @@
     "answer": 0,
     "explanation": "Traps are unacknowledged notifications. Informs (SNMPv2c and later) are acknowledged by the manager. Get and Set come from the manager.",
     "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.nat.007",
+    "domain": "d4",
+    "subtopic": "4.1",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, what type of NAT is R1 doing?",
+    "exhibit": "R1#show ip nat translations\nPro  Inside global        Inside local          Outside local     Outside global\ntcp  203.0.113.2:1024     192.168.1.10:51000    8.8.8.8:443       8.8.8.8:443\ntcp  203.0.113.2:1025     192.168.1.11:51000    8.8.8.8:443       8.8.8.8:443\nudp  203.0.113.2:1026     192.168.1.12:53122    1.1.1.1:53        1.1.1.1:53",
+    "choices": [
+      "Static NAT",
+      "Dynamic NAT with a pool",
+      "No NAT",
+      "PAT (NAT overload)"
+    ],
+    "answer": 3,
+    "explanation": "Several inside hosts share one inside global address, told apart by port numbers. Note that R1 changed the port when two hosts used the same source port.",
+    "lesson_ref": "d4.nat_basics"
+  },
+  {
+    "id": "q.d4.nat.008",
+    "domain": "d4",
+    "subtopic": "4.1",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Dynamic NAT (without overload) uses a pool of 5 public addresses. A sixth inside host starts a connection while five translations are active. What happens?",
+    "choices": [
+      "It shares an address using ports",
+      "It uses the outside interface address",
+      "The router adds a sixth address",
+      "Its traffic isn't translated, so the connection fails until an entry times out"
+    ],
+    "answer": 3,
+    "explanation": "Without 'overload', each inside host needs a whole public address. When the pool is used up, new hosts wait until entries expire.",
+    "lesson_ref": "d4.nat_basics"
+  },
+  {
+    "id": "q.d4.nat.cli.001",
+    "domain": "d4",
+    "subtopic": "4.1",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the R1 command line. Make the web server 192.168.1.20 reachable from the internet as 203.0.113.4. Gi0/0 faces the LAN and Gi0/1 faces the ISP.",
+    "lab": "lab.mini_static_nat",
+    "answer": "interface g0/0 / ip nat inside / interface g0/1 / ip nat outside / ip nat inside source static 192.168.1.20 203.0.113.4",
+    "explanation": "Static NAT needs the inside and outside interfaces marked, plus a permanent one-to-one mapping so connections can start from outside.",
+    "lesson_ref": "d4.nat_basics"
+  },
+  {
+    "id": "q.d4.ntp.006",
+    "domain": "d4",
+    "subtopic": "4.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Why does accurate time on every device matter for troubleshooting?",
+    "choices": [
+      "So DHCP leases work",
+      "Because routing protocols need it to form neighbours",
+      "So log messages from different devices can be lined up in order",
+      "Because SSH won't start without it"
+    ],
+    "answer": 2,
+    "explanation": "Correlating events across routers, switches and servers needs consistent timestamps. Certificates and some authentication also depend on correct time.",
+    "lesson_ref": "d4.ntp"
+  },
+  {
+    "id": "q.d4.ntp.007",
+    "domain": "d4",
+    "subtopic": "4.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which command shows whether a router's clock is synchronised, and its stratum?",
+    "choices": [
+      "show time",
+      "show clock detail",
+      "show ntp config",
+      "show ntp status"
+    ],
+    "answer": 3,
+    "explanation": "'show ntp status' reports synchronised or not, the stratum and the reference. 'show ntp associations' lists the servers.",
+    "lesson_ref": "d4.ntp"
+  },
+  {
+    "id": "q.d4.dhcp.008",
+    "domain": "d4",
+    "subtopic": "4.3",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which command lists the addresses a router's DHCP server has leased?",
+    "choices": [
+      "show dhcp lease",
+      "show ip dhcp pool",
+      "show ip dhcp binding",
+      "show ip arp"
+    ],
+    "answer": 2,
+    "explanation": "Bindings show each IP with the client's MAC and lease expiry. 'show ip dhcp pool' shows pool usage.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.dhcp.009",
+    "domain": "d4",
+    "subtopic": "4.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which global command, on by default, lets IOS try to resolve names you type with DNS?",
+    "choices": [
+      "ip dns server",
+      "ip domain-lookup",
+      "ip name-server",
+      "ip host"
+    ],
+    "answer": 1,
+    "explanation": "With domain-lookup on and no name server set, a mistyped command gets broadcast as a DNS query. Many admins disable it on lab devices.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.dhcp.010",
+    "domain": "d4",
+    "subtopic": "4.3",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Inside a DHCP pool, which command hands out 10.1.1.1 as the default gateway? (full command)",
+    "answer": [
+      "default-router 10.1.1.1"
+    ],
+    "explanation": "The pool also needs 'network' and usually 'dns-server'. Exclude the gateway's own address with 'ip dhcp excluded-address'.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.svc.011",
+    "domain": "d4",
+    "subtopic": "4.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "In SNMP, what holds the variables a manager can read or set on a device?",
+    "choices": [
+      "The OID filter",
+      "The community string",
+      "The trap",
+      "The MIB"
+    ],
+    "answer": 3,
+    "explanation": "The Management Information Base organises variables (objects) by OID. The agent answers Get and Set requests for them.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.012",
+    "domain": "d4",
+    "subtopic": "4.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "On which UDP port does an SNMP agent listen for requests?",
+    "choices": [
+      "161",
+      "69",
+      "162",
+      "514"
+    ],
+    "answer": 0,
+    "explanation": "Agents listen on UDP 161; managers receive traps and informs on 162. 69 is TFTP and 514 syslog.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.013",
+    "domain": "d4",
+    "subtopic": "4.5",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What does 'logging buffered' do?",
+    "choices": [
+      "Saves logs to flash permanently",
+      "Sends logs to a syslog server",
+      "Shows logs on the console only",
+      "Stores log messages in RAM so 'show logging' can display them"
+    ],
+    "answer": 3,
+    "explanation": "The buffer survives logging out but not a reload. Console logging and VTY monitor logging are separate destinations.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.014",
+    "domain": "d4",
+    "subtopic": "4.5",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "What is the syslog severity level number for 'errors'?",
+    "answer": "3",
+    "explanation": "0 emergencies, 1 alerts, 2 critical, 3 errors, 4 warnings, 5 notifications, 6 informational, 7 debugging.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.dhcp.011",
+    "domain": "d4",
+    "subtopic": "4.6",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A router relays a client's DHCP Discover. Which address does it put in the giaddr field?",
+    "choices": [
+      "The DHCP server's address",
+      "The address of the interface that received the client's broadcast",
+      "The client's MAC address",
+      "0.0.0.0"
+    ],
+    "answer": 1,
+    "explanation": "giaddr tells the server which subnet the client is on, so it picks the matching pool and sends the reply back to the relay.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.dhcp.012",
+    "domain": "d4",
+    "subtopic": "4.6",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What does 'ip helper-address' do with a client's DHCP Discover?",
+    "choices": [
+      "Floods it out every interface",
+      "Forwards it to the configured server as a unicast",
+      "Answers it locally",
+      "Drops it"
+    ],
+    "answer": 1,
+    "explanation": "Routers don't forward broadcasts. The helper turns certain UDP broadcasts, including DHCP, into unicasts to the server.",
+    "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.qos.008",
+    "domain": "d4",
+    "subtopic": "4.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Which targets are commonly quoted for good voice quality?",
+    "choices": [
+      "Delay up to 10 ms, no loss allowed",
+      "Delay up to 1 s, any jitter, loss up to 10%",
+      "One-way delay up to 150 ms, jitter up to 30 ms, loss up to 1%",
+      "Bandwidth of at least 1 Gbps"
+    ],
+    "answer": 2,
+    "explanation": "Voice is sensitive to delay, jitter and loss but needs little bandwidth, which is why it gets a priority queue.",
+    "lesson_ref": "d4.qos"
+  },
+  {
+    "id": "q.d4.qos.009",
+    "domain": "d4",
+    "subtopic": "4.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Where is the DSCP value carried?",
+    "choices": [
+      "In the 6 high-order bits of the IP header's ToS (DS) byte",
+      "In the 802.1Q tag",
+      "In the TCP header",
+      "In the Ethernet trailer"
+    ],
+    "answer": 0,
+    "explanation": "DSCP is 6 bits of the IPv4 ToS / IPv6 Traffic Class byte (the other 2 are ECN). The 3-bit CoS is in the 802.1Q tag.",
+    "lesson_ref": "d4.qos"
+  },
+  {
+    "id": "q.d4.ssh.005",
+    "domain": "d4",
+    "subtopic": "4.8",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which command confirms that SSH is enabled and shows its version?",
+    "choices": [
+      "show ssh",
+      "show ip ssh",
+      "show crypto key",
+      "show users"
+    ],
+    "answer": 1,
+    "explanation": "'show ip ssh' gives 'SSH Enabled - version 2.0' (1.99 means both versions). 'show ssh' lists current sessions.",
+    "lesson_ref": "d4.ssh"
+  },
+  {
+    "id": "q.d4.ssh.cli.001",
+    "domain": "d4",
+    "subtopic": "4.8",
+    "type": "cli_task",
+    "difficulty": 2,
+    "stem": "Use the R1 command line. Make the VTY lines accept only SSH version 2, with logins checked against a new local user 'admin' (privilege 15). The domain name is already set.",
+    "lab": "lab.mini_ssh",
+    "answer": "crypto key generate rsa modulus 2048 / ip ssh version 2 / username admin privilege 15 secret <pw> / line vty 0 4 / login local / transport input ssh",
+    "explanation": "SSH needs a hostname, a domain name and an RSA key. 'login local' checks the user database and 'transport input ssh' blocks Telnet.",
+    "lesson_ref": "d4.ssh"
+  },
+  {
+    "id": "q.d4.svc.015",
+    "domain": "d4",
+    "subtopic": "4.9",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which FTP connection carries the commands, such as login and file requests?",
+    "choices": [
+      "The data connection on TCP 20",
+      "The control connection on TCP 21",
+      "UDP 69",
+      "UDP 21"
+    ],
+    "answer": 1,
+    "explanation": "FTP uses a control connection (TCP 21) for commands and separate data connections for file contents. TFTP uses UDP 69.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.016",
+    "domain": "d4",
+    "subtopic": "4.9",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which command copies an IOS image from an FTP server to the router?",
+    "choices": [
+      "archive download ftp:",
+      "copy flash: ftp:",
+      "boot system ftp:",
+      "copy ftp: flash:"
+    ],
+    "answer": 3,
+    "explanation": "Source first, destination second. IOS then asks for the server address and file names; FTP credentials can be set with 'ip ftp username/password'.",
+    "lesson_ref": "d4.network_services"
   }
 ]

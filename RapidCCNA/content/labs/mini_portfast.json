@@ -1,0 +1,79 @@
+{
+  "id": "lab.mini_portfast",
+  "title": "PortFast and BPDU Guard",
+  "hidden": true,
+  "domain": "d2",
+  "subtopics": [
+    "2.5"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [SW1] Fa0/1 - Fa0/8: user PCs in VLAN 10\n  [SW1] Gi0/1: uplink trunk",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "fa0/3"
+        },
+        {
+          "name": "fa0/4"
+        },
+        {
+          "name": "fa0/5"
+        },
+        {
+          "name": "fa0/6"
+        },
+        {
+          "name": "fa0/7"
+        },
+        {
+          "name": "fa0/8"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "vlan 10",
+        "interface range fa0/1 - 8",
+        "switchport mode access",
+        "switchport access vlan 10",
+        "interface g0/1",
+        "switchport mode trunk"
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "Make Fa0/1 - Fa0/8 go straight to forwarding when a PC connects, and err-disable any of them that receives a BPDU.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "portfast",
+          "args": {
+            "iface": "fa0/1-8",
+            "bpduguard": true
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "interface range fa0/1 - 8",
+      "spanning-tree portfast",
+      "spanning-tree bpduguard enable",
+      "end"
+    ]
+  }
+}
