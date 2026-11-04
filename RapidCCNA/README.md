@@ -4,7 +4,7 @@ A Godot 4 study game for the **CCNA 200-301** exam. Each unit runs **tutorial �
 
 All question content is original and written in exam style. The game does not use real Cisco exam items.
 
-## Status: milestone M7 in progress (accessibility done; web tuning and content QA next)
+## Status: milestone M7 in progress (accessibility and web build done; content QA next)
 | Milestone | Scope | State |
 |---|---|---|
 | M0 | Project, autoloads, save/load, content loader + validator, tests, export presets, menu → dashboard | ✅ |
@@ -14,7 +14,7 @@ All question content is original and written in exam style. The game does not us
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | ✅ |
 | M5 | All tutorials and remaining mini-games | ✅ |
 | M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | ✅ |
-| M7 | Accessibility, web tuning, content QA | 🚧 part 1: accessibility |
+| M7 | Accessibility, web tuning, content QA | 🚧 parts 1-2: accessibility, web build |
 
 **Content:** 42 lessons covering all 53 blueprint subtopics, 600 questions split by exam weight (120/120/150/60/90/60), with at least 5 per subtopic, 600 in total and enough in every exam area to fill a full mock exam, all enforced in CI, 16 drills and 14 labs (plus 18 hidden mini-labs behind `cli_task` questions).
 
@@ -121,6 +121,14 @@ Right and wrong answers are never shown by colour alone: answered choices are la
 
 ![M7 settings, 150% text and high contrast](docs/ui/m7.png)
 
+## Web build
+`godot --headless --path . --export-release Web build/web/index.html` builds a single-threaded web version that needs no special server headers. Godot only needs the two web export templates, and `tools/fetch_web_templates.py` installs just those (about 17 MB, read out of the 1 GB template archive). CI exports the web build on every push and attaches it as the `rapidccna-web` artifact.
+- **Size:** about 37 MB as files (35 MB engine, 2 MB game data) or **9.6 MB gzipped**, so serve it with gzip or Brotli. `docs/` holds a `.gdignore` file, so the README screenshots aren't packed into the game.
+- **Progress** saves to the browser's IndexedDB and survives reloads. It's tied to the site's address, and clearing site data erases it.
+- **Small screens:** windows smaller than 1280x720 get a smaller logical canvas, down to 960x360, so text stays readable instead of shrinking. Body text is about 14 px on a phone held sideways, and desktop windows of 1280x720 or more are unchanged. Every screen fits at 960x360. Narrow portrait screens get a "turn your device sideways" prompt, with a "Continue anyway" button. See `autoload/Display.gd`.
+- **Touch** taps and drag-scrolling work through Godot's mouse emulation. Typing into fill-in answers and the CLI on a phone depends on the browser's on-screen keyboard and hasn't been tested on real devices.
+- The Quit button is hidden, because a page can't close its own tab.
+
 ## UI looks (prototype)
 Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Night Ops is the default. Switch looks from the dropdown on the dashboard or in Settings.
 
@@ -130,7 +138,7 @@ Fonts are bundled in `assets/fonts/` (SIL Open Font License; licences alongside)
 
 ## Layout
 ```
-autoload/   Settings, ContentDB, SRS (SM-2), Progress (save/mastery/streak), SessionManager
+autoload/   Settings, ContentDB, SRS (SM-2), Progress (save/mastery/streak), SessionManager, Display (small screens)
 core/       Pure logic (no UI): exam/ (MockExam: weighted selection, scaled scoring),
             net/ (IPv4, IPv6, RoutingTable, ACL, NAT, STP, OSPF, EtherChannel, MacTable
             + item generators), ios/ (Device, Network, CLI, Commands, Show, Validator, LabSession,
@@ -142,7 +150,7 @@ ui/         theme/ (Palette, ThemeFactory), components/ (UI, Backdrop, QuestionV
 minigames/  DrillBase + SubnetSprint, BitFlipper, GenDrill (generator-driven drills)
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures
-tools/      validate_content.py, install_gut.sh, smoke_session.gd (end-to-end)
+tools/      validate_content.py, install_gut.sh, smoke_session.gd (end-to-end), fetch_web_templates.py
 ```
 
 ## Running
@@ -155,6 +163,8 @@ python3 tools/validate_content.py                         # content checks
 godot --headless --path . -s res://tools/smoke_session.gd # plays a daily session and a quick mock end to end
 python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600  # coverage + mock-exam gate (CI)
 godot --headless --path . --export-release Linux          # export (needs export templates)
+python3 tools/fetch_web_templates.py                      # once, for the web export
+godot --headless --path . --export-release Web build/web/index.html
 ```
 Saves go to `user://save.json` (on Linux: `~/.local/share/godot/app_userdata/RapidCCNA/`).
 
