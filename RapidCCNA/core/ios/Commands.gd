@@ -144,6 +144,8 @@ func _build() -> void:
 	_add("config", "", "no ip route <ip> <mask> <iface>", "h_no_route_if")
 	_add("config", "switch", "ip default-gateway <ip>", "h_default_gw")
 	_add("config", "", "enable secret <word>", "h_secret")
+	_add("config", "", "enable password <word>", "h_enable_password")
+	_add("config", "", "no enable password", "h_no_enable_password")
 	_add("config", "", "service password-encryption", "h_pw_enc")
 	_add("config", "", "access-list <num> <rest>", "h_acl")
 	_add("config", "", "no access-list <num>", "h_no_acl")
@@ -285,7 +287,8 @@ func _build() -> void:
 	_add("line", "", "login", "h_line_login")
 	_add("line", "", "login local", "h_line_login_local")
 	_add("line", "", "transport input <word>", "h_line_transport")
-	_add("line", "", "exec-timeout <num> <num>", "h_noop")
+	_add("line", "", "exec-timeout <num> <num>", "h_exec_timeout")
+	_add("line", "", "exec-timeout <num>", "h_exec_timeout")
 	_add("nacl", "", "permit <rest>", "h_nacl_permit")
 	_add("nacl", "", "deny <rest>", "h_nacl_deny")
 
@@ -591,6 +594,14 @@ func h_default_gw(s: CLISession, a: Array) -> String:
 func h_secret(s: CLISession, a: Array) -> String:
 	s.device.enable_secret = a[0]
 	return ""
+func h_enable_password(s: CLISession, a: Array) -> String:
+	s.device.enable_password = a[0]
+	if not s.device.enable_secret.is_empty():
+		return "The enable password you have chosen is the same as your enable secret.\nThis is not recommended.  Re-enter the enable password." if a[0] == s.device.enable_secret else ""
+	return ""
+func h_no_enable_password(s: CLISession, _a: Array) -> String:
+	s.device.enable_password = ""
+	return ""
 func h_pw_enc(s: CLISession, _a: Array) -> String:
 	s.device.password_encryption = true
 	return ""
@@ -662,6 +673,12 @@ func _line(s: CLISession, key: String) -> String:
 	return ""
 func h_line_pw(s: CLISession, a: Array) -> String:
 	s.device.lines[s.ctx.line].password = a[0]
+	return ""
+func h_exec_timeout(s: CLISession, a: Array) -> String:
+	if a[0] > 35791:
+		return INVALID + "1"
+	s.device.lines[s.ctx.line].timeout = a[0]
+	s.device.lines[s.ctx.line].timeout_s = a[1] if a.size() > 1 else 0
 	return ""
 func h_line_login(s: CLISession, _a: Array) -> String:
 	s.device.lines[s.ctx.line].login = "login"

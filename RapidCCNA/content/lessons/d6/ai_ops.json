@@ -1,0 +1,29 @@
+{
+  "id": "d6.ai_ops",
+  "domain": "d6",
+  "subtopics": [
+    "6.4"
+  ],
+  "order": 20,
+  "title": "AI and machine learning in network operations",
+  "minutes": 5,
+  "cards": [
+    {
+      "heading": "AI and machine learning",
+      "body": "Artificial intelligence is the broad field of systems that perform tasks needing human-like judgement. Machine learning (ML) is the part that learns patterns from data instead of following hand-written rules. Supervised learning trains on labelled examples; unsupervised learning finds structure and anomalies in unlabelled data."
+    },
+    {
+      "heading": "Where it helps operations",
+      "body": "Anomaly detection spots behaviour that departs from a learned baseline (unusual traffic, rising errors). Predictive analytics forecasts failures and capacity needs before they hurt. Correlation reduces thousands of alerts to a probable root cause. Platforms such as Catalyst Center assurance apply these to telemetry."
+    },
+    {
+      "heading": "Generative AI",
+      "body": "Large language models can draft configurations, explain logs and answer troubleshooting questions in plain language. They can also be confidently wrong, so a human must review anything before it touches production, and sensitive data shouldn't be pasted into public services."
+    }
+  ],
+  "recall": [
+    "q.d6.ai.001",
+    "q.d6.ai.002",
+    "q.d6.ai.003"
+  ]
+}

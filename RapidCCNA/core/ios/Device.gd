@@ -24,6 +24,7 @@ var nat_pools: Dictionary = {}  # name -> {start, end, mask}
 var nat_rules: Array = []       # {acl, pool, iface, overload}
 var default_gateway := ""
 var enable_secret := ""
+var enable_password := ""
 var password_encryption := false
 var lines: Dictionary = {}      # "vty 0 4" / "console 0" -> {password, login, transport}
 var mac := ""                   # base MAC (bridge ID)

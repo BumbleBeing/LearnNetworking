@@ -1,0 +1,35 @@
+{
+  "id": "d5.aaa",
+  "domain": "d5",
+  "subtopics": [
+    "5.8"
+  ],
+  "order": 75,
+  "title": "AAA, RADIUS, TACACS+ and 802.1X",
+  "minutes": 7,
+  "cards": [
+    {
+      "heading": "Authentication, authorisation, accounting",
+      "body": "Authentication proves who you are. Authorisation decides what you may do. Accounting records what you did. Centralising AAA on a server means one account per person instead of local users on every device."
+    },
+    {
+      "heading": "RADIUS",
+      "body": "An open standard on UDP 1812 (authentication/authorisation) and 1813 (accounting). It combines authentication and authorisation and encrypts only the password. It's the usual choice for network access: VPN users, Wi-Fi and 802.1X."
+    },
+    {
+      "heading": "TACACS+",
+      "body": "Cisco-originated, on TCP 49. It encrypts the whole payload and keeps authentication, authorisation and accounting separate, so it can authorise individual commands. It's the usual choice for device administration.",
+      "example": "aaa new-model\ntacacs server ISE\n address ipv4 10.0.0.20\n key T@csKey\naaa authentication login default group tacacs+ local"
+    },
+    {
+      "heading": "802.1X",
+      "body": "Port-based network access control. The supplicant (the user's device) talks EAP over LAN (EAPOL) to the authenticator (switch or WLC), which relays it in RADIUS to the authentication server (such as Cisco ISE). The port only passes traffic once the server says yes.",
+      "example": "[PC: supplicant] ─EAPOL─ [Switch: authenticator] ─RADIUS─ [ISE: auth server]"
+    }
+  ],
+  "recall": [
+    "q.d5.aaa.001",
+    "q.d5.aaa.002",
+    "q.d5.aaa.003"
+  ]
+}

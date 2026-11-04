@@ -1,0 +1,36 @@
+{
+  "id": "d5.wireless_security",
+  "domain": "d5",
+  "subtopics": [
+    "5.9",
+    "5.10"
+  ],
+  "order": 80,
+  "title": "Wireless security",
+  "minutes": 7,
+  "cards": [
+    {
+      "heading": "The protocol history",
+      "body": "WEP (RC4) is broken and must never be used. WPA (TKIP) was a stop-gap. WPA2 (802.11i) uses AES-CCMP and is the baseline. WPA3 adds SAE, mandatory protected management frames (PMF) and stronger GCMP-256 encryption in its 192-bit Enterprise mode.",
+      "example": "WEP  RC4         broken\nWPA  TKIP        deprecated\nWPA2 AES-CCMP    baseline\nWPA3 SAE + PMF   current"
+    },
+    {
+      "heading": "Personal and Enterprise",
+      "body": "Personal mode uses a pre-shared key (passphrase) everyone knows. Enterprise mode uses 802.1X/EAP with a RADIUS server, so every user has their own credentials and access can be revoked per user."
+    },
+    {
+      "heading": "WPA3 SAE",
+      "body": "Simultaneous Authentication of Equals replaces WPA2-Personal's PSK handshake. It resists offline dictionary attacks against captured handshakes and gives forward secrecy: capturing traffic today and learning the passphrase later doesn't decrypt it."
+    },
+    {
+      "heading": "WPA2-PSK in the WLC GUI",
+      "body": "WLANs > select the WLAN > Security > Layer 2. Set Layer 2 Security to WPA+WPA2, tick WPA2 Policy with AES encryption, set Authentication Key Management to PSK, choose the PSK format (ASCII) and enter a passphrase of 8-63 characters. Apply and save.",
+      "example": "Security > Layer 2\n  Layer 2 Security: WPA+WPA2\n  WPA2 Policy: ✓   Encryption: AES\n  Auth Key Mgmt: PSK   Format: ASCII\n  PSK: ********************"
+    }
+  ],
+  "recall": [
+    "q.d5.wsec.001",
+    "q.d5.wsec.002",
+    "q.d5.wsec.003"
+  ]
+}

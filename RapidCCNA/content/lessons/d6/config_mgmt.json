@@ -1,0 +1,39 @@
+{
+  "id": "d6.config_mgmt",
+  "domain": "d6",
+  "subtopics": [
+    "6.6"
+  ],
+  "order": 40,
+  "title": "Configuration management: Ansible and Terraform",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Infrastructure as code",
+      "body": "Configuration management tools describe the desired state of devices or infrastructure in files kept under version control. The tool makes reality match the files: repeatable, reviewable and consistent."
+    },
+    {
+      "heading": "Ansible",
+      "body": "Agentless: nothing to install on devices. A control node pushes changes over SSH (or NETCONF/APIs). Inventory files list the devices; playbooks written in YAML list tasks that call modules (such as ios_config). Written in Python.",
+      "example": "- name: Set NTP\n  hosts: routers\n  tasks:\n    - cisco.ios.ios_config:\n        lines:\n          - ntp server 10.0.0.100"
+    },
+    {
+      "heading": "Terraform",
+      "body": "HashiCorp's infrastructure-as-code tool, declarative and written in HCL. It provisions infrastructure (cloud networks, VMs, controller objects) through providers. 'terraform plan' shows what will change; 'terraform apply' does it; a state file tracks what exists.",
+      "example": "resource \"aws_vpc\" \"main\" {\n  cidr_block = \"10.0.0.0/16\"\n}"
+    },
+    {
+      "heading": "Puppet and Chef",
+      "body": "Older agent-based tools: an agent on each managed node pulls its configuration from a server. Puppet uses manifests in its own declarative language; Chef uses cookbooks and recipes in Ruby. They're less common for network devices, which can't run agents."
+    },
+    {
+      "heading": "Push and pull",
+      "body": "Push: the controller sends changes when you run it (Ansible). Pull: agents on the nodes check in and fetch their configuration (Puppet, Chef). Declarative tools state the end result (Terraform, Puppet); procedural ones list the steps to take (Ansible playbooks run in order)."
+    }
+  ],
+  "recall": [
+    "q.d6.cm.001",
+    "q.d6.cm.002",
+    "q.d6.cm.003"
+  ]
+}

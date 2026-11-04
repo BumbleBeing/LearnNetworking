@@ -1,0 +1,29 @@
+{
+  "id": "d5.security_program",
+  "domain": "d5",
+  "subtopics": [
+    "5.2"
+  ],
+  "order": 20,
+  "title": "Security program elements",
+  "minutes": 5,
+  "cards": [
+    {
+      "heading": "User awareness",
+      "body": "Ongoing reminders that keep security in mind: posters, emails and simulated phishing campaigns that show staff what a real attack looks like and who to report it to."
+    },
+    {
+      "heading": "User training",
+      "body": "Formal, scheduled training, often required by policy or regulation, on the organisation's rules: acceptable use, data handling, passwords and how to report incidents."
+    },
+    {
+      "heading": "Physical access control",
+      "body": "Keeping unauthorised people away from equipment: locked rooms and racks, badge readers, cameras, guards and an access control vestibule (mantrap) where only one door opens at a time. Physical access to a device defeats most other controls, because the console port allows password recovery."
+    }
+  ],
+  "recall": [
+    "q.d5.prog.001",
+    "q.d5.prog.002",
+    "q.d5.prog.003"
+  ]
+}

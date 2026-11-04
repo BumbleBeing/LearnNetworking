@@ -112,3 +112,20 @@ func test_renamed_device_still_works_with_network_commands():
 	r.execute("hostname HQ")
 	assert_string_contains(r.execute("do ping 192.168.3.1"), "!!!!!")
 	assert_string_contains(r.execute("do show ip route"), "192.168.3.0/24 [110/3]")
+
+func test_device_hardening_commands_and_checks():
+	var ls := _ls("lab.device_hardening")
+	var d: Device = ls.network.devices["R1"]
+	assert_string_contains(Validator.run(ls.network, {"device": "R1", "check": "enable_secret", "args": {}}).msg, "enable password")
+	ls.apply("R1", ["enable secret S3cret!", "line console 0", "password Con!", "login", "exec-timeout 5 0"])
+	assert_true(Validator.run(ls.network, {"device": "R1", "check": "enable_secret", "args": {}}).ok)
+	assert_true(Validator.run(ls.network, {"device": "R1", "check": "line_auth", "args": {"line": "console 0", "password": true, "login": "login", "timeout": 5}}).ok)
+	var cfg := Show.running_config(d)
+	assert_string_contains(cfg, "enable password cisco", "clear text before encryption")
+	assert_string_contains(cfg, " exec-timeout 5 0")
+	ls.apply("R1", ["service password-encryption"])
+	cfg = Show.running_config(d)
+	assert_false(cfg.contains("enable password cisco"))
+	assert_false(cfg.contains(" password Con!"))
+	var vty := Validator.run(ls.network, {"device": "R1", "check": "line_auth", "args": {"line": "vty 0 4", "login": "login local"}})
+	assert_string_contains(vty.msg, "isn't configured")

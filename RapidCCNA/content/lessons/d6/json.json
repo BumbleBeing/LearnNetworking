@@ -1,0 +1,38 @@
+{
+  "id": "d6.json",
+  "domain": "d6",
+  "subtopics": [
+    "6.7"
+  ],
+  "order": 50,
+  "title": "JSON-encoded data",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Objects and key/value pairs",
+      "body": "JSON data is built from objects: curly braces holding key/value pairs separated by commas. Keys are always strings in double quotes, followed by a colon.",
+      "example": "{\n  \"hostname\": \"SW1\",\n  \"uptime_days\": 42\n}"
+    },
+    {
+      "heading": "Value types",
+      "body": "A value is a string (\"text\" in double quotes), a number (42, 3.5, no quotes), a boolean (true or false, lowercase), null, an array ([ ] an ordered list) or another object.",
+      "example": "\"vlans\": [10, 20, 30]\n\"enabled\": true\n\"location\": null\n\"ipv4\": {\"address\": \"10.1.1.1\", \"prefix\": 24}"
+    },
+    {
+      "heading": "Nesting and reading paths",
+      "body": "Objects and arrays nest, so you follow a path one step at a time. interfaces[1].ipv4.address means: the key interfaces, its second item (arrays count from 0), then ipv4, then address."
+    },
+    {
+      "heading": "Strict rules",
+      "body": "Double quotes only, never single. A comma between items but not after the last one. Lowercase true/false/null. No comments. Whitespace and line breaks don't matter."
+    }
+  ],
+  "recall": [
+    "q.d6.json.001",
+    "q.d6.json.002",
+    "q.d6.json.003"
+  ],
+  "drills": [
+    "json_rest"
+  ]
+}

@@ -2,7 +2,7 @@ extends GutTest
 ## M5 generators: every item self-consistent and deterministic, plus answer-checking rules.
 
 const GENS := ["res://core/net/Ipv6Gen.gd", "res://core/net/InterfaceGen.gd", "res://core/net/WifiGen.gd",
-	"res://core/net/FhrpGen.gd", "res://core/net/ServiceGen.gd"]
+	"res://core/net/FhrpGen.gd", "res://core/net/ServiceGen.gd", "res://core/net/JsonRestGen.gd"]
 
 func test_items_are_self_consistent():
 	for path in GENS:
@@ -88,3 +88,44 @@ func test_service_desk_dscp_and_trap_rules():
 		var sev: int = t.exhibit.split("\n")[3].split("-")[1].to_int()
 		var trap: int = ServiceGen.LEVELS.find(t.exhibit.split("\n")[1].trim_prefix("logging trap "))
 		assert_eq(t.answer_index, 0 if sev <= trap else 1, t.exhibit)
+
+func test_json_items_valid_ones_parse_and_paths_resolve():
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 31
+	var valid := 0
+	for i in 200:
+		var it := JsonRestGen.make_item(rng, "json_valid")
+		if it.answer == JsonRestGen.VALID:
+			valid += 1
+			assert_not_null(JSON.parse_string(it.exhibit), "a 'valid' item must parse:\n" + it.exhibit)
+	assert_true(valid > 20 and valid < 100, "a fair share of valid items (%d)" % valid)
+	# Strict invalidity is cross-checked with a standards-compliant parser during development;
+	# here, every defect must leave its fingerprint in the text.
+	var marks := {"trailing": "443,", "single": "'", "unquoted": "\n  enabled:", "missing_comma": "\"enabled\": true\n", "python_bool": "True", "comment": "//"}
+	for k in marks:
+		var found := false
+		for j in 200:
+			var it := JsonRestGen.make_item(rng, "json_valid")
+			if it.answer == JsonRestGen.DEFECTS[k]:
+				assert_string_contains(it.exhibit, marks[k], k)
+				found = true
+				break
+		assert_true(found, "defect %s generated" % k)
+
+func test_json_path_answer_matches_parsed_document():
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 5
+	for i in 100:
+		var it := JsonRestGen.make_item(rng, "json_path")
+		var doc = JSON.parse_string(it.exhibit)
+		assert_not_null(doc)
+		if it.question.begins_with("How many"):
+			assert_eq(str(doc.interfaces.size()), it.answer)
+			continue
+		var path: String = it.question.trim_prefix("What is the value of ").split("?")[0]
+		var v = doc
+		for part in path.replace("[", ".[").split(".", false):
+			v = v[int(part.trim_prefix("[").trim_suffix("]"))] if part.begins_with("[") else v[part]
+		var s: String = ("true" if v else "false") if v is bool else str(int(v)) if v is float else str(v)
+		assert_eq(s, it.answer, path)
+	assert_true(JsonRestGen.check({"kind": "json_path", "answer": "SW3"}, "\"SW3\""), "quotes around a string answer are fine")

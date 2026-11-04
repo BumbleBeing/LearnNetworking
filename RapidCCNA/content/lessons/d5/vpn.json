@@ -1,0 +1,38 @@
+{
+  "id": "d5.vpn",
+  "domain": "d5",
+  "subtopics": [
+    "5.5"
+  ],
+  "order": 40,
+  "title": "IPsec VPNs",
+  "minutes": 7,
+  "cards": [
+    {
+      "heading": "What a VPN does",
+      "body": "A VPN builds a private, encrypted tunnel across an untrusted network, usually the internet. IPsec provides confidentiality (encryption such as AES), integrity (hashing such as SHA), authentication of the peers (pre-shared keys or certificates) and anti-replay protection."
+    },
+    {
+      "heading": "Site-to-site",
+      "body": "Two gateways (routers or firewalls) at fixed sites keep a permanent tunnel between them. Hosts send normal traffic to their gateway; the gateways encrypt and decrypt it, so the hosts need no VPN software.",
+      "example": "[LAN A]─[R1]═══ IPsec tunnel over internet ═══[R2]─[LAN B]"
+    },
+    {
+      "heading": "Remote access",
+      "body": "Individual users connect from anywhere with a VPN client (such as Cisco Secure Client) to a headend firewall or router, using TLS or IPsec. Clientless VPNs give browser access to selected internal web apps over TLS."
+    },
+    {
+      "heading": "IPsec building blocks",
+      "body": "IKE negotiates the security associations (algorithms and keys) between the peers. ESP encrypts and authenticates the payload; AH only authenticates (no encryption), so ESP is what's used in practice. Tunnel mode wraps the whole original packet in a new IP header (gateway to gateway); transport mode protects only the payload (host to host)."
+    },
+    {
+      "heading": "GRE over IPsec and DMVPN",
+      "body": "Plain IPsec carries only unicast IP, so routing protocols (which use multicast) can't run over it. GRE over IPsec wraps traffic in GRE first, then encrypts it. DMVPN lets many branches build tunnels to a hub and directly to each other on demand."
+    }
+  ],
+  "recall": [
+    "q.d5.vpn.001",
+    "q.d5.vpn.002",
+    "q.d5.vpn.003"
+  ]
+}

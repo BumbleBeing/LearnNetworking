@@ -486,5 +486,53 @@
     "answer": "interface g0/1 / ip helper-address 10.0.0.10",
     "explanation": "The relay goes on the interface in the clients' subnet; it forwards their broadcasts as unicast to the server.",
     "lesson_ref": "d4.dhcp_dns"
+  },
+  {
+    "id": "q.d4.svc.007",
+    "domain": "d4",
+    "subtopic": "4.4",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "Which global command lets managers read (but not change) the router over SNMPv2c with the community string NETMON? (full command)",
+    "answer": [
+      "snmp-server community NETMON ro",
+      "snmp-server community NETMON RO"
+    ],
+    "explanation": "RO = read-only; RW would allow Set operations.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.008",
+    "domain": "d4",
+    "subtopic": "4.5",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "Which transport and port does syslog use by default?",
+    "choices": [
+      "TCP 514",
+      "UDP 162",
+      "UDP 514",
+      "TCP 601"
+    ],
+    "answer": 2,
+    "explanation": "Syslog sends to UDP 514.",
+    "lesson_ref": "d4.network_services"
+  },
+  {
+    "id": "q.d4.svc.009",
+    "domain": "d4",
+    "subtopic": "4.9",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Why might you choose FTP over TFTP for copying an IOS image?",
+    "choices": [
+      "FTP uses TCP and supports authentication",
+      "FTP needs no username",
+      "TFTP can't copy files to flash",
+      "FTP encrypts the transfer"
+    ],
+    "answer": 0,
+    "explanation": "FTP runs over TCP (reliable, faster for big files on lossy links) and supports logins; TFTP is simpler but has no authentication.",
+    "lesson_ref": "d4.network_services"
   }
 ]

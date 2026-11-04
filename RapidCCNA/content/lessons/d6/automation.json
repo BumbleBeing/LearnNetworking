@@ -1,0 +1,48 @@
+{
+  "id": "d6.automation",
+  "domain": "d6",
+  "subtopics": [
+    "6.1",
+    "6.2",
+    "6.3"
+  ],
+  "order": 10,
+  "title": "Automation and controller-based networking",
+  "minutes": 8,
+  "cards": [
+    {
+      "heading": "Why automate",
+      "body": "Configuring devices one by one by hand is slow and error-prone, and configurations drift apart over time. Automation applies tested changes consistently and quickly to many devices, checks compliance, and frees engineers from repetitive work. The cost: you need skills in programming, APIs and tools."
+    },
+    {
+      "heading": "Three planes",
+      "body": "The data plane forwards traffic (switching frames, routing packets, applying ACLs). The control plane builds the information needed to forward: routing protocols, STP, ARP. The management plane is how people and tools manage the device: SSH, SNMP, APIs."
+    },
+    {
+      "heading": "Traditional networks",
+      "body": "Every device runs its own control plane and is configured individually, box by box, usually through the CLI. Network-wide changes mean touching every device."
+    },
+    {
+      "heading": "Controller-based networks",
+      "body": "An SDN controller centralises (some of) the control plane and the network's configuration. Devices keep the data plane. Administrators and applications work with the controller instead of individual boxes.",
+      "example": "        Apps / scripts\n             │  northbound API (REST)\n        [ SDN controller ]\n             │  southbound API (NETCONF, RESTCONF, OpenFlow, CLI)\n   [switch]  [switch]  [router]"
+    },
+    {
+      "heading": "Northbound and southbound",
+      "body": "The northbound interface (NBI) faces up, to applications and engineers, usually a REST API returning JSON. The southbound interface (SBI) faces down, to the devices: NETCONF, RESTCONF, OpenFlow, OpFlex, or plain SSH/CLI."
+    },
+    {
+      "heading": "Software-Defined Access",
+      "body": "Cisco SD-Access is a controller-based campus run from Catalyst Center (formerly DNA Center). The underlay is the physical network of routed links (IS-IS). The overlay is built on top: VXLAN tunnels carry traffic, LISP acts as the control plane, and Cisco TrustSec group tags apply policy. Together they form the fabric."
+    },
+    {
+      "heading": "Catalyst Center and traditional management",
+      "body": "Catalyst Center adds intent-based management: you describe the desired policy and it configures the devices. It also offers assurance (health scores, path traces, issue detection), software image management and a REST API for automation, compared with traditional device-by-device CLI management."
+    }
+  ],
+  "recall": [
+    "q.d6.auto.001",
+    "q.d6.auto.002",
+    "q.d6.auto.003"
+  ]
+}

@@ -146,5 +146,15 @@
     "generator": "res://core/net/ServiceGen.gd",
     "description": "Service ports, syslog levels and trap filtering, DSCP and AF values, DHCP and SNMP.",
     "target_seconds": 25
+  },
+  {
+    "id": "json_rest",
+    "title": "JSON & REST Inspector",
+    "domain": "d6",
+    "unit": "d6.json",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/JsonRestGen.gd",
+    "description": "Spot broken JSON, pull values out of API responses, and read REST requests, methods and status codes.",
+    "target_seconds": 35
   }
 ]

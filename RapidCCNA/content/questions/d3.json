@@ -362,5 +362,55 @@
     "answer": "interface g0/0 / standby 5 ip 10.5.5.1 / standby 5 priority 150 / standby 5 preempt",
     "explanation": "R1 needs a higher priority AND preempt: without preempt it stays standby because R2 is already active.",
     "lesson_ref": "d3.fhrp"
+  },
+  {
+    "id": "q.d3.route.004",
+    "domain": "d3",
+    "subtopic": "3.1",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each part of the route 'O 172.16.0.0/16 [110/20] via 10.0.0.2, Gi0/0' to its meaning.",
+    "answer": {
+      "O": "How the route was learned (OSPF)",
+      "110": "Administrative distance",
+      "20": "Metric (cost)",
+      "10.0.0.2": "Next hop"
+    },
+    "explanation": "Code, prefix, [AD/metric], next hop, exit interface.",
+    "lesson_ref": "d3.routing_table"
+  },
+  {
+    "id": "q.d3.route.005",
+    "domain": "d3",
+    "subtopic": "3.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What does the 'L' code in 'show ip route' mean?",
+    "choices": [
+      "A route learned from a neighbour",
+      "A floating static route",
+      "The default route",
+      "The router's own interface address (a /32 local route)"
+    ],
+    "answer": 3,
+    "explanation": "L is a local /32 route for the router's own address on an interface; C is the connected subnet.",
+    "lesson_ref": "d3.routing_table"
+  },
+  {
+    "id": "q.d3.route.006",
+    "domain": "d3",
+    "subtopic": "3.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A router has 10.0.0.0/8 via OSPF (AD 110) and 10.1.0.0/16 via a static route (AD 1). Which does it use for 10.1.5.5?",
+    "choices": [
+      "10.0.0.0/8, because OSPF has a better metric",
+      "10.1.0.0/16, the longest prefix match",
+      "Both, load balanced",
+      "Neither: the AD values conflict"
+    ],
+    "answer": 1,
+    "explanation": "Forwarding uses the longest matching prefix: /16 beats /8. AD only compares routes to the same prefix.",
+    "lesson_ref": "d3.routing_table"
   }
 ]
