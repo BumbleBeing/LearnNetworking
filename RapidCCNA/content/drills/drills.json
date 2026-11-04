@@ -1,0 +1,20 @@
+[
+  {
+    "id": "bit_flipper",
+    "title": "Bit Flipper",
+    "domain": "d1",
+    "unit": "d1.binary_basics",
+    "script": "res://minigames/BitFlipper.gd",
+    "description": "Convert octets between decimal, binary and hex until it's automatic.",
+    "target_seconds": 20
+  },
+  {
+    "id": "subnet_sprint",
+    "title": "Subnet Sprint",
+    "domain": "d1",
+    "unit": "d1.subnetting_basics",
+    "script": "res://minigames/SubnetSprint.gd",
+    "description": "Network, broadcast, host range, mask and host count. Target: under 30 seconds each.",
+    "target_seconds": 30
+  }
+]

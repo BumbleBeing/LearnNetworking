@@ -32,4 +32,4 @@ func test_session_manager_suggests_first_unmastered_unit():
 	ContentDB.load_all(ContentDB.ROOT)
 	var s = SessionManager.build_daily_session()
 	assert_true(s.has("reviews"))
-	assert_eq(s.next_unit.get("id"), "d1.subnetting_basics")
+	assert_eq(s.next_unit.get("id"), "d1.binary_basics")

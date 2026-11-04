@@ -52,6 +52,26 @@ static func build(p: Dictionary, scale: float = 1.0) -> Theme:
 		if v[2]:
 			t.set_font("font", v[0], semibold if v[0] in ["H3", "ChipText"] else bold)
 
+	# Body text, code and exhibits
+	for v in [["Stem", 20], ["Body", 18]]:
+		t.set_type_variation(v[0], "Label")
+		t.set_font_size("font_size", v[0], sz.call(v[1]))
+		t.set_color("font_color", v[0], p.text)
+		t.set_constant("line_spacing", v[0], 4)
+	var code_font: Font = load(MONO.regular)
+	var code_bold: Font = load(MONO.bold)
+	t.set_type_variation("Code", "Label")
+	t.set_font("font", "Code", code_font)
+	t.set_font_size("font_size", "Code", sz.call(15))
+	t.set_color("font_color", "Code", p.text)
+	t.set_constant("line_spacing", "Code", 3)
+	t.set_type_variation("CodeBig", "Label")
+	t.set_font("font", "CodeBig", code_bold)
+	t.set_font_size("font_size", "CodeBig", sz.call(38))
+	t.set_color("font_color", "CodeBig", p.text)
+	t.set_type_variation("Exhibit", "PanelContainer")
+	t.set_stylebox("panel", "Exhibit", box(p.input, p.border, max(2, r / 2), 1, 16, 12))
+
 	# Buttons
 	t.set_font("font", "Button", semibold)
 	t.set_font_size("font_size", "Button", sz.call(16))
@@ -83,6 +103,32 @@ static func build(p: Dictionary, scale: float = 1.0) -> Theme:
 	t.set_font("font", "OptionButton", semibold)
 	t.set_font_size("font_size", "OptionButton", sz.call(16))
 
+	# Answer choices and bit toggles (toggle buttons)
+	t.set_type_variation("Choice", "Button")
+	t.set_stylebox("normal", "Choice", box(p.input, p.border, max(2, r / 2), 1, 16, 12))
+	t.set_stylebox("hover", "Choice", box(p.button_hover, p.accent, max(2, r / 2), 1, 16, 12))
+	t.set_stylebox("pressed", "Choice", box(Color(p.accent, 0.18), p.accent, max(2, r / 2), 2, 16, 12))
+	t.set_stylebox("hover_pressed", "Choice", box(Color(p.accent, 0.24), p.accent, max(2, r / 2), 2, 16, 12))
+	t.set_stylebox("disabled", "Choice", box(p.input, Color(p.border, 0.6), max(2, r / 2), 1, 16, 12))
+	t.set_font("font", "Choice", base)
+	t.set_font_size("font_size", "Choice", sz.call(17))
+	for c in ["font_color", "font_hover_color", "font_focus_color", "font_pressed_color", "font_hover_pressed_color", "font_disabled_color"]:
+		t.set_color(c, "Choice", p.text)
+	t.set_type_variation("Bit", "Button")
+	t.set_stylebox("normal", "Bit", box(p.input, p.border, max(2, r / 2), 1, 8, 8))
+	t.set_stylebox("hover", "Bit", box(p.button_hover, p.accent, max(2, r / 2), 1, 8, 8))
+	t.set_stylebox("pressed", "Bit", box(p.accent, p.accent, max(2, r / 2), 1, 8, 8))
+	t.set_stylebox("hover_pressed", "Bit", box(p.accent.lightened(0.1), p.accent, max(2, r / 2), 1, 8, 8))
+	t.set_stylebox("disabled", "Bit", box(p.input, Color(p.border, 0.6), max(2, r / 2), 1, 8, 8))
+	t.set_font("font", "Bit", code_bold)
+	t.set_font_size("font_size", "Bit", sz.call(28))
+	t.set_color("font_color", "Bit", p.muted)
+	t.set_color("font_hover_color", "Bit", p.text)
+	t.set_color("font_focus_color", "Bit", p.text)
+	t.set_color("font_disabled_color", "Bit", p.muted)
+	for c in ["font_pressed_color", "font_hover_pressed_color"]:
+		t.set_color(c, "Bit", p.on_accent)
+
 	# Panels
 	t.set_type_variation("Card", "PanelContainer")
 	var card := box(p.panel, p.border, r, p.border_w, 24, 20)
@@ -96,7 +142,9 @@ static func build(p: Dictionary, scale: float = 1.0) -> Theme:
 	# Inputs
 	t.set_stylebox("normal", "LineEdit", box(p.input, p.border, max(2, r / 2), 1, 12, 9))
 	t.set_stylebox("focus", "LineEdit", box(p.input, p.accent, max(2, r / 2), 2, 12, 9))
+	t.set_stylebox("read_only", "LineEdit", box(Color(p.input, p.input.a * 0.6), Color(p.border, 0.6), max(2, r / 2), 1, 12, 9))
 	t.set_color("font_color", "LineEdit", p.text)
+	t.set_color("font_uneditable_color", "LineEdit", Color(p.text, 0.75))
 	t.set_color("font_placeholder_color", "LineEdit", Color(p.muted, 0.8))
 	t.set_color("caret_color", "LineEdit", p.accent)
 	t.set_color("selection_color", "LineEdit", Color(p.accent, 0.35))

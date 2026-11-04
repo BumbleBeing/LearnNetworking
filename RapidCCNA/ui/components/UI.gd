@@ -133,3 +133,26 @@ static func center_all(node: Node) -> void:
 			c.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 			if c is PanelContainer:
 				center_all(c)
+
+## Focus a control on the next frame, if it still exists and is in the tree.
+static func focus_later(c: Control) -> void:
+	var ref: WeakRef = weakref(c)
+	(func():
+		var n = ref.get_ref()
+		if n and n.is_inside_tree() and n.is_visible_in_tree():
+			n.grab_focus()).call_deferred()
+
+## Scroll the nearest ScrollContainer so `c` is visible (after layout settles).
+static func scroll_into_view(c: Control) -> void:
+	var ref: WeakRef = weakref(c)
+	var tree := Engine.get_main_loop() as SceneTree
+	await tree.process_frame
+	await tree.process_frame
+	var n = ref.get_ref()
+	if n == null or not n.is_inside_tree():
+		return
+	var p = n.get_parent()
+	while p and not p is ScrollContainer:
+		p = p.get_parent()
+	if p:
+		p.ensure_control_visible(n)

@@ -24,16 +24,36 @@ def load(path, errors):
 
 def check_answer(q, where, errors):
     t, ans, choices = q["type"], q["answer"], q.get("choices")
-    if t in ("mcq_single", "mcq_multi") and not isinstance(choices, list):
+    if t in ("mcq_single", "mcq_multi", "exhibit") and not isinstance(choices, list):
         errors.append(f"{where}: {t} needs a 'choices' list")
         return
-    if t == "mcq_single":
+    if t in ("mcq_single", "exhibit"):
         if not isinstance(ans, int) or not 0 <= ans < len(choices):
             errors.append(f"{where}: answer index out of range")
+        if t == "exhibit" and not isinstance(q.get("exhibit"), str):
+            errors.append(f"{where}: exhibit question needs an 'exhibit' string")
     elif t == "mcq_multi":
         if (not isinstance(ans, list) or len(ans) < 2 or len(set(ans)) != len(ans)
                 or any(not isinstance(a, int) or not 0 <= a < len(choices) for a in ans)):
             errors.append(f"{where}: mcq_multi answer must be >=2 unique valid indices")
+    elif t == "fill_in":
+        accepted = ans if isinstance(ans, list) else [ans]
+        if not accepted or any(not isinstance(a, str) or not a.strip() for a in accepted):
+            errors.append(f"{where}: fill_in answer must be a string or list of strings")
+    elif t == "drag_match":
+        if not isinstance(ans, dict) or len(ans) < 2:
+            errors.append(f"{where}: drag_match answer must map >=2 left items to right items")
+        if not isinstance(q.get("distractors", []), list):
+            errors.append(f"{where}: distractors must be a list")
+    elif t == "drag_order":
+        if not isinstance(ans, list) or len(ans) < 2 or len(set(ans)) != len(ans):
+            errors.append(f"{where}: drag_order answer must be >=2 unique items in order")
+    elif t == "subnet_calc":
+        fields = q.get("fields")
+        if not isinstance(fields, list) or not isinstance(ans, dict):
+            errors.append(f"{where}: subnet_calc needs 'fields' list and 'answer' object")
+        elif {f.get("key") for f in fields} != set(ans):
+            errors.append(f"{where}: subnet_calc field keys must match answer keys")
 
 
 def validate(root: Path, min_per_subtopic: int = 0):
@@ -98,6 +118,28 @@ def validate(root: Path, min_per_subtopic: int = 0):
             if subtopics.get(q["subtopic"]) != q["domain"]:
                 errors.append(f"{where}: subtopic {q['subtopic']} not in domain {q['domain']}")
             check_answer(q, where, errors)
+
+    drills = {}
+    drills_path = root / "drills" / "drills.json"
+    if drills_path.exists():
+        arr = load(drills_path, errors)
+        for d in arr if isinstance(arr, list) else []:
+            missing = {"id", "title", "domain", "unit", "script"} - d.keys()
+            if missing:
+                errors.append(f"{drills_path}: drill missing {sorted(missing)}")
+                continue
+            register(d["id"], str(drills_path))
+            drills[d["id"]] = d
+            script = root.parent / d["script"].replace("res://", "")
+            if not script.exists():
+                errors.append(f"drill {d['id']}: script {d['script']} not found")
+    for d in drills.values():
+        if d["unit"] not in lessons:
+            errors.append(f"drill {d['id']}: unit {d['unit']} does not exist")
+    for lid, (lesson, path) in lessons.items():
+        for did in lesson.get("drills", []):
+            if did not in drills:
+                errors.append(f"{path}: drill {did} does not exist")
 
     for q in questions.values():
         ref = q.get("lesson_ref")

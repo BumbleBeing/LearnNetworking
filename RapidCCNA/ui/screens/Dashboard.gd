@@ -37,10 +37,16 @@ func _ready() -> void:
 	UI.label(left, next.get("title", "All units mastered!"), "H2", true)
 	if not next.is_empty():
 		var d := ContentDB.get_domain(next.domain)
-		UI.label(left, "%s  ·  ~%d min tutorial, then drills and recall" % [d.get("name", ""), int(next.get("minutes", 5))], "Muted", true)
-	var go := UI.button(left, "Start session", func(): pass, true)
-	go.disabled = true
-	go.tooltip_text = "Playable sessions arrive in milestone M1"
+		UI.label(left, d.get("name", ""), "Muted", true)
+	var plan: Array = session.steps
+	var plan_box := UI.vbox(left, 2)
+	for st in plan:
+		UI.label(plan_box, "•  " + SessionManager.describe(st), "Body", true)
+	var go := UI.button(left, "Start session", SessionManager.start_daily, true)
+	if plan.is_empty():
+		go.disabled = true
+		UI.label(plan_box, "Nothing due. Try a practice drill below.", "Muted", true)
+	UI.focus_later(go)
 	var spacer := Control.new()
 	spacer.custom_minimum_size.y = 8
 	left.add_child(spacer)
@@ -69,6 +75,20 @@ func _ready() -> void:
 		var r := _readiness(d.id)
 		UI.label(line, "%d%%  ·  w%d" % [int(round(r * 100)), int(d.weight)], "Muted")
 		UI.bar(right, r, color, 8)
+
+	# Free practice
+	if not ContentDB.drills.is_empty():
+		var practice := UI.card(v, "Practice drills")
+		for drill in ContentDB.drills.values():
+			var row2 := UI.hbox(practice, 12)
+			var info := UI.vbox(row2, 0)
+			info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			UI.label(info, drill.title, "H2")
+			UI.label(info, drill.get("description", ""), "Muted", true)
+			for mode in [["Guided", true], ["Unguided", false]]:
+				var b := UI.button(row2, mode[0], SessionManager.start_drill.bind(drill.id, mode[1]))
+				b.custom_minimum_size.x = 120
+				b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 func _readiness(domain_id: String) -> float:
 	if preview_readiness.has(domain_id):

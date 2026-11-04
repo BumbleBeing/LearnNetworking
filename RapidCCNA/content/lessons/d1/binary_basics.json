@@ -1,0 +1,32 @@
+{
+  "id": "d1.binary_basics",
+  "domain": "d1",
+  "subtopics": ["1.6"],
+  "order": 55,
+  "title": "Binary and hex for network engineers",
+  "minutes": 5,
+  "cards": [
+    {
+      "heading": "Eight bits, eight place values",
+      "body": "Every IPv4 octet is 8 bits. From left to right the bits are worth 128, 64, 32, 16, 8, 4, 2 and 1. A bit set to 1 adds its value; a 0 adds nothing. The largest octet, all ones, is 255.",
+      "example": "  128  64  32  16   8   4   2   1\n    1   1   0   0   0   0   0   0   = 128 + 64 = 192"
+    },
+    {
+      "heading": "Decimal to binary",
+      "body": "Walk the place values left to right. If the value fits in what is left, write 1 and subtract it; otherwise write 0. Stop when nothing is left and fill the rest with zeros.",
+      "example": "200: 128 fits (72 left), 64 fits (8 left), 32 no, 16 no,\n     8 fits (0 left), 4 no, 2 no, 1 no\n200 = 1100 1000"
+    },
+    {
+      "heading": "The mask values to memorise",
+      "body": "Subnet mask octets are always ones followed by zeros, so only nine values are possible. Each one adds the next place value to the previous. Knowing these by heart is what makes subnetting fast.",
+      "example": "0000 0000 =   0     1111 1000 = 248\n1000 0000 = 128     1111 1100 = 252\n1100 0000 = 192     1111 1110 = 254\n1110 0000 = 224     1111 1111 = 255\n1111 0000 = 240"
+    },
+    {
+      "heading": "Hex in one step",
+      "body": "Split the byte into two 4-bit halves (nibbles). Each nibble is one hex digit from 0 to F, where A=10 through F=15. You will see hex in MAC addresses and in every IPv6 address.",
+      "example": "1100 1000  →  C 8  →  0xC8 = 200\n1111 1111  →  F F  →  0xFF = 255"
+    }
+  ],
+  "recall": ["q.d1.binary.001", "q.d1.binary.002", "q.d1.binary.003"],
+  "drills": ["bit_flipper"]
+}

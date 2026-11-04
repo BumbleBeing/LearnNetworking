@@ -7,6 +7,7 @@ var blueprint: Dictionary = {}
 var domains: Array = []            # blueprint domains, in order
 var lessons: Dictionary = {}       # id -> lesson dict
 var questions: Dictionary = {}     # id -> question dict
+var drills: Dictionary = {}        # id -> drill definition (content/drills/drills.json)
 var errors: PackedStringArray = []
 
 func _ready() -> void:
@@ -17,6 +18,7 @@ func load_all(root: String) -> void:
 	domains = []
 	lessons = {}
 	questions = {}
+	drills = {}
 	errors = PackedStringArray()
 	var bp = JsonIO.read(root + "/blueprint.json")
 	if not bp is Dictionary:
@@ -40,6 +42,11 @@ func load_all(root: String) -> void:
 				_add_unique(questions, q, path)
 			else:
 				errors.append("invalid question in %s" % path)
+	var dr = JsonIO.read(root + "/drills/drills.json")
+	if dr is Array:
+		for d in dr:
+			if d is Dictionary and d.has("id"):
+				_add_unique(drills, d, root + "/drills/drills.json")
 	for e in errors:
 		push_warning("ContentDB: " + e)
 

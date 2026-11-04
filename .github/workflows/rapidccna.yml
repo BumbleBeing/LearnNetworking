@@ -26,3 +26,5 @@ jobs:
         run: godot --headless --import --path . || true
       - name: Run unit tests
         run: godot --headless --path . -s addons/gut/gut_cmdln.gd
+      - name: End-to-end session smoke test
+        run: godot --headless --path . -s res://tools/smoke_session.gd
