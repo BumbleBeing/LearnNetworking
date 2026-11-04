@@ -56,5 +56,45 @@
     "generator": "res://core/net/NatGen.gd",
     "description": "NAT address terms, NAT types from config, PAT behaviour and translation tables.",
     "target_seconds": 40
+  },
+  {
+    "id": "frame_forwarder",
+    "title": "Frame Forwarder",
+    "domain": "d1",
+    "unit": "d1.switching",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/MacGen.gd",
+    "description": "Learn, forward, flood or filter: predict what a switch does with each frame, VLAN by VLAN.",
+    "target_seconds": 40
+  },
+  {
+    "id": "channel_builder",
+    "title": "Channel Builder",
+    "domain": "d2",
+    "unit": "d2.etherchannel",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/EtherChannelGen.gd",
+    "description": "Which mode pairs bundle, why a member is suspended, and reading show etherchannel summary.",
+    "target_seconds": 30
+  },
+  {
+    "id": "stp_solver",
+    "title": "Spanning Tree Solver",
+    "domain": "d2",
+    "unit": "d2.stp",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/StpGen.gd",
+    "description": "Elect the root bridge, find root ports and path costs, and spot the blocked port.",
+    "target_seconds": 60
+  },
+  {
+    "id": "ospf_navigator",
+    "title": "OSPF Navigator",
+    "domain": "d3",
+    "unit": "d3.ospf",
+    "script": "res://minigames/GenDrill.gd",
+    "generator": "res://core/net/OspfGen.gd",
+    "description": "Router IDs, DR/BDR elections, costs, best paths, network statements and broken adjacencies.",
+    "target_seconds": 50
   }
 ]

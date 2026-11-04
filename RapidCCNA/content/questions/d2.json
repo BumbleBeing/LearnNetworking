@@ -62,5 +62,221 @@
     "answer": "interface fa0/5 / switchport mode access / switchport access vlan 20",
     "explanation": "Set the mode explicitly (switchport mode access) so the port can't negotiate a trunk, then assign it to the VLAN.",
     "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.ec.001",
+    "domain": "d2",
+    "subtopic": "2.4",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "SW1's member ports use 'channel-group 1 mode passive'. Which mode on SW2 forms an LACP EtherChannel?",
+    "choices": [
+      "passive",
+      "active",
+      "desirable",
+      "auto"
+    ],
+    "answer": 1,
+    "explanation": "passive only responds to LACP; it never starts negotiation. The other end must be active.",
+    "lesson_ref": "d2.etherchannel"
+  },
+  {
+    "id": "q.d2.ec.002",
+    "domain": "d2",
+    "subtopic": "2.4",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each channel-group mode to its protocol.",
+    "answer": {
+      "active": "LACP",
+      "passive": "LACP",
+      "desirable": "PAgP",
+      "auto": "PAgP",
+      "on": "No negotiation protocol"
+    },
+    "explanation": "LACP (IEEE 802.3ad) uses active/passive. PAgP (Cisco proprietary) uses desirable/auto. 'on' bundles without negotiating.",
+    "lesson_ref": "d2.etherchannel"
+  },
+  {
+    "id": "q.d2.ec.003",
+    "domain": "d2",
+    "subtopic": "2.4",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, why isn't Gi0/2 bundled into Po1?",
+    "exhibit": "interface GigabitEthernet0/1\n switchport trunk allowed vlan 10,20,30\n switchport mode trunk\n channel-group 1 mode active\n!\ninterface GigabitEthernet0/2\n switchport trunk allowed vlan 10,20\n switchport mode trunk\n channel-group 1 mode active\n\nSW1#show etherchannel summary\n1      Po1(SU)       LACP        Gi0/1(P)    Gi0/2(s)",
+    "choices": [
+      "LACP needs at least three member ports",
+      "Gi0/2 should be in mode passive",
+      "The allowed VLAN lists don't match",
+      "The port numbers must be the same on both switches"
+    ],
+    "answer": 2,
+    "explanation": "The trunk member ports must match on native VLAN and allowed VLANs. Gi0/2 has a different allowed list, so it's suspended (s).",
+    "lesson_ref": "d2.etherchannel"
+  },
+  {
+    "id": "q.d2.ec.004",
+    "domain": "d2",
+    "subtopic": "2.4",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Why does a two-link EtherChannel between two switches give more usable bandwidth than two separate links?",
+    "choices": [
+      "STP treats the bundle as one link, so neither member is blocked",
+      "EtherChannel doubles the speed of each member",
+      "The links negotiate jumbo frames",
+      "Each frame is split across both links"
+    ],
+    "answer": 0,
+    "explanation": "Without a bundle, STP blocks one of the parallel links. A port-channel is one logical link to STP, so both members forward.",
+    "lesson_ref": "d2.etherchannel"
+  },
+  {
+    "id": "q.d2.ec.005",
+    "domain": "d2",
+    "subtopic": "2.4",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two pairs of modes form an EtherChannel? (Choose two.)",
+    "choices": [
+      "active / passive",
+      "auto / auto",
+      "desirable / active",
+      "on / on",
+      "passive / passive"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "active + passive negotiates LACP and on + on forces a static channel. auto + auto and passive + passive never start negotiation, and desirable (PAgP) can't talk to active (LACP).",
+    "lesson_ref": "d2.etherchannel"
+  },
+  {
+    "id": "q.d2.ec.006",
+    "domain": "d2",
+    "subtopic": "2.4",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "What is the maximum number of active member links in a single LACP EtherChannel on a Catalyst switch?",
+    "answer": "8",
+    "explanation": "Up to 8 links are active in one bundle (LACP can hold 8 more in hot-standby).",
+    "lesson_ref": "d2.etherchannel"
+  },
+  {
+    "id": "q.d2.stp.001",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "How is the root bridge chosen?",
+    "choices": [
+      "Highest priority, then highest MAC address",
+      "The switch with the most ports",
+      "Lowest priority, then lowest MAC address",
+      "The switch with the fastest uplinks"
+    ],
+    "answer": 2,
+    "explanation": "The lowest bridge ID wins. The bridge ID is the priority followed by the MAC address, so priority is compared first and the MAC breaks ties.",
+    "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.stp.002",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "A switch runs Rapid PVST+ with the default priority. What bridge priority does it advertise in VLAN 20?",
+    "answer": "32788",
+    "explanation": "Default 32768 plus the extended system ID (the VLAN number, 20) = 32788.",
+    "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.stp.003",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Based on the exhibit, what is SW2's role and why is Gi0/2 blocking?",
+    "exhibit": "SW2#show spanning-tree vlan 10\nVLAN0010\n  Root ID    Priority    24586\n             Address     0019.e8a1.1c00\n             Cost        4\n             Port        1 (GigabitEthernet0/1)\n  Bridge ID  Priority    32778  (priority 32768 sys-id-ext 10)\n             Address     0019.e8b2.2d00\n\nInterface           Role Sts Cost      Prio.Nbr Type\nGi0/1               Root FWD 4         128.1    P2p\nGi0/2               Altn BLK 4         128.2    P2p\nFa0/5               Desg FWD 19        128.5    P2p Edge",
+    "choices": [
+      "SW2 is the root bridge; Gi0/2 is a backup designated port",
+      "SW2 is not the root; Gi0/2 is an alternate path to the root",
+      "SW2 is the root bridge; Gi0/2 has a cost mismatch",
+      "Gi0/2 was err-disabled by BPDU Guard"
+    ],
+    "answer": 1,
+    "explanation": "SW2 isn't the root (the root ID differs from its bridge ID). Gi0/1 is its root port. Gi0/2 is an alternate port: a backup path to the root that discards frames until the root port fails.",
+    "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.stp.004",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "drag_match",
+    "difficulty": 1,
+    "stem": "Match each link speed to its default spanning tree port cost.",
+    "distractors": [
+      "1"
+    ],
+    "answer": {
+      "10 Mbps": "100",
+      "100 Mbps": "19",
+      "1 Gbps": "4",
+      "10 Gbps": "2"
+    },
+    "explanation": "Short (802.1D) costs, used by default by Rapid PVST+: 100, 19, 4, 2.",
+    "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.stp.005",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "A non-root switch has two links to the root bridge with equal cost, connected to the root's Gi0/2 and Gi0/1. Its own ports are Gi0/1 and Gi0/2 respectively. Which port becomes its root port?",
+    "choices": [
+      "Gi0/1, because it's its own lowest port number",
+      "Gi0/2, because it connects to the root's lower port ID",
+      "Both, because costs are equal",
+      "Neither; both block until costs are changed"
+    ],
+    "answer": 1,
+    "explanation": "Cost and neighbour bridge ID tie, so the lowest neighbour (sender) port ID decides. The local port that connects to the root's Gi0/1 wins, which is the local Gi0/2.",
+    "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.stp.006",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "An administrator enables PortFast and BPDU Guard on an access port. Which two statements are true? (Choose two.)",
+    "choices": [
+      "The port goes to forwarding immediately when it comes up",
+      "The port becomes the root port",
+      "The port is err-disabled if it receives a BPDU",
+      "The port stops sending all frames"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "PortFast moves the port straight to forwarding. BPDU Guard err-disables it if a BPDU arrives, such as when someone connects a switch.",
+    "lesson_ref": "d2.stp"
+  },
+  {
+    "id": "q.d2.stp.007",
+    "domain": "d2",
+    "subtopic": "2.5",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "Which global command makes a switch the root bridge for VLAN 10 by lowering its priority automatically? (full command)",
+    "answer": [
+      "spanning-tree vlan 10 root primary"
+    ],
+    "explanation": "root primary sets the priority to 24576, or 4096 below the current root's priority if that's already lower.",
+    "lesson_ref": "d2.stp"
   }
 ]

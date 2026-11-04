@@ -1,0 +1,53 @@
+{
+  "id": "d3.ospf",
+  "domain": "d3",
+  "subtopics": [
+    "3.4"
+  ],
+  "order": 30,
+  "title": "Single-area OSPFv2",
+  "minutes": 8,
+  "cards": [
+    {
+      "heading": "Link-state routing",
+      "body": "OSPF routers flood link-state advertisements so every router in the area has the same map (the LSDB). Each router then runs Dijkstra's SPF algorithm to find its own lowest-cost path to every network. OSPF routes have administrative distance 110 and code O.",
+      "example": "O    10.4.4.0/24 [110/3] via 10.0.12.2, 00:01:12, Gi0/0"
+    },
+    {
+      "heading": "Turn it on",
+      "body": "router ospf <process-id> starts a process (the ID is local only). A network statement enables OSPF on every interface whose IP matches the address and wildcard, and puts it in an area. Or enable it on the interface directly.",
+      "example": "router ospf 1\n router-id 1.1.1.1\n network 10.0.12.0 0.0.0.3 area 0\n passive-interface g0/2\n!\ninterface g0/1\n ip ospf 1 area 0"
+    },
+    {
+      "heading": "Router ID",
+      "body": "Every router needs a unique 32-bit router ID. It's chosen in this order: the router-id command, else the highest IP on an up loopback, else the highest IP on an up physical interface. A changed router ID takes effect after 'clear ip ospf process'."
+    },
+    {
+      "heading": "Becoming neighbours",
+      "body": "Routers discover each other with Hellos (every 10 s on Ethernet; dead after 40 s). To become neighbours they must match on: subnet and mask, area, Hello and Dead timers, authentication and MTU, and their router IDs must differ. Process IDs, costs and priorities don't have to match. Passive interfaces send no Hellos.",
+      "example": "R1#show ip ospf neighbor\nNeighbor ID  Pri  State     Dead Time  Address    Interface\n2.2.2.2        1  FULL/DR   00:00:35   10.0.12.2  Gi0/0"
+    },
+    {
+      "heading": "DR and BDR",
+      "body": "On Ethernet segments routers elect a designated router and a backup to cut down flooding. Highest priority wins (default 1, 0 = never), then highest router ID. The election isn't pre-emptive. Other routers (DROTHERs) go FULL with the DR and BDR and stay 2WAY with each other, which is normal."
+    },
+    {
+      "heading": "Cost",
+      "body": "Cost = reference bandwidth ÷ interface bandwidth, minimum 1. The default reference is 100 Mbps, so FastEthernet, Gigabit and 10 Gigabit all cost 1. Raise it on every router with auto-cost reference-bandwidth, or set ip ospf cost on an interface. The lowest total cost wins; equal costs load-balance.",
+      "example": "auto-cost reference-bandwidth 10000\n→ 10 Gbps = 1, 1 Gbps = 10, 100 Mbps = 100"
+    },
+    {
+      "heading": "Default route",
+      "body": "A router with a default route to the internet can advertise it to the area with default-information originate. Others see it as O*E2 0.0.0.0/0.",
+      "example": "ip route 0.0.0.0 0.0.0.0 203.0.113.1\nrouter ospf 1\n default-information originate"
+    }
+  ],
+  "recall": [
+    "q.d3.ospf.001",
+    "q.d3.ospf.002",
+    "q.d3.ospf.003"
+  ],
+  "drills": [
+    "ospf_navigator"
+  ]
+}

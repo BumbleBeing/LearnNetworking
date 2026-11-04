@@ -1,0 +1,48 @@
+{
+  "id": "d2.stp",
+  "domain": "d2",
+  "subtopics": [
+    "2.5"
+  ],
+  "order": 30,
+  "title": "Rapid PVST+ spanning tree",
+  "minutes": 8,
+  "cards": [
+    {
+      "heading": "Why spanning tree",
+      "body": "Redundant switch links create layer 2 loops. Ethernet frames have no TTL, so a broadcast would circle forever (a broadcast storm) and MAC tables would flap. Spanning tree blocks just enough ports to leave one loop-free path, and unblocks them if a link fails."
+    },
+    {
+      "heading": "1. Elect the root bridge",
+      "body": "Every switch has a bridge ID: priority (default 32768) plus its MAC address. The lowest bridge ID wins: lowest priority, then lowest MAC. PVST+ runs one tree per VLAN and adds the VLAN number to the priority (the extended system ID), so 32768 in VLAN 10 shows as 32778.",
+      "example": "spanning-tree vlan 10 priority 24576   (multiples of 4096)\nspanning-tree vlan 10 root primary     (sets 24576 or lower)"
+    },
+    {
+      "heading": "2. Root port on every other switch",
+      "body": "Each non-root switch picks the one port with the lowest total cost to the root. Default costs: 10 Gbps = 2, 1 Gbps = 4, 100 Mbps = 19, 10 Mbps = 100. Ties go to the lowest neighbour bridge ID, then the lowest neighbour port ID (priority.number).",
+      "example": "SW3 Gi0/1: 0 + 4 = 4   ← root port\nSW3 Gi0/2: 4 + 4 = 8"
+    },
+    {
+      "heading": "3. Designated port on every link",
+      "body": "On each link one end is designated (forwards towards that segment): the end whose switch has the lower root cost, then the lower bridge ID. All the root bridge's ports are designated. Any port that is neither root nor designated becomes an alternate port and blocks (discards)."
+    },
+    {
+      "heading": "Rapid PVST+ roles and states",
+      "body": "Roles: root, designated, alternate (a backup root port) and backup. States: discarding, learning, forwarding. Rapid PVST+ converges in about a second instead of 30-50 seconds for classic STP.",
+      "example": "spanning-tree mode rapid-pvst\nInterface  Role Sts Cost  Prio.Nbr\nGi0/1      Root FWD 4     128.1\nGi0/2      Altn BLK 4     128.2"
+    },
+    {
+      "heading": "PortFast and BPDU Guard",
+      "body": "Access ports to end hosts can skip listening and learning with PortFast. BPDU Guard err-disables a PortFast port if a BPDU arrives, so nobody can plug in a switch and change the tree.",
+      "example": "interface fa0/5\n spanning-tree portfast\n spanning-tree bpduguard enable"
+    }
+  ],
+  "recall": [
+    "q.d2.stp.001",
+    "q.d2.stp.002",
+    "q.d2.stp.003"
+  ],
+  "drills": [
+    "stp_solver"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": "d2.etherchannel",
+  "domain": "d2",
+  "subtopics": [
+    "2.4"
+  ],
+  "order": 20,
+  "title": "EtherChannel",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Why bundle links",
+      "body": "Spanning tree blocks all but one of several parallel links between two switches. An EtherChannel bundles up to 8 active physical links into one logical port-channel interface, so STP sees a single link: all members forward, and losing one member doesn't change the topology.",
+      "example": "SW1 Gi0/1 ═╗           ╔═ Gi0/1 SW2\nSW1 Gi0/2 ═╩═ Po1 ════ ╩═ Gi0/2"
+    },
+    {
+      "heading": "LACP, PAgP or static",
+      "body": "LACP (802.3ad, open standard) uses modes active and passive. PAgP (Cisco) uses desirable and auto. Mode on forces the bundle with no negotiation at all. You can't mix protocols, and 'on' only works with 'on'.",
+      "example": "active   + active/passive   → LACP\ndesirable + desirable/auto  → PAgP\non + on                    → static\npassive + passive, auto + auto → nothing"
+    },
+    {
+      "heading": "Configure it",
+      "body": "Put the same channel-group number and mode on every member port. IOS creates the port-channel interface for you; configure trunking or VLANs on the port-channel and it's copied to the members.",
+      "example": "interface range gi0/1 - 2\n channel-group 1 mode active\ninterface port-channel 1\n switchport mode trunk"
+    },
+    {
+      "heading": "Members must match",
+      "body": "Speed, duplex, switchport mode, access VLAN (or native VLAN and allowed list on a trunk) must be identical on every member. A port that differs is suspended. Descriptions and port numbers don't matter."
+    },
+    {
+      "heading": "Verify",
+      "body": "show etherchannel summary lists each group, its protocol and every member with a flag: P = bundled, s = suspended, I = stand-alone, D = down. The port-channel shows SU when it's a layer 2 bundle in use.",
+      "example": "Group  Port-channel  Protocol    Ports\n1      Po1(SU)       LACP        Gi0/1(P)    Gi0/2(P)"
+    }
+  ],
+  "recall": [
+    "q.d2.ec.001",
+    "q.d2.ec.002",
+    "q.d2.ec.003"
+  ],
+  "drills": [
+    "channel_builder"
+  ]
+}

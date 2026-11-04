@@ -199,5 +199,111 @@
       "Data is exchanged"
     ],
     "explanation": "TCP's three-way handshake is SYN, SYN-ACK, ACK. Only then does data flow."
+  },
+  {
+    "id": "q.d1.switch.001",
+    "domain": "d1",
+    "subtopic": "1.13",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What does a switch use to build its MAC address table?",
+    "choices": [
+      "The source MAC address of frames it receives",
+      "The destination MAC address of frames it receives",
+      "ARP replies only",
+      "Entries configured by the administrator only"
+    ],
+    "answer": 0,
+    "explanation": "Switches learn the source MAC address of each incoming frame and map it to the ingress port and VLAN. Destination addresses are only looked up, never learned.",
+    "lesson_ref": "d1.switching"
+  },
+  {
+    "id": "q.d1.switch.002",
+    "domain": "d1",
+    "subtopic": "1.13",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "A switch receives a unicast frame whose destination MAC address isn't in its MAC address table. What does it do?",
+    "choices": [
+      "Drops the frame",
+      "Sends it back out the port it arrived on",
+      "Floods it out all ports in the frame's VLAN except the ingress port",
+      "Floods it out every port on the switch, in all VLANs"
+    ],
+    "answer": 2,
+    "explanation": "An unknown unicast is flooded out every port in the same VLAN except the one it arrived on. When the destination replies, the switch learns where it is.",
+    "lesson_ref": "d1.switching"
+  },
+  {
+    "id": "q.d1.switch.003",
+    "domain": "d1",
+    "subtopic": "1.13",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "SW1 receives a frame on Fa0/3 (VLAN 20) with destination 0050.7966.1a01. Based on the exhibit, what does SW1 do with it?",
+    "exhibit": "SW1#show mac address-table\nVlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n  10    0050.7966.1a01    DYNAMIC     Fa0/1\n  20    0050.7966.2b02    DYNAMIC     Fa0/2\n  20    000c.2944.3c03    DYNAMIC     Gi0/1",
+    "choices": [
+      "Forwards it out Fa0/1",
+      "Forwards it out Gi0/1",
+      "Drops it",
+      "Floods it out the other VLAN 20 ports, including the trunk"
+    ],
+    "answer": 3,
+    "explanation": "The only entry for 0050.7966.1a01 is in VLAN 10. MAC tables are per VLAN, so the lookup in VLAN 20 misses and the frame is flooded within VLAN 20.",
+    "lesson_ref": "d1.switching"
+  },
+  {
+    "id": "q.d1.switch.004",
+    "domain": "d1",
+    "subtopic": "1.13",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each situation to what the switch does with the frame.",
+    "distractors": [
+      "Send to the default gateway"
+    ],
+    "answer": {
+      "Destination is ffff.ffff.ffff": "Flood in the VLAN",
+      "Destination learned on another port in the VLAN": "Forward out one port",
+      "Destination learned on the ingress port": "Filter (drop)",
+      "Destination not in the table for the VLAN": "Flood in the VLAN (unknown unicast)"
+    },
+    "explanation": "Known unicast goes out one port; broadcasts and unknown unicasts flood within the VLAN; a destination on the ingress port is filtered.",
+    "lesson_ref": "d1.switching"
+  },
+  {
+    "id": "q.d1.switch.005",
+    "domain": "d1",
+    "subtopic": "1.13",
+    "type": "mcq_multi",
+    "difficulty": 2,
+    "stem": "Which two statements about a switch's MAC address table are true? (Choose two.)",
+    "choices": [
+      "Entries are shared with neighbouring switches using CDP",
+      "Dynamic entries are removed after a period of inactivity (300 seconds by default)",
+      "One entry covers a MAC address in every VLAN",
+      "If a known MAC address shows up on a different port, the entry moves to the new port"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Dynamic entries age out (300 s by default) and an address seen on a new port replaces the old entry. Entries are kept per VLAN, and the table isn't routed or shared with other switches.",
+    "lesson_ref": "d1.switching"
+  },
+  {
+    "id": "q.d1.switch.006",
+    "domain": "d1",
+    "subtopic": "1.13",
+    "type": "fill_in",
+    "difficulty": 2,
+    "stem": "On a 24-port access switch, one uplink port shows 37 MAC addresses in show mac address-table while every other port shows one. What kind of device is most likely connected to that port? (one word)",
+    "answer": [
+      "switch",
+      "a switch",
+      "another switch"
+    ],
+    "explanation": "Many MAC addresses learned on one port means many hosts are reachable through it, typically another switch (often over a trunk).",
+    "lesson_ref": "d1.switching"
   }
 ]
