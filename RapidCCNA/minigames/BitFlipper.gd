@@ -3,7 +3,6 @@ extends DrillBase
 ## dec_to_bin uses 8 toggle bits (keys 1-8 flip them); other kinds take typed input.
 
 var item: Dictionary
-var _answer: LineEdit
 var _bits: Array[Button] = []
 var _total: Label
 
@@ -17,7 +16,6 @@ const TITLES := {
 func present_item() -> void:
 	item = Binary.make_item(rng)
 	_bits.clear()
-	_answer = null
 	var p := UI.label(prompt_box, item.prompt, "CodeBig")
 	p.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var t := UI.label(prompt_box, TITLES[item.kind], "H2")
@@ -25,7 +23,7 @@ func present_item() -> void:
 	if item.kind == "dec_to_bin":
 		_build_bits()
 	else:
-		_answer = answer_input("e.g. 0xC0" if item.kind == "dec_to_hex" else "0-255")
+		answer_input("e.g. 0xC0" if item.kind == "dec_to_hex" else "0-255")
 
 func _build_bits() -> void:
 	var row := UI.hbox(answer_box, 8)
@@ -73,7 +71,7 @@ func get_response() -> String:
 		for b in _bits:
 			s += "1" if b.button_pressed else "0"
 		return s
-	return _answer.text if _answer else ""
+	return super()
 
 func check(r: String) -> bool: return Binary.check(item, r)
 func explain() -> String: return Binary.explain(item)
@@ -90,6 +88,15 @@ func hint() -> String:
 			return "Write the binary, split it into two 4-bit halves; each half is one hex digit (10-15 = A-F)."
 		_:
 			return "First hex digit x 16 + second digit. A=10 ... F=15."
+
+func autoplay(correct: bool) -> void:
+	if _bits.is_empty():
+		super(correct)
+		return
+	var bits := Binary.to_bin8(item.value if correct else item.value ^ 1)
+	for k in 8:
+		_bits[k].button_pressed = bits[k] == "1"
+	submit()
 
 func lock_inputs() -> void:
 	for b in _bits:

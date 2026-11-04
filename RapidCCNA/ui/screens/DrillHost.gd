@@ -15,7 +15,7 @@ func _ready() -> void:
 		return
 	var drill: DrillBase = load(def.script).new()
 	drill.setup({"guided": step.get("guided", true), "count": step.get("count", 10),
-		"target_seconds": def.get("target_seconds", 30)})
+		"target_seconds": def.get("target_seconds", 30), "generator": def.get("generator", "")})
 	drill.finished.connect(_on_finished)
 	v.add_child(drill)
 

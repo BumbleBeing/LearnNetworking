@@ -1,0 +1,55 @@
+[
+  {
+    "id": "q.d4.nat.001",
+    "domain": "d4",
+    "subtopic": "4.1",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "In NAT terminology, what is the inside global address?",
+    "choices": [
+      "The private address configured on an inside host",
+      "The public address that represents an inside host on the outside",
+      "The address of an outside host as seen from the inside",
+      "The real address of an outside host"
+    ],
+    "answer": 1,
+    "explanation": "Inside = the host belongs to your network. Global = how it appears outside. So inside global is the translated, usually public, address of your host.",
+    "lesson_ref": "d4.nat_basics"
+  },
+  {
+    "id": "q.d4.nat.002",
+    "domain": "d4",
+    "subtopic": "4.1",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Which keyword makes this configuration PAT rather than dynamic NAT?",
+    "exhibit": "access-list 1 permit 192.168.0.0 0.0.255.255\nip nat inside source list 1 interface GigabitEthernet0/1 overload",
+    "choices": [
+      "list 1",
+      "interface",
+      "overload",
+      "source"
+    ],
+    "answer": 2,
+    "explanation": "'overload' lets many inside hosts share one inside global address, kept apart by port numbers. That's PAT.",
+    "lesson_ref": "d4.nat_basics"
+  },
+  {
+    "id": "q.d4.nat.003",
+    "domain": "d4",
+    "subtopic": "4.1",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "PC 192.168.1.10 reaches server 203.0.113.80 through R1, which does PAT using its outside address 198.51.100.2. Match each NAT term to its address.",
+    "answer": {
+      "Inside local": "192.168.1.10",
+      "Inside global": "198.51.100.2",
+      "Outside global": "203.0.113.80"
+    },
+    "distractors": [
+      "192.168.1.1"
+    ],
+    "explanation": "Inside local is the PC's own address, inside global is the PC after translation (R1's outside address), and outside global is the server's real address.",
+    "lesson_ref": "d4.nat_basics"
+  }
+]

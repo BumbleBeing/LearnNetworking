@@ -133,6 +133,9 @@ def validate(root: Path, min_per_subtopic: int = 0):
             script = root.parent / d["script"].replace("res://", "")
             if not script.exists():
                 errors.append(f"drill {d['id']}: script {d['script']} not found")
+            gen = d.get("generator")
+            if gen and not (root.parent / gen.replace("res://", "")).exists():
+                errors.append(f"drill {d['id']}: generator {gen} not found")
     for d in drills.values():
         if d["unit"] not in lessons:
             errors.append(f"drill {d['id']}: unit {d['unit']} does not exist")

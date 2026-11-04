@@ -4,13 +4,13 @@ A Godot 4 study game for the **CCNA 200-301** exam. Each unit runs **tutorial �
 
 All question content is original and written in exam style. The game does not use real Cisco exam items.
 
-## Status: milestone M1 (core loop)
+## Status: milestone M2 (networking engine + drills)
 | Milestone | Scope | State |
 |---|---|---|
 | M0 | Project, autoloads, save/load, content loader + validator, tests, export presets, menu → dashboard | ✅ |
 | M1 | Tutorial screen, question views, SRS-driven Daily Session, Subnet Sprint, Bit Flipper | ✅ |
-| M2 | Networking logic engine (IPv4/IPv6, routing, ACL, NAT) + its drills | next |
-| M3 | Scoped IOS CLI simulator + config labs | |
+| M2 | Networking logic engine (IPv4/IPv6, routing, ACL, NAT) + its drills | ✅ |
+| M3 | Scoped IOS CLI simulator + config labs | next |
 | M4 | STP / OSPF / EtherChannel / MAC table puzzles | |
 | M5 | All tutorials and remaining mini-games | |
 | M6 | Mock exam (100 q / 120 min, weighted), 600+ question bank | |
@@ -26,6 +26,20 @@ Every answer shows an explanation. A miss always shows the worked solution. Dril
 
 ![M1 screens](docs/ui/m1.png)
 
+## Drills
+| Drill | Unit | What you practise |
+|---|---|---|
+| Bit Flipper | Binary and hex | Decimal, binary and hex conversions on single octets |
+| Subnet Sprint | Subnetting | Network, broadcast, host range, mask and host count |
+| Route Picker | Reading the routing table | Longest-prefix match on a generated `show ip route`; which source wins by AD |
+| Wildcard Workshop | Wildcard masks | Wildcards from prefixes and ranges; does an address match |
+| ACL Gatekeeper | Access control lists | Which ACE decides a packet (incl. implicit deny); write an ACE from a requirement (checked by behaviour, so `host X` = `X 0.0.0.0` and `eq www` = `eq 80`) |
+| NAT Translator | NAT and PAT | The four NAT addresses, NAT type from config, PAT port behaviour, reading `show ip nat translations` |
+
+Generated drills share one screen (`minigames/GenDrill.gd`). A drill is a `drills.json` entry plus a generator script with `make_item(rng)` (and `check()` for typed answers), so adding one needs no UI code.
+
+![M2 drills](docs/ui/m2.png)
+
 ## UI looks (prototype)
 Four switchable looks are defined in `ui/theme/Palette.gd` and built into Godot themes by `ui/theme/ThemeFactory.gd`. The animated network backdrop is `ui/components/Backdrop.gd`. Night Ops is the default. Switch looks from the dropdown on the main menu or the dashboard.
 
@@ -36,11 +50,11 @@ Fonts are bundled in `assets/fonts/` (SIL Open Font License; licences alongside)
 ## Layout
 ```
 autoload/   Settings, ContentDB, SRS (SM-2), Progress (save/mastery/streak), SessionManager
-core/       Pure logic (no UI): net/ (IPv4, SubnetGen, Binary), question/ (Grader), JsonIO
+core/       Pure logic (no UI): net/ (IPv4, IPv6, RoutingTable, ACL, NAT + item generators), question/ (Grader), JsonIO
 assets/     fonts/ (Inter, JetBrains Mono + licences)
 ui/         theme/ (Palette, ThemeFactory), components/ (UI, Backdrop, QuestionView, QuestionRunner, ScreenHeader),
             screens/ (MainMenu, Dashboard, Tutorial, Review, DrillHost, Summary)
-minigames/  DrillBase + SubnetSprint, BitFlipper
+minigames/  DrillBase + SubnetSprint, BitFlipper, GenDrill (generator-driven drills)
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures
 tools/      validate_content.py, install_gut.sh, smoke_session.gd (end-to-end)

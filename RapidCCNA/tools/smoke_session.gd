@@ -34,13 +34,7 @@ func _initialize() -> void:
 		elif name == "DrillHost":
 			var d = _find(scene, func(n): return n.has_method("next_item") and n.has_method("correct_answer"))
 			if d and not d._answered:
-				if not d._bits.is_empty():
-					var bits: String = load("res://core/net/Binary.gd").to_bin8(d.item.value)
-					for k in 8:
-						d._bits[k].button_pressed = bits[k] == "1"
-				elif d._answer:
-					d._answer.text = d.correct_answer()
-				d.submit()
+				d.autoplay(true)
 			elif d:
 				d.next_item()
 	_check(current_scene != null and current_scene.name == "Summary", "reached summary")

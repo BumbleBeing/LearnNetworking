@@ -1,0 +1,45 @@
+{
+  "id": "d5.acl_basics",
+  "domain": "d5",
+  "subtopics": [
+    "5.6"
+  ],
+  "order": 61,
+  "title": "Access control lists",
+  "minutes": 6,
+  "cards": [
+    {
+      "heading": "Standard vs extended",
+      "body": "Standard ACLs (1-99, 1300-1999) match only the source address. Extended ACLs (100-199, 2000-2699) match protocol, source, destination and optionally ports, so they can be far more precise.",
+      "example": "access-list 10 permit 192.168.1.0 0.0.0.255\naccess-list 100 permit tcp 192.168.1.0 0.0.0.255 host 10.1.1.10 eq 443"
+    },
+    {
+      "heading": "Top-down, first match wins",
+      "body": "The router checks a packet against each line in order. The first line that matches decides permit or deny, and the remaining lines are never checked. Put specific lines before general ones.",
+      "example": "10 deny   tcp 192.168.1.0 0.0.0.255 host 10.1.1.10 eq 22\n20 permit ip  192.168.1.0 0.0.0.255 any\n→ SSH to 10.1.1.10 is denied by 10; everything else is permitted by 20"
+    },
+    {
+      "heading": "The implicit deny",
+      "body": "Every ACL ends with an invisible 'deny any' (or 'deny ip any any'). A packet that matches no line is dropped. An ACL made only of deny lines therefore blocks everything.",
+      "example": "access-list 10 deny host 192.168.1.50\n(implicit) deny any   ← everyone else is blocked too!\naccess-list 10 permit any   ← add this to allow the rest"
+    },
+    {
+      "heading": "Applying and placing ACLs",
+      "body": "An ACL does nothing until it's applied to an interface in a direction. You can have one ACL per interface, per direction, per protocol. Place extended ACLs close to the source (drop traffic early) and standard ACLs close to the destination (they can't tell destinations apart).",
+      "example": "interface GigabitEthernet0/1\n ip access-group 100 in"
+    },
+    {
+      "heading": "Named ACLs and sequence numbers",
+      "body": "Named ACLs are easier to read and let you insert or delete single lines by sequence number without retyping the whole list.",
+      "example": "ip access-list extended WEB-ONLY\n 10 permit tcp any host 10.1.1.10 eq 443\n 15 permit tcp any host 10.1.1.10 eq 80\n no 10"
+    }
+  ],
+  "recall": [
+    "q.d5.acl.001",
+    "q.d5.acl.002",
+    "q.d5.acl.003"
+  ],
+  "drills": [
+    "acl_gatekeeper"
+  ]
+}

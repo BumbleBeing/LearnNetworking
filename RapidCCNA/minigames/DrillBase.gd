@@ -26,6 +26,9 @@ var _submit_btn: Button
 var _next_btn: Button
 var _item_start := 0
 var _answered := false
+var _answer: LineEdit            # set by answer_input()
+var _choices: Array[Button] = [] # set by add_choices()
+var _choice_index := -1
 
 func setup(cfg: Dictionary) -> DrillBase:
 	guided = bool(cfg.get("guided", true))
@@ -82,7 +85,11 @@ func next_item() -> void:
 	_submit_btn.visible = true
 	_next_btn.visible = false
 	_hint_btn.disabled = false
+	_answer = null
+	_choices.clear()
+	_choice_index = -1
 	present_item()
+	_submit_btn.visible = _choices.is_empty()   # choices answer on click
 	_item_start = Time.get_ticks_msec()
 
 func submit() -> void:
@@ -98,6 +105,7 @@ func submit() -> void:
 	streak = streak + 1 if ok else 0
 	_streak_chip.text = "Streak %d" % streak
 	lock_inputs()
+	_mark_choices()
 	var head := UI.label(_feedback, ("Correct  ·  %.1fs" % (ms / 1000.0)) if ok else "Not quite. Answer: " + correct_answer(), "H2", true)
 	head.add_theme_color_override("font_color", look.good if ok else look.accent2)
 	# Learning first: always show the worked solution after a miss; in guided mode after every item.
@@ -137,11 +145,71 @@ func answer_input(placeholder: String) -> LineEdit:
 	le.text_submitted.connect(func(_t): submit())
 	answer_box.add_child(le)
 	UI.focus_later(le)
+	_answer = le
 	return le
+
+## Helper: clickable choices; clicking (or pressing 1-9) answers immediately.
+func add_choices(options: Array) -> void:
+	var box := UI.vbox(answer_box, 8)
+	for i in options.size():
+		var b := Button.new()
+		b.text = "%d.   %s" % [i + 1, options[i]]
+		b.theme_type_variation = "Choice"
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.focus_mode = Control.FOCUS_NONE
+		b.pressed.connect(choose.bind(i))
+		box.add_child(b)
+		_choices.append(b)
+
+func choose(i: int) -> void:
+	if _answered or i < 0 or i >= _choices.size():
+		return
+	_choice_index = i
+	submit()
+
+## Index of the correct choice for choice items (override), -1 otherwise.
+func correct_choice() -> int:
+	return -1
+
+func _mark_choices() -> void:
+	if _choices.is_empty():
+		return
+	var r: int = max(2, int(look.radius) / 2)
+	for i in _choices.size():
+		var col := Color.TRANSPARENT
+		if i == correct_choice():
+			col = look.good
+		elif i == _choice_index:
+			col = look.accent2
+		_choices[i].disabled = true
+		if col.a > 0:
+			_choices[i].add_theme_stylebox_override("disabled", ThemeFactory.box(Color(col, 0.16), col, r, 2, 16, 12))
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if _choices.is_empty() or _answered or not event is InputEventKey or not event.pressed or event.echo:
+		return
+	var n: int = event.keycode - KEY_1
+	if n >= 0 and n < _choices.size():
+		get_viewport().set_input_as_handled()
+		choose(n)
+
+## Answers the current item programmatically (tests, smoke runs, screenshots).
+func autoplay(correct: bool) -> void:
+	if not _choices.is_empty():
+		var c := correct_choice()
+		choose(c if correct else (c + 1) % _choices.size())
+		return
+	if _answer:
+		_answer.text = correct_answer() if correct else "999"
+	submit()
 
 # --- virtuals ---
 func present_item() -> void: pass
-func get_response() -> String: return ""
+func get_response() -> String:
+	if not _choices.is_empty():
+		return str(_choice_index) if _choice_index >= 0 else ""
+	return _answer.text if _answer else ""
 func check(_response: String) -> bool: return false
 func explain() -> String: return ""
 func hint() -> String: return ""

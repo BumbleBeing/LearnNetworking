@@ -59,34 +59,36 @@ func test_continue_emits_once():
 	v._continue()
 	assert_signal_emit_count(v, "continued", 1)
 
-func _play(script_path: String, answer_right: bool) -> Dictionary:
-	var d: DrillBase = load(script_path).new()
-	d.setup({"guided": true, "count": 4, "seed": 99})
+func _play(def: Dictionary, answer_right: bool) -> Dictionary:
+	var d: DrillBase = load(def.script).new()
+	d.setup({"guided": true, "count": 4, "seed": 99, "generator": def.get("generator", "")})
 	add_child_autofree(d)
 	watch_signals(d)
 	for i in 4:
-		var ans: String = d.correct_answer()
-		if d.has_method("_build_bits") and not d._bits.is_empty():
-			var bits := Binary.to_bin8(d.item.value if answer_right else (d.item.value ^ 1))
-			for k in 8:
-				d._bits[k].button_pressed = bits[k] == "1"
-		elif d._answer:
-			d._answer.text = ans if answer_right else "999"
-		d.submit()
+		d.autoplay(answer_right)
+		assert_true(d._answered, "%s item %d answered" % [def.id, i])
+		assert_false(d.explain().is_empty(), def.id)
 		d.next_item()
-	assert_signal_emitted(d, "finished")
+	assert_signal_emitted(d, "finished", def.id)
 	return get_signal_parameters(d, "finished")[0]
 
-func test_subnet_sprint_full_round():
-	var s := _play("res://minigames/SubnetSprint.gd", true)
-	assert_eq(s.items, 4)
-	assert_eq(s.correct, 4)
-	var w := _play("res://minigames/SubnetSprint.gd", false)
-	assert_eq(w.correct, 0)
+func test_every_drill_plays_a_full_round():
+	for def in ContentDB.drills.values():
+		var s := _play(def, true)
+		assert_eq(s.items, 4, def.id)
+		assert_eq(s.correct, 4, def.id)
+		var w := _play(def, false)
+		assert_eq(w.correct, 0, "%s wrong answers" % def.id)
 
-func test_bit_flipper_full_round():
-	var s := _play("res://minigames/BitFlipper.gd", true)
-	assert_eq(s.items, 4)
-	assert_eq(s.correct, 4)
-	var w := _play("res://minigames/BitFlipper.gd", false)
-	assert_eq(w.correct, 0)
+func test_choice_drill_marks_choices_and_keys_work():
+	var d: DrillBase = load("res://minigames/GenDrill.gd").new()
+	d.setup({"guided": false, "count": 2, "seed": 1, "generator": "res://core/net/RouteGen.gd"})
+	add_child_autofree(d)
+	assert_gt(d._choices.size(), 1)
+	var ev := InputEventKey.new()
+	ev.keycode = KEY_1
+	ev.pressed = true
+	d._unhandled_key_input(ev)
+	assert_true(d._answered, "pressing 1 answers")
+	assert_true(d._choices[0].disabled)
+	assert_false(d._hint_btn.visible, "no hints in unguided mode")

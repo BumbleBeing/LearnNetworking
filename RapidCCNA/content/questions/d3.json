@@ -1,0 +1,48 @@
+[
+  {
+    "id": "q.d3.route.001",
+    "domain": "d3",
+    "subtopic": "3.2",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "R1 receives a packet for 10.20.30.77. Based on the exhibit, which next hop does it use?",
+    "exhibit": "S*   0.0.0.0/0 [1/0] via 192.0.2.1\nO    10.20.0.0/16 [110/30] via 10.0.0.2\nD    10.20.30.0/24 [90/30720] via 10.0.0.6\nS    10.20.30.64/27 [1/0] via 10.0.0.10",
+    "choices": [
+      "192.0.2.1",
+      "10.0.0.2",
+      "10.0.0.6",
+      "10.0.0.10"
+    ],
+    "answer": 3,
+    "explanation": "All four routes contain 10.20.30.77 (the /27 covers .64-.95). The longest prefix, /27, wins, so the next hop is 10.0.0.10. AD only matters between routes to the same prefix.",
+    "lesson_ref": "d3.routing_table"
+  },
+  {
+    "id": "q.d3.route.002",
+    "domain": "d3",
+    "subtopic": "3.1",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "What is the default administrative distance of OSPF?",
+    "answer": "110",
+    "explanation": "OSPF routes have AD 110. For comparison: connected 0, static 1, eBGP 20, EIGRP 90, RIP 120.",
+    "lesson_ref": "d3.routing_table"
+  },
+  {
+    "id": "q.d3.route.003",
+    "domain": "d3",
+    "subtopic": "3.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "R1 learns 172.16.8.0/22 from OSPF (cost 20), EIGRP (metric 3072) and RIP (2 hops). Which route is installed?",
+    "choices": [
+      "The OSPF route, because cost 20 is the lowest metric",
+      "The EIGRP route, because it has the lowest administrative distance",
+      "The RIP route, because 2 hops is the shortest path",
+      "All three, for load balancing"
+    ],
+    "answer": 1,
+    "explanation": "Metrics from different protocols can't be compared. With the same prefix and length, the lowest AD wins: EIGRP 90 beats OSPF 110 and RIP 120.",
+    "lesson_ref": "d3.routing_table"
+  }
+]
