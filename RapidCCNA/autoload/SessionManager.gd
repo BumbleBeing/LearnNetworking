@@ -21,12 +21,14 @@ const SCENES := {
 	"lab": "res://ui/screens/Lab.tscn",
 	"summary": "res://ui/screens/Summary.tscn",
 	"dashboard": "res://ui/screens/Dashboard.tscn",
+	"topics": "res://ui/screens/Topics.tscn",
 }
 
 var steps: Array = []
 var index := -1
 var results: Array = []
 var title := ""
+var origin := "dashboard"       # screen to return to: "dashboard" or "topics"
 var _start_ms := 0
 
 ## Kept for the dashboard header.
@@ -60,17 +62,26 @@ func plan_steps(now: int = -1) -> Array:
 		out.append({"kind": "lab", "lab": l})
 	var unit := next_unit()
 	if not unit.is_empty():
-		if not Progress.is_tutorial_done(unit.id):
-			out.append({"kind": "tutorial", "lesson": unit.id})
-		for d in unit.get("drills", []):
-			if not ContentDB.drills.has(d):
-				continue
-			if Progress.attempt_count(unit.id) < GUIDED_UNTIL:
-				out.append(drill_step(d, true, UNIT_DRILL_COUNT))
-			out.append(drill_step(d, false, UNIT_DRILL_COUNT))
-		for l in unit.get("labs", []):
-			if ContentDB.labs.has(l) and not Progress.is_lab_done(l) and not l in review_labs:
-				out.append({"kind": "lab", "lab": l})
+		out.append_array(unit_steps(unit, false, review_labs))
+	return out
+
+## Steps to study one unit: tutorial (if not done), guided rounds until GUIDED_UNTIL
+## unguided attempts, an unguided round per drill, then labs. In the daily plan
+## (on_demand = false) finished labs are left to spaced repetition; when the learner
+## picks the unit themselves (on_demand = true) its labs are always included.
+func unit_steps(unit: Dictionary, on_demand: bool = false, skip_labs: Array = []) -> Array:
+	var out: Array = []
+	if not Progress.is_tutorial_done(unit.id):
+		out.append({"kind": "tutorial", "lesson": unit.id})
+	for d in unit.get("drills", []):
+		if not ContentDB.drills.has(d):
+			continue
+		if Progress.attempt_count(unit.id) < GUIDED_UNTIL:
+			out.append(drill_step(d, true, UNIT_DRILL_COUNT))
+		out.append(drill_step(d, false, UNIT_DRILL_COUNT))
+	for l in unit.get("labs", []):
+		if ContentDB.labs.has(l) and (on_demand or not Progress.is_lab_done(l)) and not l in skip_labs:
+			out.append({"kind": "lab", "lab": l})
 	return out
 
 func drill_step(drill_id: String, guided: bool, count: int) -> Dictionary:
@@ -106,6 +117,27 @@ func start_daily() -> void:
 func start_drill(drill_id: String, guided: bool) -> void:
 	start([drill_step(drill_id, guided, UNIT_DRILL_COUNT)], "Practice: " + ContentDB.drills[drill_id].title)
 
+## Free training: any unit, tutorial or exam area, regardless of the daily plan.
+func start_unit(lesson_id: String) -> void:
+	var unit: Dictionary = ContentDB.lessons[lesson_id]
+	var steps := unit_steps(unit, true)
+	if steps.is_empty():
+		steps = [{"kind": "tutorial", "lesson": lesson_id}]
+	start(steps, "Study: " + unit.title)
+
+func start_tutorial(lesson_id: String) -> void:
+	start([{"kind": "tutorial", "lesson": lesson_id}], "Tutorial: " + ContentDB.lessons[lesson_id].title)
+
+## Up to MAX_REVIEWS questions from one exam area, shuffled.
+func quiz_ids(domain_id: String) -> Array:
+	var ids: Array = ContentDB.questions_for_domain(domain_id).map(func(q): return q.id)
+	ids.shuffle()
+	return ids.slice(0, MAX_REVIEWS)
+
+func start_quiz(domain_id: String) -> void:
+	start([{"kind": "review", "ids": quiz_ids(domain_id), "title": "Quiz"}],
+		"Quiz: " + ContentDB.get_domain(domain_id).get("name", domain_id))
+
 func start_lab(lab_id: String) -> void:
 	start([{"kind": "lab", "lab": lab_id}], "Lab: " + ContentDB.labs[lab_id].title)
 
@@ -136,7 +168,7 @@ func advance() -> void:
 func abort() -> void:
 	if results.is_empty():
 		steps = []
-		_go(SCENES.dashboard)
+		_go(SCENES[origin])
 	else:
 		_finish()
 

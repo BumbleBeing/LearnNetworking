@@ -30,5 +30,6 @@ func _ready() -> void:
 		UI.label(row, detail, "Muted")
 	if SessionManager.results.is_empty():
 		UI.label(list, "Nothing completed.", "Muted")
-	var back := UI.button(v, "Back to dashboard", func(): get_tree().change_scene_to_file(SessionManager.SCENES.dashboard), true)
+	var dest: String = SessionManager.origin
+	var back := UI.button(v, "Back to " + ("topics" if dest == "topics" else "dashboard"), func(): get_tree().change_scene_to_file(SessionManager.SCENES[dest]), true)
 	back.grab_focus()

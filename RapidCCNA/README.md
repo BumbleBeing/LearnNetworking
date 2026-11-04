@@ -22,6 +22,8 @@ The dashboard plans each day's session:
 2. **Drill refreshers:** short unguided rounds for generated drill skills that are due.
 3. **Next unit:** the first unmastered lesson. You get its tutorial (once), a **guided** drill round (hints, place values, a worked solution after every item) until you have 10 unguided attempts, then an **unguided** round. Unguided accuracy over the last 20 attempts drives mastery (85% or better).
 
+The daily plan always follows the exam areas in order. To study anything else, use **Topics** (from the dashboard): every exam area has a quiz, and every unit has *Study unit* (tutorial if new, drills, labs), *Tutorial*, per-drill Guided/Unguided buttons and its labs. Free training updates the same progress and spaced-repetition schedule.
+
 Every answer shows an explanation. A miss always shows the worked solution. Drill skills are graded once per round, so a 10-item round doesn't inflate review intervals.
 
 ![M1 screens](docs/ui/m1.png)
@@ -75,7 +77,7 @@ core/       Pure logic (no UI): net/ (IPv4, IPv6, RoutingTable, ACL, NAT + item 
             ios/ (Device, Network, CLI, Commands, Show, Validator, LabSession), question/ (Grader), JsonIO
 assets/     fonts/ (Inter, JetBrains Mono + licences)
 ui/         theme/ (Palette, ThemeFactory), components/ (UI, Backdrop, QuestionView, QuestionRunner, ScreenHeader, Terminal),
-            screens/ (MainMenu, Dashboard, Tutorial, Review, DrillHost, Lab, Summary)
+            screens/ (MainMenu, Dashboard, Topics, Tutorial, Review, DrillHost, Lab, Summary)
 minigames/  DrillBase + SubnetSprint, BitFlipper, GenDrill (generator-driven drills)
 content/    blueprint.json, lessons/, questions/, drills/, labs/ (all JSON)
 tests/      GUT unit tests + fixtures
