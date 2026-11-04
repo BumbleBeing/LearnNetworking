@@ -14,6 +14,11 @@ func test_every_question_renders_and_grades_correct_answer():
 		var v := _view(id)
 		watch_signals(v)
 		var q: Dictionary = v.q
+		if q.type == "cli_task":
+			assert_eq(v._lab.apply_solution().size(), 0, id)
+			v._on_submit()
+			assert_true(get_signal_parameters(v, "answered")[0].correct, id)
+			continue
 		v._get_response = func():
 			if q.type in ["mcq_single", "exhibit"]:
 				return int(q.answer)
@@ -25,6 +30,21 @@ func test_every_question_renders_and_grades_correct_answer():
 		var res: Dictionary = get_signal_parameters(v, "answered")[0]
 		assert_true(res.correct, id)
 		assert_true(v._feedback.visible, id)
+
+func test_cli_task_terminal_drives_device():
+	var v := _view("q.d3.static.cli.001")
+	watch_signals(v)
+	v._term.run("enable")
+	v._term.run("configure terminal")
+	v._term.run("ip route 0.0.0.0 0.0.0.0 10.0.0.9")
+	v._on_submit()
+	assert_false(get_signal_parameters(v, "answered")[0].correct, "wrong next hop")
+	var v2 := _view("q.d3.static.cli.001")
+	watch_signals(v2)
+	for l in ["en", "conf t", "ip route 0.0.0.0 0.0.0.0 10.0.0.2"]:
+		v2._term.run(l)
+	v2._on_submit()
+	assert_true(get_signal_parameters(v2, "answered")[0].correct)
 
 func test_blank_answer_is_blocked_but_skip_counts_as_wrong():
 	var v := _view("q.d1.subnet.001")

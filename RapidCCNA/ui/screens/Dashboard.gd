@@ -90,6 +90,19 @@ func _ready() -> void:
 				b.custom_minimum_size.x = 120
 				b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
+	var labs := ContentDB.labs.values().filter(func(l): return not l.get("hidden", false))
+	if not labs.is_empty():
+		var lab_card := UI.card(v, "Command-line labs")
+		for lab in labs:
+			var row3 := UI.hbox(lab_card, 12)
+			var info2 := UI.vbox(row3, 0)
+			info2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			UI.label(info2, lab.title + ("   ✓" if Progress.is_lab_done(lab.id) else ""), "H2")
+			UI.label(info2, lab.get("description", ""), "Muted", true)
+			var ob := UI.button(row3, "Open", SessionManager.start_lab.bind(lab.id))
+			ob.custom_minimum_size.x = 120
+			ob.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
 func _readiness(domain_id: String) -> float:
 	if preview_readiness.has(domain_id):
 		return preview_readiness[domain_id]

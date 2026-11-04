@@ -1,0 +1,45 @@
+{
+  "id": "d3.static_routing",
+  "domain": "d3",
+  "subtopics": [
+    "3.3"
+  ],
+  "order": 20,
+  "title": "Static routing",
+  "minutes": 5,
+  "cards": [
+    {
+      "heading": "The ip route command",
+      "body": "A static route names a destination prefix and mask, then either a next-hop address or an exit interface. Next-hop routes are the usual choice on Ethernet. The route only goes into the table if the router can reach the next hop.",
+      "example": "ip route 192.168.3.0 255.255.255.0 10.0.12.2\nip route 192.168.3.0 255.255.255.0 GigabitEthernet0/0"
+    },
+    {
+      "heading": "Default route",
+      "body": "0.0.0.0 0.0.0.0 matches everything, so it catches any destination without a more specific route. Edge routers typically point a default route at the ISP.",
+      "example": "ip route 0.0.0.0 0.0.0.0 203.0.113.1\nGateway of last resort is 203.0.113.1 to network 0.0.0.0"
+    },
+    {
+      "heading": "Floating static routes",
+      "body": "Add an administrative distance at the end of the command to make a backup route. Because its AD is higher than the primary route's, it stays out of the routing table until the primary disappears.",
+      "example": "ip route 192.168.3.0 255.255.255.0 10.0.12.2       ← primary (AD 1)\nip route 192.168.3.0 255.255.255.0 10.0.13.3 10    ← backup (AD 10)"
+    },
+    {
+      "heading": "Verify with show ip route and ping",
+      "body": "Check that the route is installed with code S, then ping. A ping needs routes in both directions: the far end must know how to reach your source address too.",
+      "example": "R1#show ip route static\nS    192.168.3.0/24 [1/0] via 10.0.12.2\nR1#ping 192.168.3.1\n!!!!!"
+    },
+    {
+      "heading": "IPv6 static routes",
+      "body": "IPv6 works the same way with 'ipv6 route'. Enable routing first with 'ipv6 unicast-routing'. The default route is ::/0.",
+      "example": "ipv6 unicast-routing\nipv6 route 2001:db8:3::/64 2001:db8:12::2\nipv6 route ::/0 2001:db8:12::2"
+    }
+  ],
+  "recall": [
+    "q.d3.static.001",
+    "q.d3.static.002",
+    "q.d3.static.003"
+  ],
+  "labs": [
+    "lab.static_routes"
+  ]
+}

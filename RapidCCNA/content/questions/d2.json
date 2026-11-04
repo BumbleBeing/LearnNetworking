@@ -1,0 +1,66 @@
+[
+  {
+    "id": "q.d2.vlan.001",
+    "domain": "d2",
+    "subtopic": "2.2",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is special about the native VLAN on an 802.1Q trunk?",
+    "choices": [
+      "Its frames are sent without an 802.1Q tag",
+      "It's the only VLAN that can carry management traffic",
+      "Its frames get a double tag",
+      "It must be VLAN 1 on every switch"
+    ],
+    "answer": 0,
+    "explanation": "802.1Q tags every VLAN except the native VLAN, whose frames cross the trunk untagged. It defaults to VLAN 1 but can be changed; both ends should match.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.002",
+    "domain": "d2",
+    "subtopic": "2.2",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Two connected switch ports are both left in their default dynamic auto mode. What happens?",
+    "choices": [
+      "They negotiate a trunk",
+      "They stay access ports, because neither side asks to trunk",
+      "The link goes err-disabled",
+      "They form an EtherChannel"
+    ],
+    "answer": 1,
+    "explanation": "dynamic auto only answers trunk requests; it never starts one. With auto on both ends nobody asks, so the link stays an access link.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.003",
+    "domain": "d2",
+    "subtopic": "2.2",
+    "type": "exhibit",
+    "difficulty": 2,
+    "stem": "Hosts in VLAN 30 on SW1 can't reach VLAN 30 hosts on SW2. VLAN 30 exists on both switches. Based on this output from SW1, what's the cause?",
+    "exhibit": "SW1#show interfaces trunk\nPort   Mode  Encapsulation  Status    Native vlan\nGi0/1  on    802.1q         trunking  1\n\nPort   Vlans allowed on trunk\nGi0/1  10,20",
+    "choices": [
+      "VLAN 30 isn't in the trunk's allowed list",
+      "The native VLAN should be 30",
+      "The trunk is using ISL",
+      "Gi0/1 isn't trunking"
+    ],
+    "answer": 0,
+    "explanation": "The trunk is up and trunking, but only VLANs 10 and 20 are allowed. Add VLAN 30 with 'switchport trunk allowed vlan add 30'.",
+    "lesson_ref": "d2.vlans_trunks"
+  },
+  {
+    "id": "q.d2.vlan.cli.001",
+    "domain": "d2",
+    "subtopic": "2.1",
+    "type": "cli_task",
+    "difficulty": 1,
+    "stem": "Use the SW1 command line. Configure Fa0/5 as a static access port in VLAN 20.",
+    "lab": "lab.mini_access",
+    "answer": "interface fa0/5 / switchport mode access / switchport access vlan 20",
+    "explanation": "Set the mode explicitly (switchport mode access) so the port can't negotiate a trunk, then assign it to the VLAN.",
+    "lesson_ref": "d2.vlans_trunks"
+  }
+]

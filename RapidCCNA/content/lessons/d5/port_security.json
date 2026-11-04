@@ -1,0 +1,40 @@
+{
+  "id": "d5.port_security",
+  "domain": "d5",
+  "subtopics": [
+    "5.7"
+  ],
+  "order": 70,
+  "title": "Port security",
+  "minutes": 4,
+  "cards": [
+    {
+      "heading": "What port security does",
+      "body": "Port security limits which MAC addresses can send frames into a switch port and how many. It stops someone unplugging a desk PC and plugging in their own device, or flooding the MAC table.",
+      "example": "interface fa0/3\n switchport mode access\n switchport port-security"
+    },
+    {
+      "heading": "Set the mode first",
+      "body": "Port security only works on static access (or trunk) ports. On a port left in the default dynamic mode, IOS rejects the command, so configure 'switchport mode access' first.",
+      "example": "SW1(config-if)#switchport port-security\nCommand rejected: FastEthernet0/3 is a dynamic port."
+    },
+    {
+      "heading": "Maximum and sticky addresses",
+      "body": "The default maximum is one MAC address. Sticky learning remembers the addresses it learns and writes them into the running configuration, so you don't have to type them in.",
+      "example": " switchport port-security maximum 2\n switchport port-security mac-address sticky"
+    },
+    {
+      "heading": "Violation modes",
+      "body": "When an extra MAC address shows up: protect drops its traffic silently; restrict drops it, logs it and counts the violation; shutdown (the default) puts the port into err-disabled. Recover an err-disabled port with shutdown then no shutdown.",
+      "example": "protect   drop                    port stays up\nrestrict  drop + log + counter    port stays up\nshutdown  err-disabled            port goes down (default)"
+    }
+  ],
+  "recall": [
+    "q.d5.ps.001",
+    "q.d5.ps.002",
+    "q.d5.ps.003"
+  ],
+  "labs": [
+    "lab.port_security"
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "id": "lab.port_security",
+  "title": "Port security",
+  "domain": "d5",
+  "unit": "d5.port_security",
+  "subtopics": [
+    "5.7"
+  ],
+  "description": "Lock down the reception desk port so only the receptionist's PC and phone can use it.",
+  "topology": "        [SW1]\n   Fa0/3 ── reception desk (PC + IP phone)\n   Fa0/10 - 24: unused",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "fa0/3"
+        },
+        {
+          "name": "fa0/4"
+        },
+        {
+          "name": "fa0/5"
+        },
+        {
+          "name": "fa0/6"
+        },
+        {
+          "name": "fa0/7"
+        },
+        {
+          "name": "fa0/8"
+        },
+        {
+          "name": "fa0/9"
+        },
+        {
+          "name": "fa0/10"
+        },
+        {
+          "name": "fa0/11"
+        },
+        {
+          "name": "fa0/12"
+        },
+        {
+          "name": "fa0/13"
+        },
+        {
+          "name": "fa0/14"
+        },
+        {
+          "name": "fa0/15"
+        },
+        {
+          "name": "fa0/16"
+        },
+        {
+          "name": "fa0/17"
+        },
+        {
+          "name": "fa0/18"
+        },
+        {
+          "name": "fa0/19"
+        },
+        {
+          "name": "fa0/20"
+        },
+        {
+          "name": "fa0/21"
+        },
+        {
+          "name": "fa0/22"
+        },
+        {
+          "name": "fa0/23"
+        },
+        {
+          "name": "fa0/24"
+        },
+        {
+          "name": "g0/1"
+        },
+        {
+          "name": "g0/2"
+        }
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "Make Fa0/3 a static access port in VLAN 10.",
+      "hint": "interface fa0/3 → switchport mode access → switchport access vlan 10",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "access_port",
+          "args": {
+            "iface": "fa0/3",
+            "vlan": 10
+          }
+        }
+      ]
+    },
+    {
+      "text": "Enable port security on Fa0/3.",
+      "hint": "switchport port-security (it's rejected on dynamic ports; set the mode first)",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "port_security",
+          "args": {
+            "iface": "fa0/3"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Allow at most 2 MAC addresses on Fa0/3 and learn them as sticky addresses.",
+      "hint": "switchport port-security maximum 2 and switchport port-security mac-address sticky",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "port_security",
+          "args": {
+            "iface": "fa0/3",
+            "maximum": 2,
+            "sticky": true
+          }
+        }
+      ]
+    },
+    {
+      "text": "On a violation, drop the offending traffic and log it, but keep the port up.",
+      "hint": "That's the 'restrict' violation mode.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "port_security",
+          "args": {
+            "iface": "fa0/3",
+            "violation": "restrict"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Administratively shut down the unused ports Fa0/10 - 24.",
+      "hint": "interface range fa0/10 - 24 → shutdown",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "iface_shutdown",
+          "args": {
+            "iface": "fa0/10 - 24"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "interface fa0/3",
+      "switchport mode access",
+      "switchport access vlan 10",
+      "switchport port-security",
+      "switchport port-security maximum 2",
+      "switchport port-security mac-address sticky",
+      "switchport port-security violation restrict",
+      "interface range fa0/10 - 24",
+      "shutdown",
+      "end"
+    ]
+  }
+}

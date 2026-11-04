@@ -8,6 +8,7 @@ var domains: Array = []            # blueprint domains, in order
 var lessons: Dictionary = {}       # id -> lesson dict
 var questions: Dictionary = {}     # id -> question dict
 var drills: Dictionary = {}        # id -> drill definition (content/drills/drills.json)
+var labs: Dictionary = {}          # id -> CLI lab definition (content/labs/*.json)
 var errors: PackedStringArray = []
 
 func _ready() -> void:
@@ -19,6 +20,7 @@ func load_all(root: String) -> void:
 	lessons = {}
 	questions = {}
 	drills = {}
+	labs = {}
 	errors = PackedStringArray()
 	var bp = JsonIO.read(root + "/blueprint.json")
 	if not bp is Dictionary:
@@ -47,6 +49,12 @@ func load_all(root: String) -> void:
 		for d in dr:
 			if d is Dictionary and d.has("id"):
 				_add_unique(drills, d, root + "/drills/drills.json")
+	for path in _json_files(root + "/labs"):
+		var lab = JsonIO.read(path)
+		if lab is Dictionary and lab.has("id"):
+			_add_unique(labs, lab, path)
+		else:
+			errors.append("invalid lab file %s" % path)
 	for e in errors:
 		push_warning("ContentDB: " + e)
 

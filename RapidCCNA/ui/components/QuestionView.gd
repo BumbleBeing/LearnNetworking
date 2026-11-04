@@ -22,6 +22,8 @@ var _feedback: VBoxContainer
 var _start_ms := 0
 var _done := false
 var _continued := false
+var _lab: LabSession
+var _term: Terminal
 
 func setup(question: Dictionary, feedback: bool = true) -> QuestionView:
 	q = question
@@ -53,6 +55,8 @@ func _ready() -> void:
 			_build_order()
 		"subnet_calc":
 			_build_fields()
+		"cli_task":
+			_build_cli()
 		_:
 			UI.label(self, "Unsupported question type: %s" % q.get("type", "?"), "Muted")
 			_get_response = func(): return null
@@ -191,6 +195,20 @@ func _build_fields() -> void:
 			d[k] = inputs[k].text
 		return d
 
+func _build_cli() -> void:
+	var lab: Dictionary = ContentDB.labs.get(q.get("lab", ""), {})
+	_lab = LabSession.create(lab)
+	if lab.has("topology"):
+		var ex := PanelContainer.new()
+		ex.theme_type_variation = "Exhibit"
+		add_child(ex)
+		UI.label(ex, lab.topology, "Code")
+	var dev: String = _lab.sessions.keys()[0]
+	_term = Terminal.new().setup(_lab.sessions[dev], "%s console. Type your commands, then press Submit." % dev)
+	_term.custom_minimum_size.y = 300
+	add_child(_term)
+	_get_response = func(): return {"passed": _lab.all_ok()}
+
 func _line_edit(placeholder: String) -> LineEdit:
 	var le := LineEdit.new()
 	le.placeholder_text = placeholder
@@ -235,6 +253,8 @@ func _on_submit(skip: bool = false) -> void:
 			c.disabled = true
 	if not _order_items.is_empty():
 		_render_order()
+	if _term:
+		_term.lock()
 	_submit.visible = false
 	_skip.visible = false
 	_notice.text = ""
@@ -285,6 +305,11 @@ func _show_feedback(correct: bool) -> void:
 	head.add_theme_color_override("font_color", good if correct else bad)
 	if not correct:
 		UI.label(card, "Answer: " + Grader.answer_text(q), "Body", true)
+		if _lab:
+			for res in _lab.results():
+				if not res.ok and not res.msg.is_empty():
+					UI.label(card, "On the device: " + res.msg, "Muted", true)
+					break
 	UI.label(card, str(q.get("explanation", "")), "Body", true)
 	var ref := str(q.get("lesson_ref", ""))
 	if ContentDB.lessons.has(ref):

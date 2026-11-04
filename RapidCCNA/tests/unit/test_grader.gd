@@ -40,6 +40,12 @@ func test_subnet_calc_compares_values():
 	assert_false(Grader.grade(q, {"network": "172.16.32.1", "hosts": "4094"}))
 	assert_eq(Grader.answer_text(q), "Network: 172.16.32.0, Hosts: 4094")
 
+func test_cli_task():
+	var q := {"type": "cli_task", "answer": "ip route 0.0.0.0 0.0.0.0 10.0.0.2"}
+	assert_true(Grader.grade(q, {"passed": true}))
+	assert_false(Grader.grade(q, {"passed": false}))
+	assert_false(Grader.grade(q, "ip route 0.0.0.0 0.0.0.0 10.0.0.2"))
+
 func test_every_shipped_question_accepts_its_own_answer():
 	ContentDB.load_all(ContentDB.ROOT)
 	for q in ContentDB.questions.values():
@@ -48,5 +54,7 @@ func test_every_shipped_question_accepts_its_own_answer():
 			resp = int(q.answer)
 		elif q.type == "fill_in" and q.answer is Array:
 			resp = q.answer[0]
+		elif q.type == "cli_task":
+			resp = {"passed": true}
 		assert_true(Grader.grade(q, resp), q.id)
 		assert_false(Grader.answer_text(q).is_empty(), q.id)

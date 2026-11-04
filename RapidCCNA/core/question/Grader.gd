@@ -48,6 +48,8 @@ static func grade(q: Dictionary, response: Variant) -> bool:
 				if norm(str(response[i])) != norm(str(q.answer[i])):
 					return false
 			return true
+		"cli_task":
+			return response is Dictionary and bool(response.get("passed", false))
 		"subnet_calc":
 			if not response is Dictionary:
 				return false
@@ -70,6 +72,8 @@ static func answer_text(q: Dictionary) -> String:
 			return ", ".join(q.answer.keys().map(func(k): return "%s → %s" % [k, q.answer[k]]))
 		"drag_order":
 			return " → ".join(q.answer)
+		"cli_task":
+			return str(q.answer)
 		"subnet_calc":
 			var labels := {}
 			for f in q.get("fields", []):

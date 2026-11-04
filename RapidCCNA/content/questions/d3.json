@@ -44,5 +44,64 @@
     "answer": 1,
     "explanation": "Metrics from different protocols can't be compared. With the same prefix and length, the lowest AD wins: EIGRP 90 beats OSPF 110 and RIP 120.",
     "lesson_ref": "d3.routing_table"
+  },
+  {
+    "id": "q.d3.static.001",
+    "domain": "d3",
+    "subtopic": "3.3",
+    "type": "fill_in",
+    "difficulty": 1,
+    "stem": "Write the command that sets a default route via next hop 203.0.113.1.",
+    "answer": [
+      "ip route 0.0.0.0 0.0.0.0 203.0.113.1"
+    ],
+    "explanation": "A default route is a static route to 0.0.0.0 with mask 0.0.0.0.",
+    "lesson_ref": "d3.static_routing"
+  },
+  {
+    "id": "q.d3.static.002",
+    "domain": "d3",
+    "subtopic": "3.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "R1 runs OSPF and learns 10.5.0.0/16 from it. An engineer also adds 'ip route 10.5.0.0 255.255.0.0 172.16.1.2 130'. Which route does R1 use for 10.5.0.0/16?",
+    "choices": [
+      "The static route, because static routes always win",
+      "The OSPF route, because 110 is lower than 130",
+      "Both, load-balancing between them",
+      "Neither until the static route is removed"
+    ],
+    "answer": 1,
+    "explanation": "The trailing 130 sets the static route's administrative distance. OSPF's AD of 110 is lower, so the OSPF route is installed and the static route floats as a backup.",
+    "lesson_ref": "d3.static_routing"
+  },
+  {
+    "id": "q.d3.static.003",
+    "domain": "d3",
+    "subtopic": "3.3",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "An engineer adds 'ip route 172.20.0.0 255.255.0.0 10.9.9.2', but the route doesn't appear in 'show ip route'. What's the most likely cause?",
+    "choices": [
+      "Static routes only appear after 'copy run start'",
+      "R1 has no route to the next hop 10.9.9.2",
+      "The mask must be written as /16",
+      "Static routes are shown only with 'show ip route static'"
+    ],
+    "answer": 1,
+    "explanation": "A next-hop static route is installed only if the next hop can be reached, usually through a connected interface that is up. Check the interface facing 10.9.9.2.",
+    "lesson_ref": "d3.static_routing"
+  },
+  {
+    "id": "q.d3.static.cli.001",
+    "domain": "d3",
+    "subtopic": "3.3",
+    "type": "cli_task",
+    "difficulty": 1,
+    "stem": "Use the R1 command line. Configure a default route via the ISP at 10.0.0.2.",
+    "lab": "lab.mini_default_route",
+    "answer": "ip route 0.0.0.0 0.0.0.0 10.0.0.2",
+    "explanation": "From global configuration mode: ip route 0.0.0.0 0.0.0.0 10.0.0.2.",
+    "lesson_ref": "d3.static_routing"
   }
 ]

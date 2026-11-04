@@ -6,6 +6,7 @@ extends Node
 ##   {kind:"review",   ids:[question ids]}
 ##   {kind:"tutorial", lesson:id}
 ##   {kind:"drill",    drill:id, guided:bool, count:int, unit:id}
+##   {kind:"lab",      lab:id}
 
 const MAX_REVIEWS := 20
 const REVIEW_DRILL_COUNT := 5
@@ -17,6 +18,7 @@ const SCENES := {
 	"review": "res://ui/screens/Review.tscn",
 	"tutorial": "res://ui/screens/Tutorial.tscn",
 	"drill": "res://ui/screens/DrillHost.tscn",
+	"lab": "res://ui/screens/Lab.tscn",
 	"summary": "res://ui/screens/Summary.tscn",
 	"dashboard": "res://ui/screens/Dashboard.tscn",
 }
@@ -53,6 +55,9 @@ func plan_steps(now: int = -1) -> Array:
 			review_drills.append(parts[1])
 	for d in review_drills:
 		out.append(drill_step(d, false, REVIEW_DRILL_COUNT))
+	var review_labs := due.filter(func(id): return ContentDB.labs.has(id))
+	for l in review_labs:
+		out.append({"kind": "lab", "lab": l})
 	var unit := next_unit()
 	if not unit.is_empty():
 		if not Progress.is_tutorial_done(unit.id):
@@ -63,6 +68,9 @@ func plan_steps(now: int = -1) -> Array:
 			if Progress.attempt_count(unit.id) < GUIDED_UNTIL:
 				out.append(drill_step(d, true, UNIT_DRILL_COUNT))
 			out.append(drill_step(d, false, UNIT_DRILL_COUNT))
+		for l in unit.get("labs", []):
+			if ContentDB.labs.has(l) and not Progress.is_lab_done(l) and not l in review_labs:
+				out.append({"kind": "lab", "lab": l})
 	return out
 
 func drill_step(drill_id: String, guided: bool, count: int) -> Dictionary:
@@ -78,6 +86,8 @@ func describe(step: Dictionary) -> String:
 			return "Tutorial: %s" % ContentDB.lessons.get(step.lesson, {}).get("title", step.lesson)
 		"drill":
 			return "%s (%s, %d items)" % [ContentDB.drills[step.drill].title, "guided" if step.guided else "unguided", step.count]
+		"lab":
+			return "Lab: %s" % ContentDB.labs.get(step.lab, {}).get("title", step.lab)
 	return step.kind
 
 # --- running ---
@@ -95,6 +105,15 @@ func start_daily() -> void:
 
 func start_drill(drill_id: String, guided: bool) -> void:
 	start([drill_step(drill_id, guided, UNIT_DRILL_COUNT)], "Practice: " + ContentDB.drills[drill_id].title)
+
+func start_lab(lab_id: String) -> void:
+	start([{"kind": "lab", "lab": lab_id}], "Lab: " + ContentDB.labs[lab_id].title)
+
+## SM-2 quality for a lab attempt: 5 clean, 4 with hints, 1 if the solution was shown or tasks left.
+func lab_quality(done: int, total: int, hints: int, solution_shown: bool) -> int:
+	if solution_shown or done < total:
+		return 1
+	return 5 if hints == 0 else 4
 
 func current_step() -> Dictionary:
 	return steps[index] if index >= 0 and index < steps.size() else {}

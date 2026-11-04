@@ -1,0 +1,124 @@
+{
+  "id": "lab.nat_pat",
+  "title": "NAT and PAT on an edge router",
+  "domain": "d4",
+  "unit": "d4.nat_basics",
+  "subtopics": [
+    "4.1"
+  ],
+  "description": "Let the office LAN share R1's public address and publish the web server with a static mapping.",
+  "topology": "  Office LAN 192.168.1.0/24                     ISP\n  web server 192.168.1.10\n        ── Gi0/0 .1 [R1] Gi0/1 203.0.113.2/30 ──  (203.0.113.1)\n\n  Spare public address for the server: 203.0.113.5",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        },
+        {
+          "name": "g0/1"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 192.168.1.1 255.255.255.0",
+        "no shutdown",
+        "interface g0/1",
+        "ip address 203.0.113.2 255.255.255.252",
+        "no shutdown",
+        "ip route 0.0.0.0 0.0.0.0 203.0.113.1"
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "Mark Gi0/0 as the NAT inside interface and Gi0/1 as the NAT outside interface.",
+      "hint": "interface g0/0 → ip nat inside; interface g0/1 → ip nat outside",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "nat_iface",
+          "args": {
+            "iface": "g0/0",
+            "side": "inside"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "nat_iface",
+          "args": {
+            "iface": "g0/1",
+            "side": "outside"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Create standard ACL 1 that permits the inside network 192.168.1.0/24.",
+      "hint": "access-list 1 permit 192.168.1.0 0.0.0.255",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "acl_permits",
+          "args": {
+            "acl": "1",
+            "src": "192.168.1.77"
+          }
+        },
+        {
+          "device": "R1",
+          "check": "acl_permits",
+          "args": {
+            "acl": "1",
+            "src": "10.9.9.9",
+            "action": "deny"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Configure PAT so inside hosts share Gi0/1's address.",
+      "hint": "ip nat inside source list 1 interface g0/1 overload",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "nat_translates",
+          "args": {
+            "inside": "192.168.1.50",
+            "global": "203.0.113.2"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Statically map the web server 192.168.1.10 to 203.0.113.5.",
+      "hint": "ip nat inside source static 192.168.1.10 203.0.113.5",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "nat_translates",
+          "args": {
+            "inside": "192.168.1.10",
+            "global": "203.0.113.5"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "interface g0/0",
+      "ip nat inside",
+      "interface g0/1",
+      "ip nat outside",
+      "exit",
+      "access-list 1 permit 192.168.1.0 0.0.0.255",
+      "ip nat inside source list 1 interface g0/1 overload",
+      "ip nat inside source static 192.168.1.10 203.0.113.5",
+      "end"
+    ]
+  }
+}

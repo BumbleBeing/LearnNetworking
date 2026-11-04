@@ -13,6 +13,7 @@ var streak_days: int = 0
 var last_study_day: String = ""   # yyyy-mm-dd
 var total_minutes: float = 0.0
 var tutorials_done: Dictionary = {}  # lesson_id -> unix time completed
+var labs_done: Dictionary = {}       # lab_id -> unix time first completed
 
 func _ready() -> void:
 	load_game()
@@ -23,6 +24,7 @@ func reset() -> void:
 	last_study_day = ""
 	total_minutes = 0.0
 	tutorials_done = {}
+	labs_done = {}
 	SRS.reset()
 
 func record_attempt(unit_id: String, correct: bool) -> void:
@@ -46,6 +48,13 @@ func mark_tutorial_done(lesson_id: String) -> void:
 
 func is_tutorial_done(lesson_id: String) -> bool:
 	return tutorials_done.has(lesson_id)
+
+func mark_lab_done(lab_id: String) -> void:
+	if not labs_done.has(lab_id):
+		labs_done[lab_id] = int(Time.get_unix_time_from_system())
+
+func is_lab_done(lab_id: String) -> bool:
+	return labs_done.has(lab_id)
 
 func is_mastered(unit_id: String) -> bool:
 	var arr: Array = attempts.get(unit_id, [])
@@ -81,6 +90,7 @@ func to_dict() -> Dictionary:
 		"last_study_day": last_study_day,
 		"total_minutes": total_minutes,
 		"tutorials_done": tutorials_done,
+		"labs_done": labs_done,
 		"srs": SRS.to_dict(),
 	}
 
@@ -91,6 +101,7 @@ func from_dict(d: Dictionary) -> void:
 	last_study_day = str(d.get("last_study_day", ""))
 	total_minutes = float(d.get("total_minutes", 0.0))
 	tutorials_done = d.get("tutorials_done", {})
+	labs_done = d.get("labs_done", {})
 	SRS.from_dict(d.get("srs", {}))
 
 func save_game() -> bool:

@@ -1,0 +1,72 @@
+{
+  "id": "lab.mini_access",
+  "title": "Access port",
+  "hidden": true,
+  "domain": "d2",
+  "subtopics": [
+    "2.1"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [SW1] Fa0/5 ── new staff PC",
+  "devices": [
+    {
+      "name": "SW1",
+      "type": "switch",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "fa0/1"
+        },
+        {
+          "name": "fa0/2"
+        },
+        {
+          "name": "fa0/3"
+        },
+        {
+          "name": "fa0/4"
+        },
+        {
+          "name": "fa0/5"
+        },
+        {
+          "name": "fa0/6"
+        },
+        {
+          "name": "fa0/7"
+        },
+        {
+          "name": "fa0/8"
+        }
+      ],
+      "config": [
+        "vlan 20",
+        "name STAFF"
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "Configure Fa0/5 as a static access port in VLAN 20.",
+      "checks": [
+        {
+          "device": "SW1",
+          "check": "access_port",
+          "args": {
+            "iface": "fa0/5",
+            "vlan": 20
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "SW1": [
+      "interface fa0/5",
+      "switchport mode access",
+      "switchport access vlan 20",
+      "end"
+    ]
+  }
+}

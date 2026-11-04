@@ -36,5 +36,8 @@
   ],
   "drills": [
     "nat_translator"
+  ],
+  "labs": [
+    "lab.nat_pat"
   ]
 }

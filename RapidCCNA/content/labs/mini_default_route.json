@@ -1,0 +1,50 @@
+{
+  "id": "lab.mini_default_route",
+  "title": "Default route",
+  "hidden": true,
+  "domain": "d3",
+  "subtopics": [
+    "3.3"
+  ],
+  "description": "Exam-style simulation item.",
+  "topology": "  [R1] Gi0/0 10.0.0.1/30 ── 10.0.0.2 [ISP]",
+  "devices": [
+    {
+      "name": "R1",
+      "type": "router",
+      "editable": true,
+      "interfaces": [
+        {
+          "name": "g0/0"
+        }
+      ],
+      "config": [
+        "interface g0/0",
+        "ip address 10.0.0.1 255.255.255.252",
+        "no shutdown"
+      ]
+    }
+  ],
+  "links": [],
+  "tasks": [
+    {
+      "text": "Configure a default route on R1 via the ISP at 10.0.0.2.",
+      "checks": [
+        {
+          "device": "R1",
+          "check": "route_to",
+          "args": {
+            "dest": "8.8.8.8",
+            "next_hop": "10.0.0.2"
+          }
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "R1": [
+      "ip route 0.0.0.0 0.0.0.0 10.0.0.2",
+      "end"
+    ]
+  }
+}

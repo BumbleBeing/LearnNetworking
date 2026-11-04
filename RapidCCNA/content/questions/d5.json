@@ -96,5 +96,57 @@
     "answer": 1,
     "explanation": "Line 10 is for port 443, so it doesn't match. Line 20 matches any source going to 10.1.1.10 on TCP 22, so the packet is denied and line 30 is never checked.",
     "lesson_ref": "d5.acl_basics"
+  },
+  {
+    "id": "q.d5.ps.001",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "mcq_single",
+    "difficulty": 1,
+    "stem": "What is the default port security violation mode?",
+    "choices": [
+      "protect",
+      "restrict",
+      "shutdown",
+      "log"
+    ],
+    "answer": 2,
+    "explanation": "By default a violation puts the port into the err-disabled state (shutdown mode).",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.ps.002",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "drag_match",
+    "difficulty": 2,
+    "stem": "Match each port security violation mode to what it does.",
+    "answer": {
+      "protect": "Drops frames from unknown MACs silently",
+      "restrict": "Drops them, logs it and counts the violation",
+      "shutdown": "Puts the port into err-disabled"
+    },
+    "distractors": [
+      "Moves the port into VLAN 999"
+    ],
+    "explanation": "protect and restrict both keep the port up; only restrict reports the violation. shutdown, the default, err-disables the port.",
+    "lesson_ref": "d5.port_security"
+  },
+  {
+    "id": "q.d5.ps.003",
+    "domain": "d5",
+    "subtopic": "5.7",
+    "type": "mcq_single",
+    "difficulty": 2,
+    "stem": "Typing 'switchport port-security' on Fa0/1 returns 'Command rejected: FastEthernet0/1 is a dynamic port.' What fixes it?",
+    "choices": [
+      "Enable the port with 'no shutdown'",
+      "Configure 'switchport mode access' first",
+      "Create the VLAN first",
+      "Use 'switchport port-security enable'"
+    ],
+    "answer": 1,
+    "explanation": "Port security can't be enabled on a port in dynamic (DTP) mode. Make it a static access port first.",
+    "lesson_ref": "d5.port_security"
   }
 ]

@@ -10,6 +10,9 @@ from pathlib import Path
 
 QUESTION_TYPES = {"mcq_single", "mcq_multi", "drag_match", "drag_order",
                   "fill_in", "subnet_calc", "cli_task", "exhibit"}
+LAB_CHECKS = {"hostname", "vlan_exists", "access_port", "trunk_port", "iface_ip", "iface_up", "iface_shutdown",
+              "route_to", "static_route", "ping", "nat_iface", "nat_translates", "port_security",
+              "acl_permits", "acl_decides"}
 QUESTION_REQUIRED = {"id", "domain", "subtopic", "type", "stem", "answer", "explanation"}
 LESSON_REQUIRED = {"id", "domain", "subtopics", "title", "cards"}
 
@@ -143,6 +146,44 @@ def validate(root: Path, min_per_subtopic: int = 0):
         for did in lesson.get("drills", []):
             if did not in drills:
                 errors.append(f"{path}: drill {did} does not exist")
+
+    labs = {}
+    for path in sorted((root / "labs").rglob("*.json")) if (root / "labs").exists() else []:
+        lab = load(path, errors)
+        if not isinstance(lab, dict):
+            continue
+        missing = {"id", "title", "devices", "tasks", "solution"} - lab.keys()
+        if missing:
+            errors.append(f"{path}: missing {sorted(missing)}")
+            continue
+        register(lab["id"], str(path))
+        labs[lab["id"]] = lab
+        names = {d.get("name") for d in lab["devices"]}
+        if not any(d.get("editable") for d in lab["devices"]):
+            errors.append(f"{path}: needs at least one editable device")
+        for link in lab.get("links", []):
+            if len(link) != 4 or link[0] not in names or link[2] not in names:
+                errors.append(f"{path}: bad link {link}")
+        for t in lab["tasks"]:
+            if not t.get("text") or not t.get("checks"):
+                errors.append(f"{path}: every task needs text and checks")
+            for c in t.get("checks", []):
+                if c.get("check") not in LAB_CHECKS:
+                    errors.append(f"{path}: unknown check {c.get('check')}")
+                if c.get("device") not in names:
+                    errors.append(f"{path}: check on unknown device {c.get('device')}")
+        for dev in lab["solution"]:
+            if dev not in names:
+                errors.append(f"{path}: solution for unknown device {dev}")
+        if not lab.get("hidden") and lab.get("unit") not in lessons:
+            errors.append(f"{path}: unit {lab.get('unit')} does not exist")
+    for lid, (lesson, path) in lessons.items():
+        for lab_id in lesson.get("labs", []):
+            if lab_id not in labs:
+                errors.append(f"{path}: lab {lab_id} does not exist")
+    for q in questions.values():
+        if q["type"] == "cli_task" and q.get("lab") not in labs:
+            errors.append(f"question {q['id']}: lab {q.get('lab')} does not exist")
 
     for q in questions.values():
         ref = q.get("lesson_ref")
