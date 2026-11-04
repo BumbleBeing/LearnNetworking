@@ -4,7 +4,10 @@ extends Control
 func _ready() -> void:
 	var step := SessionManager.current_step()
 	var v := UI.page(self)
-	ScreenHeader.build(v, "Review", "Due for review", "Questions you studied before, scheduled so you see them just before you'd forget.")
+	if step.get("title", "") == "Quiz":
+		ScreenHeader.build(v, "Quiz", SessionManager.title.trim_prefix("Quiz: "), "Questions from across this exam area. They feed your spaced-repetition schedule like any review.")
+	else:
+		ScreenHeader.build(v, "Review", "Due for review", "Questions you studied before, scheduled so you see them just before you'd forget.")
 	var body := UI.card(v)
 	var runner := QuestionRunner.new()
 	body.add_child(runner)
@@ -17,5 +20,5 @@ func _on_done(results: Array) -> void:
 		var ref := str(ContentDB.questions.get(r.id, {}).get("lesson_ref", ""))
 		if not ref.is_empty():
 			Progress.record_attempt(ref, r.correct)
-	SessionManager.step_done({"title": "Review", "items": results.size(),
+	SessionManager.step_done({"title": SessionManager.current_step().get("title", "Review"), "items": results.size(),
 		"correct": results.filter(func(r): return r.correct).size()})

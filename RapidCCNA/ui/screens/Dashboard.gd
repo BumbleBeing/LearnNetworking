@@ -7,6 +7,7 @@ static var preview_readiness: Dictionary = {}
 var _exam_input: LineEdit
 
 func _ready() -> void:
+	SessionManager.origin = "dashboard"
 	Progress.mark_studied()
 	Progress.save_game()
 	var look := Palette.current()
@@ -45,7 +46,7 @@ func _ready() -> void:
 	var go := UI.button(left, "Start session", SessionManager.start_daily, true)
 	if plan.is_empty():
 		go.disabled = true
-		UI.label(plan_box, "Nothing due. Try a practice drill below.", "Muted", true)
+		UI.label(plan_box, "Nothing due. Browse topics below to train on anything.", "Muted", true)
 	UI.focus_later(go)
 	var spacer := Control.new()
 	spacer.custom_minimum_size.y = 8
@@ -76,32 +77,16 @@ func _ready() -> void:
 		UI.label(line, "%d%%  ·  w%d" % [int(round(r * 100)), int(d.weight)], "Muted")
 		UI.bar(right, r, color, 8)
 
-	# Free practice
-	if not ContentDB.drills.is_empty():
-		var practice := UI.card(v, "Practice drills")
-		for drill in ContentDB.drills.values():
-			var row2 := UI.hbox(practice, 12)
-			var info := UI.vbox(row2, 0)
-			info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			UI.label(info, drill.title, "H2")
-			UI.label(info, drill.get("description", ""), "Muted", true)
-			for mode in [["Guided", true], ["Unguided", false]]:
-				var b := UI.button(row2, mode[0], SessionManager.start_drill.bind(drill.id, mode[1]))
-				b.custom_minimum_size.x = 120
-				b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-
-	var labs := ContentDB.labs.values().filter(func(l): return not l.get("hidden", false))
-	if not labs.is_empty():
-		var lab_card := UI.card(v, "Command-line labs")
-		for lab in labs:
-			var row3 := UI.hbox(lab_card, 12)
-			var info2 := UI.vbox(row3, 0)
-			info2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			UI.label(info2, lab.title + ("   ✓" if Progress.is_lab_done(lab.id) else ""), "H2")
-			UI.label(info2, lab.get("description", ""), "Muted", true)
-			var ob := UI.button(row3, "Open", SessionManager.start_lab.bind(lab.id))
-			ob.custom_minimum_size.x = 120
-			ob.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# Free training: the daily plan follows exam-area order; anything can be studied on demand.
+	var train := UI.card(v, "Train any topic")
+	var trow := UI.hbox(train, 12)
+	var tinfo := UI.vbox(trow, 2)
+	tinfo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	UI.label(tinfo, "Today's session follows the exam areas in order. To jump ahead or revisit something, pick any unit, drill, lab or exam-area quiz.", "Body", true)
+	UI.label(tinfo, "%d units  ·  %d drills  ·  %d labs  ·  %d questions" % [ContentDB.lessons.size(), ContentDB.drills.size(),
+		ContentDB.labs.values().filter(func(l): return not l.get("hidden", false)).size(), ContentDB.questions.size()], "Muted")
+	var browse := UI.button(trow, "Browse topics", func(): get_tree().change_scene_to_file(SessionManager.SCENES.topics))
+	browse.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 func _readiness(domain_id: String) -> float:
 	if preview_readiness.has(domain_id):
