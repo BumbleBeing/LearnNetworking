@@ -281,3 +281,35 @@ func test_bottom_buttons_are_centred():
 	add_child_autofree(sum)
 	await wait_process_frames(3)
 	_centred(sum.find_children("*", "Button", true, false).filter(func(b): return b.text.begins_with("Back to"))[-1])
+
+func test_a_long_session_plan_scrolls_inside_its_card():
+	var saved_path := Progress.save_path
+	Progress.save_path = "user://test_layout_plan.json"
+	Progress.reset()
+	for d in ContentDB.drills:   # every drill and lab due: one plan line each
+		SRS.grade("gen.%s.a" % d, 1, 1_000_000_000)
+	for l in ContentDB.labs:
+		SRS.grade(l, 1, 1_000_000_000)
+	for size in SIZES:
+		await _set_size(size)
+		var s := await _open("res://ui/screens/Dashboard.tscn")
+		await wait_process_frames(2)
+		var sc: ScrollContainer = s.find_child("PlanScroll", true, false)
+		var content: Control = sc.get_child(0)
+		assert_lte(sc.size.y, s.PLAN_MAX_HEIGHT + 1, "the plan stops growing at %s" % size)
+		assert_gt(content.size.y, sc.size.y, "and the rest scrolls")
+		s.queue_free()
+	Progress.save_path = saved_path
+	Progress.load_game()
+
+func test_a_short_session_plan_shows_in_full():
+	var saved_path := Progress.save_path
+	Progress.save_path = "user://test_layout_plan.json"
+	Progress.reset()
+	var s := await _open("res://ui/screens/Dashboard.tscn")
+	await wait_process_frames(2)
+	var sc: ScrollContainer = s.find_child("PlanScroll", true, false)
+	assert_almost_eq(sc.size.y, sc.get_child(0).size.y, 1.0, "no scrolling needed for a few lines")
+	s.queue_free()
+	Progress.save_path = saved_path
+	Progress.load_game()
