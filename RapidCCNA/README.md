@@ -29,6 +29,8 @@ A unit is **Completed** once you finish its last step, from the daily session or
 
 The daily plan always follows the exam areas in order. To study anything else, use **Topics** (from the dashboard): every exam area has a quiz, and every unit has *Study unit* (tutorial if new, drills, labs), *Tutorial*, per-drill Guided/Unguided buttons and its labs. Free training updates the same progress and spaced-repetition schedule.
 
+**Question variants:** every question except CLI tasks has at least one variant, a similar-looking version with a different correct answer (another address, protocol, symptom or "which is NOT"). Each time a question is shown, in quizzes, reviews, recall checks and mock exams, the original or one of its variants is picked at random. Memorising "the answer is C" doesn't work, so you have to read each question. A question and its variants share one spaced-repetition card. The exam report shows the version you actually missed. A variant (`"variants": [{stem, answer, explanation, ...}]` in a question) replaces only the fields it names. The validator checks that every version has its own answer.
+
 Multiple-choice answers are shuffled each time a question is shown, mock exams included. The number keys pick by position on screen. Typed answers are centred.
 
 Every answer shows an explanation. A miss always shows the worked solution. Drill skills are graded once per round, so a 10-item round doesn't inflate review intervals.
@@ -196,7 +198,7 @@ python3 tools/check_gdscript_warnings.py                  # editor warnings, che
 tools/a11y_tree.sh main topics lab                        # what a screen reader gets (Linux; see the script for packages)
 python3 tools/validate_content.py                         # content checks
 godot --headless --path . -s res://tools/smoke_session.gd # plays a daily session and a quick mock end to end
-python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600  # coverage + mock-exam gate (CI)
+python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600 --min-variants 1  # coverage, variants + mock-exam gate (CI)
 python3 tools/qa_content.py --strict                      # answer-key giveaways, wording, links (CI)
 godot --headless --path . --export-release Linux          # export (needs export templates)
 python3 tools/fetch_web_templates.py                      # once, for the web export

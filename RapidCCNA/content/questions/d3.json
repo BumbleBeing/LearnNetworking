@@ -15,7 +15,14 @@
     ],
     "answer": 3,
     "explanation": "All four routes contain 10.20.30.77 (the /27 covers .64-.95). The longest prefix, /27, wins, so the next hop is 10.0.0.10. AD only matters between routes to the same prefix.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 receives a packet for 10.20.30.12. Based on the exhibit, which next hop does it use?",
+        "answer": 2,
+        "explanation": "10.20.30.12 is outside the /27 (which covers .64-.95), so the matches are the default route, the /16 and the /24. The longest of those, 10.20.30.0/24, wins, so the next hop is 10.0.0.6. The AD of each route plays no part in the choice."
+      }
+    ]
   },
   {
     "id": "q.d3.route.002",
@@ -26,7 +33,14 @@
     "stem": "What is the default administrative distance of OSPF?",
     "answer": "110",
     "explanation": "OSPF routes have AD 110. For comparison: connected 0, static 1, eBGP 20, EIGRP 90, RIP 120.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "What is the default administrative distance of RIP?",
+        "answer": "120",
+        "explanation": "RIP routes have AD 120, ten above OSPF's 110, so RIP is trusted least of the interior protocols. For comparison: connected 0, static 1, eBGP 20, EIGRP 90."
+      }
+    ]
   },
   {
     "id": "q.d3.route.003",
@@ -43,7 +57,20 @@
     ],
     "answer": 1,
     "explanation": "Metrics from different protocols can't be compared. With the same prefix and length, the lowest AD wins: EIGRP 90 beats OSPF 110 and RIP 120.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 learns 172.16.8.0/22 from OSPF (cost 20) and from RIP (2 hops), and from nothing else. Which route is installed?",
+        "choices": [
+          "The OSPF route, because its administrative distance is lower",
+          "The RIP route, because 2 hops is the shortest path",
+          "The RIP route, because RIP is the more trusted source",
+          "Both, for load balancing"
+        ],
+        "answer": 0,
+        "explanation": "Same prefix and length from two protocols, so the lowest administrative distance wins: OSPF 110 beats RIP 120. Cost 20 and 2 hops can't be compared, because metrics only mean something within one protocol."
+      }
+    ]
   },
   {
     "id": "q.d3.static.001",
@@ -56,7 +83,16 @@
       "ip route 0.0.0.0 0.0.0.0 203.0.113.1"
     ],
     "explanation": "A default route is a static route to 0.0.0.0 with mask 0.0.0.0.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Write the command that sets a default route via next hop 198.51.100.254.",
+        "answer": [
+          "ip route 0.0.0.0 0.0.0.0 198.51.100.254"
+        ],
+        "explanation": "A default route is destination 0.0.0.0 with mask 0.0.0.0, which matches every address, followed by the next hop: ip route 0.0.0.0 0.0.0.0 198.51.100.254."
+      }
+    ]
   },
   {
     "id": "q.d3.static.002",
@@ -73,7 +109,20 @@
     ],
     "answer": 1,
     "explanation": "The trailing 130 sets the static route's administrative distance. OSPF's AD of 110 is lower, so the OSPF route is installed and the static route floats as a backup.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "R1 runs OSPF and learns 10.5.0.0/16 from it. An engineer also adds 'ip route 10.5.0.0 255.255.0.0 172.16.1.2 100'. Which route does R1 use for 10.5.0.0/16?",
+        "choices": [
+          "The OSPF route, because dynamic routes always win",
+          "Both, load-balancing between them",
+          "The static route, because 100 is lower than 110",
+          "Neither until the OSPF route is removed"
+        ],
+        "answer": 2,
+        "explanation": "Same prefix, so the lower administrative distance wins. AD 100 is below OSPF's 110, so the static route replaces the OSPF route. To float behind OSPF the static route would need an AD of 111-254."
+      }
+    ]
   },
   {
     "id": "q.d3.static.003",
@@ -90,7 +139,20 @@
     ],
     "answer": 1,
     "explanation": "A next-hop static route is installed only if the next hop can be reached, usually through a connected interface that is up. Check the interface facing 10.9.9.2.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "An engineer adds 'ip route 172.20.0.0 255.255.0.0 10.9.9.2' and it appears in 'show ip route', but pings from R1's LAN to 172.20.1.1 still fail. What's the most likely cause?",
+        "choices": [
+          "Static routes only work after 'copy run start'",
+          "R1 has no route to the next hop 10.9.9.2",
+          "The far end has no route back to R1's LAN",
+          "Static routes are used only after 'show ip route static'"
+        ],
+        "answer": 2,
+        "explanation": "The route is installed, so R1 can reach its next hop. A ping needs routes in both directions: the replies can't come back unless the far end knows how to reach the source address on R1's LAN."
+      }
+    ]
   },
   {
     "id": "q.d3.static.cli.001",
@@ -119,7 +181,14 @@
     ],
     "answer": 1,
     "explanation": "Without a router-id command, the highest IP on an up loopback is used before any physical interface, even if the physical address is higher.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "R1 has no router-id command and no loopback. Its two physical interfaces, 10.255.0.1 and 192.168.1.1, are both up. What is R1's OSPF router ID?",
+        "answer": 0,
+        "explanation": "With no router-id command and no up loopback, OSPF uses the highest IP on an up physical interface. 192.168.1.1 is higher than 10.255.0.1, so it becomes the router ID."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.002",
@@ -140,7 +209,24 @@
       3
     ],
     "explanation": "Area and Hello/Dead timers must match (as must subnet, authentication and MTU). Process IDs and priorities are local and may differ, and router IDs must be different.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which two settings can differ between two routers without stopping them becoming OSPF neighbours? (Choose two.)",
+        "choices": [
+          "Process ID",
+          "Area ID",
+          "Subnet mask",
+          "Hello and Dead intervals",
+          "Interface priority"
+        ],
+        "answer": [
+          0,
+          4
+        ],
+        "explanation": "The process ID is local to each router and priority only affects the DR election, so both can differ. Area, subnet and mask, and the Hello and Dead timers must all match."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.003",
@@ -158,7 +244,21 @@
     ],
     "answer": 0,
     "explanation": "Both are OSPF routes, so AD is equal (110) and the metric decides. Cost 3 via 10.0.12.2 beats cost 66 via 10.0.13.3; only the best one is installed.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, which route or routes does R1 use for 10.4.4.0/24?",
+        "exhibit": "R1's OSPF database contains two paths to 10.4.4.0/24:\n  via R2 (10.0.12.2): cost 1 + 1 + 1 = 3\n  via R3 (10.0.13.3): cost 1 + 1 + 1 = 3",
+        "choices": [
+          "Via 10.0.12.2 only, cost 3",
+          "Via 10.0.13.3 only, cost 3",
+          "Both, load-balanced",
+          "Neither; OSPF prefers the route with the most hops"
+        ],
+        "answer": 2,
+        "explanation": "Both paths total cost 3. When the lowest costs are equal, OSPF installs both and shares traffic between them; it doesn't pick one by neighbour or router ID."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.004",
@@ -169,7 +269,14 @@
     "stem": "With the default reference bandwidth, what OSPF cost does a GigabitEthernet interface get?",
     "answer": "1",
     "explanation": "100 Mbps ÷ 1000 Mbps = 0.1, but the minimum cost is 1. That's why reference bandwidth is usually raised.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "With the default reference bandwidth, what OSPF cost does a 10 Mbps Ethernet interface get?",
+        "answer": "10",
+        "explanation": "Cost is the reference bandwidth (100 Mbps by default) divided by the interface bandwidth: 100 / 10 = 10. FastEthernet and faster all come out at the minimum of 1."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.005",
@@ -186,7 +293,14 @@
     ],
     "answer": 0,
     "explanation": "Priority 0 (9.9.9.9) can't be elected. The rest tie on priority 1, so the highest router ID, 4.4.4.4, becomes DR and 3.3.3.3 BDR.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Four routers on one Ethernet segment have OSPF priorities 1, 1, 0 and 1 and router IDs 4.4.4.4, 3.3.3.3, 9.9.9.9 and 1.1.1.1 respectively. They start together. Which router ID becomes the BDR?",
+        "answer": 3,
+        "explanation": "9.9.9.9 has priority 0, so it can't take either role. The rest tie on priority 1, so router ID decides: 4.4.4.4 becomes DR and the next highest, 3.3.3.3, becomes BDR."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.006",
@@ -204,7 +318,15 @@
     ],
     "answer": 2,
     "explanation": "10.1.0.0 0.0.3.255 matches 10.1.0.0 through 10.1.3.255, so Gi0/0 (10.1.1.1) and Gi0/1 (10.1.3.1) match. 10.1.4.1 and 172.16.1.1 don't.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, which interfaces does this network statement enable for OSPF?",
+        "exhibit": "Gi0/0  10.1.1.1/24\nGi0/1  10.1.3.1/24\nGi0/2  10.1.4.1/24\nLo0    172.16.1.1/32\n\nrouter ospf 1\n network 10.1.0.0 0.0.7.255 area 0",
+        "answer": 3,
+        "explanation": "Wildcard 0.0.7.255 matches 10.1.0.0 through 10.1.7.255, which includes 10.1.1.1, 10.1.3.1 and 10.1.4.1. Lo0's 172.16.1.1 is outside the range, so only the three Gigabit interfaces are enabled."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.007",
@@ -221,7 +343,20 @@
     ],
     "answer": 3,
     "explanation": "A passive interface still has its network advertised, but sends no Hellos, so no neighbours form on it. Use it on LAN interfaces with no other routers.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which command makes Gi0/2 send no OSPF Hellos while OSPF still advertises Gi0/2's network?",
+        "choices": [
+          "ip ospf priority 0",
+          "no ip ospf 1 area 0",
+          "passive-interface g0/2",
+          "ip ospf network point-to-point"
+        ],
+        "answer": 2,
+        "explanation": "passive-interface (under router ospf) stops Hellos, so no neighbours form on that interface, but its network is still advertised. Priority 0 only keeps the router out of the DR election."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.008",
@@ -236,7 +371,18 @@
       "Highest IP on an up physical interface"
     ],
     "explanation": "Manual first, then loopbacks, then physical interfaces.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Put the router ID selection order in sequence, from last resort to first choice.",
+        "answer": [
+          "Highest IP on an up physical interface",
+          "Highest IP on an up loopback interface",
+          "The router-id command"
+        ],
+        "explanation": "The router-id command always wins. Without it OSPF takes the highest up loopback address, and only as a last resort the highest up physical interface address."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.cli.001",
@@ -265,7 +411,20 @@
     ],
     "answer": 2,
     "explanation": "Hosts point at the virtual IP, which the active router answers for with the virtual MAC.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "When HSRP is deployed, which router forwards the traffic hosts send to the virtual IP?",
+        "choices": [
+          "The active router",
+          "The standby router",
+          "Every router in the group, in turn",
+          "Any router in the Listen state"
+        ],
+        "answer": 0,
+        "explanation": "Only the active router answers for the virtual IP and MAC and forwards the hosts' traffic. The standby waits to take over, and routers in Listen only speak up if the active or standby fails."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.002",
@@ -282,7 +441,14 @@
     ],
     "answer": 0,
     "explanation": "Without preempt, a higher-priority router doesn't take over from a working active router.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "R2 has HSRP priority 120 and 'standby 1 preempt'. R1 (currently active) has 100. What happens?",
+        "answer": 1,
+        "explanation": "With preempt configured, a router with a higher priority takes the active role from a working active router. R2's 120 beats R1's 100, so R2 becomes active and R1 drops to standby."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.003",
@@ -296,7 +462,17 @@
       "0000.0C07.AC0A"
     ],
     "explanation": "HSRPv1 uses 0000.0c07.acXX with the group in hex: 10 = 0x0a.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "What is the HSRPv1 virtual MAC address for group 20?",
+        "answer": [
+          "0000.0c07.ac14",
+          "0000.0C07.AC14"
+        ],
+        "explanation": "HSRPv1 MACs are 0000.0c07.acXX, where XX is the group in hex. 20 in hex is 14, so group 20 uses 0000.0c07.ac14. Writing 20 without converting is the trap."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.004",
@@ -314,7 +490,21 @@
       "GLBP": "Cisco; several routers forward for one virtual IP"
     },
     "explanation": "HSRP and GLBP are Cisco; VRRP is the IETF standard. Only GLBP load-balances with a single group.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "Match each protocol to its virtual MAC address format.",
+        "answer": {
+          "HSRP": "0000.0c07.acXX (version 1)",
+          "VRRP": "0000.5e00.01XX",
+          "GLBP": "0007.b4XX.XXYY"
+        },
+        "distractors": [
+          "ffff.ffff.ffff"
+        ],
+        "explanation": "HSRP's prefix 0000.0c looks like Cisco's own MACs, VRRP uses the IANA block 0000.5e, and GLBP uses 0007.b4. ffff.ffff.ffff is the broadcast address, not a virtual MAC."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.005",
@@ -332,7 +522,21 @@
     ],
     "answer": 1,
     "explanation": "R1 drops to 110 - 20 = 90, below R2's 100, and R2 has preempt, so R2 takes over.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "R1 is active. Its uplink Gi0/1 fails. Based on this exhibit, which router is active afterwards?",
+        "exhibit": "R1: interface g0/0\n  standby 1 ip 10.1.1.1\n  standby 1 priority 110\n  standby 1 preempt\n  standby 1 track g0/1 5\n\nR2: interface g0/0\n  standby 1 ip 10.1.1.1\n  standby 1 preempt",
+        "choices": [
+          "R1, because its priority only falls to 105, above R2's 100",
+          "R2, because R1's priority falls to 90 and R2 preempts",
+          "Neither; the group goes down",
+          "R1, because tracking only affects the standby router"
+        ],
+        "answer": 0,
+        "explanation": "The track decrement is only 5: 110 - 5 = 105, still above R2's default 100, so R2 has no reason to preempt and R1 stays active. The decrement must push the active router below its peer."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.006",
@@ -349,7 +553,20 @@
     ],
     "answer": 3,
     "explanation": "Ties go to the highest IP address on the HSRP interface.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "R1 (10.1.1.2, HSRP priority 110) and R2 (10.1.1.3, priority 100) start together. Which becomes active?",
+        "choices": [
+          "R1, because priority is compared before the IP address",
+          "R2, because it has the higher interface IP",
+          "R2, because the lower priority wins",
+          "Whichever router booted last"
+        ],
+        "answer": 0,
+        "explanation": "The highest priority wins, so R1's 110 beats R2's 100. The interface IP only breaks a tie when the priorities are equal."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.cli.001",
@@ -377,7 +594,19 @@
       "10.0.0.2": "Next hop"
     },
     "explanation": "Code, prefix, [AD/metric], next hop, exit interface.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Match each part of the route 'D 10.8.0.0/16 [90/30720] via 10.0.0.6, Gi0/1' to its meaning.",
+        "answer": {
+          "D": "How the route was learned (EIGRP)",
+          "90": "Administrative distance",
+          "30720": "Metric (EIGRP composite)",
+          "10.0.0.6": "Next hop"
+        },
+        "explanation": "The code D means EIGRP (D for DUAL). Inside the brackets the first number, 90, is the administrative distance and the second, 30720, is EIGRP's composite metric. The address after 'via' is the next hop."
+      }
+    ]
   },
   {
     "id": "q.d3.route.005",
@@ -394,7 +623,14 @@
     ],
     "answer": 3,
     "explanation": "L is a local /32 route for the router's own address on an interface; C is the connected subnet.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "What does an 'S*' entry for 0.0.0.0/0 in 'show ip route' show?",
+        "answer": 2,
+        "explanation": "S means static and the asterisk marks a candidate default route, so 'S* 0.0.0.0/0' is a static default route. Its next hop becomes the gateway of last resort."
+      }
+    ]
   },
   {
     "id": "q.d3.route.006",
@@ -411,7 +647,20 @@
     ],
     "answer": 1,
     "explanation": "Forwarding uses the longest matching prefix: /16 beats /8. AD only compares routes to the same prefix.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "A router has 10.0.0.0/8 via OSPF (AD 110) and 10.1.0.0/16 via a static route (AD 1). Which does it use for 10.2.5.5?",
+        "choices": [
+          "10.0.0.0/8, the only route that matches",
+          "10.1.0.0/16, the longest prefix match",
+          "Both, load balanced",
+          "Neither: the AD values conflict"
+        ],
+        "answer": 0,
+        "explanation": "10.1.0.0/16 covers only 10.1.x.x, so it doesn't contain 10.2.5.5. The only matching route is 10.0.0.0/8. The trap is picking the /16 for being longer: a route has to contain the destination before its length counts."
+      }
+    ]
   },
   {
     "id": "q.d3.route.007",
@@ -428,7 +677,14 @@
     ],
     "answer": 3,
     "explanation": "In [110/65] the first number is the administrative distance (OSPF = 110) and the second is the metric, here the total OSPF cost. 00:12:44 is how long ago the route was learned.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "In 'O 10.1.1.0/24 [110/65] via 192.168.1.2, 00:12:44, Serial0/0/0', what is 110?",
+        "answer": 0,
+        "explanation": "Inside [110/65] the first number is the administrative distance (110 is OSPF's default) and the second, 65, is the OSPF cost. The timer 00:12:44 is how long ago the route was learned."
+      }
+    ]
   },
   {
     "id": "q.d3.route.008",
@@ -449,7 +705,24 @@
       "BGP"
     ],
     "explanation": "C and L appear for every interface that is up with an address: C for the subnet and L for the /32 of the address itself. S is static, D is EIGRP (from DUAL) and O is OSPF.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Match each routing table code to the source of the route.",
+        "answer": {
+          "R": "RIP",
+          "B": "BGP",
+          "C": "Directly connected network",
+          "O": "OSPF",
+          "D": "EIGRP"
+        },
+        "distractors": [
+          "Static route",
+          "The router's own interface address (/32)"
+        ],
+        "explanation": "Most codes are first letters: R RIP, B BGP, C connected, O OSPF. EIGRP is the odd one, D, named after its DUAL algorithm because E was taken by the older EGP. S (static) and L (local /32) aren't in this set."
+      }
+    ]
   },
   {
     "id": "q.d3.route.009",
@@ -460,7 +733,14 @@
     "stem": "What is the default administrative distance of an internal EIGRP route?",
     "answer": "90",
     "explanation": "Connected 0, static 1, eBGP 20, internal EIGRP 90, OSPF 110, RIP 120, external EIGRP 170, iBGP 200.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "What is the default administrative distance of an external EIGRP route?",
+        "answer": "170",
+        "explanation": "External EIGRP routes (redistributed into EIGRP from another source) have AD 170, far above internal EIGRP's 90, because they were heard second-hand."
+      }
+    ]
   },
   {
     "id": "q.d3.route.010",
@@ -478,7 +758,21 @@
       "RIP"
     ],
     "explanation": "Connected 0, static 1, eBGP 20, internal EIGRP 90, OSPF 110, RIP 120. Lower AD is more trusted.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Put these route sources in order of default administrative distance, least trusted first.",
+        "answer": [
+          "RIP",
+          "OSPF",
+          "EIGRP (internal)",
+          "eBGP",
+          "Static",
+          "Connected"
+        ],
+        "explanation": "Least trusted means highest AD first: RIP 120, OSPF 110, internal EIGRP 90, eBGP 20, static 1, connected 0."
+      }
+    ]
   },
   {
     "id": "q.d3.route.011",
@@ -496,7 +790,14 @@
     ],
     "answer": 0,
     "explanation": "8.8.8.8 matches none of the 10.x routes, so only the default route 0.0.0.0/0 matches. Its next hop, 203.0.113.1, is the gateway of last resort.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, where does R1 send a packet for 10.2.40.1?",
+        "answer": 1,
+        "explanation": "10.2.40.1 is inside 10.2.0.0/16, so the OSPF route matches and is longer than the default route. R1 forwards the packet to 10.1.1.2. The gateway of last resort is only used when nothing more specific matches."
+      }
+    ]
   },
   {
     "id": "q.d3.route.012",
@@ -513,7 +814,20 @@
     ],
     "answer": 1,
     "explanation": "It's a heading, not a route. The classful network 10.0.0.0/8 has four routes beneath it, using three distinct prefix lengths (for example /24, /30 and /32).",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "In show ip route, '10.0.0.0/8 is variably subnetted, 5 subnets, 2 masks' appears. What does it tell you?",
+        "choices": [
+          "Five routes inside 10.0.0.0/8 follow, using two prefix lengths",
+          "Two routes inside 10.0.0.0/8 follow, using five prefix lengths",
+          "10.0.0.0/8 has been split into five equal-sized subnets",
+          "R1 has a route to 10.0.0.0/8 itself plus five other routes"
+        ],
+        "answer": 0,
+        "explanation": "The line is a heading, not a route. 'Five subnets' is the number of routes listed under it and 'two masks' is how many different prefix lengths they use, so the subnets can't all be the same size."
+      }
+    ]
   },
   {
     "id": "q.d3.route.013",
@@ -531,7 +845,14 @@
     ],
     "answer": 2,
     "explanation": "172.16.4.0/22 covers 172.16.4.0-172.16.7.255, so it includes .6.9. The /24 only covers 172.16.4.x. The longest matching prefix is /22, via 10.0.0.5.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 receives a packet for 172.16.4.200. Based on the exhibit, which next hop does it use?",
+        "answer": 1,
+        "explanation": "172.16.4.200 is inside 172.16.4.0/24, which is also inside the /22 and the /16. The longest match, /24, wins, so R1 uses the static route's next hop, 10.0.0.9."
+      }
+    ]
   },
   {
     "id": "q.d3.route.014",
@@ -548,7 +869,20 @@
     ],
     "answer": 2,
     "explanation": "Equal-cost paths to the same prefix from the same protocol are all installed (OSPF allows 4 by default) and traffic is load-balanced across them: ECMP.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "OSPF on R1 finds two paths to 10.9.0.0/16, one with cost 30 and one with cost 40. What does R1 do?",
+        "choices": [
+          "Installs only the path through the neighbour with the higher router ID",
+          "Installs only the cost 30 path",
+          "Installs both and shares traffic between them",
+          "Installs the path learned first and keeps the other as a backup outside the table"
+        ],
+        "answer": 1,
+        "explanation": "Within one protocol the lowest metric wins, so only the cost 30 path is installed. Traffic is shared only when the best costs are equal (ECMP)."
+      }
+    ]
   },
   {
     "id": "q.d3.route.015",
@@ -565,7 +899,20 @@
     ],
     "answer": 2,
     "explanation": "Routers never flood. With no matching route the packet is dropped, and the router tells the sender with an ICMP destination unreachable message.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "A router lowers a packet's TTL as it forwards it, and the TTL reaches zero. What happens?",
+        "choices": [
+          "It floods the packet out every interface",
+          "It sends the packet back out the interface it arrived on",
+          "It resets the TTL to 255 and forwards the packet",
+          "It drops the packet and sends ICMP time exceeded to the source"
+        ],
+        "answer": 3,
+        "explanation": "TTL stops packets looping for ever: at zero the router drops the packet and tells the source with ICMP time exceeded. (ICMP destination unreachable is for a packet that matches no route.)"
+      }
+    ]
   },
   {
     "id": "q.d3.route.016",
@@ -585,7 +932,17 @@
       2
     ],
     "explanation": "First the longest prefix match. AD only breaks ties between sources offering the same prefix/length, and metric only between routes from the same protocol. A default route is the least specific match, so it's used last.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Which two statements about how a router picks a route for a packet are false? (Choose two.)",
+        "answer": [
+          0,
+          3
+        ],
+        "explanation": "False: metrics can't be compared across protocols, and a default route is the least specific match, so it's used only when nothing else matches. True: the longest prefix wins whatever its AD, and AD is only compared between routes to the same prefix and length."
+      }
+    ]
   },
   {
     "id": "q.d3.route.017",
@@ -599,7 +956,17 @@
       "21"
     ],
     "explanation": "All three match: /16 covers everything in 192.168, /19 covers 192.168.32-63, /21 covers 192.168.40-47. The longest match, /21, is used.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 has routes to 192.168.0.0/16, 192.168.32.0/19 and 192.168.40.0/21. Which prefix length does it use for a packet to 192.168.33.1? (for example /24)",
+        "answer": [
+          "/19",
+          "19"
+        ],
+        "explanation": "/16 covers all of 192.168 and /19 covers 192.168.32-63, so both match. /21 covers only 192.168.40-47, so it doesn't contain .33.1. The longest match is /19."
+      }
+    ]
   },
   {
     "id": "q.d3.route.018",
@@ -616,7 +983,20 @@
     ],
     "answer": 0,
     "explanation": "Each hop decrements the TTL. At zero the router drops the packet and sends ICMP time exceeded, which stops loops from circulating forever and is how traceroute works.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Which tool maps the path to a destination by relying on routers sending ICMP time exceeded when a packet's TTL reaches zero?",
+        "choices": [
+          "ping",
+          "traceroute",
+          "show ip route",
+          "show ip cef"
+        ],
+        "answer": 1,
+        "explanation": "traceroute sends packets with TTL 1, 2, 3 and so on. Each router that lowers the TTL to zero drops the packet and replies with ICMP time exceeded, revealing itself hop by hop. ping only tests whether the far end answers."
+      }
+    ]
   },
   {
     "id": "q.d3.static.004",
@@ -633,7 +1013,20 @@
     ],
     "answer": 2,
     "explanation": "A floating static route needs an AD higher than the route it backs up. OSPF is 110, so 120 works. AD 1 (the default) or 100 would replace the OSPF route. 0.0.255.255 is a wildcard, not a subnet mask, so that command is wrong.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "R1 learns 10.50.0.0/16 from OSPF. Which command adds a route via 172.16.2.2 that would replace the OSPF route in the routing table?",
+        "choices": [
+          "ip route 10.50.0.0 255.255.0.0 172.16.2.2 100",
+          "ip route 10.50.0.0 255.255.0.0 172.16.2.2 120",
+          "ip route 10.50.0.0 255.255.0.0 172.16.2.2 130",
+          "ip route 10.50.0.0 0.0.255.255 172.16.2.2 100"
+        ],
+        "answer": 0,
+        "explanation": "A static route beats OSPF when its AD is below 110, so AD 100 replaces the OSPF route. AD 120 and 130 would float behind OSPF as backups, and 0.0.255.255 is a wildcard, not a mask."
+      }
+    ]
   },
   {
     "id": "q.d3.static.005",
@@ -646,7 +1039,16 @@
       "ipv6 route ::/0 2001:db8:acad:1::1"
     ],
     "explanation": "The IPv6 default route is ::/0. 'ipv6 unicast-routing' must also be on for the router to forward IPv6.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Write the command that sets an IPv6 default route via next hop 2001:db8:12::2.",
+        "answer": [
+          "ipv6 route ::/0 2001:db8:12::2"
+        ],
+        "explanation": "IPv6 uses 'ipv6 route' with a prefix length, and the default route is ::/0: ipv6 route ::/0 2001:db8:12::2. Routing must also be on with 'ipv6 unicast-routing'."
+      }
+    ]
   },
   {
     "id": "q.d3.static.006",
@@ -663,7 +1065,20 @@
     ],
     "answer": 2,
     "explanation": "Every interface has its own fe80:: address and the same one can appear on several links, so 'ipv6 route 2001:db8:5::/64 g0/0 fe80::2' says which link to use.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Which statement is true about an IPv6 static route whose next hop is a global address, such as 2001:db8:1::2?",
+        "choices": [
+          "IOS can't ping global next hops, so the route stays out of the table",
+          "It needs a higher administrative distance than a link-local next hop",
+          "The exit interface is optional, since R1 can look up the global address",
+          "The exit interface is required, as on every IPv6 static route"
+        ],
+        "answer": 2,
+        "explanation": "A global address is unique beyond one link, so R1 can find the exit interface with a recursive lookup. Only a link-local next hop (fe80::) has to name the interface, because the same link-local address can exist on every link."
+      }
+    ]
   },
   {
     "id": "q.d3.static.007",
@@ -680,7 +1095,14 @@
     ],
     "answer": 3,
     "explanation": "A host route matches exactly one address, so the mask is 255.255.255.255 (/32). Mask 0.0.0.0 would be a default route. 'ip host' maps a name to an address.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Which command creates a route to the whole 10.8.8.0/24 network via 10.0.0.2?",
+        "answer": 2,
+        "explanation": "A /24 is written as mask 255.255.255.0 with the network address 10.8.8.0. The 255.255.255.255 mask would make a host route to one address, and 0.0.0.0 isn't a valid mask for a single network."
+      }
+    ]
   },
   {
     "id": "q.d3.static.008",
@@ -696,7 +1118,19 @@
       "Floating static route": "ip route 10.20.0.0 255.255.0.0 10.0.0.6 130"
     },
     "explanation": "Default: all-zeros network and mask. Network: a subnet. Host: a /32. Floating: a raised AD (130) so it's only used when a better route is gone.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Match each kind of static route to the command that creates it.",
+        "answer": {
+          "Default route": "ip route 0.0.0.0 0.0.0.0 198.51.100.1",
+          "Network route": "ip route 172.16.0.0 255.240.0.0 10.0.0.2",
+          "Host route": "ip route 172.16.9.9 255.255.255.255 10.0.0.2",
+          "Floating static route": "ip route 172.16.0.0 255.240.0.0 10.0.0.6 200"
+        },
+        "explanation": "0.0.0.0 0.0.0.0 matches everything (default route), a mask like 255.240.0.0 covers a network, 255.255.255.255 is one host, and an AD added at the end (200) makes a floating backup."
+      }
+    ]
   },
   {
     "id": "q.d3.static.009",
@@ -713,7 +1147,20 @@
     ],
     "answer": 3,
     "explanation": "With only an exit interface on a multi-access link, R1 treats every destination as directly connected and ARPs for each one. It only works if the next router answers with proxy ARP. Name the next hop (or both) instead.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "R1 has 'ip route 10.30.0.0 255.255.0.0 Serial0/0/0' and no next hop. Serial0/0/0 is a point-to-point link. Which statement is true?",
+        "choices": [
+          "The route gets AD 0 like a connected route and overrides OSPF",
+          "This is fine, because only one device sits at the other end of the link",
+          "The route never appears in the routing table",
+          "R1 ARPs for every destination and relies on proxy ARP from the next router"
+        ],
+        "answer": 1,
+        "explanation": "On a point-to-point link there's exactly one device at the far end, so naming only the exit interface is fine. The proxy ARP problem only affects exit-interface routes on multi-access Ethernet."
+      }
+    ]
   },
   {
     "id": "q.d3.static.010",
@@ -731,7 +1178,15 @@
     ],
     "answer": 3,
     "explanation": "The echo request reaches PC2 using R1's route, but R2 has no route to 192.168.1.0/24 for the reply. Routing has to work in both directions: add 'ip route 192.168.1.0 255.255.255.0 10.0.12.1' on R2.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "PC1 (192.168.1.10) still can't ping PC2 (192.168.2.20) after a fix on R2. Based on the exhibit, why?",
+        "exhibit": "R1#show running-config | include ip route\nip route 192.168.2.0 255.255.255.0 10.0.12.6\n\nR2#show ip route\nC     10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL     10.0.12.2/32 is directly connected, GigabitEthernet0/0\nC     192.168.2.0/24 is directly connected, GigabitEthernet0/1\nL     192.168.2.1/32 is directly connected, GigabitEthernet0/1\nS     192.168.1.0/24 [1/0] via 10.0.12.1",
+        "answer": 0,
+        "explanation": "R2 now has a route back to 192.168.1.0/24, but R1's route points at 10.0.12.6, which isn't R2 (10.0.12.2) and isn't even on the 10.0.12.0/30 link. R1 can't reach that next hop, so its route to 192.168.2.0/24 never works."
+      }
+    ]
   },
   {
     "id": "q.d3.static.011",
@@ -748,7 +1203,14 @@
     ],
     "answer": 2,
     "explanation": "Fully specified means both the exit interface and the next hop. The first and last are recursive (next hop only); the second is directly attached (interface only).",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Which IPv6 static route names only an exit interface?",
+        "answer": 1,
+        "explanation": "'ipv6 route 2001:db8:5::/64 g0/0' gives an interface and no next-hop address. Naming both g0/0 and fe80::2 makes a fully specified route, and the others give only a next hop."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.009",
@@ -767,7 +1229,22 @@
       "Full"
     ],
     "explanation": "Hellos take a neighbour from Down through Init to 2-Way. Adjacent routers then elect master/slave (ExStart), swap database summaries (Exchange), request missing LSAs (Loading) and reach Full.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Put the OSPF neighbour states in reverse order, from Full back to Down.",
+        "answer": [
+          "Full",
+          "Loading",
+          "Exchange",
+          "ExStart",
+          "2-Way",
+          "Init",
+          "Down"
+        ],
+        "explanation": "Forwards the states are Down, Init, 2-Way, ExStart, Exchange, Loading, Full (Dogs In Trucks Eat Everything, Leaving Fleas). Reversed, Full comes first and Down last."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.010",
@@ -784,7 +1261,20 @@
     ],
     "answer": 2,
     "explanation": "On broadcast segments DROthers only go Full with the DR and BDR. Two DROthers see each other (2-Way) but don't exchange databases. That's expected, not a fault.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "On an Ethernet segment, show ip ospf neighbor lists a neighbour as FULL/DR. What does this mean?",
+        "choices": [
+          "The adjacency is stuck and the timers must be checked",
+          "The neighbour is the DR, and the two routers' databases are in sync",
+          "Both routers are DROthers, so stopping at 2-Way is normal",
+          "The neighbour is in another area"
+        ],
+        "answer": 1,
+        "explanation": "The part after the slash is the neighbour's role (DR) and FULL is the adjacency state: their link-state databases are synchronised. Every router on the segment goes FULL with the DR and BDR."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.011",
@@ -795,7 +1285,14 @@
     "stem": "R1 has 'auto-cost reference-bandwidth 10000'. What OSPF cost does a 1 Gbps interface get?",
     "answer": "10",
     "explanation": "Cost = reference bandwidth / interface bandwidth = 10000 Mbps / 1000 Mbps = 10. With the default reference of 100 Mbps every link of 100 Mbps or more costs 1.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "R1 has 'auto-cost reference-bandwidth 10000'. What OSPF cost does a 100 Mbps interface get?",
+        "answer": "100",
+        "explanation": "The reference is now 10000 Mbps, so the cost is 10000 / 100 = 100. With the same reference, 1 Gbps costs 10 and 10 Gbps costs 1."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.012",
@@ -812,7 +1309,20 @@
     ],
     "answer": 0,
     "explanation": "Hello 10 s, Dead 40 s (four Hellos) on broadcast and point-to-point links. Both must match for neighbours to form.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "By default on Ethernet, how long can an OSPF router go without a Hello from a neighbour before it declares that neighbour down?",
+        "choices": [
+          "10 s",
+          "40 s",
+          "30 s",
+          "120 s"
+        ],
+        "answer": 1,
+        "explanation": "The Dead interval on Ethernet is 40 s by default, four times the 10 s Hello interval. 10 s is how often Hellos are sent, not when the neighbour is declared dead."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.013",
@@ -830,7 +1340,15 @@
     ],
     "answer": 0,
     "explanation": "Priority 0 makes a router ineligible for DR/BDR. R1 is Full with a DROther, which only the DR or BDR does, so R1 must be the BDR. DR elections aren't preemptive: a better router joining later doesn't take over.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "R1 shows the exhibit. All three routers share one Ethernet segment and the election has finished. Which statement is true?",
+        "exhibit": "R1#show ip ospf neighbor\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n2.2.2.2           1   FULL/DR         00:00:36    10.0.0.2        Gi0/0\n3.3.3.3           1   FULL/BDR        00:00:31    10.0.0.3        Gi0/0",
+        "answer": 1,
+        "explanation": "The neighbours hold the DR and BDR roles, so R1, the third router, must be a DROther, and it goes FULL with both. 3.3.3.3 has priority 1 here, so it is eligible, and the DR keeps its role because the election isn't pre-emptive."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.014",
@@ -847,7 +1365,14 @@
     ],
     "answer": 2,
     "explanation": "A wildcard of 0.0.0.0 means every bit must match, so only 10.1.1.1. 0.0.0.255 matches all of 10.1.1.x, and 255.255.255.255 is a wildcard of all ones, which matches every address on the router.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which network statement enables OSPF on every interface whose address is in 10.1.1.0/24?",
+        "answer": 1,
+        "explanation": "OSPF network statements use a wildcard mask: 0.0.0.255 lets the last octet be anything, matching 10.1.1.0-10.1.1.255. 0.0.0.0 matches one address only, and 0.255.255.255 matches all of 10.0.0.0/8."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.015",
@@ -864,7 +1389,14 @@
     ],
     "answer": 2,
     "explanation": "Hellos are sent every Hello interval to 224.0.0.5. DBD, LSR and LSU synchronise the link-state database once neighbours are found.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which OSPF packet type carries the full LSAs a neighbour asked for?",
+        "answer": 3,
+        "explanation": "A Link-State Update (LSU) carries complete LSAs. The LSR is the request for them, the DBD only summarises the database, and Hellos find and keep neighbours."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.016",
@@ -884,7 +1416,17 @@
       3
     ],
     "explanation": "Duplicate router IDs break the adjacency, and a passive interface sends no Hellos. The process ID is local to each router, and priority only affects the DR/BDR election.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which two of these do NOT stop two directly connected routers from becoming OSPF neighbours? (Choose two.)",
+        "answer": [
+          0,
+          1
+        ],
+        "explanation": "Process IDs are local and priorities only affect the DR election, so neither has to match. Duplicate router IDs and a passive interface (which sends no Hellos) both prevent an adjacency."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.007",
@@ -897,7 +1439,17 @@
       "0000.0c9f.f00a"
     ],
     "explanation": "HSRPv2 uses 0000.0c9f.fXXX, with the group number in the last three hex digits: 10 = 0x00a. HSRPv1 uses 0000.0c07.acXX.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "What is the HSRPv2 virtual MAC address for group 100? (dotted format, for example 0000.0c07.ac01)",
+        "answer": [
+          "0000.0c9f.f064",
+          "0000.0C9F.F064"
+        ],
+        "explanation": "HSRPv2 MACs are 0000.0c9f.fXXX with the group in three hex digits. 100 in hex is 64, so group 100 is 0000.0c9f.f064."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.008",
@@ -914,7 +1466,14 @@
     ],
     "answer": 3,
     "explanation": "VRRP is defined by the IETF (RFC 5798). HSRP and GLBP are Cisco-proprietary. PAgP is a Cisco EtherChannel protocol, not an FHRP.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "Which first hop redundancy protocol is Cisco-proprietary and load-balances within one group?",
+        "answer": 1,
+        "explanation": "GLBP (Gateway Load Balancing Protocol) is Cisco's and shares one group's traffic across several forwarders. HSRP is also Cisco's but only the active router forwards, and VRRP is the open standard."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.009",
@@ -931,7 +1490,14 @@
     ],
     "answer": 1,
     "explanation": "In GLBP the active virtual gateway (AVG) hands out different virtual MACs belonging to different forwarders (AVFs), so hosts spread across routers. HSRP and VRRP have one forwarding router per group.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "Which FHRP is the open standard, with master and backup routers?",
+        "answer": 2,
+        "explanation": "VRRP (RFC 5798) is vendor-neutral and uses its own terms, master and backup. HSRP (active and standby) and GLBP (AVG and AVFs) are Cisco-proprietary."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.010",
@@ -942,7 +1508,14 @@
     "stem": "What is the default HSRP priority?",
     "answer": "100",
     "explanation": "HSRP priority defaults to 100 (range 0-255). The highest priority wins; equal priorities are broken by the highest interface IP.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "What is the highest HSRP priority value you can configure?",
+        "answer": "255",
+        "explanation": "HSRP priority ranges from 0 to 255, with a default of 100. The highest priority wins the election."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.011",
@@ -960,7 +1533,21 @@
     ],
     "answer": 0,
     "explanation": "Preempt only takes over from a router with a lower priority. R1 stays standby, so 10.1.1.3 has a higher priority, or the same 110 and the higher IP. Hosts use the virtual IP 10.1.1.1, not a real router address.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "R1's Gi0/0 address is 10.1.1.2. Based on this exhibit, what can you conclude?",
+        "exhibit": "R1#show standby brief\n                     P indicates configured to preempt.\n                     |\nInterface   Grp  Pri P State   Active          Standby         Virtual IP\nGi0/0       1    110 P Active  local           10.1.1.3        10.1.1.1",
+        "choices": [
+          "R1 is the active router and 10.1.1.3 is the standby",
+          "R1 will hand over to 10.1.1.3 when its preempt delay expires",
+          "Hosts use 10.1.1.2 as their default gateway",
+          "R1 is misconfigured, because a router with preempt is always standby"
+        ],
+        "answer": 0,
+        "explanation": "State Active with 'local' in the Active column means R1 is active, and the Standby column names 10.1.1.3. Hosts use the virtual IP 10.1.1.1, not R1's own 10.1.1.2."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.012",
@@ -977,7 +1564,20 @@
     ],
     "answer": 1,
     "explanation": "Tracking lowers the priority by the decrement while the tracked interface is down. Add preempt on the peer so it takes over when that drops this router below it.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "What does 'standby 1 priority 110' do?",
+        "choices": [
+          "Sends HSRP Hellos every 110 ms instead of every 3 s",
+          "Lowers this router's priority by 110 when an interface fails",
+          "Sets this router's group 1 priority to 110, above the default",
+          "Makes this router active for group 110"
+        ],
+        "answer": 2,
+        "explanation": "It sets the HSRP priority for group 1 to 110, above the default of 100, so this router wins the election (or takes over, with preempt). Lowering priority on a failure is what 'track' does."
+      }
+    ]
   },
   {
     "id": "q.d3.route.019",
@@ -994,7 +1594,14 @@
     ],
     "answer": 0,
     "explanation": "'via' gives the next-hop IP the packet is sent to. The router ARPs for it (on Ethernet) to build the frame.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "In 'S 172.16.0.0/16 [1/0] via 10.0.12.2', what is 172.16.0.0/16?",
+        "answer": 2,
+        "explanation": "The prefix right after the code is the destination network the route covers. 10.0.12.2, after 'via', is the next hop, and [1/0] is the AD and metric."
+      }
+    ]
   },
   {
     "id": "q.d3.route.020",
@@ -1011,7 +1618,20 @@
     ],
     "answer": 0,
     "explanation": "O = OSPF, E2 = external type 2 (the metric doesn't grow inside the area), * = candidate default. It's what 'default-information originate' produces on the other routers.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "In the routing table code 'O*E2', what do the letters 'E2' mean?",
+        "choices": [
+          "The route is in OSPF area 2",
+          "The route is an OSPF external type 2 route",
+          "The route has flapped twice",
+          "The route's total cost is 2"
+        ],
+        "answer": 1,
+        "explanation": "E2 means OSPF external type 2: the route came into OSPF from outside, such as a default route advertised with default-information originate. The asterisk marks it as a candidate default route."
+      }
+    ]
   },
   {
     "id": "q.d3.route.021",
@@ -1022,7 +1642,14 @@
     "stem": "What administrative distance does a directly connected route have?",
     "answer": "0",
     "explanation": "Connected routes are trusted most (AD 0). A static route has AD 1 by default.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "What is the default administrative distance of a static route?",
+        "answer": "1",
+        "explanation": "A static route has AD 1 unless you add a different value at the end of the command (a floating static route). Only connected routes, at 0, are trusted more."
+      }
+    ]
   },
   {
     "id": "q.d3.route.022",
@@ -1039,7 +1666,20 @@
     ],
     "answer": 1,
     "explanation": "C covers the connected subnet; L is a /32 host route for the router's own address, so traffic to the router itself is matched precisely.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "An interface is given 172.16.5.9/28 and comes up. Which routes appear?",
+        "choices": [
+          "C 172.16.5.0/28 and L 172.16.5.9/32",
+          "C 172.16.5.0/28 only, for the connected subnet",
+          "L 172.16.5.9/32 only, for the interface address",
+          "C 172.16.5.9/28 and L 172.16.5.0/32"
+        ],
+        "answer": 0,
+        "explanation": "An up/up interface adds two routes: C for the connected subnet (172.16.5.9/28 is in 172.16.5.0/28, which covers .0-.15) and L, a /32 for the router's own address. The trap swaps the two addresses."
+      }
+    ]
   },
   {
     "id": "q.d3.route.023",
@@ -1057,7 +1697,20 @@
     ],
     "answer": 3,
     "explanation": "Two OSPF (O) routes and one EIGRP (D) route are dynamic. C and L are connected and S is static.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "How many routes in the exhibit were learned from OSPF?",
+        "choices": [
+          "2",
+          "6",
+          "4",
+          "3"
+        ],
+        "answer": 0,
+        "explanation": "Only the two lines with code O are OSPF routes. The D route is EIGRP, S is static, and C and L are added by the router itself."
+      }
+    ]
   },
   {
     "id": "q.d3.route.024",
@@ -1075,7 +1728,14 @@
     ],
     "answer": 1,
     "explanation": "10.1.1.128/25 covers .128-.255, so it doesn't match .100. The longest match left is 10.1.1.0/24, via 10.9.0.9. AD doesn't come into it, because the prefixes differ.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 receives a packet for 10.1.1.200. Based on the exhibit, which next hop does it use?",
+        "answer": 3,
+        "explanation": "10.1.1.0/24, 10.1.0.0/16 and 10.0.0.0/8 all match, but so does 10.1.1.128/25 (it covers .128-.255). The /25 is longest, so the EIGRP route via 10.9.0.13 is used, even though its AD is higher than the static route's."
+      }
+    ]
   },
   {
     "id": "q.d3.route.025",
@@ -1092,7 +1752,20 @@
     ],
     "answer": 2,
     "explanation": "Same prefix and length, so AD decides: static 1 beats OSPF 110. Only the static route is installed.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 has a static route with AD 130 and an OSPF route to the same 10.2.0.0/16. Which does it use for 10.2.3.4?",
+        "choices": [
+          "The OSPF route, because 110 is lower than 130",
+          "Both, load-balanced across the two next hops",
+          "The static route, because static routes always win",
+          "Whichever was learned first, until it fails"
+        ],
+        "answer": 0,
+        "explanation": "The prefixes are identical, so the lower administrative distance wins. This static route was given AD 130, a floating static route, so OSPF's 110 beats it and the static route waits as a backup."
+      }
+    ]
   },
   {
     "id": "q.d3.route.026",
@@ -1109,7 +1782,20 @@
     ],
     "answer": 1,
     "explanation": "0.0.0.0/0 matches everything but is the shortest possible prefix. The connected /24 (or whatever length) is more specific and wins.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "A router has only connected routes and a default route. A packet arrives for an address that is on none of its connected subnets. Which route is used?",
+        "choices": [
+          "The default route, because nothing more specific matches",
+          "The connected route, because it's the longer match",
+          "Both",
+          "Neither; the packet is dropped as unroutable"
+        ],
+        "answer": 0,
+        "explanation": "No connected route contains the destination, so the only match is 0.0.0.0/0. That's exactly what the default route is for: it catches anything without a more specific route."
+      }
+    ]
   },
   {
     "id": "q.d3.route.027",
@@ -1126,7 +1812,20 @@
     ],
     "answer": 3,
     "explanation": "IP addresses stay end-to-end. Each hop builds a new frame with its own MAC as source and the next hop's MAC as destination, and decrements the TTL (updating the checksum).",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Without NAT, which part of a packet stays the same as a router forwards it from one Ethernet link to another?",
+        "choices": [
+          "The source and destination IP addresses",
+          "The source and destination MAC addresses",
+          "The TTL value",
+          "The whole frame, including its layer 2 header"
+        ],
+        "answer": 0,
+        "explanation": "IP addresses stay end-to-end. The router builds a new frame (its own MAC as source, the next hop's as destination) and lowers the TTL by one, so the MACs and TTL both change."
+      }
+    ]
   },
   {
     "id": "q.d3.route.028",
@@ -1137,7 +1836,17 @@
     "stem": "By default, how many equal-cost paths to one destination does OSPF install on a Cisco router?",
     "answer": "4",
     "explanation": "'maximum-paths' defaults to 4 for OSPF on IOS and can be raised under router ospf.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "OSPF on R1 finds three paths to one prefix, with costs 20, 20 and 30. How many of them does it install?",
+        "answer": [
+          "2",
+          "two"
+        ],
+        "explanation": "Only the lowest-cost paths go in. The two cost 20 paths tie for best, so both are installed and share traffic; the cost 30 path is left out."
+      }
+    ]
   },
   {
     "id": "q.d3.static.012",
@@ -1154,7 +1863,20 @@
     ],
     "answer": 0,
     "explanation": "'show ip route <source>' filters by source: static, connected, ospf and so on. 'show ip protocols' covers dynamic protocols.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Which command shows the static routes as they were configured, including any that are currently out of the routing table?",
+        "choices": [
+          "show ip route static",
+          "show running-config | include ip route",
+          "show ip static",
+          "show ip protocols"
+        ],
+        "answer": 1,
+        "explanation": "A static route whose interface or next hop is down leaves the routing table but stays in the configuration. 'show ip route static' shows only installed routes; the running-config shows every ip route line."
+      }
+    ]
   },
   {
     "id": "q.d3.static.013",
@@ -1171,7 +1893,20 @@
     ],
     "answer": 3,
     "explanation": "Static routes whose exit interface (or next-hop path) is down are withdrawn from the table but stay in the config, and return when the interface comes back.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "A static route was withdrawn when its exit interface went down. The interface comes back up. What happens to the route?",
+        "choices": [
+          "It stays out of the table until someone types it in again",
+          "It returns to the table, because it never left the configuration",
+          "It returns with AD 255 and is never used",
+          "It's added back only after a reload"
+        ],
+        "answer": 1,
+        "explanation": "Withdrawing a static route removes it from the routing table only; the command stays in the configuration. When the interface comes back the route reappears, and its lower AD pushes any floating backup out again."
+      }
+    ]
   },
   {
     "id": "q.d3.static.014",
@@ -1184,7 +1919,16 @@
       "ip route 172.16.0.0 255.240.0.0 10.0.0.2"
     ],
     "explanation": "/12 is 255.240.0.0: the second octet keeps 4 bits (128 + 64 + 32 + 16 = 240).",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Write the static route to 10.64.0.0/10 via next hop 10.0.0.2.",
+        "answer": [
+          "ip route 10.64.0.0 255.192.0.0 10.0.0.2"
+        ],
+        "explanation": "A /10 has eight bits in the first octet and two in the second, so the mask is 255.192.0.0: ip route 10.64.0.0 255.192.0.0 10.0.0.2. IPv4 static routes take dotted masks, not /10."
+      }
+    ]
   },
   {
     "id": "q.d3.static.015",
@@ -1201,7 +1945,20 @@
     ],
     "answer": 2,
     "explanation": "IPv6 static routes use 'ipv6 route' with the prefix length written as /48. There's no dotted mask in IPv6.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Which command sends 10.9.0.0/16 to next hop 10.1.1.2?",
+        "choices": [
+          "ipv6 route 10.9.0.0/16 10.1.1.2",
+          "ip route 10.9.0.0 255.255.0.0 10.1.1.2",
+          "ip route 10.9.0.0/16 10.1.1.2",
+          "ip static 10.9.0.0 255.255.0.0 10.1.1.2"
+        ],
+        "answer": 1,
+        "explanation": "IPv4 static routes use 'ip route' with a dotted mask, so /16 is written 255.255.0.0. Prefix lengths like /16 belong to 'ipv6 route', and 'ip static' isn't a command."
+      }
+    ]
   },
   {
     "id": "q.d3.static.016",
@@ -1218,7 +1975,20 @@
     ],
     "answer": 0,
     "explanation": "Four contiguous /16s starting at a multiple of 4 summarise to a /14: 10.4.0.0 255.252.0.0 (10.4.0.0-10.7.255.255). /13 would also cover 10.0-10.3.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Which single static route covers 10.0.0.0/16 through 10.7.0.0/16, and nothing else?",
+        "choices": [
+          "ip route 10.0.0.0 255.252.0.0 10.0.0.2",
+          "ip route 10.0.0.0 255.248.0.0 10.0.0.2",
+          "ip route 10.0.0.0 255.0.0.0 10.0.0.2",
+          "ip route 10.4.0.0 255.248.0.0 10.0.0.2"
+        ],
+        "answer": 1,
+        "explanation": "Eight contiguous /16s starting at 10.0 summarise to a /13 (255.248.0.0), which covers 10.0.0.0-10.7.255.255. A /14 (255.252.0.0) stops at 10.3, /8 covers all of 10, and 10.4.0.0 doesn't sit on a /13 boundary."
+      }
+    ]
   },
   {
     "id": "q.d3.static.cli.002",
@@ -1247,7 +2017,14 @@
     ],
     "answer": 1,
     "explanation": "Each router builds a tree of lowest-cost paths from itself using SPF. Bellman-Ford is used by distance-vector protocols like RIP; DUAL is EIGRP's.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Unlike OSPF, which algorithm does a distance-vector protocol such as RIP use?",
+        "answer": 0,
+        "explanation": "Distance-vector protocols like RIP use Bellman-Ford, comparing the distances their neighbours report. OSPF runs Dijkstra's SPF on its LSDB, and EIGRP uses DUAL."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.018",
@@ -1264,7 +2041,14 @@
     ],
     "answer": 3,
     "explanation": "224.0.0.5 is all OSPF routers; 224.0.0.6 is DR/BDR only. 224.0.0.9 is RIPv2 and 224.0.0.10 is EIGRP.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which multicast address reaches only the OSPF DR and BDR?",
+        "answer": 1,
+        "explanation": "224.0.0.6 is for the DR and BDR only; 224.0.0.5 reaches every OSPF router. 224.0.0.9 is RIPv2 and 224.0.0.10 is EIGRP."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.019",
@@ -1281,7 +2065,20 @@
     ],
     "answer": 1,
     "explanation": "Without a router-id command, OSPF picks the highest loopback address, then the highest up interface. A loopback is always up. Setting 'router-id' explicitly is even more predictable.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "R1 has no router-id command. Loopback0 is 10.0.0.1 and Loopback1 is 10.0.0.9, both up, and its highest physical interface is 192.168.1.1. What is its router ID?",
+        "choices": [
+          "10.0.0.1",
+          "10.0.0.9",
+          "192.168.1.1",
+          "0.0.0.0"
+        ],
+        "answer": 1,
+        "explanation": "Without a router-id command OSPF prefers an up loopback over any physical interface, even one with a higher address, and among loopbacks it takes the highest IP: 10.0.0.9."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.020",
@@ -1298,7 +2095,20 @@
     ],
     "answer": 0,
     "explanation": "IOS warns that the new router ID takes effect after a reload or 'clear ip ospf process', which resets the adjacencies.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "R1's router ID came from its loopback. You add 'router-id 5.5.5.5' and run 'clear ip ospf process'. Which router ID does R1 now use?",
+        "choices": [
+          "The loopback address, because loopbacks never go down",
+          "5.5.5.5, because the router-id command comes first",
+          "The highest physical interface address",
+          "0.0.0.0, until the router reloads"
+        ],
+        "answer": 1,
+        "explanation": "The router-id command is first in the selection order, ahead of loopbacks and physical interfaces. Once the process is cleared, R1 uses 5.5.5.5."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.021",
@@ -1311,7 +2121,16 @@
       "ip ospf cost 50"
     ],
     "explanation": "A cost set on the interface overrides the bandwidth-based calculation. Lower cost makes a path more preferred.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which router ospf command makes a 10 Gbps link cost 1 and a 1 Gbps link cost 10? (full command)",
+        "answer": [
+          "auto-cost reference-bandwidth 10000"
+        ],
+        "explanation": "The reference bandwidth is set in Mbps: 10000 Mbps divided by 10 Gbps gives 1 and by 1 Gbps gives 10. Set the same value on every router so the costs stay consistent."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.022",
@@ -1328,7 +2147,14 @@
     ],
     "answer": 3,
     "explanation": "'show ip ospf neighbor' gives neighbour ID, priority, state (for example FULL/DR), dead time, address and interface.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which command summarises the OSPF process: router ID, network statements, passive interfaces and routing sources?",
+        "answer": 2,
+        "explanation": "show ip protocols gives the overview of each routing process. show ip ospf neighbor lists adjacencies, and show ip route ospf lists the routes OSPF installed."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.023",
@@ -1345,7 +2171,20 @@
     ],
     "answer": 1,
     "explanation": "OSPF doesn't preempt. If the DR fails the BDR is promoted, and the new router could then win the BDR election.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "A router with OSPF priority 255 joins a segment that already has a DR and BDR. Later the DR fails. What happens?",
+        "choices": [
+          "The priority 255 router becomes DR straight away",
+          "The BDR is promoted to DR, and a new BDR is elected",
+          "Every router restarts the election from scratch",
+          "Nothing changes until the old DR comes back"
+        ],
+        "answer": 1,
+        "explanation": "There's no preemption: when the DR fails the BDR is promoted, and only the BDR role is elected again (which the priority 255 router would then win). It doesn't jump straight to DR."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.024",
@@ -1362,7 +2201,20 @@
     ],
     "answer": 2,
     "explanation": "The router must already have a default route (for example a static one to the ISP). Neighbours learn it as O*E2.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "R1 has a default route and 'default-information originate' under router ospf. How does that default route appear in its neighbour R2's routing table?",
+        "choices": [
+          "S* 0.0.0.0/0",
+          "O*E2 0.0.0.0/0",
+          "O 0.0.0.0/0",
+          "C 0.0.0.0/0"
+        ],
+        "answer": 1,
+        "explanation": "OSPF advertises the default as an external type 2 route, so R2 shows O*E2 0.0.0.0/0: O for OSPF, * for candidate default, E2 for external type 2. S* is how it looks on R1 itself."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.cli.002",
@@ -1391,7 +2243,20 @@
     ],
     "answer": 1,
     "explanation": "Only one active and one standby router exist per group; others stay in Listen and only speak up if the active or standby fails.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "In an HSRP group with three routers, what state is the router that forwards traffic for the virtual IP in?",
+        "choices": [
+          "Speak",
+          "Listen",
+          "Active",
+          "Learn"
+        ],
+        "answer": 2,
+        "explanation": "The router that answers for the virtual IP and MAC is in the Active state. One other router is Standby, and the third waits in Listen."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.014",
@@ -1408,7 +2273,20 @@
     ],
     "answer": 2,
     "explanation": "v1: groups 0-255, 224.0.0.2, MAC 0000.0c07.acXX. v2: groups 0-4095, 224.0.0.102, MAC 0000.0c9f.fXXX, and IPv6 support. Both are Cisco-proprietary.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "Which is a difference between GLBP and HSRP?",
+        "choices": [
+          "GLBP load-balances one group across several routers",
+          "GLBP is an open standard",
+          "GLBP uses master and backup routers",
+          "GLBP removes preempt, so the active router never changes"
+        ],
+        "answer": 0,
+        "explanation": "In HSRP only the active router forwards; GLBP's AVG hands out several virtual MACs so up to four forwarders share one group's traffic. Both are Cisco-proprietary, and master and backup are VRRP terms."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.015",
@@ -1425,7 +2303,14 @@
     ],
     "answer": 2,
     "explanation": "HSRPv1 uses 224.0.0.2 (all routers), HSRPv2 224.0.0.102 and VRRP 224.0.0.18. 224.0.0.5 is OSPF.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "Which multicast address do HSRPv2 Hellos use?",
+        "answer": 3,
+        "explanation": "HSRPv2 sends Hellos to 224.0.0.102, which is version 1's 224.0.0.2 with 10 put in front. 224.0.0.18 is VRRP and 224.0.0.5 is OSPF."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.016",
@@ -1442,7 +2327,14 @@
     ],
     "answer": 3,
     "explanation": "VRRP uses master and backup; HSRP uses active and standby; GLBP has an AVG and AVFs. DR is an OSPF term.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "In HSRP, what is the router that forwards traffic for the virtual IP called?",
+        "answer": 0,
+        "explanation": "HSRP calls it the active router, with a standby ready to take over. Master is the VRRP term, and the AVG is GLBP's gateway that hands out virtual MACs."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.017",
@@ -1459,7 +2351,20 @@
     ],
     "answer": 3,
     "explanation": "Hellos every 3 seconds; if none arrive for 10 seconds the peer is declared down. 10/40 are OSPF's Ethernet defaults.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "By default, how long does the HSRP standby router wait without hearing a Hello before it takes over?",
+        "choices": [
+          "3 s",
+          "10 s",
+          "40 s",
+          "1 s"
+        ],
+        "answer": 1,
+        "explanation": "The hold time is 10 s by default. Hellos go every 3 s, so the standby takes over after missing roughly three of them. 40 s is OSPF's Dead interval."
+      }
+    ]
   },
   {
     "id": "q.d3.route.029",
@@ -1476,7 +2381,20 @@
     ],
     "answer": 2,
     "explanation": "Dynamic routes show their age. Static and connected routes don't have this field.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "In 'O 10.4.0.0/16 [110/3] via 10.0.0.2, 00:12:44, GigabitEthernet0/0', what does the 3 show?",
+        "choices": [
+          "The number of hops to the network",
+          "The OSPF Dead timer for the neighbour 10.0.0.2",
+          "How long ago the route was learned or last updated",
+          "The OSPF cost (metric) to reach 10.4.0.0/16"
+        ],
+        "answer": 3,
+        "explanation": "In [110/3] the 110 is the AD and the 3 is the metric. OSPF's metric is cost, based on bandwidth, not a hop count. The timer 00:12:44 is how long ago the route was learned."
+      }
+    ]
   },
   {
     "id": "q.d3.route.030",
@@ -1493,7 +2411,20 @@
     ],
     "answer": 2,
     "explanation": "The gateway of last resort is the next hop of the default route. Without one, a packet that matches nothing is dropped with ICMP unreachable.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "show ip route says 'Gateway of last resort is 203.0.113.1 to network 0.0.0.0'. What does that mean?",
+        "choices": [
+          "Routing is disabled",
+          "There's a default route, so packets that match nothing else go to 203.0.113.1",
+          "There's no default route, so packets that match nothing are dropped",
+          "OSPF isn't running, so no routes can be learned at all"
+        ],
+        "answer": 1,
+        "explanation": "The gateway of last resort is the next hop of the default route (0.0.0.0/0). Packets that match no more specific route are sent there instead of being dropped."
+      }
+    ]
   },
   {
     "id": "q.d3.route.031",
@@ -1513,7 +2444,23 @@
       "110"
     ],
     "explanation": "Connected 0, static 1, eBGP 20, internal EIGRP 90, OSPF 110, RIP 120, external EIGRP 170, iBGP 200. 255 means never trusted.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Match each of these route sources to its default administrative distance.",
+        "answer": {
+          "Connected": "0",
+          "Static": "1",
+          "Internal EIGRP": "90",
+          "OSPF": "110"
+        },
+        "distractors": [
+          "120",
+          "170"
+        ],
+        "explanation": "Connected 0, static 1, internal EIGRP 90, OSPF 110. 120 is RIP and 170 is external EIGRP, neither of which is in this set."
+      }
+    ]
   },
   {
     "id": "q.d3.route.032",
@@ -1524,7 +2471,14 @@
     "stem": "Which administrative distance means a route is never installed in the routing table?",
     "answer": "255",
     "explanation": "AD 255 marks a source as untrusted. Setting a static route's AD to 255 effectively disables it.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "What is the default administrative distance of an eBGP route?",
+        "answer": "20",
+        "explanation": "eBGP routes, learned from a neighbour in another autonomous system, have AD 20. That's more trusted than any interior protocol; iBGP is 200."
+      }
+    ]
   },
   {
     "id": "q.d3.route.033",
@@ -1541,7 +2495,20 @@
     ],
     "answer": 3,
     "explanation": "'show ip route ospf' filters the routing table. 'show ip ospf database' shows LSAs, not routes.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Which command filters 'show ip route' to list only the S routes?",
+        "choices": [
+          "show ip static route",
+          "show ip route static",
+          "show running-config static",
+          "show ip protocols static"
+        ],
+        "answer": 1,
+        "explanation": "'show ip route' takes a route source as a filter, so 'show ip route static' lists only the S routes, just as 'show ip route ospf' lists only O routes."
+      }
+    ]
   },
   {
     "id": "q.d3.route.034",
@@ -1558,7 +2525,20 @@
     ],
     "answer": 3,
     "explanation": "* marks a candidate default. Its next hop becomes the gateway of last resort.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "In 'S* 0.0.0.0/0 [1/0] via 203.0.113.1', what does the letter S mean?",
+        "choices": [
+          "The route is load-balanced",
+          "The route is static, configured by hand",
+          "The route is flapping",
+          "The route is a candidate default route"
+        ],
+        "answer": 1,
+        "explanation": "S is the code for a static route. The asterisk after it is what marks a candidate default route, and [1/0] is static's AD of 1 with metric 0."
+      }
+    ]
   },
   {
     "id": "q.d3.route.035",
@@ -1576,7 +2556,14 @@
     ],
     "answer": 0,
     "explanation": "IPv6 routing protocols use the neighbour's link-local address as the next hop, together with the exit interface. 2001:DB8:1::FE is only for the default route.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, which next hop does R1 use for a packet to 2001:db8:9::1?",
+        "answer": 1,
+        "explanation": "2001:db8:9::1 isn't in 2001:DB8:1::/64 or 2001:DB8:2::/64, so the only match is the default route ::/0, whose next hop is 2001:DB8:1::FE."
+      }
+    ]
   },
   {
     "id": "q.d3.route.036",
@@ -1593,7 +2580,20 @@
     ],
     "answer": 0,
     "explanation": "Like the /32 local route in IPv4, IPv6 installs a /128 host route for each address configured on the router.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "What prefix length does the local (L) route for an interface's own IPv4 address have?",
+        "choices": [
+          "/24",
+          "/30",
+          "/32",
+          "/31"
+        ],
+        "answer": 2,
+        "explanation": "The L route is always a single address, the router's own: /32 in IPv4. The /128 is the IPv6 equivalent. The connected (C) route carries the subnet's real prefix length."
+      }
+    ]
   },
   {
     "id": "q.d3.route.037",
@@ -1611,7 +2611,21 @@
       "Administrative distance"
     ],
     "explanation": "Metrics only compare routes from the same protocol; between protocols, AD decides.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Match each routing metric to the protocol that uses it.",
+        "answer": {
+          "Cost, from interface bandwidth": "OSPF",
+          "Hop count": "RIP",
+          "Composite of bandwidth and delay (by default)": "EIGRP"
+        },
+        "distractors": [
+          "BGP"
+        ],
+        "explanation": "OSPF's cost comes from interface bandwidth, RIP counts hops and EIGRP combines bandwidth and delay by default. Each metric only compares routes within its own protocol."
+      }
+    ]
   },
   {
     "id": "q.d3.route.038",
@@ -1628,7 +2642,20 @@
     ],
     "answer": 3,
     "explanation": "A next hop alone doesn't say which interface to use. The router looks up the next hop itself, normally matching a connected route.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 forwards a packet for 10.9.1.1 using 'ip route 10.9.0.0 255.255.0.0 172.16.1.2'. Which destination MAC address does R1 put in the new frame?",
+        "choices": [
+          "The MAC address of 172.16.1.2, found with ARP",
+          "The MAC address of the host 10.9.1.1",
+          "R1's own MAC address on the exit interface",
+          "The broadcast MAC address"
+        ],
+        "answer": 0,
+        "explanation": "The IP destination stays 10.9.1.1, but the frame only has to reach the next hop, so its destination MAC is 172.16.1.2's (learned with ARP). R1's own MAC is the source."
+      }
+    ]
   },
   {
     "id": "q.d3.route.039",
@@ -1646,7 +2673,14 @@
     ],
     "answer": 0,
     "explanation": "192.168.16.0/20 covers 192.168.16.0-31.255, which contains .19.5. The /22 only covers 20.0-23.255. The longest match is /20, via 10.0.0.9.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 receives a packet for 192.168.21.5. Based on the exhibit, which next hop does it use?",
+        "answer": 3,
+        "explanation": "192.168.21.5 is in 192.168.0.0/16, 192.168.16.0/20 (16-31) and 192.168.20.0/22 (20-23). The /22 is the longest match, so the static route via 10.0.0.13 wins."
+      }
+    ]
   },
   {
     "id": "q.d3.route.040",
@@ -1664,7 +2698,14 @@
     ],
     "answer": 2,
     "explanation": "The /32 only matches 10.10.10.40 exactly. 10.10.10.32/27 covers .32-.63, so it's the longest match for .41.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 receives a packet for 10.10.10.40. Based on the exhibit, which next hop does it use?",
+        "answer": 1,
+        "explanation": "10.10.10.40 matches the /24, the /27 (.32-.63), the default and the host route 10.10.10.40/32. A /32 is the longest possible match, so 172.16.0.9 is used."
+      }
+    ]
   },
   {
     "id": "q.d3.route.041",
@@ -1681,7 +2722,14 @@
     ],
     "answer": 3,
     "explanation": "Within one protocol the lowest metric wins. Only equal-cost paths are installed together.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "OSPF on R1 finds two paths to 10.6.0.0/16, and both have cost 15. Which is installed?",
+        "answer": 0,
+        "explanation": "When two paths from the same protocol tie on the best metric, both are installed and traffic is shared between them (ECMP). Router IDs play no part."
+      }
+    ]
   },
   {
     "id": "q.d3.route.042",
@@ -1701,7 +2749,23 @@
       3
     ],
     "explanation": "172.16.4.0/23 covers 172.16.4.0-5.255, so it matches. 172.16.6.0/23 is 6.0-7.255 and 172.16.5.0/30 is only 5.0-5.3.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Which two of these routes match destination 172.16.6.9? (Choose two.)",
+        "choices": [
+          "172.16.4.0/23",
+          "172.16.5.0/30",
+          "172.16.6.0/23",
+          "172.16.6.0/24"
+        ],
+        "answer": [
+          2,
+          3
+        ],
+        "explanation": "172.16.6.0/23 covers 172.16.6.0-7.255 and 172.16.6.0/24 covers 172.16.6.0-6.255, so both contain 172.16.6.9 (the /24 would win as the longer match). 172.16.4.0/23 stops at 5.255 and 172.16.5.0/30 is only .0-.3."
+      }
+    ]
   },
   {
     "id": "q.d3.route.043",
@@ -1715,7 +2779,17 @@
       "11"
     ],
     "explanation": "/10 covers 10.64-10.127 and /11 covers 10.96-10.127. Both match 10.100, as does /8. The longest, /11, wins.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 has routes to 10.0.0.0/8, 10.64.0.0/10 and 10.96.0.0/11. Which prefix length does it use for 10.70.1.1? (for example /16)",
+        "answer": [
+          "/10",
+          "10"
+        ],
+        "explanation": "/10 covers 10.64-10.127 and /8 covers all of 10, so both match. /11 covers only 10.96-10.127, so it doesn't contain 10.70. The longest match is /10."
+      }
+    ]
   },
   {
     "id": "q.d3.route.044",
@@ -1732,7 +2806,20 @@
     ],
     "answer": 3,
     "explanation": "A floating static route only wins if its AD is lower. At 200 it stays out of the table while the EIGRP route exists.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 has a floating static route with AD 160 and an external EIGRP route (AD 170) to the same prefix. Which is installed?",
+        "choices": [
+          "The static route, because 160 is lower than 170",
+          "Neither",
+          "Both",
+          "The external EIGRP route, because dynamic routes always win"
+        ],
+        "answer": 0,
+        "explanation": "Same prefix, so the lower AD wins, and 160 is lower than external EIGRP's 170. A floating static route only stays out of the table when its AD is higher than the route it backs up."
+      }
+    ]
   },
   {
     "id": "q.d3.route.045",
@@ -1748,7 +2835,19 @@
       "Within that protocol, keep the lowest metric"
     ],
     "explanation": "Longest prefix first, then administrative distance between sources, then metric within a protocol. Equal metrics leave several paths (ECMP).",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Put the steps a router uses to choose a route for a packet in reverse order, last step first.",
+        "answer": [
+          "Within that protocol, keep the lowest metric",
+          "If several sources offer that prefix, keep the lowest AD",
+          "Keep the longest matching prefix",
+          "Find every route that matches the destination"
+        ],
+        "explanation": "Forwards, the router finds every match, keeps the longest prefix, breaks ties between sources with the lowest AD and finally uses the lowest metric within that protocol. Reversed, the metric comes first and finding the matches last."
+      }
+    ]
   },
   {
     "id": "q.d3.route.046",
@@ -1765,7 +2864,20 @@
     ],
     "answer": 0,
     "explanation": "OSPF still knows the route; it just lost on AD. When the EIGRP route disappears, the next-best source is installed.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "R1 learns 10.1.0.0/16 from both EIGRP and OSPF, and both neighbours are up. Which route is installed?",
+        "choices": [
+          "The OSPF route, because OSPF cost is a better metric",
+          "Both, load-balanced",
+          "The EIGRP route, because its AD of 90 beats OSPF's 110",
+          "Whichever was learned first"
+        ],
+        "answer": 2,
+        "explanation": "Same prefix from two protocols, so AD decides: internal EIGRP 90 beats OSPF 110. The OSPF route stays out of the table but would be installed if the EIGRP route disappeared."
+      }
+    ]
   },
   {
     "id": "q.d3.route.047",
@@ -1782,7 +2894,14 @@
     ],
     "answer": 3,
     "explanation": "The /32 local route is the longest match for the router's own address, and it tells the router to receive the packet rather than forward it.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "A packet arrives for another host on one of R1's connected subnets (not R1's own address). Which route matches it?",
+        "answer": 2,
+        "explanation": "The connected (C) route for the subnet contains the host's address, so R1 forwards the packet onto that LAN. The local /32 route matches only R1's own address, and the default route is less specific."
+      }
+    ]
   },
   {
     "id": "q.d3.route.048",
@@ -1800,7 +2919,15 @@
     ],
     "answer": 1,
     "explanation": "'from 2.2.2.2' is the advertising router's ID and 10.0.0.2 the next hop. There is one descriptor block, so one path.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, which statement about the route R1 uses for 10.5.5.5 is true?",
+        "exhibit": "R1#show ip route 10.5.5.5\nRouting entry for 10.5.0.0/16\n  Known via \"static\", distance 20, metric 0\n  Routing Descriptor Blocks:\n  * 10.0.0.6\n      Route metric is 0, traffic share count is 1",
+        "answer": 0,
+        "explanation": "'Known via \"static\", distance 20' means a static route configured with AD 20, a floating static route. There's one descriptor block, so one path, and no advertising router because static routes aren't learned."
+      }
+    ]
   },
   {
     "id": "q.d3.route.049",
@@ -1817,7 +2944,20 @@
     ],
     "answer": 3,
     "explanation": "CEF is on by default. It precomputes a forwarding table (FIB) and an adjacency table, so packets aren't looked up in the routing table one by one.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "In Cisco Express Forwarding, which table holds the layer 2 rewrite information for each next hop?",
+        "choices": [
+          "The routing table",
+          "The forwarding information base (FIB)",
+          "The adjacency table",
+          "The MAC address table"
+        ],
+        "answer": 2,
+        "explanation": "CEF splits the work: the FIB holds the best routes precomputed from the routing table, and the adjacency table holds the layer 2 header to write for each next hop. The FIB is the trap here."
+      }
+    ]
   },
   {
     "id": "q.d3.route.050",
@@ -1837,7 +2977,17 @@
       3
     ],
     "explanation": "The FIB mirrors the routing table's best routes; the adjacency table holds the layer 2 rewrite information for each next hop.",
-    "lesson_ref": "d3.routing_table"
+    "lesson_ref": "d3.routing_table",
+    "variants": [
+      {
+        "stem": "Which two of these tables are NOT built by CEF? (Choose two.)",
+        "answer": [
+          0,
+          1
+        ],
+        "explanation": "CEF builds the FIB and the adjacency table. The link-state database belongs to OSPF and the MAC address table is a switch's layer 2 table, so neither comes from CEF."
+      }
+    ]
   },
   {
     "id": "q.d3.static.017",
@@ -1854,7 +3004,14 @@
     ],
     "answer": 2,
     "explanation": "With only a next-hop address, the router has to look that address up to find the exit interface. Naming the interface (alone or with the next hop) avoids that.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Which static route is fully specified?",
+        "answer": 0,
+        "explanation": "A fully specified route names both the exit interface and the next hop: GigabitEthernet0/1 192.168.1.2. A next hop alone is recursive, an interface alone relies on proxy ARP on Ethernet, and Null0 discards traffic."
+      }
+    ]
   },
   {
     "id": "q.d3.static.018",
@@ -1872,7 +3029,14 @@
     ],
     "answer": 0,
     "explanation": "The first route has AD 1 and the second AD 5, so 203.0.113.1 wins. The second is a floating backup that appears if the first is withdrawn.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "R1 has two ISPs. Based on the exhibit, which default route is in the routing table after the link to 203.0.113.1 goes down?",
+        "answer": 1,
+        "explanation": "The route via 203.0.113.1 has AD 1 and the one via 198.51.100.1 has AD 5, so normally only the first is installed. When its path goes down it's withdrawn and the floating route via 198.51.100.1 takes over."
+      }
+    ]
   },
   {
     "id": "q.d3.static.019",
@@ -1885,7 +3049,16 @@
       "ip route 0.0.0.0 0.0.0.0 198.51.100.1 5"
     ],
     "explanation": "The AD goes after the next hop. A value above the primary route's AD (1 for static) makes it float.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Write a backup default route via 203.0.113.9 with administrative distance 10.",
+        "answer": [
+          "ip route 0.0.0.0 0.0.0.0 203.0.113.9 10"
+        ],
+        "explanation": "The administrative distance goes at the end of the command: ip route 0.0.0.0 0.0.0.0 203.0.113.9 10. With AD 10 it floats behind a primary default route with AD 1."
+      }
+    ]
   },
   {
     "id": "q.d3.static.020",
@@ -1902,7 +3075,20 @@
     ],
     "answer": 1,
     "explanation": "IOS routes IPv4 by default but IPv6 only after 'ipv6 unicast-routing'. Without it, the router acts as an IPv6 host.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "R1 has IPv6 addresses on its interfaces but no 'ipv6 unicast-routing'. How does it handle IPv6?",
+        "choices": [
+          "It forwards IPv6 using only its static routes",
+          "It acts as an IPv6 host and forwards nothing",
+          "It ignores IPv6 packets, even those sent to its own addresses",
+          "It forwards IPv6 packets by converting them to IPv4"
+        ],
+        "answer": 1,
+        "explanation": "Without 'ipv6 unicast-routing' the router behaves as an IPv6 host: it can use its own addresses but won't route between interfaces, so IPv6 static routes do nothing until the command is entered."
+      }
+    ]
   },
   {
     "id": "q.d3.static.021",
@@ -1919,7 +3105,14 @@
     ],
     "answer": 3,
     "explanation": "Like IPv4, 'show ipv6 route' takes a source filter such as static, connected or ospf.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Which command shows only the IPv4 static routes?",
+        "answer": 1,
+        "explanation": "'show ip route static' filters the IPv4 table to S routes. The IPv6 equivalent is 'show ipv6 route static', and 'show ipv6 static' isn't a command."
+      }
+    ]
   },
   {
     "id": "q.d3.static.022",
@@ -1936,7 +3129,20 @@
     ],
     "answer": 1,
     "explanation": "Equal AD and equal metric (0 for static) means both are installed and traffic is load-balanced, just like equal-cost dynamic routes.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "R1 has two static routes to 10.30.0.0/16 via two different next hops, one with the default AD and one with AD 10. What does R1 do?",
+        "choices": [
+          "Installs only the route with the default AD of 1",
+          "Installs both and shares traffic between them",
+          "Uses neither",
+          "Uses the one with the lower next-hop address"
+        ],
+        "answer": 0,
+        "explanation": "The routes are for the same prefix, so the lower AD wins: 1 beats 10. The AD 10 route is a floating static route that appears only if the first is withdrawn. Traffic is shared only when the ADs and metrics are equal."
+      }
+    ]
   },
   {
     "id": "q.d3.static.023",
@@ -1953,7 +3159,20 @@
     ],
     "answer": 0,
     "explanation": "Static routes send no updates and need no CPU, but every topology change means manual edits, and a failure isn't routed around unless you planned a backup.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "What is the main advantage of static routes over a routing protocol?",
+        "choices": [
+          "They adapt to failures automatically",
+          "They send no updates and use no CPU to calculate routes",
+          "They're the only way to make a default route",
+          "They scale well to large networks that change often"
+        ],
+        "answer": 1,
+        "explanation": "Static routes cost nothing to run: no updates on the links and no route calculation. The price is that they don't adapt to failures and every change is a manual edit."
+      }
+    ]
   },
   {
     "id": "q.d3.static.024",
@@ -1973,7 +3192,17 @@
       2
     ],
     "explanation": "Stub networks with one way out and backup paths are classic static use cases. Large or changing networks need a routing protocol.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Which two are poor uses for static routes? (Choose two.)",
+        "answer": [
+          1,
+          3
+        ],
+        "explanation": "A 50-router full mesh or a large, changing network would need endless manual edits and wouldn't adapt to failures, so a routing protocol fits better. A stub branch's default route and a floating backup are classic static routes."
+      }
+    ]
   },
   {
     "id": "q.d3.static.025",
@@ -1991,7 +3220,21 @@
     ],
     "answer": 0,
     "explanation": "The packet bounces between 10.0.0.2 (R2) and 10.0.0.1 (R1) until the TTL runs out. Each router's route points at the other, a common mistake with static routes.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "R1 traces the path to 10.9.9.9. Based on the exhibit, which statement is true?",
+        "exhibit": "R1#traceroute 10.9.9.9\n  1 10.0.0.2 1 msec\n  2 10.0.1.2 1 msec\n  3 10.9.9.9 2 msec",
+        "choices": [
+          "A routing loop: R2's route for 10.9.9.9 points back to R1",
+          "The path works: 10.9.9.9 answered at hop 3",
+          "An ACL on R2 is blocking ICMP to 10.9.9.9",
+          "The TTL is set too low on R1's packets"
+        ],
+        "answer": 1,
+        "explanation": "Each hop is a new address and the last line is the destination itself, so the path works and is three hops long. A loop would show the same two addresses repeating until the TTL ran out."
+      }
+    ]
   },
   {
     "id": "q.d3.static.026",
@@ -2008,7 +3251,20 @@
     ],
     "answer": 0,
     "explanation": "On point-to-point links there's only one device at the other end, so no ARP for each destination is needed. On Ethernet, include the next hop.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "When should you avoid a static route that names only an exit interface?",
+        "choices": [
+          "On a point-to-point link such as a serial link",
+          "On an Ethernet link, where R1 would ARP for every destination",
+          "On a link where only one device sits at the other end",
+          "Never: exit-interface-only routes are always fine"
+        ],
+        "answer": 1,
+        "explanation": "On Ethernet an exit-interface-only route makes R1 ARP for every destination and depend on proxy ARP from the next router. On a point-to-point link there's only one device at the far end, so it's fine."
+      }
+    ]
   },
   {
     "id": "q.d3.static.027",
@@ -2024,7 +3280,19 @@
       "ipv6 route 2001:db8:7::/64 gig0/1 fe80::7"
     ],
     "explanation": "The interface comes before the link-local next hop. A link-local next hop always needs the interface.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "Write a fully specified IPv6 static route to 2001:db8:8::/64 out Gi0/0 via next hop fe80::1.",
+        "answer": [
+          "ipv6 route 2001:db8:8::/64 g0/0 fe80::1",
+          "ipv6 route 2001:db8:8::/64 gi0/0 fe80::1",
+          "ipv6 route 2001:db8:8::/64 gigabitethernet0/0 fe80::1",
+          "ipv6 route 2001:db8:8::/64 gig0/0 fe80::1"
+        ],
+        "explanation": "A link-local next hop is only unique on one link, so the route names the interface and then the next hop: ipv6 route 2001:db8:8::/64 g0/0 fe80::1."
+      }
+    ]
   },
   {
     "id": "q.d3.static.028",
@@ -2041,7 +3309,20 @@
     ],
     "answer": 1,
     "explanation": "Static routes have AD 1 by default and a metric of 0.",
-    "lesson_ref": "d3.static_routing"
+    "lesson_ref": "d3.static_routing",
+    "variants": [
+      {
+        "stem": "In 'S 10.20.0.0/16 [5/0] via 10.0.0.2', what does the 5 tell you?",
+        "choices": [
+          "The route's hop count is 5",
+          "The route was configured with administrative distance 5",
+          "The route has 5 equal-cost paths",
+          "The route's priority is 5"
+        ],
+        "answer": 1,
+        "explanation": "In [AD/metric] the first number is the administrative distance. A static route normally shows [1/0]; [5/0] means someone added AD 5 to the command, as for a floating route."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.025",
@@ -2058,7 +3339,20 @@
     ],
     "answer": 3,
     "explanation": "Area 0 is the backbone. In single-area OSPF every interface is normally in area 0.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "In single-area OSPF, which area is every interface normally in?",
+        "choices": [
+          "A different area on every link",
+          "Area 1",
+          "Area 0, the backbone",
+          "Area 255"
+        ],
+        "answer": 2,
+        "explanation": "Area 0 is the backbone, and in a single-area design every interface is normally placed in it. Neighbours must agree on the area, so one area per link would break adjacencies."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.026",
@@ -2075,7 +3369,20 @@
     ],
     "answer": 0,
     "explanation": "All routers in an area synchronise the same LSDB. Each then runs SPF from its own position, so their routing tables differ.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Routers in one OSPF area share the same link-state database. What still differs between them?",
+        "choices": [
+          "Their copies of the link-state database",
+          "Nothing: SPF gives every router the same routes",
+          "Their routing tables, since each runs SPF from its own position",
+          "The area ID on their interfaces"
+        ],
+        "answer": 2,
+        "explanation": "The LSDB is the same map for everyone, but each router runs SPF with itself at the root, so its best paths and next hops are its own and the routing tables differ."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.027",
@@ -2092,7 +3399,14 @@
     ],
     "answer": 3,
     "explanation": "Every router floods a type 1 LSA listing its links and costs. Type 2 comes from the DR for a multi-access segment; types 3 and 5 come from ABRs and ASBRs.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which LSA type does the DR originate to describe a multi-access segment?",
+        "answer": 1,
+        "explanation": "The DR alone originates the type 2 (network) LSA for its segment. Every router originates its own type 1 (router) LSA, and types 3 and 5 come from ABRs and ASBRs."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.028",
@@ -2109,7 +3423,14 @@
     ],
     "answer": 1,
     "explanation": "The DR represents the multi-access segment in the LSDB with a type 2 LSA listing the routers attached to it.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which router originates a type 1 (router) LSA on an Ethernet segment?",
+        "answer": 0,
+        "explanation": "Every OSPF router writes a type 1 LSA describing its own links and costs. Only the type 2 (network) LSA is limited to the DR."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.029",
@@ -2127,7 +3448,15 @@
     ],
     "answer": 3,
     "explanation": "'State BDR' is R1's own role, and the DR line shows router ID 3.3.3.3. The network type is BROADCAST, which elects a DR and BDR.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Based on this exhibit from R1, which statement is true?",
+        "exhibit": "R1#show ip ospf interface g0/0\nGigabitEthernet0/0 is up, line protocol is up\n  Internet Address 10.0.0.1/24, Area 0\n  Process ID 1, Router ID 1.1.1.1, Network Type BROADCAST, Cost: 1\n  Transmit Delay is 1 sec, State DR, Priority 1\n  Designated Router (ID) 1.1.1.1, Interface address 10.0.0.1\n  Backup Designated router (ID) 3.3.3.3, Interface address 10.0.0.3\n  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5",
+        "answer": 0,
+        "explanation": "'State DR' and the Designated Router line showing R1's own ID (1.1.1.1) mean R1 is the DR; 3.3.3.3 is the BDR. Priority is 1 and the network type is broadcast, so an election did take place."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.030",
@@ -2144,7 +3473,20 @@
     ],
     "answer": 3,
     "explanation": "Hello and dead intervals are carried in Hellos and must match exactly. Fix them with 'ip ospf hello-interval' and 'ip ospf dead-interval'.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "R1 and R2 both use OSPF Hello 10 / Dead 40 on a link in area 0, but R1 runs 'router ospf 1' and R2 runs 'router ospf 2'. What happens?",
+        "choices": [
+          "They become neighbours, because process IDs are only local",
+          "R1 adopts R2's process ID",
+          "They become neighbours but don't exchange LSAs",
+          "They don't become neighbours, because the process IDs must match"
+        ],
+        "answer": 0,
+        "explanation": "The process ID only identifies the process on that router and isn't carried in Hellos, so it doesn't have to match. The timers, area and subnet match, so the adjacency forms."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.031",
@@ -2161,7 +3503,20 @@
     ],
     "answer": 2,
     "explanation": "10.0.12.1/30 is in 10.0.12.0-3 and 10.0.12.5/30 in 10.0.12.4-7. OSPF neighbours on a broadcast link must share a subnet and mask.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "R1's link to R2 is 10.0.12.1/30 and R2's side is 10.0.12.2/30. Both run OSPF in area 0 with default timers. What happens?",
+        "choices": [
+          "They become neighbours: same subnet and same area",
+          "They become neighbours but stay stuck in 2-Way",
+          "They don't become neighbours: different subnets",
+          "R2 changes its address"
+        ],
+        "answer": 0,
+        "explanation": "10.0.12.1 and 10.0.12.2 are both in 10.0.12.0/30, the area and timers match, so they become neighbours. Two routers alone on a link aren't both DROthers, so they don't stop at 2-Way."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.032",
@@ -2178,7 +3533,14 @@
     ],
     "answer": 3,
     "explanation": "Hellos (and so 2-Way) work, but database description packets are rejected when the MTUs differ. Timer or area mismatches stop them before 2-Way.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "R1 and R2 never become OSPF neighbours. 'show ip ospf interface' shows Hello 10 on R1 and Hello 5 on R2. What is the cause?",
+        "answer": 0,
+        "explanation": "Hello and Dead timers must match, so the routers ignore each other's Hellos and no adjacency forms. A mismatched MTU is different: Hellos work, but the routers stick in ExStart/Exchange."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.033",
@@ -2195,7 +3557,14 @@
     ],
     "answer": 2,
     "explanation": "With only two routers on a link there's nothing to gain from a DR. Point-to-point links go straight to Full, and Ethernet links between two routers can be set to this type.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which OSPF network type, the default on Ethernet, elects a DR and BDR?",
+        "answer": 0,
+        "explanation": "Ethernet interfaces default to the broadcast network type, which elects a DR and BDR to cut down flooding. Point-to-point skips the election."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.034",
@@ -2208,7 +3577,16 @@
       "ip ospf priority 0"
     ],
     "explanation": "Priority 0 makes the router ineligible. It still forms Full adjacencies with the DR and BDR.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which interface command gives a router the highest possible OSPF priority on that segment? (full command)",
+        "answer": [
+          "ip ospf priority 255"
+        ],
+        "explanation": "OSPF priority ranges from 0 to 255, so 'ip ospf priority 255' is the highest. It wins the next election, but because there's no preemption it won't take over a working DR."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.035",
@@ -2221,7 +3599,16 @@
       "ip ospf network point-to-point"
     ],
     "explanation": "This skips the DR/BDR election and the wait timer, so the adjacency comes up faster. Set it on both ends.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which interface command sets the OSPF Hello interval to 5 seconds? (full command)",
+        "answer": [
+          "ip ospf hello-interval 5"
+        ],
+        "explanation": "'ip ospf hello-interval 5' changes the Hello timer on the interface. It must match on both ends of the link, as must the Dead timer ('ip ospf dead-interval')."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.036",
@@ -2238,7 +3625,20 @@
     ],
     "answer": 1,
     "explanation": "'show ip protocols' summarises each routing process: router ID, network statements, passive interfaces and routing information sources.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Which command shows the router's own DR/BDR state, priority, cost and network type on an interface?",
+        "choices": [
+          "show ip ospf neighbor",
+          "show ip protocols",
+          "show ip route",
+          "show ip ospf interface"
+        ],
+        "answer": 3,
+        "explanation": "show ip ospf interface describes OSPF on each interface: its state (DR, BDR or DROTHER), priority, cost, network type and the DR's router ID. show ip ospf neighbor shows the neighbours' roles instead."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.037",
@@ -2255,7 +3655,14 @@
     ],
     "answer": 1,
     "explanation": "Cost = 100 Mbps / bandwidth: each 100 Mbps link costs 1, so path A is 2; a 10 Mbps link costs 10. Hop count doesn't matter to OSPF.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "With the default reference bandwidth, path A to 10.9.9.0/24 crosses two 100 Mbps links and path B crosses one 1 Gbps link. Which does OSPF choose?",
+        "answer": 0,
+        "explanation": "With a 100 Mbps reference, 100 Mbps and 1 Gbps both cost 1. Path A costs 1 + 1 = 2 and path B costs 1, so path B wins. It's the total cost that matters, not hop count."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.038",
@@ -2272,7 +3679,20 @@
     ],
     "answer": 2,
     "explanation": "With the default 100 Mbps reference every link of 100 Mbps or faster costs 1, so OSPF can't tell them apart. Set the same reference on every router.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "With the default reference bandwidth, what OSPF costs do 1, 10 and 100 Gbps links get?",
+        "choices": [
+          "100, 10 and 1, falling as speed rises",
+          "1 each, so OSPF can't tell them apart",
+          "10, 1 and 0, with 100 Gbps free",
+          "1, 10 and 100, rising as speed rises"
+        ],
+        "answer": 1,
+        "explanation": "The default reference is 100 Mbps and the minimum cost is 1, so every link of 100 Mbps or faster costs 1. That's why the reference bandwidth needs raising in fast networks."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.039",
@@ -2292,7 +3712,23 @@
       3
     ],
     "explanation": "A network statement needs a wildcard and an area; the interface command enables OSPF directly. There's no 'ospf enable' command.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Gi0/1 has 10.5.5.1/24. Which two network statements under router ospf 1 put it in area 0? (Choose two.)",
+        "choices": [
+          "network 10.5.5.1 0.0.0.0 area 0",
+          "network 10.5.6.0 0.0.0.255 area 0",
+          "network 10.5.0.0 0.0.255.255 area 0",
+          "network 10.5.5.0 0.0.0.255 area 1"
+        ],
+        "answer": [
+          0,
+          2
+        ],
+        "explanation": "0.0.0.0 matches exactly 10.5.5.1, and 10.5.0.0 0.0.255.255 matches everything in 10.5.x.x, so both enable Gi0/1 in area 0. 10.5.6.0 0.0.0.255 misses the address, and the last statement uses area 1."
+      }
+    ]
   },
   {
     "id": "q.d3.ospf.040",
@@ -2309,7 +3745,20 @@
       "LSAck": "Confirms that LSAs arrived"
     },
     "explanation": "Hellos build adjacencies; DBD, LSR, LSU and LSAck then synchronise the database reliably.",
-    "lesson_ref": "d3.ospf"
+    "lesson_ref": "d3.ospf",
+    "variants": [
+      {
+        "stem": "Match each OSPF packet type number to its packet.",
+        "answer": {
+          "Type 1": "Hello",
+          "Type 2": "DBD",
+          "Type 3": "LSR",
+          "Type 4": "LSU",
+          "Type 5": "LSAck"
+        },
+        "explanation": "The numbers follow the conversation: 1 Hello, 2 DBD (here's my table of contents), 3 LSR (can I have that?), 4 LSU (here it is), 5 LSAck (got it)."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.018",
@@ -2326,7 +3775,20 @@
     ],
     "answer": 3,
     "explanation": "An FHRP lets two or more routers share a virtual IP and MAC, so the hosts' single gateway setting keeps working if one router fails.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "What problem does GLBP solve that HSRP alone doesn't?",
+        "choices": [
+          "DHCP servers run out of addresses on busy subnets",
+          "Only one router forwards in an HSRP group, so the others sit idle",
+          "Routers can't share routes without a routing protocol",
+          "Hosts have one default gateway, which is a single point of failure"
+        ],
+        "answer": 1,
+        "explanation": "HSRP already solves the single gateway problem, but only its active router forwards. GLBP lets several routers forward for one virtual IP, so their capacity isn't wasted."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.019",
@@ -2339,7 +3801,19 @@
       "standby 1 preempt"
     ],
     "explanation": "Without preempt, a higher-priority router that comes up later stays standby until the active router fails.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "Which interface command lowers this router's HSRP group 1 priority by 20 while Gi0/1 is down? (full command)",
+        "answer": [
+          "standby 1 track g0/1 20",
+          "standby 1 track gi0/1 20",
+          "standby 1 track gig0/1 20",
+          "standby 1 track gigabitethernet0/1 20"
+        ],
+        "explanation": "'standby 1 track g0/1 20' tracks the uplink and takes 20 off the priority when it fails, so a peer with preempt and a higher priority can take over."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.020",
@@ -2352,7 +3826,16 @@
       "standby 1 ip 10.1.1.254"
     ],
     "explanation": "Every router in the group uses the same group number and virtual IP; hosts use the virtual IP as their gateway.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "Which interface command sets HSRP group 1's priority to 110? (full command)",
+        "answer": [
+          "standby 1 priority 110"
+        ],
+        "explanation": "'standby 1 priority 110' raises the priority above the default of 100. Add 'standby 1 preempt' if this router should take over from a working active router."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.021",
@@ -2369,7 +3852,14 @@
     ],
     "answer": 2,
     "explanation": "VRRP uses 0000.5e00.01XX with the group in hex. 0000.0c07.acXX is HSRPv1, 0000.0c9f.fXXX HSRPv2 and 0007.b4XX.XXYY GLBP.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "What is the HSRPv1 virtual MAC address for group 5?",
+        "answer": 0,
+        "explanation": "HSRPv1 uses 0000.0c07.acXX with the group in hex, so group 5 is 0000.0c07.ac05. 0000.0c9f.f005 is HSRPv2, 0000.5e00.0105 is VRRP and 0007.b4 is GLBP."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.022",
@@ -2386,7 +3876,20 @@
     ],
     "answer": 1,
     "explanation": "VRRP allows the virtual IP to be a real address. The owner always becomes master. HSRP needs a separate virtual address.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "In HSRP, can the virtual IP be the real interface address of one of the routers?",
+        "choices": [
+          "No: HSRP needs a separate virtual address",
+          "Yes: the address owner gets priority 255 and is active",
+          "Yes, but only on the standby router",
+          "Only for IPv6"
+        ],
+        "answer": 0,
+        "explanation": "HSRP's virtual IP must be its own address in the subnet. Using a real router's address, with the owner getting priority 255, is a VRRP feature."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.023",
@@ -2403,7 +3906,20 @@
     ],
     "answer": 2,
     "explanation": "The AVG assigns virtual MACs to up to four active virtual forwarders (AVFs) and spreads hosts across them in its ARP replies.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "In GLBP, what do the active virtual forwarders (AVFs) do?",
+        "choices": [
+          "Answer ARP for the virtual IP on behalf of the group",
+          "Forward traffic sent to their own virtual MAC, sharing the load",
+          "Act as a backup only",
+          "Run the routing protocol on behalf of the group"
+        ],
+        "answer": 1,
+        "explanation": "Each AVF owns one of the virtual MACs the AVG hands out and forwards the traffic sent to it, so up to four routers share the load. Answering ARP is the AVG's job."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.024",
@@ -2421,7 +3937,21 @@
     ],
     "answer": 2,
     "explanation": "Higher priority only wins at election time or with preempt. R2 came up first (or R1 restarted), and R1 waits as standby. The MAC 0000.0c07.ac0a shows HSRPv1, group 10.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "R1 (192.168.1.2, priority 100) is the standby router. Based on this exhibit from R2, why is R2 active?",
+        "exhibit": "R2#show standby\nGigabitEthernet0/0 - Group 10\n  State is Active\n  Virtual IP address is 192.168.1.254\n  Active virtual MAC address is 0000.0c07.ac0a\n  Hello time 3 sec, hold time 10 sec\n  Preemption enabled\n  Active router is local\n  Standby router is 192.168.1.2, priority 100 (expires in 9.1 sec)\n  Priority 110 (configured 110)",
+        "choices": [
+          "R2 has the higher IP address, which beats priority",
+          "In HSRP a lower priority value wins the election",
+          "R1 has no preempt, so it doesn't take over from R2",
+          "R2 has the higher priority, 110 against 100"
+        ],
+        "answer": 3,
+        "explanation": "R2's priority is 110 and R1's is 100, and the highest priority wins. With preemption enabled R2 would also take over if it came up later. The IP address only breaks ties."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.025",
@@ -2438,7 +3968,20 @@
     ],
     "answer": 1,
     "explanation": "The virtual MAC moves with the active role, so after a failover hosts keep using the same gateway MAC and don't need to ARP again.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "After an HSRP failover, what happens to the gateway MAC address the hosts use?",
+        "choices": [
+          "The new active router's burned-in MAC replaces it",
+          "It moves to the new active router, so hosts keep the same gateway MAC",
+          "Hosts flush their ARP caches and learn a new virtual MAC",
+          "It becomes ffff.ffff.ffff until the next Hello"
+        ],
+        "answer": 1,
+        "explanation": "The virtual MAC belongs to the group and moves with the active role. Hosts keep the same gateway IP and MAC, so they don't need to ARP again and notice nothing."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.026",
@@ -2455,7 +3998,14 @@
     ],
     "answer": 2,
     "explanation": "Priority is 0-255 with a default of 100. (0-4095 is the HSRPv2 group number range.)",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "What is the range of HSRPv2 group numbers?",
+        "answer": 0,
+        "explanation": "HSRPv2 supports groups 0-4095, which is why its MAC carries the group in three hex digits. HSRPv1 groups are 0-255, the same range as the priority."
+      }
+    ]
   },
   {
     "id": "q.d3.fhrp.027",
@@ -2475,6 +4025,22 @@
       3
     ],
     "explanation": "HSRP is Cisco's; VRRP is the standard. One active router per group forwards; load sharing needs several groups or GLBP.",
-    "lesson_ref": "d3.fhrp"
+    "lesson_ref": "d3.fhrp",
+    "variants": [
+      {
+        "stem": "Which two statements about VRRP are true? (Choose two.)",
+        "choices": [
+          "It is Cisco-proprietary",
+          "It uses master and backup routers",
+          "It is an open standard",
+          "Its virtual IP must differ from every router's real address"
+        ],
+        "answer": [
+          1,
+          2
+        ],
+        "explanation": "VRRP is the open standard (RFC 5798) and calls its roles master and backup. Its virtual IP may be a real router's address, whose owner then gets priority 255; HSRP and GLBP are the Cisco ones."
+      }
+    ]
   }
 ]

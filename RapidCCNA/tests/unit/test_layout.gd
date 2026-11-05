@@ -113,7 +113,7 @@ func test_every_question_before_and_after_answering():
 	for size in SIZES:
 		await _set_size(size)
 		var bad := 0
-		for id in ContentDB.questions:
+		for id in _every_version():
 			if bad >= 5:
 				break   # enough to act on
 			var s := await _open("res://ui/screens/Review.tscn", [{"kind": "review", "ids": [id], "title": "Quiz"}])
@@ -124,7 +124,24 @@ func test_every_question_before_and_after_answering():
 			ok = _check(s, id + " answered") and ok
 			bad += 0 if ok else 1
 			s.queue_free()
+	for id in ContentDB.questions.keys().filter(func(k): return k.contains("~v")):
+		ContentDB.questions.erase(id)
 	assert_true(true)
+
+## Every question id, plus a stand-in "<id>~vN" for each variant so each version
+## is laid out on its own (a review of the real id picks a version at random).
+func _every_version() -> Array:
+	var out: Array = []
+	for id in ContentDB.questions.keys():
+		if id.contains("~v"):
+			continue
+		out.append(id)
+		for n in range(1, ContentDB.questions[id].get("variants", []).size() + 1):
+			var only := ContentDB.question_version(id, n)
+			only.id = "%s~v%d" % [id, n]
+			ContentDB.questions[only.id] = only
+			out.append(only.id)
+	return out
 
 func test_every_lesson_in_tutorial_and_study_overlay():
 	for size in SIZES:

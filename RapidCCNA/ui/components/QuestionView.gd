@@ -3,7 +3,7 @@ extends VBoxContainer
 ## Renders one question of any non-CLI type, grades it and shows an explanation.
 ## Keyboard: 1-9 pick choices, Enter submits / continues.
 
-signal answered(result: Dictionary)   # {id, correct, response, ms, skipped}
+signal answered(result: Dictionary)   # {id, variant, correct, response, ms, skipped}
 signal continued
 
 var q: Dictionary = {}
@@ -302,7 +302,7 @@ func _on_submit(skip: bool = false) -> void:
 	_skip.visible = false   # Study stays, to read up on the answer
 	_notice.text = ""
 	_notice.visible = false
-	answered.emit({"id": q.get("id", ""), "correct": correct, "response": response, "ms": ms, "skipped": skip})
+	answered.emit({"id": q.get("id", ""), "variant": int(q.get("variant", 0)), "correct": correct, "response": response, "ms": ms, "skipped": skip})
 	if show_feedback:
 		_show_feedback(correct)
 	else:

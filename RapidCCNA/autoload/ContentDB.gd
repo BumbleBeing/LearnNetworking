@@ -76,6 +76,26 @@ func _json_files(dir_path: String) -> PackedStringArray:
 			out.append(dir_path + "/" + f)
 	return out
 
+## A question as it is shown. Version 0 is the original; 1..n are its variants, whose
+## fields (stem, exhibit, choices, answer, explanation...) replace the original's.
+## Every version keeps the original's id, so they share one review card.
+func question_version(id: String, version: int) -> Dictionary:
+	var q: Dictionary = questions.get(id, {})
+	var variants: Array = q.get("variants", [])
+	var out := q.duplicate(true)
+	out.erase("variants")
+	if version < 1 or version > variants.size():
+		version = 0
+	if version > 0:
+		out.merge(variants[version - 1], true)
+	out["variant"] = version
+	return out
+
+## The original or one of its variants, at random: a fresh pick every time a question is shown.
+func pick_version(id: String, rng: RandomNumberGenerator = null) -> Dictionary:
+	var n: int = questions.get(id, {}).get("variants", []).size()
+	return question_version(id, rng.randi_range(0, n) if rng else randi_range(0, n))
+
 func get_domain(domain_id: String) -> Dictionary:
 	for d in domains:
 		if d.id == domain_id:

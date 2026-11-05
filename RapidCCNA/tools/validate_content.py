@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate RapidCCNA content: schema, unique ids, answer keys, cross-references, coverage.
 
-Usage: python3 tools/validate_content.py [content_dir] [--min-per-subtopic N] [--min-total N]
+Usage: python3 tools/validate_content.py [content_dir] [--min-per-subtopic N] [--min-total N] [--min-variants N]
 Exit code 0 = valid, 1 = errors found.
 """
 import json
@@ -19,6 +19,79 @@ LAB_CHECKS = {"hostname", "vlan_exists", "access_port", "trunk_port", "iface_ip"
               "enable_secret", "password_encryption", "line_auth"}
 QUESTION_REQUIRED = {"id", "domain", "subtopic", "type", "stem", "answer", "explanation"}
 LESSON_REQUIRED = {"id", "domain", "subtopics", "title", "cards"}
+# A variant replaces some of its question's fields; the rest (id, type, domain, lesson...) are shared.
+VARIANT_FIELDS = {"stem", "exhibit", "choices", "answer", "explanation", "distractors", "fields"}
+NO_VARIANTS_NEEDED = {"cli_task"}   # each would need its own simulated lab
+
+
+def versions(q):
+    """The question as shown: the original first, then each variant merged over it."""
+    base = {k: v for k, v in q.items() if k != "variants"}
+    out = [dict(base, version=0)]
+    for n, v in enumerate(q.get("variants", []) if isinstance(q.get("variants"), list) else [], 1):
+        if isinstance(v, dict):
+            out.append(dict(base, **v, version=n))
+    return out
+
+
+def answer_key(q):
+    """What counts as 'the answer', for telling versions apart."""
+    t, ans, ch = q["type"], q["answer"], q.get("choices") or []
+    norm = lambda x: " ".join(str(x).lower().split())
+    if t in ("mcq_single", "exhibit"):
+        return norm(ch[ans])
+    if t == "mcq_multi":
+        return frozenset(norm(ch[i]) for i in ans)
+    if t == "fill_in":
+        return ("accepts", frozenset(norm(a) for a in (ans if isinstance(ans, list) else [ans])))
+    if isinstance(ans, dict):
+        return tuple(sorted((norm(k), norm(v)) for k, v in ans.items()))
+    if isinstance(ans, list):
+        return tuple(norm(a) for a in ans)
+    return norm(ans)
+
+
+def same_answer(a, b):
+    # Fill-in versions must not share any accepted answer; the rest must differ as a whole
+    # (a multi-select variant may share some correct choices, but not the whole set).
+    if isinstance(a, tuple) and a[:1] == ("accepts",) and isinstance(b, tuple) and b[:1] == ("accepts",):
+        return bool(a[1] & b[1])
+    return a == b
+
+
+def check_variants(q, where, errors, min_variants):
+    raw = q.get("variants", [])
+    if not isinstance(raw, list):
+        errors.append(f"{where}: variants must be a list")
+        return
+    if q["type"] not in NO_VARIANTS_NEEDED and len(raw) < min_variants:
+        errors.append(f"{where}: needs at least {min_variants} variant(s), has {len(raw)}")
+    for n, v in enumerate(raw, 1):
+        if not isinstance(v, dict):
+            errors.append(f"{where} variant {n}: not an object")
+            return
+        extra = v.keys() - VARIANT_FIELDS
+        if extra:
+            errors.append(f"{where} variant {n}: can't override {sorted(extra)}")
+        if not {"stem", "answer", "explanation"} <= v.keys():
+            errors.append(f"{where} variant {n}: needs its own stem, answer and explanation")
+    vs = versions(q)
+    before = len(errors)
+    for v in vs[1:]:
+        check_answer(v, f"{where} variant {v['version']}", errors)
+    if len(errors) > before:
+        return
+    try:
+        keys = [answer_key(v) for v in vs]
+    except (IndexError, TypeError, KeyError):
+        errors.append(f"{where}: a variant's answer doesn't fit its choices")
+        return
+    for i in range(len(vs)):
+        for j in range(i + 1, len(vs)):
+            if same_answer(keys[i], keys[j]):
+                errors.append(f"{where}: versions {i} and {j} have the same answer; a variant needs a different one")
+            if " ".join(vs[i]["stem"].split()) == " ".join(vs[j]["stem"].split()) and vs[i].get("exhibit") == vs[j].get("exhibit"):
+                errors.append(f"{where}: versions {i} and {j} have the same stem")
 
 
 def load(path, errors):
@@ -74,7 +147,7 @@ def allocate(domains, n):
     return {d["id"]: s for d, s in zip(domains, seats)}
 
 
-def validate(root: Path, min_per_subtopic: int = 0, min_total: int = 0):
+def validate(root: Path, min_per_subtopic: int = 0, min_total: int = 0, min_variants: int = 0):
     errors = []
     bp = load(root / "blueprint.json", errors)
     if not isinstance(bp, dict):
@@ -135,7 +208,10 @@ def validate(root: Path, min_per_subtopic: int = 0, min_total: int = 0):
                 errors.append(f"{where}: unknown domain {q['domain']}")
             if subtopics.get(q["subtopic"]) != q["domain"]:
                 errors.append(f"{where}: subtopic {q['subtopic']} not in domain {q['domain']}")
+            before = len(errors)
             check_answer(q, where, errors)
+            if len(errors) == before:
+                check_variants(q, where, errors, min_variants)
 
     drills = {}
     drills_path = root / "drills" / "drills.json"
@@ -235,7 +311,7 @@ def validate(root: Path, min_per_subtopic: int = 0, min_total: int = 0):
 
 
 def main(argv):
-    args, opts = [], {"--min-per-subtopic": 0, "--min-total": 0}
+    args, opts = [], {"--min-per-subtopic": 0, "--min-total": 0, "--min-variants": 0}
     it = iter(argv[1:])
     for a in it:
         if a in opts:
@@ -246,7 +322,7 @@ def main(argv):
         else:
             args.append(a)
     root = Path(args[0]) if args else Path(__file__).resolve().parent.parent / "content"
-    errors = validate(root, opts["--min-per-subtopic"], opts["--min-total"])
+    errors = validate(root, opts["--min-per-subtopic"], opts["--min-total"], opts["--min-variants"])
     for e in errors:
         print("ERROR", e)
     print(f"{'FAIL' if errors else 'OK'}: {len(errors)} error(s) in {root}")

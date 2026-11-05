@@ -12,7 +12,18 @@
       "An administrator logging in over SSH": "Management plane"
     },
     "explanation": "Data plane forwards, control plane builds forwarding information, management plane manages the device.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Match each of these device functions to the plane it belongs to.",
+        "answer": {
+          "Applying an ACL to packets as they pass through": "Data plane",
+          "Running STP to block a looped port": "Control plane",
+          "A monitoring tool polling the device with SNMP": "Management plane"
+        },
+        "explanation": "Applying ACLs while forwarding is data plane work. STP builds forwarding information, so it's control plane. SNMP is a management tool, so it's management plane."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.002",
@@ -29,7 +40,14 @@
     ],
     "answer": 0,
     "explanation": "Northbound faces applications and scripts (usually REST/JSON); southbound faces the network devices.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "In a controller-based network, what does the southbound API connect?",
+        "answer": 1,
+        "explanation": "Southbound faces down to the network devices (NETCONF, RESTCONF, OpenFlow, CLI). Northbound is the one that faces applications and scripts."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.003",
@@ -45,7 +63,18 @@
       "Catalyst Center": "The controller that manages the fabric"
     },
     "explanation": "SD-Access: an IS-IS underlay, a VXLAN/LISP overlay, TrustSec policy, all managed by Catalyst Center (formerly DNA Center).",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Match each SD-Access fabric node to its role.",
+        "answer": {
+          "Fabric edge node": "Connects endpoints, much like an access switch",
+          "Border node": "Connects the fabric to outside networks",
+          "Control-plane node": "Holds the LISP map server"
+        },
+        "explanation": "Edge nodes attach users and devices, border nodes link the fabric to external networks, and control-plane nodes keep the LISP endpoint-to-location mappings."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.004",
@@ -65,7 +94,23 @@
       3
     ],
     "explanation": "Automation gives consistent changes with fewer human errors and lets you scale changes quickly. It doesn't remove the need for skills or testing.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which two are challenges or risks of network automation? (Choose two.)",
+        "choices": [
+          "Engineers need skills in programming and APIs",
+          "Changes are applied to many devices consistently",
+          "A bad automated change can spread quickly",
+          "Fewer configuration errors from manual typing"
+        ],
+        "answer": [
+          0,
+          2
+        ],
+        "explanation": "Automation needs new skills (programming, APIs, tools), and a bad change spreads as fast as a good one. Consistency and fewer typing errors are benefits, not risks."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.005",
@@ -82,7 +127,20 @@
     ],
     "answer": 3,
     "explanation": "NETCONF, RESTCONF, OpenFlow and OpFlex are southbound. REST APIs offered to applications are northbound.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which is a northbound interface?",
+        "choices": [
+          "A REST API used by a ticketing system",
+          "OpenFlow",
+          "RESTCONF to a switch",
+          "NETCONF"
+        ],
+        "answer": 0,
+        "explanation": "Northbound interfaces face applications, such as a ticketing system calling the controller's REST API. NETCONF, RESTCONF and OpenFlow all face the devices, so they're southbound, even though RESTCONF uses HTTPS."
+      }
+    ]
   },
   {
     "id": "q.d6.ai.001",
@@ -99,7 +157,20 @@
     ],
     "answer": 2,
     "explanation": "ML learns a baseline from telemetry and flags deviations; it doesn't replace routing protocols or cabling.",
-    "lesson_ref": "d6.ai_ops"
+    "lesson_ref": "d6.ai_ops",
+    "variants": [
+      {
+        "stem": "Which task is a typical use of generative AI rather than predictive AI in network operations?",
+        "choices": [
+          "Forecasting next month's link capacity",
+          "Drafting a config from a plain-English request",
+          "Detecting traffic that deviates from a baseline",
+          "Encrypting VPN traffic between branch sites"
+        ],
+        "answer": 1,
+        "explanation": "Generative models create content such as text or configuration. Forecasting capacity and flagging deviations from a baseline are predictive (and classifying) uses."
+      }
+    ]
   },
   {
     "id": "q.d6.ai.002",
@@ -116,7 +187,20 @@
     ],
     "answer": 0,
     "explanation": "Supervised learning trains on labelled examples; unsupervised learning finds patterns in unlabelled data.",
-    "lesson_ref": "d6.ai_ops"
+    "lesson_ref": "d6.ai_ops",
+    "variants": [
+      {
+        "stem": "Which kind of machine learning finds structure in data that has no labels?",
+        "choices": [
+          "Supervised learning",
+          "Unsupervised learning",
+          "Reinforcement learning",
+          "Rule-based programming"
+        ],
+        "answer": 1,
+        "explanation": "Unsupervised learning finds patterns and anomalies in unlabelled data. Supervised learning needs labelled examples, and reinforcement learning learns by trial and reward."
+      }
+    ]
   },
   {
     "id": "q.d6.ai.003",
@@ -133,7 +217,20 @@
     ],
     "answer": 1,
     "explanation": "Generated output can be wrong; review and test it, as with any change.",
-    "lesson_ref": "d6.ai_ops"
+    "lesson_ref": "d6.ai_ops",
+    "variants": [
+      {
+        "stem": "An engineer uses a public generative AI service to help troubleshoot. What should they avoid doing?",
+        "choices": [
+          "Asking it to explain a log message",
+          "Pasting sensitive network data into it",
+          "Reviewing its suggested fix before use",
+          "Testing its suggested change in a lab first"
+        ],
+        "answer": 1,
+        "explanation": "Sensitive data shouldn't be pasted into public AI services. Asking for explanations is fine, and reviewing and testing generated changes is exactly what should happen."
+      }
+    ]
   },
   {
     "id": "q.d6.ai.004",
@@ -150,7 +247,14 @@
     ],
     "answer": 3,
     "explanation": "Predictive analytics uses trends in historical data to forecast future problems.",
-    "lesson_ref": "d6.ai_ops"
+    "lesson_ref": "d6.ai_ops",
+    "variants": [
+      {
+        "stem": "Which capability reduces thousands of alerts to a probable root cause?",
+        "answer": 0,
+        "explanation": "Correlation links related alerts and events so you see one probable root cause. Predictive analytics forecasts future problems; it doesn't group current alerts."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.001",
@@ -169,7 +273,22 @@
       "Delete": "DELETE"
     },
     "explanation": "Create POST, Read GET, Update PUT/PATCH, Delete DELETE.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "Match each HTTP method to the CRUD action it performs.",
+        "distractors": [
+          "Connect"
+        ],
+        "answer": {
+          "POST": "Create",
+          "GET": "Read",
+          "PUT": "Update by replacing the whole resource",
+          "DELETE": "Delete"
+        },
+        "explanation": "POST creates, GET reads, PUT replaces a whole resource (PATCH changes part of it) and DELETE removes it. There is no Connect action in CRUD."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.002",
@@ -186,7 +305,14 @@
     ],
     "answer": 1,
     "explanation": "401 Unauthorized: authentication is missing or invalid. 403 means authenticated but not permitted.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "An API call returns HTTP 404. What's wrong?",
+        "answer": 0,
+        "explanation": "404 Not Found means nothing exists at that URI. A 4xx code is a client error; a crashed server would return a 5xx code such as 500."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.003",
@@ -203,7 +329,20 @@
     ],
     "answer": 2,
     "explanation": "The server keeps no session state between requests, so each request includes its authentication and all needed information.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "Which of these is not a property of a RESTful API?",
+        "choices": [
+          "Each request carries everything needed, including credentials",
+          "Responses can be cached where appropriate",
+          "The server keeps each client's session between requests",
+          "Resources are identified by URIs"
+        ],
+        "answer": 2,
+        "explanation": "REST is stateless: the server keeps no session between requests, so each request carries its own authentication. Caching where appropriate and URI-identified resources are REST properties."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.004",
@@ -222,7 +361,22 @@
       "500": "Internal Server Error"
     },
     "explanation": "2xx success, 4xx client error, 5xx server error.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "Match each of these HTTP status codes to its meaning.",
+        "distractors": [
+          "Moved permanently"
+        ],
+        "answer": {
+          "204": "No Content",
+          "400": "Bad Request",
+          "401": "Unauthorized",
+          "403": "Forbidden"
+        },
+        "explanation": "204 is a success with no body. 400, 401 and 403 are client errors: a malformed request, missing or invalid credentials, and a known user who isn't allowed."
+      }
+    ]
   },
   {
     "id": "q.d6.cm.001",
@@ -242,7 +396,17 @@
       2
     ],
     "explanation": "Ansible is agentless and pushes changes; playbooks are YAML. Puppet and Chef use agents that pull.",
-    "lesson_ref": "d6.config_mgmt"
+    "lesson_ref": "d6.config_mgmt",
+    "variants": [
+      {
+        "stem": "Which two statements describe Chef? (Choose two.)",
+        "answer": [
+          1,
+          3
+        ],
+        "explanation": "Chef is agent-based: an agent on each node pulls its configuration, described in Ruby recipes and cookbooks. Agentless SSH and YAML playbooks describe Ansible."
+      }
+    ]
   },
   {
     "id": "q.d6.cm.002",
@@ -259,7 +423,14 @@
     ],
     "answer": 3,
     "explanation": "Terraform uses HashiCorp Configuration Language, shows changes with plan and makes them with apply.",
-    "lesson_ref": "d6.config_mgmt"
+    "lesson_ref": "d6.config_mgmt",
+    "variants": [
+      {
+        "stem": "Which tool is agentless and pushes changes from YAML playbooks over SSH?",
+        "answer": 0,
+        "explanation": "Ansible needs nothing installed on devices and pushes playbooks written in YAML. Terraform uses HCL, while Puppet and Chef use agents that pull."
+      }
+    ]
   },
   {
     "id": "q.d6.cm.003",
@@ -275,7 +446,19 @@
       "Chef": "Recipe in a cookbook (Ruby)"
     },
     "explanation": "Each tool has its own format for describing the desired state.",
-    "lesson_ref": "d6.config_mgmt"
+    "lesson_ref": "d6.config_mgmt",
+    "variants": [
+      {
+        "stem": "Match each term to the tool it belongs to.",
+        "answer": {
+          "Playbook": "Ansible",
+          "State file": "Terraform",
+          "Manifest": "Puppet",
+          "Cookbook": "Chef"
+        },
+        "explanation": "Ansible runs playbooks, Terraform tracks what exists in a state file, Puppet uses manifests and Chef groups recipes into cookbooks."
+      }
+    ]
   },
   {
     "id": "q.d6.cm.004",
@@ -292,7 +475,20 @@
     ],
     "answer": 0,
     "explanation": "Changes are reviewable, repeatable and can be rolled back.",
-    "lesson_ref": "d6.config_mgmt"
+    "lesson_ref": "d6.config_mgmt",
+    "variants": [
+      {
+        "stem": "Which is not a benefit of keeping device configurations as code in version control?",
+        "choices": [
+          "Changes can be reviewed before they're applied",
+          "Earlier versions can be restored after a bad change",
+          "It removes the need to test changes",
+          "The same change can be repeated on other devices"
+        ],
+        "answer": 2,
+        "explanation": "Version control makes changes reviewable, repeatable and easy to roll back. It doesn't remove the need to test: a bad change in code is still a bad change."
+      }
+    ]
   },
   {
     "id": "q.d6.json.001",
@@ -310,7 +506,21 @@
     ],
     "answer": 2,
     "explanation": "JSON doesn't allow a comma after the last item in an object or array.",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, what makes this invalid JSON?",
+        "exhibit": "{\n  'hostname': 'R1',\n  \"vlans\": [10, 20]\n}",
+        "choices": [
+          "Keys must not be quoted in JSON",
+          "Arrays can't hold numbers, only strings",
+          "There's a trailing comma after the last item",
+          "Strings must use double quotes, not single"
+        ],
+        "answer": 3,
+        "explanation": "JSON allows only double quotes, so 'hostname' and 'R1' are invalid. There's no trailing comma here, and arrays of numbers are fine."
+      }
+    ]
   },
   {
     "id": "q.d6.json.002",
@@ -330,7 +540,24 @@
       "{\"id\": 10}": "Object"
     },
     "explanation": "Quotes = string, bare digits = number, true/false = boolean, [ ] = array, { } = object.",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "Match each of these JSON values to its type.",
+        "distractors": [
+          "Object",
+          "Date"
+        ],
+        "answer": {
+          "\"true\"": "String",
+          "3.5": "Number",
+          "false": "Boolean",
+          "null": "Null",
+          "[\"g0/0\", \"g0/1\"]": "Array"
+        },
+        "explanation": "Anything in double quotes is a string, even \"true\". 3.5 is a number, bare false is a boolean, null is null and [ ] is an array. JSON has no date type."
+      }
+    ]
   },
   {
     "id": "q.d6.json.003",
@@ -348,7 +575,19 @@
     ],
     "answer": 1,
     "explanation": "Arrays count from 0, so interfaces[1] is the second object, whose mtu is 9000.",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, what is the value of interfaces[0].mtu?",
+        "answer": 0,
+        "explanation": "Arrays count from 0, so interfaces[0] is the first object, Gi0/0, whose mtu is 1500."
+      },
+      {
+        "stem": "Based on the exhibit, what is the value of interfaces[1].name?",
+        "answer": 2,
+        "explanation": "interfaces[1] is the second object (arrays count from 0), and its name key holds the string Gi0/1."
+      }
+    ]
   },
   {
     "id": "q.d6.json.004",
@@ -365,7 +604,20 @@
     ],
     "answer": 0,
     "explanation": "Keys and strings use double quotes; booleans are lowercase without quotes.",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "Which is a valid JSON key/value pair with a null value?",
+        "choices": [
+          "\"location\": Null",
+          "\"location\": None",
+          "\"location\": null",
+          "location: null"
+        ],
+        "answer": 2,
+        "explanation": "null is lowercase and unquoted, and the key must be in double quotes. None is Python, Null has a capital letter, and an unquoted key isn't allowed."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.006",
@@ -382,7 +634,20 @@
     ],
     "answer": 2,
     "explanation": "Manual box-by-box changes are slow and inconsistent and cause configuration drift; automation applies changes consistently.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which is a risk that comes with network automation?",
+        "choices": [
+          "Cable faults and bad connectors in closets",
+          "A bad change can spread to many devices quickly",
+          "Errors and drift from manual, device-by-device changes",
+          "Power failures in the data centre"
+        ],
+        "answer": 1,
+        "explanation": "Automation applies changes quickly everywhere, so a bad change spreads just as fast. Errors and drift from manual changes are the problem automation solves, not a risk of it."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.007",
@@ -399,7 +664,20 @@
     ],
     "answer": 3,
     "explanation": "Teams need new skills (APIs, data formats, programming, tools); a bad automated change can also spread quickly.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which is a benefit of adopting network automation?",
+        "choices": [
+          "Devices stop supporting the CLI once automated",
+          "It makes routine changes slower to carry out",
+          "Tested changes are applied consistently to many devices",
+          "Engineers need new skills, and a bad change can spread fast"
+        ],
+        "answer": 2,
+        "explanation": "Automation applies tested changes quickly and consistently. Needing new skills and the fast spread of a bad change are challenges, not benefits."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.008",
@@ -416,7 +694,14 @@
     ],
     "answer": 1,
     "explanation": "The underlay is the physical network of switches and routed links (IS-IS) that carries the overlay tunnels.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "In SD-Access, what carries user traffic across the overlay?",
+        "answer": 0,
+        "explanation": "The overlay uses VXLAN tunnels between fabric nodes to carry traffic. The underlay is the physical routed network those tunnels run over."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.009",
@@ -433,7 +718,20 @@
     ],
     "answer": 0,
     "explanation": "Central intent-based policy and automation, assurance analytics, software image management and a REST API.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which of these is not something Catalyst Center offers?",
+        "choices": [
+          "Central policy and automation",
+          "Assurance health scores and path traces",
+          "Software image management",
+          "Replacing the data plane on every switch"
+        ],
+        "answer": 3,
+        "explanation": "Catalyst Center offers intent-based policy, automation, assurance, image management and a REST API. The devices keep their own data plane and still forward the traffic."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.010",
@@ -450,7 +748,14 @@
     ],
     "answer": 1,
     "explanation": "Traditionally every router and switch runs its own control plane (OSPF, STP and so on). Controller-based networks centralise much of that logic.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "In a controller-based network, where is much of the control plane centralised?",
+        "answer": 0,
+        "explanation": "An SDN controller centralises some of the control plane and the configuration, while the devices keep the data plane. Traditionally each device runs its own control plane."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.011",
@@ -467,7 +772,20 @@
     ],
     "answer": 1,
     "explanation": "The SD-Access data plane is VXLAN, the control plane is LISP and policy uses Cisco TrustSec (SGTs). The underlay is the routed physical network.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "In SD-Access, which protocol is the overlay's control plane?",
+        "choices": [
+          "LISP",
+          "VXLAN",
+          "IPsec",
+          "MPLS"
+        ],
+        "answer": 0,
+        "explanation": "LISP is the SD-Access control plane, mapping endpoints to locations. VXLAN is the data plane that carries the traffic itself."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.012",
@@ -484,7 +802,14 @@
     ],
     "answer": 3,
     "explanation": "LISP's map server keeps endpoint-to-location mappings, so fabric edge nodes ask it where to tunnel traffic.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which SD-Access technology encapsulates user traffic in the overlay's data plane?",
+        "answer": 0,
+        "explanation": "VXLAN tunnels carry the traffic, which is the data plane. LISP is the control plane that tells nodes where to send it."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.013",
@@ -501,7 +826,20 @@
     ],
     "answer": 3,
     "explanation": "You declare intent (for example 'guests can't reach finance'). The controller translates it into configuration, deploys it and checks that the network behaves that way.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "In intent-based networking, what does the controller do once you state the outcome you want?",
+        "choices": [
+          "Waits for engineers to type each device's configuration",
+          "Translates it into configuration, deploys it and verifies it",
+          "Replaces every routing protocol with static routes",
+          "Moves all the devices onto open-source software"
+        ],
+        "answer": 1,
+        "explanation": "With intent-based networking the controller turns your intent into device configuration, deploys it and checks the network behaves that way, so nobody types it box by box."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.005",
@@ -518,7 +856,14 @@
     ],
     "answer": 2,
     "explanation": "Content-Type describes the body being sent (for example application/json). Accept lists the formats the client wants back.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "Which HTTP header lists the formats the client wants back in the response?",
+        "answer": 0,
+        "explanation": "Accept tells the server which formats the client can take (for example application/json). Content-Type describes the body being sent."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.006",
@@ -529,7 +874,14 @@
     "stem": "Which HTTP status code means a new resource was created?",
     "answer": "201",
     "explanation": "200 OK, 201 Created, 204 No Content; 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found; 500 Internal Server Error.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "Which HTTP status code means nothing exists at the requested URI?",
+        "answer": "404",
+        "explanation": "404 Not Found is a client error: the resource isn't there. 201 Created is the success code for a new resource."
+      }
+    ]
   },
   {
     "id": "q.d6.json.005",
@@ -547,7 +899,19 @@
     ],
     "answer": 1,
     "explanation": "Square brackets make an array, here an array of two objects. Curly braces make an object, as each VLAN entry and the whole document are.",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, what type is the value of \"device\"?",
+        "answer": 2,
+        "explanation": "\"sw1\" is in double quotes, so it's a string. The vlans value is an array and the whole document is an object."
+      },
+      {
+        "stem": "Based on the exhibit, what type is vlans[0]?",
+        "answer": 0,
+        "explanation": "vlans[0] is the first item in the array: {\"id\": 10, \"name\": \"users\"}. Curly braces make it an object."
+      }
+    ]
   },
   {
     "id": "q.d6.json.006",
@@ -564,7 +928,20 @@
     ],
     "answer": 1,
     "explanation": "JSON has string, number, boolean, null, object and array. Dates are sent as strings, for example \"2026-11-04T10:00:00Z\".",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "Which of these is a JSON data type?",
+        "choices": [
+          "Tuple",
+          "Date",
+          "Object",
+          "Set"
+        ],
+        "answer": 2,
+        "explanation": "JSON's six types are string, number, boolean, null, object and array. It has no tuple, set or date type; dates are sent as strings."
+      }
+    ]
   },
   {
     "id": "q.d6.cm.005",
@@ -581,7 +958,20 @@
     ],
     "answer": 0,
     "explanation": "The Ansible control node pushes changes over SSH (or NETCONF/REST). Puppet and Chef traditionally use agents that pull from a server.",
-    "lesson_ref": "d6.config_mgmt"
+    "lesson_ref": "d6.config_mgmt",
+    "variants": [
+      {
+        "stem": "How does an agent-based tool such as Puppet get configuration onto a node?",
+        "choices": [
+          "Nothing is installed on managed devices; it uses SSH or APIs",
+          "It runs without a control node or inventory",
+          "It can only read configurations",
+          "Each node checks in with a server and pulls its configuration"
+        ],
+        "answer": 3,
+        "explanation": "Puppet and Chef use an agent on each node that pulls its configuration from a server. Installing nothing and pushing over SSH describes Ansible."
+      }
+    ]
   },
   {
     "id": "q.d6.ai.005",
@@ -598,7 +988,20 @@
     ],
     "answer": 0,
     "explanation": "Predictive models forecast (capacity, failures) or classify (anomalies). Generative models produce text, code or configuration, which still needs human review before use.",
-    "lesson_ref": "d6.ai_ops"
+    "lesson_ref": "d6.ai_ops",
+    "variants": [
+      {
+        "stem": "Which statement about AI in network operations is not true?",
+        "choices": [
+          "Generative AI creates content such as configs; predictive AI forecasts",
+          "Predictive AI can flag anomalies in telemetry",
+          "Generated configurations still need human review",
+          "Generative AI is always correct, so it needs no review"
+        ],
+        "answer": 3,
+        "explanation": "Generative models can be confidently wrong, so an engineer must review and test their output. The other statements are true."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.014",
@@ -615,7 +1018,20 @@
     ],
     "answer": 1,
     "explanation": "Most outages come from human error. Templates and tested scripts apply consistent configuration, and can verify the result.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "How does automation correct configuration drift?",
+        "choices": [
+          "It removes the need to test changes before applying them",
+          "It turns off logging so drift isn't recorded",
+          "It compares devices with the intended state and fixes them",
+          "It makes devices reboot faster after each change is made"
+        ],
+        "answer": 2,
+        "explanation": "Automation tools check each device against the intended state and correct the differences, so configurations stop diverging from the standard."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.015",
@@ -632,7 +1048,20 @@
     ],
     "answer": 2,
     "explanation": "Automation tools compare devices with the intended state and correct differences, so the network matches its documentation.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which is an example of configuration drift?",
+        "choices": [
+          "Hand edits leave a few switches unlike the standard",
+          "A link keeps flapping, so the OSPF routes keep changing",
+          "Two switches' clocks differ because they don't use NTP",
+          "A wireless client roams from one AP to another"
+        ],
+        "answer": 0,
+        "explanation": "Drift is configurations slowly diverging from the standard, often through one-off manual edits. Flapping links, clock differences and roaming aren't configuration changes."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.016",
@@ -649,7 +1078,20 @@
     ],
     "answer": 2,
     "explanation": "Repetitive changes across many devices are where automation saves the most time and avoids inconsistencies.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which task can automation not do for you?",
+        "choices": [
+          "Pushing a new NTP server to 500 switches",
+          "Updating SNMP settings on every router",
+          "Checking all devices for compliance",
+          "Replacing a failed power supply"
+        ],
+        "answer": 3,
+        "explanation": "Automation changes and checks configuration in software; a failed power supply is physical hardware someone has to swap. The other tasks are classic automation jobs."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.017",
@@ -666,7 +1108,20 @@
     ],
     "answer": 2,
     "explanation": "The controller holds the network-wide view and policy, and programs the devices through southbound interfaces.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "In a controller-based network, which plane stays on the devices?",
+        "choices": [
+          "The management plane only",
+          "The data plane",
+          "Every routing protocol",
+          "The network-wide policy"
+        ],
+        "answer": 1,
+        "explanation": "The controller centralises (some of) the control plane and the policy, but devices keep the data plane and still forward the traffic themselves."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.018",
@@ -683,7 +1138,20 @@
     ],
     "answer": 2,
     "explanation": "Northbound interfaces face up toward applications and admins. Southbound ones (NETCONF, RESTCONF, OpenFlow, CLI/SSH) face the devices.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which is an example of a southbound interface?",
+        "choices": [
+          "A REST API used by a monitoring app",
+          "OpenFlow between the controller and switches",
+          "A script calling the controller's REST API",
+          "The controller's web GUI used by engineers"
+        ],
+        "answer": 1,
+        "explanation": "Southbound interfaces face down to the devices: OpenFlow, NETCONF, RESTCONF or CLI. Apps, scripts and engineers reach the controller northbound."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.019",
@@ -700,7 +1168,20 @@
     ],
     "answer": 0,
     "explanation": "NETCONF runs over SSH (port 830) with XML encoding. RESTCONF offers the same YANG data over HTTPS, in JSON or XML.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which southbound protocol carries YANG-modelled data over HTTPS, in JSON or XML?",
+        "choices": [
+          "NETCONF",
+          "SNMP",
+          "RESTCONF",
+          "OpenFlow"
+        ],
+        "answer": 2,
+        "explanation": "RESTCONF uses HTTPS and can encode YANG data in JSON or XML. NETCONF carries the same data in XML only, over SSH on port 830."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.020",
@@ -717,7 +1198,20 @@
     ],
     "answer": 3,
     "explanation": "RESTCONF maps HTTP methods (GET, POST, PUT, PATCH, DELETE) onto YANG data on the device.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "What is YANG?",
+        "choices": [
+          "A JSON validator built into IOS XE",
+          "A language that models a device's configuration and state",
+          "A REST API used only by Catalyst Center",
+          "An HTTPS API for reading and changing modelled data"
+        ],
+        "answer": 1,
+        "explanation": "YANG is a data model language: it describes the data. NETCONF and RESTCONF are the transports that carry YANG-modelled data; RESTCONF is the HTTPS one."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.021",
@@ -734,7 +1228,19 @@
     ],
     "answer": 0,
     "explanation": "Edge nodes attach users and devices. Border nodes connect to outside networks, and control-plane nodes hold the LISP map server.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "In SD-Access, what does a border node do?",
+        "answer": 1,
+        "explanation": "Border nodes connect the fabric to external networks such as the WAN and internet. Edge nodes attach endpoints, and control-plane nodes hold the LISP map server."
+      },
+      {
+        "stem": "In SD-Access, what does a control-plane node do?",
+        "answer": 2,
+        "explanation": "Control-plane nodes hold the LISP map server, which stores where each endpoint is. Edge nodes attach endpoints and border nodes connect to outside networks."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.022",
@@ -751,7 +1257,20 @@
     ],
     "answer": 1,
     "explanation": "Assurance turns streaming telemetry, logs and events into health scores, issues and guided remediation.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "Which Catalyst Center capability lets you describe the desired policy and have it configure the devices?",
+        "choices": [
+          "Assurance",
+          "Intent-based management",
+          "Software image management",
+          "Packet capture on the console"
+        ],
+        "answer": 1,
+        "explanation": "Intent-based management turns the policy you describe into device configuration. Assurance reports health and issues, and image management handles software versions."
+      }
+    ]
   },
   {
     "id": "q.d6.auto.023",
@@ -768,7 +1287,20 @@
     ],
     "answer": 2,
     "explanation": "SGTs (Cisco TrustSec) classify endpoints into groups; policy says which groups may talk, wherever the endpoints are.",
-    "lesson_ref": "d6.automation"
+    "lesson_ref": "d6.automation",
+    "variants": [
+      {
+        "stem": "In SD-Access, what does LISP do?",
+        "choices": [
+          "Marking QoS for voice and video traffic",
+          "Tagging VLANs on trunks between fabric nodes",
+          "Applying policy by group rather than by IP address",
+          "Mapping endpoints to their location in the fabric"
+        ],
+        "answer": 3,
+        "explanation": "LISP is the control plane: its map server keeps endpoint-to-location mappings. Group-based policy is the job of scalable group tags (SGTs)."
+      }
+    ]
   },
   {
     "id": "q.d6.ai.006",
@@ -785,7 +1317,20 @@
     ],
     "answer": 1,
     "explanation": "AIOps platforms correlate telemetry, logs and events, spot anomalies, find root causes and can trigger automated fixes.",
-    "lesson_ref": "d6.ai_ops"
+    "lesson_ref": "d6.ai_ops",
+    "variants": [
+      {
+        "stem": "What is anomaly detection?",
+        "choices": [
+          "Forecasting failures and capacity needs ahead of time",
+          "Reducing thousands of alerts to one probable root cause",
+          "Spotting behaviour that departs from a learned baseline",
+          "A replacement for SNMP polling"
+        ],
+        "answer": 2,
+        "explanation": "Anomaly detection learns what normal looks like and flags departures from it. Forecasting is predictive analytics, and reducing alerts to a root cause is correlation."
+      }
+    ]
   },
   {
     "id": "q.d6.ai.007",
@@ -802,7 +1347,20 @@
     ],
     "answer": 2,
     "explanation": "Models are only as good as the data they learn from. Incomplete or biased telemetry leads to missed problems or false alarms.",
-    "lesson_ref": "d6.ai_ops"
+    "lesson_ref": "d6.ai_ops",
+    "variants": [
+      {
+        "stem": "What happens if a machine learning model is trained on incomplete or biased telemetry?",
+        "choices": [
+          "It misses problems or raises false alarms",
+          "It becomes more accurate with each run",
+          "It encrypts the telemetry automatically",
+          "Nothing, because models ignore data quality"
+        ],
+        "answer": 0,
+        "explanation": "A model is only as good as its training data, so poor telemetry leads to missed problems or false alarms."
+      }
+    ]
   },
   {
     "id": "q.d6.ai.008",
@@ -819,7 +1377,14 @@
     ],
     "answer": 1,
     "explanation": "Supervised learning uses labelled data, unsupervised finds structure in unlabelled data, and reinforcement learning learns by trial and reward.",
-    "lesson_ref": "d6.ai_ops"
+    "lesson_ref": "d6.ai_ops",
+    "variants": [
+      {
+        "stem": "How does supervised learning learn?",
+        "answer": 0,
+        "explanation": "Supervised learning trains on examples that humans have labelled. Learning by trial and reward is reinforcement learning; clustering unlabelled data is unsupervised."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.007",
@@ -836,7 +1401,19 @@
     ],
     "answer": 3,
     "explanation": "PUT replaces (or creates at a known URI); PATCH changes part of a resource; POST creates; GET reads.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "Which HTTP method changes only part of a resource?",
+        "answer": 2,
+        "explanation": "PATCH changes part of a resource, like patching a hole. PUT replaces the whole resource, POST creates and GET reads."
+      },
+      {
+        "stem": "Which HTTP method creates a new resource, the C in CRUD?",
+        "answer": 1,
+        "explanation": "POST creates a new resource, like posting a new letter. GET reads, PUT replaces and PATCH changes part of a resource."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.008",
@@ -853,7 +1430,19 @@
     ],
     "answer": 0,
     "explanation": "The scheme is https, the host is dnac.example.com and the path names the resource. A query string (?key=value) can filter it.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "In https://dnac.example.com/api/v1/network-device, which part is the host?",
+        "answer": 1,
+        "explanation": "The host is dnac.example.com, the server the request goes to. The scheme is https and /api/v1/network-device is the path naming the resource."
+      },
+      {
+        "stem": "In https://dnac.example.com/api/v1/network-device, which part is the scheme?",
+        "answer": 2,
+        "explanation": "The scheme (https) says which protocol to use. dnac.example.com is the host and /api/v1/network-device is the path to the resource."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.009",
@@ -870,7 +1459,20 @@
     ],
     "answer": 2,
     "explanation": "401 Unauthorized asks you to authenticate. 403 Forbidden means the server knows who you are and refuses anyway.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "Which HTTP status code means the server knows who you are but refuses the request?",
+        "choices": [
+          "400",
+          "401",
+          "404",
+          "403"
+        ],
+        "answer": 3,
+        "explanation": "403 Forbidden: you're authenticated but not allowed. 401 Unauthorized means you haven't authenticated (or the credentials are invalid)."
+      }
+    ]
   },
   {
     "id": "q.d6.rest.010",
@@ -887,7 +1489,20 @@
     ],
     "answer": 0,
     "explanation": "Token-based authentication avoids sending the username and password each time. Catalyst Center, for example, uses an X-Auth-Token header.",
-    "lesson_ref": "d6.rest_apis"
+    "lesson_ref": "d6.rest_apis",
+    "variants": [
+      {
+        "stem": "Catalyst Center returns a token after you log in. Which header carries it on later requests?",
+        "choices": [
+          "Content-Type",
+          "Accept",
+          "X-Auth-Token",
+          "Host"
+        ],
+        "answer": 2,
+        "explanation": "Catalyst Center expects its token in the X-Auth-Token header. Many other APIs use Authorization: Bearer instead; Content-Type and Accept describe formats."
+      }
+    ]
   },
   {
     "id": "q.d6.cm.006",
@@ -904,7 +1519,14 @@
     ],
     "answer": 0,
     "explanation": "The inventory lists hosts and groups (and variables). Playbooks describe the tasks to run against them, using modules.",
-    "lesson_ref": "d6.config_mgmt"
+    "lesson_ref": "d6.config_mgmt",
+    "variants": [
+      {
+        "stem": "Which Ansible file lists the tasks to run against the managed devices?",
+        "answer": 1,
+        "explanation": "A playbook, written in YAML, lists the tasks, which call modules. The inventory only lists the hosts and groups to run them against."
+      }
+    ]
   },
   {
     "id": "q.d6.cm.007",
@@ -921,7 +1543,14 @@
     ],
     "answer": 1,
     "explanation": "plan compares the configuration with the current state and lists the changes; apply carries them out.",
-    "lesson_ref": "d6.config_mgmt"
+    "lesson_ref": "d6.config_mgmt",
+    "variants": [
+      {
+        "stem": "What does 'terraform apply' do?",
+        "answer": 0,
+        "explanation": "apply carries out the changes so reality matches the configuration. plan is the command that only shows what would change."
+      }
+    ]
   },
   {
     "id": "q.d6.cm.008",
@@ -938,7 +1567,20 @@
     ],
     "answer": 3,
     "explanation": "Idempotent tasks describe the end state, so they're safe to re-run: they only act where the device differs.",
-    "lesson_ref": "d6.config_mgmt"
+    "lesson_ref": "d6.config_mgmt",
+    "variants": [
+      {
+        "stem": "An idempotent task runs on a device that already matches the desired state. What happens?",
+        "choices": [
+          "The change is applied again",
+          "The device reboots",
+          "Nothing changes",
+          "The task fails with an error"
+        ],
+        "answer": 2,
+        "explanation": "Idempotent tasks describe the end state, so they only act where the device differs. If it already matches, nothing is changed."
+      }
+    ]
   },
   {
     "id": "q.d6.cm.009",
@@ -955,7 +1597,14 @@
     ],
     "answer": 0,
     "explanation": "Puppet and Chef are agent-based pull models. Ansible is agentless and pushes over SSH or APIs.",
-    "lesson_ref": "d6.config_mgmt"
+    "lesson_ref": "d6.config_mgmt",
+    "variants": [
+      {
+        "stem": "How does Ansible normally get configuration onto managed devices?",
+        "answer": 1,
+        "explanation": "Ansible is agentless: the control node pushes changes over SSH, with nothing installed on the devices. Puppet and Chef use agents that pull."
+      }
+    ]
   },
   {
     "id": "q.d6.json.007",
@@ -973,7 +1622,21 @@
     ],
     "answer": 1,
     "explanation": "hostname, interfaces, ospf and managed. Values inside the array and the nested object don't count at the top level.",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "How many key/value pairs are in the top-level object shown in the exhibit?",
+        "exhibit": "{\n  \"hostname\": \"edge2\",\n  \"interfaces\": [\"g0/0\", \"g0/1\", \"g0/2\"],\n  \"location\": null\n}",
+        "answer": 0,
+        "explanation": "hostname, interfaces and location make 3. The three items inside the interfaces array don't count at the top level."
+      },
+      {
+        "stem": "Count the key/value pairs in the exhibit's top-level object.",
+        "exhibit": "{\n  \"hostname\": \"dist1\",\n  \"model\": \"C9300\",\n  \"uptime_days\": 42,\n  \"managed\": true,\n  \"location\": null,\n  \"ntp\": {\"server\": \"10.0.0.100\"}\n}",
+        "answer": 2,
+        "explanation": "hostname, model, uptime_days, managed, location and ntp make 6. The server key inside the nested ntp object doesn't count at the top level."
+      }
+    ]
   },
   {
     "id": "q.d6.json.008",
@@ -990,7 +1653,14 @@
     ],
     "answer": 3,
     "explanation": "JSON booleans are lowercase true and false with no quotes. \"true\" is a string; True is Python.",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "Which of these is a JSON string rather than a boolean?",
+        "answer": 1,
+        "explanation": "Anything in double quotes is a string, so \"true\" is a string. Bare lowercase true is the boolean; True and yes aren't valid JSON values."
+      }
+    ]
   },
   {
     "id": "q.d6.json.009",
@@ -1007,7 +1677,14 @@
     ],
     "answer": 2,
     "explanation": "YAML (used by Ansible) relies on indentation. JSON uses braces and brackets; XML uses tags.",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "Which data format uses tags to show structure, and is used by NETCONF?",
+        "answer": 1,
+        "explanation": "XML wraps data in tags and is NETCONF's encoding. JSON uses braces and brackets, and YAML uses indentation."
+      }
+    ]
   },
   {
     "id": "q.d6.json.010",
@@ -1020,6 +1697,15 @@
       ":"
     ],
     "explanation": "\"hostname\": \"core1\". Commas separate pairs; braces wrap objects and brackets wrap arrays.",
-    "lesson_ref": "d6.json"
+    "lesson_ref": "d6.json",
+    "variants": [
+      {
+        "stem": "In JSON, which character separates one key/value pair from the next?",
+        "answer": [
+          ","
+        ],
+        "explanation": "Commas go between pairs (but never after the last one). A colon separates each key from its value."
+      }
+    ]
   }
 ]

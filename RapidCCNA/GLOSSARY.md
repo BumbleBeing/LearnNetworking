@@ -39,6 +39,10 @@ _Avoid_: Tip, hint (a hint belongs to guided drills)
 
 ## Questions
 
+**Variant**:
+Another version of a question that looks similar but has a different correct answer. A question and its variants share one review card, and one version is picked at random each time the question is shown.
+_Avoid_: Alternate, clone, version (a version is the original or any one of its variants)
+
 **Choice**:
 One of the options in a multiple-choice question. Choices appear in a new random order each time the question is shown. Number keys pick by on-screen position.
 _Avoid_: Answer (the answer is the correct choice or choices), option

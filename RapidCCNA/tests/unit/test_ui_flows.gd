@@ -16,25 +16,32 @@ func _view(id: String) -> QuestionView:
 
 func test_every_question_renders_and_grades_correct_answer():
 	for id in ContentDB.questions:
-		var v := _view(id)
-		watch_signals(v)
-		var q: Dictionary = v.q
-		if q.type == "cli_task":
-			assert_eq(v._lab.apply_solution().size(), 0, id)
-			v._on_submit()
-			assert_true(get_signal_parameters(v, "answered")[0].correct, id)
-			continue
-		v._get_response = func():
-			if q.type in ["mcq_single", "exhibit"]:
-				return int(q.answer)
-			if q.type == "fill_in" and q.answer is Array:
-				return q.answer[0]
-			return q.answer
+		for n in ContentDB.questions[id].get("variants", []).size() + 1:
+			_render_and_grade(id, n)
+
+## Shows one version of a question, answers it with its own key and expects "correct".
+func _render_and_grade(id: String, version: int) -> void:
+	var v: QuestionView = QuestionView.new().setup(ContentDB.question_version(id, version))
+	add_child_autofree(v)
+	watch_signals(v)
+	var q: Dictionary = v.q
+	var label := "%s v%d" % [id, version]
+	if q.type == "cli_task":
+		assert_eq(v._lab.apply_solution().size(), 0, label)
 		v._on_submit()
-		assert_signal_emitted(v, "answered", id)
-		var res: Dictionary = get_signal_parameters(v, "answered")[0]
-		assert_true(res.correct, id)
-		assert_true(v._feedback.visible, id)
+		assert_true(get_signal_parameters(v, "answered")[0].correct, label)
+		return
+	v._get_response = func():
+		if q.type in ["mcq_single", "exhibit"]:
+			return int(q.answer)
+		if q.type == "fill_in" and q.answer is Array:
+			return q.answer[0]
+		return q.answer
+	v._on_submit()
+	assert_signal_emitted(v, "answered", label)
+	var res: Dictionary = get_signal_parameters(v, "answered")[0]
+	assert_true(res.correct, label)
+	assert_true(v._feedback.visible, label)
 
 func test_cli_task_terminal_drives_device():
 	var v := _view("q.d3.static.cli.001")
@@ -145,3 +152,46 @@ func test_text_inputs_are_centred():
 		var v := _view(id)
 		var box: Control = v.find_children("*", "LineEdit", true, false)[0] if t == "fill_in" else v.find_children("*", "GridContainer", true, false)[0]
 		assert_eq(box.size_flags_horizontal, Control.SIZE_SHRINK_CENTER, t)
+
+# --- Question variants ---
+
+const VQ := {"id": "q.test.variant", "domain": "d1", "subtopic": "1.6", "type": "mcq_single", "lesson_ref": "d1.subnetting_basics",
+	"stem": "Network address of 192.168.1.130/26?", "choices": ["192.168.1.0", "192.168.1.64", "192.168.1.128", "192.168.1.192"],
+	"answer": 2, "explanation": "130 rounds down to 128.",
+	"variants": [{"stem": "Network address of 192.168.1.70/26?", "answer": 1, "explanation": "70 rounds down to 64."}]}
+
+func test_question_version_merges_a_variant_over_the_original():
+	ContentDB.questions[VQ.id] = VQ.duplicate(true)
+	var v1 := ContentDB.question_version(VQ.id, 1)
+	assert_eq(v1.stem, "Network address of 192.168.1.70/26?")
+	assert_eq(v1.answer, 1)
+	assert_eq(v1.choices, VQ.choices, "unchanged fields come from the original")
+	assert_eq(v1.id, VQ.id, "every version shares the original's id and review card")
+	assert_false(v1.has("variants"))
+	assert_eq(ContentDB.question_version(VQ.id, 0).stem, VQ.stem)
+	assert_eq(ContentDB.question_version(VQ.id, 5).variant, 0, "an unknown version falls back to the original")
+	ContentDB.questions.erase(VQ.id)
+
+func test_pick_version_reaches_every_version():
+	ContentDB.questions[VQ.id] = VQ.duplicate(true)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
+	var seen := {}
+	for i in 40:
+		seen[ContentDB.pick_version(VQ.id, rng).variant] = true
+	assert_eq(seen.keys().size(), 2)
+	ContentDB.questions.erase(VQ.id)
+
+func test_answers_record_the_version_shown_and_grade_against_it():
+	ContentDB.questions[VQ.id] = VQ.duplicate(true)
+	var v := QuestionView.new().setup(ContentDB.question_version(VQ.id, 1))
+	add_child_autofree(v)
+	watch_signals(v)
+	v.choice_button(1).button_pressed = true
+	v._on_submit()
+	var r: Dictionary = get_signal_parameters(v, "answered")[0]
+	assert_true(r.correct, "graded against the variant's answer")
+	assert_eq(r.variant, 1)
+	var report := MockExam.score([VQ.id], [{"id": VQ.id, "variant": 1, "correct": false, "response": 0}], ContentDB.questions, ContentDB.domains, 825)
+	assert_eq(report.missed[0].variant, 1, "the exam report knows which version was missed")
+	ContentDB.questions.erase(VQ.id)

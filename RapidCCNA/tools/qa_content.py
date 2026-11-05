@@ -32,6 +32,9 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from validate_content import versions  # noqa: E402
+
 CLEAR = 1.2               # a choice "stands out" when it is at least 20% longer than every other choice
 LONGEST_MAX = 0.40        # when one choice stands out by length, it may be the key at most 40% of the time
 POSITION_MAX_SHARE = 0.35  # no single position holds more than 35% of correct answers (4 choices)
@@ -49,9 +52,13 @@ def jaccard(a, b):
 
 
 def load(root):
+    """Every version of every question (variants as '<id>~vN'), and the lessons."""
     questions, lessons = [], {}
     for p in sorted((root / "questions").rglob("*.json")):
-        questions += json.loads(p.read_text(encoding="utf-8"))
+        for q in json.loads(p.read_text(encoding="utf-8")):
+            for v in versions(q):
+                n = v.pop("version")
+                questions.append(dict(v, id=q["id"] if n == 0 else f"{q['id']}~v{n}"))
     for p in sorted((root / "lessons").rglob("*.json")):
         lesson = json.loads(p.read_text(encoding="utf-8"))
         lessons[lesson["id"]] = lesson

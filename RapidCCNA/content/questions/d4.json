@@ -14,7 +14,14 @@
     ],
     "answer": 1,
     "explanation": "Inside = the host belongs to your network. Global = how it appears outside. So inside global is the translated, usually public, address of your host.",
-    "lesson_ref": "d4.nat_basics"
+    "lesson_ref": "d4.nat_basics",
+    "variants": [
+      {
+        "stem": "In NAT terminology, what is the inside local address?",
+        "answer": 0,
+        "explanation": "Inside = the host belongs to your network. Local = how it's seen on the inside. So inside local is the host's own, usually private, address before translation. The public address is the inside global one."
+      }
+    ]
   },
   {
     "id": "q.d4.nat.002",
@@ -32,7 +39,14 @@
     ],
     "answer": 2,
     "explanation": "'overload' lets many inside hosts share one inside global address, kept apart by port numbers. That's PAT.",
-    "lesson_ref": "d4.nat_basics"
+    "lesson_ref": "d4.nat_basics",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, which part of the command selects the inside addresses that get translated?",
+        "answer": 0,
+        "explanation": "'list 1' points at access-list 1, which permits 192.168.0.0/16: only those sources are translated. 'overload' is what makes it PAT, and 'interface' picks the outside address."
+      }
+    ]
   },
   {
     "id": "q.d4.nat.003",
@@ -50,7 +64,21 @@
       "192.168.1.1"
     ],
     "explanation": "Inside local is the PC's own address, inside global is the PC after translation (R1's outside address), and outside global is the server's real address.",
-    "lesson_ref": "d4.nat_basics"
+    "lesson_ref": "d4.nat_basics",
+    "variants": [
+      {
+        "stem": "PC 10.0.0.5 reaches server 198.51.100.7 through R1, which does PAT using its outside address 203.0.113.9. Match each NAT term to its address.",
+        "answer": {
+          "Inside local": "10.0.0.5",
+          "Inside global": "203.0.113.9",
+          "Outside global": "198.51.100.7"
+        },
+        "distractors": [
+          "10.0.0.1"
+        ],
+        "explanation": "Inside local is the PC's own private address, inside global is the PC after translation (R1's outside address 203.0.113.9), and outside global is the server's real address."
+      }
+    ]
   },
   {
     "id": "q.d4.ntp.001",
@@ -67,7 +95,20 @@
     ],
     "answer": 0,
     "explanation": "Stratum counts hops from an authoritative clock: stratum 1 is directly attached to one. Lower is more accurate; 16 means unsynchronised.",
-    "lesson_ref": "d4.ntp"
+    "lesson_ref": "d4.ntp",
+    "variants": [
+      {
+        "stem": "What does an NTP stratum of 16 mean?",
+        "choices": [
+          "The clock is wired directly to a GPS receiver",
+          "The device's clock is unsynchronised",
+          "The server is 16 ms away from the client",
+          "It's the most accurate stratum there is"
+        ],
+        "answer": 1,
+        "explanation": "Stratum counts hops from an authoritative clock and lower is better. 16 is the special value for unsynchronised, so don't trust that clock. A device wired to GPS is stratum 1."
+      }
+    ]
   },
   {
     "id": "q.d4.ntp.002",
@@ -80,7 +121,16 @@
       "ntp server 10.0.0.100"
     ],
     "explanation": "'ntp server <address>' makes the router an NTP client of that server.",
-    "lesson_ref": "d4.ntp"
+    "lesson_ref": "d4.ntp",
+    "variants": [
+      {
+        "stem": "Which global command makes a router an authoritative NTP source from its own clock, advertising stratum 4? (full command)",
+        "answer": [
+          "ntp master 4"
+        ],
+        "explanation": "'ntp master <stratum>' makes the router serve time from its internal clock when there's no external source. 'ntp server <address>' would make it a client instead."
+      }
+    ]
   },
   {
     "id": "q.d4.ntp.003",
@@ -98,7 +148,21 @@
     ],
     "answer": 2,
     "explanation": "The asterisk marks the server the router is synchronised to (sys.peer); stratum 2 means that server is itself synced to a stratum 1 clock.",
-    "lesson_ref": "d4.ntp"
+    "lesson_ref": "d4.ntp",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, which statement about R1's NTP sources is true?",
+        "exhibit": "R1#show ntp associations\n  address         ref clock       st   when   poll reach  delay  offset   disp\n*~10.0.0.101      .GPS.           1    21     64   377  0.880   0.210   0.440\n ~10.0.0.100      .INIT.          16   -      64   0    0.000   0.000   15937.\n * sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured",
+        "choices": [
+          "R1 is synchronised to 10.0.0.101, a stratum 1 server",
+          "R1 is a stratum 1 server for the other routers",
+          "R1 is synchronised to 10.0.0.100, a stratum 2 server",
+          "Neither server is reachable"
+        ],
+        "answer": 0,
+        "explanation": "The asterisk marks the server in use (sys.peer): 10.0.0.101, stratum 1 with a GPS reference. 10.0.0.100 shows stratum 16 and reach 0, so it hasn't answered. R1 itself becomes stratum 2."
+      }
+    ]
   },
   {
     "id": "q.d4.ntp.004",
@@ -115,7 +179,20 @@
     ],
     "answer": 3,
     "explanation": "NTP uses UDP 123 for both client and server. UDP 161 is SNMP, and TCP 37 is the old Time protocol that NTP replaced.",
-    "lesson_ref": "d4.ntp"
+    "lesson_ref": "d4.ntp",
+    "variants": [
+      {
+        "stem": "Which statement about NTP is false?",
+        "choices": [
+          "It runs over UDP",
+          "It uses port 123",
+          "It needs a TCP session to the server",
+          "It keeps device clocks synchronised"
+        ],
+        "answer": 2,
+        "explanation": "NTP keeps clocks synchronised over UDP 123, so there's no TCP session. The other statements are all true."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.001",
@@ -131,7 +208,19 @@
       "ACK"
     ],
     "explanation": "DORA: the client discovers, the server offers, the client requests, the server acknowledges.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "Put the DHCP messages in order from last to first.",
+        "answer": [
+          "ACK",
+          "REQUEST",
+          "OFFER",
+          "DISCOVER"
+        ],
+        "explanation": "DORA runs Discover, Offer, Request, Ack, so backwards the server's Ack comes first and the client's Discover last."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.002",
@@ -148,7 +237,20 @@
     ],
     "answer": 1,
     "explanation": "The clients' gateway interface must relay their broadcasts: 'ip helper-address 10.0.0.10' on the VLAN 20 SVI or router subinterface.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "R1's interface facing the ISP must get its own address from the ISP's DHCP server. What should be configured?",
+        "choices": [
+          "ip dhcp pool on R1 for the ISP subnet",
+          "ip helper-address on the ISP-facing interface",
+          "A static route on R1 to 255.255.255.255",
+          "ip address dhcp on the ISP-facing interface"
+        ],
+        "answer": 3,
+        "explanation": "'ip address dhcp' makes the interface itself a DHCP client. A helper address relays other clients' requests, and a pool would make R1 a server."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.003",
@@ -165,7 +267,22 @@
       "PTR": "A name for an address (reverse lookup)"
     },
     "explanation": "A/AAAA forward lookups, CNAME aliases, MX mail, PTR reverse.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "Match each lookup to the DNS record type that answers it.",
+        "answer": {
+          "The IPv4 address of www.example.com": "A",
+          "The IPv6 address of www.example.com": "AAAA",
+          "Where to deliver mail for example.com": "MX",
+          "The name that belongs to 93.184.216.34": "PTR"
+        },
+        "distractors": [
+          "CNAME"
+        ],
+        "explanation": "A gives an IPv4 address and AAAA an IPv6 one, MX names the mail server, and PTR is the reverse lookup from address to name. CNAME (an alias) isn't needed here."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.004",
@@ -182,7 +299,20 @@
     ],
     "answer": 0,
     "explanation": "Exclusions stop the pool leasing addresses already assigned statically, such as the gateway and servers.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "Why would you add 'dns-server 8.8.8.8' to a DHCP pool?",
+        "choices": [
+          "So the router never leases 8.8.8.8 to a client",
+          "To stop 8.8.8.8 from getting onto the network",
+          "To relay client broadcasts to the server 8.8.8.8",
+          "So clients learn to use 8.8.8.8 for name lookups"
+        ],
+        "answer": 3,
+        "explanation": "A pool hands out the gateway (default-router) and the DNS server along with the address. Excluding addresses is 'ip dhcp excluded-address', and relaying is 'ip helper-address'."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.005",
@@ -199,7 +329,20 @@
     ],
     "answer": 2,
     "explanation": "The relay agent writes its receiving interface address into the giaddr field; the server picks the pool that contains it.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "A relayed DHCP request reaches the server with the relay's address in giaddr. Where does the server send its reply?",
+        "choices": [
+          "Back to the relay agent",
+          "Directly to the client's MAC address",
+          "As a broadcast on the server's own subnet",
+          "To the server's own default gateway"
+        ],
+        "answer": 0,
+        "explanation": "The server can't reach the client's subnet by broadcast, so it replies to the relay agent (the giaddr address), which passes the reply on to the client."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.006",
@@ -212,7 +355,16 @@
       "ip address dhcp"
     ],
     "explanation": "'ip address dhcp' makes the interface a DHCP client, common on links to an ISP.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "Which interface command makes a router forward its clients' DHCP broadcasts as unicasts to the server 10.0.12.1? (full command)",
+        "answer": [
+          "ip helper-address 10.0.12.1"
+        ],
+        "explanation": "'ip helper-address' on the interface facing the clients relays their broadcasts as unicasts to the server and fills in giaddr. 'ip address dhcp' would make the interface a client."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.001",
@@ -232,7 +384,23 @@
       "debugging"
     ],
     "explanation": "Levels run from 0 (emergencies) to 7 (debugging); a lower number is more severe. 'logging trap warnings' sends levels 0 to 4.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Put the syslog severities in order from least to most severe.",
+        "answer": [
+          "debugging",
+          "informational",
+          "notifications",
+          "warnings",
+          "errors",
+          "critical",
+          "alerts",
+          "emergencies"
+        ],
+        "explanation": "Levels run from 7 (debugging, least severe) down to 0 (emergencies); the lower the number, the worse the news."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.002",
@@ -249,7 +417,14 @@
     ],
     "answer": 1,
     "explanation": "warnings = 4, so levels 0-4 are sent. LINK-3 is severity 3 (errors).",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "With 'logging trap informational', which message is not sent to the syslog server?",
+        "answer": 3,
+        "explanation": "informational = 6, so levels 0-6 are sent. SYS-7 is severity 7 (debugging), the only one above the trap level. SEC-6, SYS-5 and LINK-3 all go."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.003",
@@ -269,7 +444,17 @@
       3
     ],
     "explanation": "Managers poll agents on UDP 161; agents send traps to UDP 162. SNMPv3 (not v2c) adds encryption.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Which two statements about SNMP are false? (Choose two.)",
+        "answer": [
+          1,
+          2
+        ],
+        "explanation": "SNMPv2c sends its community string in clear text (only SNMPv3 encrypts), and traps go from agents to the manager, not the other way round. Polling on UDP 161 and traps to UDP 162 are both true."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.004",
@@ -286,7 +471,14 @@
     ],
     "answer": 2,
     "explanation": "Only SNMPv3 offers authentication and encryption (authPriv).",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Which SNMP version is named after the community string it uses for authentication?",
+        "answer": 1,
+        "explanation": "The c in v2c stands for community. Like v1, it sends the community string in clear text; SNMPv3 replaces it with real users and can encrypt."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.005",
@@ -302,7 +494,19 @@
       "Can't list directories": "TFTP"
     },
     "explanation": "TFTP is minimal (UDP 69, no authentication or listing). FTP uses TCP 21/20 and logs in (in clear text).",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Match each feature to the file transfer protocol it describes.",
+        "answer": {
+          "Has no login at all": "TFTP",
+          "Uses TCP 20 for data in active mode": "FTP",
+          "Does its own acknowledgements": "TFTP",
+          "Sends usernames and passwords in clear text": "FTP"
+        },
+        "explanation": "TFTP runs over UDP 69, so it acknowledges its own blocks and has no login. FTP logs in (in clear text) on TCP 21 and moves data on TCP 20 in active mode."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.006",
@@ -319,7 +523,14 @@
     ],
     "answer": 0,
     "explanation": "copy <source> <destination>: the router then asks for the server address and file name.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Which command loads a configuration from a TFTP server into the running configuration?",
+        "answer": 1,
+        "explanation": "copy <source> <destination>: the TFTP server is the source and the running configuration the destination, so 'copy tftp: running-config'."
+      }
+    ]
   },
   {
     "id": "q.d4.qos.001",
@@ -330,7 +541,14 @@
     "stem": "What decimal DSCP value is EF (Expedited Forwarding)?",
     "answer": "46",
     "explanation": "EF = 46, the standard marking for voice.",
-    "lesson_ref": "d4.qos"
+    "lesson_ref": "d4.qos",
+    "variants": [
+      {
+        "stem": "What decimal DSCP value is AF41, the usual marking for video?",
+        "answer": "34",
+        "explanation": "AFxy = 8x + 2y = 8 × 4 + 2 × 1 = 34. EF (46) is the voice marking, not video."
+      }
+    ]
   },
   {
     "id": "q.d4.qos.002",
@@ -347,7 +565,20 @@
     ],
     "answer": 1,
     "explanation": "Policing drops or re-marks traffic above the rate; shaping queues it and sends it later.",
-    "lesson_ref": "d4.qos"
+    "lesson_ref": "d4.qos",
+    "variants": [
+      {
+        "stem": "Traffic towards a provider must stay under the contracted rate, but excess packets shouldn't be dropped. Which tool fits?",
+        "choices": [
+          "Policing, because it drops or re-marks the excess",
+          "Policing, because it queues the excess",
+          "Shaping, because it drops the excess immediately",
+          "Shaping, because it queues the excess and sends it later"
+        ],
+        "answer": 3,
+        "explanation": "Shaping buffers traffic above the rate and sends it later, at the cost of delay; it's used outbound towards a slower provider rate. Policing drops or re-marks, it doesn't queue."
+      }
+    ]
   },
   {
     "id": "q.d4.qos.003",
@@ -364,7 +595,14 @@
     ],
     "answer": 3,
     "explanation": "LLQ = CBWFQ plus a policed strict-priority queue.",
-    "lesson_ref": "d4.qos"
+    "lesson_ref": "d4.qos",
+    "variants": [
+      {
+        "stem": "Which queuing method gives each class a guaranteed share of bandwidth but has no strict-priority queue?",
+        "answer": 2,
+        "explanation": "CBWFQ guarantees bandwidth per class. LLQ is CBWFQ with a policed strict-priority queue added for voice, and WRED is congestion avoidance, not queuing."
+      }
+    ]
   },
   {
     "id": "q.d4.qos.004",
@@ -375,7 +613,14 @@
     "stem": "What decimal DSCP value is AF31?",
     "answer": "26",
     "explanation": "AFxy = 8x + 2y = 8 × 3 + 2 × 1 = 26. The first digit is the class (3), the second the drop precedence (1, the lowest).",
-    "lesson_ref": "d4.qos"
+    "lesson_ref": "d4.qos",
+    "variants": [
+      {
+        "stem": "What decimal DSCP value is AF33?",
+        "answer": "30",
+        "explanation": "AFxy = 8x + 2y = 8 × 3 + 2 × 3 = 30. Class 3 with drop precedence 3, the highest, so it's dropped first within its class."
+      }
+    ]
   },
   {
     "id": "q.d4.qos.005",
@@ -392,7 +637,20 @@
     ],
     "answer": 2,
     "explanation": "WRED randomly drops some packets before a queue is full, more for higher drop-probability markings, so TCP senders slow down gradually instead of all at once.",
-    "lesson_ref": "d4.qos"
+    "lesson_ref": "d4.qos",
+    "variants": [
+      {
+        "stem": "What does shaping do?",
+        "choices": [
+          "Prioritises voice above all other traffic in one queue",
+          "Encrypts queued packets",
+          "Drops some packets early, before queues fill, to avoid tail drop",
+          "Buffers excess traffic to hold it to a contracted rate"
+        ],
+        "answer": 3,
+        "explanation": "Shaping queues traffic above the rate and sends it later, smoothing it at the cost of delay. Dropping early before queues fill is WRED; policing drops the excess."
+      }
+    ]
   },
   {
     "id": "q.d4.qos.006",
@@ -409,7 +667,14 @@
     ],
     "answer": 0,
     "explanation": "CoS (802.1p priority) is 3 bits, values 0-7. DSCP is 6 bits.",
-    "lesson_ref": "d4.qos"
+    "lesson_ref": "d4.qos",
+    "variants": [
+      {
+        "stem": "How many bits does the DSCP field have?",
+        "answer": 1,
+        "explanation": "DSCP is 6 bits (values 0-63) of the IP header's ToS byte. The 802.1Q CoS field has only 3 bits (0-7)."
+      }
+    ]
   },
   {
     "id": "q.d4.ssh.001",
@@ -426,7 +691,20 @@
       "line vty 0 4 / login local / transport input ssh"
     ],
     "explanation": "The RSA key needs the hostname and domain name first; the VTY lines then use the local user and SSH only.",
-    "lesson_ref": "d4.ssh"
+    "lesson_ref": "d4.ssh",
+    "variants": [
+      {
+        "stem": "Put the SSH setup steps in a working order, starting from the last step and ending with the first.",
+        "answer": [
+          "line vty 0 4 / login local / transport input ssh",
+          "username admin secret Str0ng!",
+          "crypto key generate rsa modulus 2048",
+          "ip domain name example.com",
+          "hostname R1"
+        ],
+        "explanation": "Forwards, the hostname and domain name come before the RSA key, then the local user, then the VTY lines. Read backwards, the VTY lines come first and the hostname last."
+      }
+    ]
   },
   {
     "id": "q.d4.ssh.002",
@@ -443,7 +721,20 @@
     ],
     "answer": 1,
     "explanation": "The key is named hostname.domain, so 'ip domain name' must be set first.",
-    "lesson_ref": "d4.ssh"
+    "lesson_ref": "d4.ssh",
+    "variants": [
+      {
+        "stem": "On a new router with a domain name set, 'crypto key generate rsa' returns '% Please define a hostname other than Router.' What's missing?",
+        "choices": [
+          "A local username",
+          "ip domain name",
+          "transport input ssh",
+          "hostname R1"
+        ],
+        "answer": 3,
+        "explanation": "The RSA key is named hostname.domain, so IOS refuses while the hostname is still the default 'Router'. Set one, such as 'hostname R1', and try again."
+      }
+    ]
   },
   {
     "id": "q.d4.ssh.003",
@@ -460,7 +751,14 @@
     ],
     "answer": 3,
     "explanation": "login local uses the username database; transport input ssh blocks Telnet.",
-    "lesson_ref": "d4.ssh"
+    "lesson_ref": "d4.ssh",
+    "variants": [
+      {
+        "stem": "Which line configuration accepts both Telnet and SSH logins, checked against the local user database?",
+        "answer": 2,
+        "explanation": "login local uses the username database, and 'transport input telnet ssh' allows both protocols. That works, but Telnet sends passwords in clear text."
+      }
+    ]
   },
   {
     "id": "q.d4.ssh.004",
@@ -473,7 +771,16 @@
       "768"
     ],
     "explanation": "SSHv2 needs a key of at least 768 bits; 2048 is the usual choice.",
-    "lesson_ref": "d4.ssh"
+    "lesson_ref": "d4.ssh",
+    "variants": [
+      {
+        "stem": "Which TCP port does SSH use?",
+        "answer": [
+          "22"
+        ],
+        "explanation": "SSH runs on TCP 22 and encrypts the whole session, unlike Telnet, which sends passwords in clear text."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.cli.001",
@@ -499,7 +806,17 @@
       "snmp-server community NETMON RO"
     ],
     "explanation": "RO = read-only; RW would allow Set operations.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Which global command lets managers read and change settings on the router over SNMPv2c with the community string NETMON? (full command)",
+        "answer": [
+          "snmp-server community NETMON rw",
+          "snmp-server community NETMON RW"
+        ],
+        "explanation": "RW = read-write, so managers can use Set as well as Get. RO would only allow reading."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.008",
@@ -516,7 +833,14 @@
     ],
     "answer": 2,
     "explanation": "Syslog sends to UDP 514 by default. TCP 601 is reliable syslog, which IOS can use if configured; UDP 162 is SNMP traps.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Which transport and port do SNMP traps use?",
+        "answer": 1,
+        "explanation": "Agents send traps (and informs) to the manager on UDP 162. Polling uses UDP 161, and UDP 514 is syslog."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.009",
@@ -533,7 +857,20 @@
     ],
     "answer": 0,
     "explanation": "FTP runs over TCP (reliable, faster for big files on lossy links) and supports logins; TFTP is simpler but has no authentication.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Why might you choose TFTP over FTP for copying a small config file?",
+        "choices": [
+          "TFTP encrypts the file and the login details",
+          "TFTP can list the folders on the server first",
+          "TFTP runs over TCP, so lost packets are resent",
+          "TFTP needs no login, so there's less to set up"
+        ],
+        "answer": 3,
+        "explanation": "TFTP is the simple one: UDP 69, no login and no directory listing. It encrypts nothing, and it's FTP that uses TCP."
+      }
+    ]
   },
   {
     "id": "q.d4.nat.004",
@@ -549,7 +886,16 @@
       "ip nat inside source list 1 interface gig0/1 overload"
     ],
     "explanation": "'overload' turns dynamic NAT into PAT, so many inside hosts share the one outside address, told apart by port.",
-    "lesson_ref": "d4.nat_basics"
+    "lesson_ref": "d4.nat_basics",
+    "variants": [
+      {
+        "stem": "Write the command that translates traffic matching ACL 1 to addresses from the pool 'public', one address per host (no PAT). (full command)",
+        "answer": [
+          "ip nat inside source list 1 pool public"
+        ],
+        "explanation": "'pool <name>' hands out addresses from a dynamic NAT pool. Without 'overload' each inside host takes a whole public address."
+      }
+    ]
   },
   {
     "id": "q.d4.nat.005",
@@ -566,7 +912,20 @@
     ],
     "answer": 3,
     "explanation": "A static mapping always exists, so outside hosts can reach the inside server. PAT entries are created only by outbound traffic.",
-    "lesson_ref": "d4.nat_basics"
+    "lesson_ref": "d4.nat_basics",
+    "variants": [
+      {
+        "stem": "R1 does PAT with the single public address 203.0.113.10. What does this allow that static NAT does not?",
+        "choices": [
+          "Internet hosts can start connections to inside hosts",
+          "Encrypting traffic to the internet",
+          "Many inside hosts can share one public address",
+          "Each inside host keeps its own public address"
+        ],
+        "answer": 2,
+        "explanation": "PAT (overload) translates port numbers too, so many hosts share one address. Static NAT is one-to-one, which is what lets internet hosts start connections inward."
+      }
+    ]
   },
   {
     "id": "q.d4.nat.006",
@@ -583,7 +942,14 @@
     ],
     "answer": 3,
     "explanation": "Mark the LAN interface 'ip nat inside' and the internet-facing one 'ip nat outside'. Translation happens as traffic crosses between them.",
-    "lesson_ref": "d4.nat_basics"
+    "lesson_ref": "d4.nat_basics",
+    "variants": [
+      {
+        "stem": "Which interface command marks the internet-facing interface for NAT?",
+        "answer": 1,
+        "explanation": "Mark the internet-facing interface 'ip nat outside' and the LAN one 'ip nat inside'. Translation happens as traffic crosses between them."
+      }
+    ]
   },
   {
     "id": "q.d4.ntp.005",
@@ -600,7 +966,20 @@
     ],
     "answer": 2,
     "explanation": "'ntp master <stratum>' makes the router an authoritative source using its internal clock. 'ntp server <ip>' makes it a client of another server.",
-    "lesson_ref": "d4.ntp"
+    "lesson_ref": "d4.ntp",
+    "variants": [
+      {
+        "stem": "Which command makes R1 and the router at 10.0.0.2 synchronise their clocks with each other as equals?",
+        "choices": [
+          "ntp server 10.0.0.2",
+          "ntp peer 10.0.0.2",
+          "ntp master 3",
+          "clock set stratum 3"
+        ],
+        "answer": 1,
+        "explanation": "Peers (ntp peer) sync with each other. 'ntp server' makes R1 a client of that router, and 'ntp master' makes R1 an authoritative source."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.007",
@@ -617,7 +996,20 @@
     ],
     "answer": 1,
     "explanation": "'ip name-server' sets the DNS server and 'ip domain-lookup' (on by default) enables lookups. 'ip dns server' makes the router itself a DNS server.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "Which command makes the router itself answer DNS queries from other hosts?",
+        "choices": [
+          "ip dns server",
+          "ip name-server 8.8.8.8",
+          "ip domain name example.com",
+          "ip helper-address 8.8.8.8"
+        ],
+        "answer": 0,
+        "explanation": "'ip dns server' makes the router a DNS server. 'ip name-server' only sets the server the router itself asks."
+      }
+    ]
   },
   {
     "id": "q.d4.qos.007",
@@ -634,7 +1026,20 @@
     ],
     "answer": 0,
     "explanation": "Trust markings as close to the source as possible, but only from devices you control. The switch trusts the phone's markings (often only when CDP detects a phone) and re-marks the PC's.",
-    "lesson_ref": "d4.qos"
+    "lesson_ref": "d4.qos",
+    "variants": [
+      {
+        "stem": "With Cisco IP phones on the access ports and PCs plugged into the phones, whose markings does the access switch usually re-mark?",
+        "choices": [
+          "The IP phones'",
+          "The PCs'",
+          "The core switches'",
+          "The WAN router's"
+        ],
+        "answer": 1,
+        "explanation": "The access switch trusts the phone's markings (often only when CDP detects a phone) and re-marks traffic from the PCs, which users control."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.010",
@@ -651,7 +1056,14 @@
     ],
     "answer": 0,
     "explanation": "Traps are unacknowledged notifications. Informs (SNMPv2c and later) are acknowledged by the manager. Get and Set come from the manager.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Which SNMP message does an agent send to the manager unprompted and expect the manager to acknowledge?",
+        "answer": 3,
+        "explanation": "Informs are acknowledged notifications; traps aren't acknowledged. Get and Set come from the manager, not the agent."
+      }
+    ]
   },
   {
     "id": "q.d4.nat.007",
@@ -669,7 +1081,20 @@
     ],
     "answer": 3,
     "explanation": "Several inside hosts share one inside global address, told apart by port numbers. Note that R1 changed the port when two hosts used the same source port.",
-    "lesson_ref": "d4.nat_basics"
+    "lesson_ref": "d4.nat_basics",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, which inside local address is translated to 203.0.113.2:1025?",
+        "choices": [
+          "192.168.1.10",
+          "192.168.1.11",
+          "192.168.1.12",
+          "8.8.8.8"
+        ],
+        "answer": 1,
+        "explanation": "Each row pairs an inside global ip:port with an inside local one. 203.0.113.2:1025 is on the row for 192.168.1.11:51000; R1 changed the port because 192.168.1.10 was already using 51000."
+      }
+    ]
   },
   {
     "id": "q.d4.nat.008",
@@ -686,7 +1111,14 @@
     ],
     "answer": 3,
     "explanation": "Without 'overload', each inside host needs a whole public address. When the pool is used up, new hosts wait until entries expire.",
-    "lesson_ref": "d4.nat_basics"
+    "lesson_ref": "d4.nat_basics",
+    "variants": [
+      {
+        "stem": "Dynamic NAT uses a pool of 5 public addresses, now with 'overload' added. A sixth inside host starts a connection while five hosts have translations. What happens?",
+        "answer": 0,
+        "explanation": "With 'overload' it's PAT: hosts share public addresses, kept apart by port numbers, so the sixth host is translated too."
+      }
+    ]
   },
   {
     "id": "q.d4.nat.cli.001",
@@ -715,7 +1147,20 @@
     ],
     "answer": 2,
     "explanation": "Correlating events across routers, switches and servers needs consistent timestamps. Certificates and some authentication also depend on correct time.",
-    "lesson_ref": "d4.ntp"
+    "lesson_ref": "d4.ntp",
+    "variants": [
+      {
+        "stem": "Besides lining up log messages, which of these also depends on accurate time on every device?",
+        "choices": [
+          "Routing protocols forming neighbours",
+          "Certificates being accepted as valid",
+          "Switches learning MAC addresses",
+          "Spanning tree electing a root bridge"
+        ],
+        "answer": 1,
+        "explanation": "Certificates have validity dates, so a wrong clock can make a good certificate look expired. Neighbours, MAC learning and root elections don't depend on the time of day."
+      }
+    ]
   },
   {
     "id": "q.d4.ntp.007",
@@ -732,7 +1177,20 @@
     ],
     "answer": 3,
     "explanation": "'show ntp status' reports synchronised or not, the stratum and the reference. 'show ntp associations' lists the servers.",
-    "lesson_ref": "d4.ntp"
+    "lesson_ref": "d4.ntp",
+    "variants": [
+      {
+        "stem": "Which command lists the NTP servers a router knows and marks the one in use with an asterisk?",
+        "choices": [
+          "show time",
+          "show clock detail",
+          "show ntp associations",
+          "show ntp status"
+        ],
+        "answer": 2,
+        "explanation": "'show ntp associations' lists the servers, with '*' on the sys.peer. 'show ntp status' reports synchronised or not and the stratum."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.008",
@@ -749,7 +1207,14 @@
     ],
     "answer": 2,
     "explanation": "Bindings show each IP with the client's MAC and lease expiry. 'show ip dhcp pool' shows pool usage.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "Which command shows how much of each DHCP pool on a router is in use?",
+        "answer": 1,
+        "explanation": "'show ip dhcp pool' shows pool usage. 'show ip dhcp binding' lists each leased address with the client's MAC and expiry."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.009",
@@ -766,7 +1231,14 @@
     ],
     "answer": 1,
     "explanation": "With domain-lookup on and no name server set, a mistyped command gets broadcast as a DNS query. Many admins disable it on lab devices.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "Which global command sets the DNS server a router asks when it resolves names?",
+        "answer": 2,
+        "explanation": "'ip name-server <address>' sets the DNS server; 'ip domain-lookup' (on by default) enables lookups. 'ip dns server' makes the router a DNS server itself."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.010",
@@ -779,7 +1251,16 @@
       "default-router 10.1.1.1"
     ],
     "explanation": "The pool also needs 'network' and usually 'dns-server'. Exclude the gateway's own address with 'ip dhcp excluded-address'.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "Inside a DHCP pool, which command tells clients to use 8.8.8.8 for name resolution? (full command)",
+        "answer": [
+          "dns-server 8.8.8.8"
+        ],
+        "explanation": "'dns-server' in the pool hands out the DNS server; 'default-router' would hand out the gateway."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.011",
@@ -796,7 +1277,20 @@
     ],
     "answer": 3,
     "explanation": "The Management Information Base organises variables (objects) by OID. The agent answers Get and Set requests for them.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "In SNMP, what identifies each individual object a manager can read or set?",
+        "choices": [
+          "The OID",
+          "The community string",
+          "The trap",
+          "The MIB"
+        ],
+        "answer": 0,
+        "explanation": "Each object in a MIB is identified by an OID. The MIB is the collection that defines them; the community string is a clear-text password."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.012",
@@ -813,7 +1307,14 @@
     ],
     "answer": 0,
     "explanation": "Agents listen on UDP 161; managers receive traps and informs on 162. 69 is TFTP and 514 syslog.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "On which UDP port does an SNMP manager receive traps?",
+        "answer": 2,
+        "explanation": "Managers receive traps and informs on UDP 162; agents listen for requests on 161. 69 is TFTP and 514 syslog."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.013",
@@ -830,7 +1331,14 @@
     ],
     "answer": 3,
     "explanation": "The buffer survives logging out but not a reload. Console logging and VTY monitor logging are separate destinations.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "What does 'logging host 10.0.0.50' do?",
+        "answer": 1,
+        "explanation": "'logging host' sends messages to an external syslog server on UDP 514. 'logging buffered' keeps them in RAM instead."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.014",
@@ -841,7 +1349,14 @@
     "stem": "What is the syslog severity level number for 'errors'?",
     "answer": "3",
     "explanation": "0 emergencies, 1 alerts, 2 critical, 3 errors, 4 warnings, 5 notifications, 6 informational, 7 debugging.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "What is the syslog severity level number for 'notifications'?",
+        "answer": "5",
+        "explanation": "0 emergencies, 1 alerts, 2 critical, 3 errors, 4 warnings, 5 notifications, 6 informational, 7 debugging."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.011",
@@ -858,7 +1373,20 @@
     ],
     "answer": 1,
     "explanation": "giaddr tells the server which subnet the client is on, so it picks the matching pool and sends the reply back to the relay.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "A router relays a client's DHCP Discover with 'ip helper-address'. Where does it send the relayed message?",
+        "choices": [
+          "To the DHCP server's address, as a unicast",
+          "Out of every other interface, as a broadcast",
+          "Back to the client's MAC address",
+          "To 0.0.0.0"
+        ],
+        "answer": 0,
+        "explanation": "Routers don't forward broadcasts, so the helper turns the Discover into a unicast to the configured server, with giaddr set to the receiving interface."
+      }
+    ]
   },
   {
     "id": "q.d4.dhcp.012",
@@ -875,7 +1403,14 @@
     ],
     "answer": 1,
     "explanation": "Routers don't forward broadcasts. The helper turns certain UDP broadcasts, including DHCP, into unicasts to the server.",
-    "lesson_ref": "d4.dhcp_dns"
+    "lesson_ref": "d4.dhcp_dns",
+    "variants": [
+      {
+        "stem": "A router hears a client's DHCP Discover on an interface with no 'ip helper-address' and no local DHCP pool. What does it do with it?",
+        "answer": 3,
+        "explanation": "A Discover is a broadcast, and routers don't forward broadcasts. Without a helper address or its own pool, the router just drops it."
+      }
+    ]
   },
   {
     "id": "q.d4.qos.008",
@@ -892,7 +1427,20 @@
     ],
     "answer": 2,
     "explanation": "Voice is sensitive to delay, jitter and loss but needs little bandwidth, which is why it gets a priority queue.",
-    "lesson_ref": "d4.qos"
+    "lesson_ref": "d4.qos",
+    "variants": [
+      {
+        "stem": "A voice call measures 200 ms one-way delay, 10 ms jitter and no loss. Which common voice target does it miss?",
+        "choices": [
+          "One-way delay up to 150 ms",
+          "Jitter up to 30 ms",
+          "Loss up to 1%",
+          "Bandwidth of at least 1 Gbps per call"
+        ],
+        "answer": 0,
+        "explanation": "Voice wants under 150 ms one way, under 30 ms jitter and under 1% loss. 200 ms of delay is over the limit; jitter and loss are fine, and voice needs little bandwidth."
+      }
+    ]
   },
   {
     "id": "q.d4.qos.009",
@@ -909,7 +1457,14 @@
     ],
     "answer": 0,
     "explanation": "DSCP is 6 bits of the IPv4 ToS / IPv6 Traffic Class byte (the other 2 are ECN). The 3-bit CoS is in the 802.1Q tag.",
-    "lesson_ref": "d4.qos"
+    "lesson_ref": "d4.qos",
+    "variants": [
+      {
+        "stem": "Where is the CoS value carried?",
+        "answer": 1,
+        "explanation": "CoS is the 3-bit 802.1p priority in the 802.1Q tag, values 0-7. DSCP is the 6 bits in the IP header's ToS byte."
+      }
+    ]
   },
   {
     "id": "q.d4.ssh.005",
@@ -926,7 +1481,14 @@
     ],
     "answer": 1,
     "explanation": "'show ip ssh' gives 'SSH Enabled - version 2.0' (1.99 means both versions). 'show ssh' lists current sessions.",
-    "lesson_ref": "d4.ssh"
+    "lesson_ref": "d4.ssh",
+    "variants": [
+      {
+        "stem": "Which command lists the SSH sessions currently connected to the router?",
+        "answer": 0,
+        "explanation": "'show ssh' lists current sessions. 'show ip ssh' shows whether SSH is enabled and its version."
+      }
+    ]
   },
   {
     "id": "q.d4.ssh.cli.001",
@@ -955,7 +1517,14 @@
     ],
     "answer": 1,
     "explanation": "FTP uses a control connection (TCP 21) for commands and separate data connections for file contents. TFTP uses UDP 69.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "In active mode, which FTP connection carries the file contents?",
+        "answer": 0,
+        "explanation": "File contents go over separate data connections, TCP 20 in active mode. The control connection on TCP 21 carries the commands."
+      }
+    ]
   },
   {
     "id": "q.d4.svc.016",
@@ -972,6 +1541,13 @@
     ],
     "answer": 3,
     "explanation": "Source first, destination second. IOS then asks for the server address and file names; FTP credentials can be set with 'ip ftp username/password'.",
-    "lesson_ref": "d4.network_services"
+    "lesson_ref": "d4.network_services",
+    "variants": [
+      {
+        "stem": "Which command backs up the IOS image in flash to an FTP server?",
+        "answer": 1,
+        "explanation": "Source first, destination second: flash is the source, the FTP server the destination, so 'copy flash: ftp:'."
+      }
+    ]
   }
 ]

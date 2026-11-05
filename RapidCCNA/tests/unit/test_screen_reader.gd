@@ -146,14 +146,15 @@ func _review(id: String) -> Array:
 	return [s, _find(s, func(n): return n is QuestionView)]
 
 func test_a_new_question_is_read_out_with_its_number():
-	await _review("q.d3.route.003")
-	assert_eq(UI.last_announcement, "Question 1 of 1. " + ContentDB.questions["q.d3.route.003"].stem)
+	var r := await _review("q.d3.route.003")
+	var qv: QuestionView = r[1]
+	assert_eq(UI.last_announcement, "Question 1 of 1. " + qv.q.stem, "the stem of the version shown")
 
 func test_feedback_is_read_out_after_answering():
 	var r := await _review("q.d3.route.003")
 	var qv: QuestionView = r[1]
 	qv._on_submit(true)
-	var q: Dictionary = ContentDB.questions["q.d3.route.003"]
+	var q: Dictionary = qv.q   # the version that was shown
 	assert_true(UI.last_announcement.begins_with("Not quite. Answer: " + Grader.answer_text(q)), UI.last_announcement)
 	assert_string_contains(UI.last_announcement, q.explanation)
 

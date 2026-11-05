@@ -140,7 +140,7 @@ static func _shuffle(arr: Array, rng: RandomNumberGenerator) -> void:
 ## Scores an exam. `ids` is every question on the exam; `results` the answered
 ## ones ({id, correct, response?}); `qdb` maps id -> question dict.
 ## Returns {total, answered, correct, fraction, scaled, passed, pass_scaled,
-## by_domain: {id: {correct, total}}, missed: [{id, response, answered, skipped}]}.
+## by_domain: {id: {correct, total}}, missed: [{id, variant, response, answered, skipped}]}.
 static func score(ids: Array, results: Array, qdb: Dictionary, domains: Array, pass_scaled: int) -> Dictionary:
 	var by_id := {}
 	for r in results:
@@ -160,7 +160,7 @@ static func score(ids: Array, results: Array, qdb: Dictionary, domains: Array, p
 			correct += 1
 			by_domain[dom].correct += 1
 		else:
-			missed.append({"id": id, "response": r.get("response"), "answered": not r.is_empty(), "skipped": r.get("skipped", false)})
+			missed.append({"id": id, "variant": int(r.get("variant", 0)), "response": r.get("response"), "answered": not r.is_empty(), "skipped": r.get("skipped", false)})
 	var fraction := weighted_fraction(by_domain, domains)
 	var scaled := scale(fraction)
 	return {"total": ids.size(), "answered": by_id.size(), "correct": correct, "fraction": fraction,

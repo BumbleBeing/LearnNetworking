@@ -40,9 +40,9 @@ static func build(parent: Node, r: Dictionary) -> void:
 	if missed.is_empty():
 		UI.label(miss_card, "None. Every question was right.", "Muted")
 	for m in missed:
-		var q: Dictionary = ContentDB.questions.get(m.id, {})
-		if q.is_empty():
+		if not ContentDB.questions.has(m.id):
 			continue
+		var q: Dictionary = ContentDB.question_version(m.id, int(m.get("variant", 0)))   # the version that was shown
 		var item := UI.vbox(miss_card, 4)
 		var d := ContentDB.get_domain(q.get("domain", ""))
 		UI.label(item, ("%s  ·  %s" % [d.get("name", ""), q.get("subtopic", "")]).to_upper(), "H3")
