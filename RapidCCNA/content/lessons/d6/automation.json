@@ -42,7 +42,8 @@
     {
       "heading": "NETCONF, RESTCONF and YANG",
       "body": "YANG is a data model language that describes a device's configuration and state. NETCONF carries YANG-modelled data encoded in XML over SSH, on port 830. RESTCONF offers the same YANG data over HTTPS, in JSON or XML, mapping HTTP methods (GET, POST, PUT, PATCH, DELETE) onto it. Both are southbound interfaces.",
-      "example": "NETCONF   SSH port 830   XML\nRESTCONF  HTTPS          JSON or XML"
+      "example": "NETCONF   SSH port 830   XML\nRESTCONF  HTTPS          JSON or XML",
+      "mnemonic": "NETCONF rides SSH on port 830: \"configure at 8:30 before the network gets busy\". It speaks XML only.\nRESTCONF is REST, so it uses HTTPS like any web API and adds JSON.\nYANG is the what (the model), and NETCONF and RESTCONF are the how (the transport)."
     }
   ],
   "recall": [

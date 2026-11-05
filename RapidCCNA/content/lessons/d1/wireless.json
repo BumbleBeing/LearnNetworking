@@ -15,7 +15,8 @@
     {
       "heading": "Non-overlapping channels",
       "body": "In 2.4 GHz, channels are 5 MHz apart but about 22 MHz wide, so only 1, 6 and 11 don't overlap. Neighbouring APs should use different ones of these three. 5 GHz has around two dozen non-overlapping 20 MHz channels.",
-      "example": " 1     6     11\n ┌─┐   ┌─┐   ┌─┐   ← no overlap\n   ┌─┐ 3 overlaps 1 and 6"
+      "example": " 1     6     11\n ┌─┐   ┌─┐   ┌─┐   ← no overlap\n   ┌─┐ 3 overlaps 1 and 6",
+      "mnemonic": "1, 6, 11: start at 1 and jump by 5. Channels are 5 MHz apart but about 22 MHz wide, so you need 5 channels (25 MHz) between two of them before they stop touching.\nThink of cars that each take up five parking spaces: only three fit on the 2.4 GHz street."
     },
     {
       "heading": "SSID, BSS and ESS",
@@ -24,7 +25,8 @@
     {
       "heading": "802.11 standards",
       "body": "Each generation is faster.",
-      "example": "802.11b   2.4 GHz    11 Mbps\n802.11a   5 GHz      54 Mbps\n802.11g   2.4 GHz    54 Mbps\n802.11n   2.4/5 GHz  Wi-Fi 4\n802.11ac  5 GHz      Wi-Fi 5\n802.11ax  2.4/5/6    Wi-Fi 6/6E"
+      "example": "802.11b   2.4 GHz    11 Mbps\n802.11a   5 GHz      54 Mbps\n802.11g   2.4 GHz    54 Mbps\n802.11n   2.4/5 GHz  Wi-Fi 4\n802.11ac  5 GHz      Wi-Fi 5\n802.11ax  2.4/5/6    Wi-Fi 6/6E",
+      "mnemonic": "b and g are the old 2.4 GHz pair: b is the basic one at 11 Mbps, and g brought 54 Mbps to 2.4 GHz.\na is their 5 GHz sibling, at g's speed of 54.\nThe Wi-Fi numbers count up from n: n is Wi-Fi 4, ac is Wi-Fi 5, ax is Wi-Fi 6, and 6E adds the 6 GHz band, matching its name.\nBands: a and ac are 5 GHz only, n and ax use more than one band."
     },
     {
       "heading": "Encryption at a glance",

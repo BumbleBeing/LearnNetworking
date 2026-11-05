@@ -55,3 +55,24 @@ func test_load_with_no_save_gives_fresh_profile():
 	Progress.load_game()
 	assert_eq(Progress.streak_days, 0)
 	assert_eq(Progress.attempts.size(), 0)
+
+func test_completed_round_trips_through_save():
+	Progress.mark_unit_completed("u")
+	assert_true(Progress.save_game())
+	Progress.reset()
+	assert_false(Progress.is_completed("u"))
+	Progress.load_game()
+	assert_true(Progress.is_completed("u"))
+
+func test_v2_saves_infer_completed_units():
+	var mastered: Array = []
+	for i in 20:
+		mastered.append(true)
+	Progress.from_dict({"version": 2,
+		"attempts": {"mastered": mastered, "round_done": [true, false, true, true, true, true, true, true, true, true],
+			"started": [true, true, true], "no_tutorial": [true, true, true, true, true, true, true, true, true, true]},
+		"tutorials_done": {"round_done": 1, "started": 1}})
+	assert_true(Progress.is_completed("mastered"))
+	assert_true(Progress.is_completed("round_done"), "tutorial done and 10 attempts")
+	assert_false(Progress.is_completed("started"), "too few attempts")
+	assert_false(Progress.is_completed("no_tutorial"), "tutorial never done")

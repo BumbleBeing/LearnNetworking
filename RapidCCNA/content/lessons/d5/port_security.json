@@ -26,7 +26,8 @@
     {
       "heading": "Violation modes",
       "body": "When an extra MAC address shows up: protect drops its traffic silently; restrict drops it, logs it and counts the violation; shutdown (the default) puts the port into err-disabled. Recover an err-disabled port with shutdown then no shutdown. In 'show port-security interface', a Port Status of Secure-shutdown with a violation count means an unexpected MAC arrived and the port is err-disabled until it's bounced (or errdisable recovery brings it back).",
-      "example": "protect   drop                    port stays up\nrestrict  drop + log + counter    port stays up\nshutdown  err-disabled            port goes down (default)"
+      "example": "protect   drop                    port stays up\nrestrict  drop + log + counter    port stays up\nshutdown  err-disabled            port goes down (default)",
+      "mnemonic": "Alphabetical order is also quiet to loud: Protect drops silently, Restrict drops and tells you (log and counter), Shutdown slams the door (err-disabled).\nThe default is the loudest: shutdown."
     },
     {
       "heading": "DHCP snooping",
@@ -41,7 +42,8 @@
     {
       "heading": "Which feature stops which attack",
       "body": "DHCP snooping stops rogue DHCP servers. Dynamic ARP Inspection stops ARP spoofing (man-in-the-middle). Port security stops MAC address table flooding by capping MACs per port. Root Guard (from the spanning tree lesson) stops an unauthorised switch taking over as root. The snooping binding table is learned from DHCP exchanges on untrusted ports, and DAI and IP Source Guard both use it to check traffic.",
-      "example": "Rogue DHCP server ........ DHCP snooping\nARP spoofing ............. Dynamic ARP Inspection\nMAC table flooding ....... Port security\nRogue root bridge ........ Root Guard"
+      "example": "Rogue DHCP server ........ DHCP snooping\nARP spoofing ............. Dynamic ARP Inspection\nMAC table flooding ....... Port security\nRogue root bridge ........ Root Guard",
+      "mnemonic": "Name what's being faked, and the feature that guards it says so. A fake DHCP server is stopped by DHCP snooping. Fake ARP replies are stopped by Dynamic ARP Inspection. Fake MACs flooding the table are stopped by Port security, which caps MACs per port. A fake root bridge is stopped by Root Guard."
     }
   ],
   "recall": [

@@ -16,7 +16,8 @@
     {
       "heading": "The four NAT addresses",
       "body": "Inside/outside says whose device it is. Local/global says where you're looking from: local is the address as seen on the inside network, global is the address as seen on the outside.",
-      "example": "Inside local    192.168.1.10   the PC's real address\nInside global   198.51.100.2   the PC after translation\nOutside global  203.0.113.80   the server's real address\nOutside local   203.0.113.80   the server as seen inside (usually the same)"
+      "example": "Inside local    192.168.1.10   the PC's real address\nInside global   198.51.100.2   the PC after translation\nOutside global  203.0.113.80   the server's real address\nOutside local   203.0.113.80   the server as seen inside (usually the same)",
+      "mnemonic": "Each name answers two questions. Inside or outside: whose host is it, ours or theirs? Local or global: who's looking, the inside network or the world?\nInside local is our PC as we see it (private). Inside global is our PC as the world sees it (public). Outside global is their server as the world sees it. Outside local is their server as we see it, usually the same address."
     },
     {
       "heading": "Static, dynamic and PAT",

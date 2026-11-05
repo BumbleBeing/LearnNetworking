@@ -34,16 +34,19 @@
     {
       "heading": "Virtual MACs",
       "body": "HSRPv1 uses 0000.0c07.acXX and HSRPv2 0000.0c9f.fXXX, where X is the group number in hex. HSRPv2 supports groups 0-4095 and IPv6.",
-      "example": "group 10 v1 → 0000.0c07.ac0a"
+      "example": "group 10 v1 → 0000.0c07.ac0a",
+      "mnemonic": "The group number is always the last hex digits of the MAC. v1 has two hex digits because it has 256 groups (0-255). v2 has three because it has 4096 groups (0-4095), and three hex digits are 12 bits.\nGroup 10 is 0a in hex, so v1 group 10 is 0000.0c07.ac0a."
     },
     {
       "heading": "VRRP and GLBP",
-      "body": "VRRP is the open standard (RFC 5798): master and backup routers, preempt on by default, and the virtual IP may be a real router's address. GLBP (Cisco) load-balances: one active virtual gateway (AVG) hands out different virtual MACs so several forwarders (AVFs) share the traffic. If the VRRP virtual IP is one router's real address, that address owner gets priority 255 and is always master; HSRP needs a separate virtual address. In GLBP the AVG answers ARP for the virtual IP with the MACs of up to four AVFs, spreading hosts across them. HSRP and GLBP are Cisco-proprietary; VRRP is the open standard."
+      "body": "VRRP is the open standard (RFC 5798): master and backup routers, preempt on by default, and the virtual IP may be a real router's address. GLBP (Cisco) load-balances: one active virtual gateway (AVG) hands out different virtual MACs so several forwarders (AVFs) share the traffic. If the VRRP virtual IP is one router's real address, that address owner gets priority 255 and is always master; HSRP needs a separate virtual address. In GLBP the AVG answers ARP for the virtual IP with the MACs of up to four AVFs, spreading hosts across them. HSRP and GLBP are Cisco-proprietary; VRRP is the open standard.",
+      "mnemonic": "VRRP is the vendor-neutral one, so it uses its own words: master and backup instead of active and standby.\nGLBP is in its name: Gateway Load Balancing. It's the only one that balances within one group. One AVG (the gateway boss) hands out up to four AVF MACs (the forwarders).\nHSRP and GLBP are Cisco's. VRRP is open."
     },
     {
       "heading": "HSRP states, versions and addresses",
       "body": "A group has one active and one standby router; any others wait in the Listen state and only speak up if the active or standby fails. Only the active router forwards for the virtual IP, so sharing load needs several groups or GLBP. When hosts ARP for the virtual IP, the reply carries the group's virtual MAC; that MAC moves with the active role, so after a failover hosts keep the same gateway MAC and don't need to ARP again. 'show standby brief' lists each group's priority, P for preempt, state, active and standby routers and virtual IP.",
-      "example": "HSRPv1  groups 0-255   hellos to 224.0.0.2    MAC 0000.0c07.acXX\nHSRPv2  groups 0-4095  hellos to 224.0.0.102  MAC 0000.0c9f.fXXX  (IPv6 too)\nVRRP    hellos to 224.0.0.18                   MAC 0000.5e00.01XX\nGLBP    MAC 0007.b4XX.XXYY"
+      "example": "HSRPv1  groups 0-255   hellos to 224.0.0.2    MAC 0000.0c07.acXX\nHSRPv2  groups 0-4095  hellos to 224.0.0.102  MAC 0000.0c9f.fXXX  (IPv6 too)\nVRRP    hellos to 224.0.0.18                   MAC 0000.5e00.01XX\nGLBP    MAC 0007.b4XX.XXYY",
+      "mnemonic": "Hello addresses: v1 uses 224.0.0.2 (all routers), and v2 just puts 10 in front: 224.0.0.102. VRRP uses 224.0.0.18.\nMAC prefixes give away the vendor. HSRP's 0000.0c starts like Cisco's own MACs. VRRP's 0000.5e is the IANA block that open standards use. GLBP is 0007.b4.\nRoles: one Active, one Standby, everyone else Listens."
     }
   ],
   "recall": [

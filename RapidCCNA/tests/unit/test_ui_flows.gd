@@ -63,8 +63,8 @@ func test_blank_answer_is_blocked_but_skip_counts_as_wrong():
 func test_choice_buttons_select_and_grade():
 	var v := _view("q.d1.tcpudp.001")
 	watch_signals(v)
-	v._choice_buttons[0].button_pressed = true
-	v._choice_buttons[2].button_pressed = true
+	v.choice_button(0).button_pressed = true
+	v.choice_button(2).button_pressed = true
 	v._on_submit()
 	assert_true(get_signal_parameters(v, "answered")[0].correct)
 
@@ -117,3 +117,31 @@ func test_choice_drill_marks_choices_and_keys_work():
 	assert_true(d._answered, "pressing 1 answers")
 	assert_true(d._choices[0].disabled)
 	assert_false(d._hint_btn.visible, "no hints in unguided mode")
+
+func test_choices_are_shuffled_but_graded_by_content():
+	var orders := {}
+	for i in 30:
+		var v := _view("q.d1.subnet.001")
+		orders[str(v._choice_order)] = true
+		watch_signals(v)
+		v.choice_button(int(v.q.answer)).button_pressed = true
+		v._on_submit()
+		assert_true(get_signal_parameters(v, "answered")[0].correct)
+		assert_eq(get_signal_parameters(v, "answered")[0].response, int(v.q.answer), "response keeps the content's index")
+		assert_string_contains(v._choice_buttons[0].text, "1.", "numbers follow screen position")
+	assert_gt(orders.size(), 1, "the order changes between showings")
+
+func test_digit_picks_by_screen_position():
+	var v := _view("q.d1.subnet.001")
+	var two := InputEventKey.new()
+	two.keycode = KEY_2
+	two.pressed = true
+	v._unhandled_key_input(two)
+	assert_true(v._choice_buttons[1].button_pressed)
+
+func test_text_inputs_are_centred():
+	for t in ["fill_in", "subnet_calc"]:
+		var id: String = ContentDB.questions.keys().filter(func(k): return ContentDB.questions[k].type == t)[0]
+		var v := _view(id)
+		var box: Control = v.find_children("*", "LineEdit", true, false)[0] if t == "fill_in" else v.find_children("*", "GridContainer", true, false)[0]
+		assert_eq(box.size_flags_horizontal, Control.SIZE_SHRINK_CENTER, t)

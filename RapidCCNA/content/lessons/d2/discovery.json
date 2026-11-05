@@ -15,12 +15,14 @@
     {
       "heading": "CDP",
       "body": "Cisco Discovery Protocol is Cisco-proprietary and on by default on Cisco devices. It sends every 60 seconds with a 180-second holdtime.",
-      "example": "SW1#show cdp neighbors\nDevice ID   Local Intrfce   Holdtme   Capability  Platform  Port ID\nR1          Gig 0/2         163       R B S I     ISR4321   Gig 0/0/0"
+      "example": "SW1#show cdp neighbors\nDevice ID   Local Intrfce   Holdtme   Capability  Platform  Port ID\nR1          Gig 0/2         163       R B S I     ISR4321   Gig 0/0/0",
+      "mnemonic": "Sixty, and three times sixty: CDP sends every 60 seconds and gives up after three missed messages (180 s).\nIt's Cisco's own protocol, so it's on by default on Cisco devices."
     },
     {
       "heading": "LLDP",
       "body": "Link Layer Discovery Protocol (IEEE 802.1AB) is the open standard, so non-Cisco devices such as many phones, APs and servers speak it. It's off by default on Cisco devices. It sends every 30 seconds with a 120-second hold time. Transmit and receive can be controlled separately per interface. Its hold time is 4 x the timer. Once 'lldp run' is on globally, 'lldp transmit' and 'lldp receive' are on for each port. CDP, VTP and DTP are all Cisco-proprietary; to discover another vendor's device, use LLDP.",
-      "example": "lldp run\ninterface g0/1\n no lldp transmit\n no lldp receive"
+      "example": "lldp run\ninterface g0/1\n no lldp transmit\n no lldp receive",
+      "mnemonic": "Half CDP's timer, held four times over: 30 s × 4 = 120 s.\nThe open standard speaks to anyone, such as non-Cisco phones and servers. But Cisco doesn't ship it on, so you have to start it with 'lldp run'.\nCDP 60/180 versus LLDP 30/120: the open one talks twice as often."
     },
     {
       "heading": "Detail and verification",

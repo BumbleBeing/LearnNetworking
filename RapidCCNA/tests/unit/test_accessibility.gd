@@ -56,13 +56,13 @@ func test_answered_choices_are_labelled_not_just_coloured():
 	add_child_autofree(v)
 	var right := int(v.q.answer)
 	var wrong := (right + 1) % v._choice_buttons.size()
-	v._choice_buttons[wrong].button_pressed = true
+	v.choice_button(wrong).button_pressed = true
 	v._on_submit()
-	assert_string_contains(v._choice_buttons[right].text, "(correct answer)")
-	assert_string_contains(v._choice_buttons[wrong].text, "(your answer)")
+	assert_string_contains(v.choice_button(right).text, "(correct answer)")
+	assert_string_contains(v.choice_button(wrong).text, "(your answer)")
 	for i in v._choice_buttons.size():
 		if i != right and i != wrong:
-			assert_false(v._choice_buttons[i].text.contains("("), "untouched choices stay plain")
+			assert_false(v.choice_button(i).text.contains("("), "untouched choices stay plain")
 
 func test_drill_choices_are_labelled_too():
 	var d: DrillBase = load("res://minigames/GenDrill.gd").new()

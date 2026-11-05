@@ -8,6 +8,8 @@ extends Node
 ##   {kind:"drill",    drill:id, guided:bool, count:int, unit:id}
 ##   {kind:"lab",      lab:id}
 ##   {kind:"exam",     ids:[question ids], minutes:int, label:String, pass_scaled:int}
+## The last step of a unit's plan also carries completes:unit_id; finishing it marks
+## the unit Completed.
 
 const MAX_REVIEWS := 20
 const REVIEW_DRILL_COUNT := 5
@@ -40,13 +42,20 @@ func build_daily_session(now: int = -1) -> Dictionary:
 	var reviews := SRS.due_cards(now).filter(func(id): return ContentDB.questions.has(id))
 	return {"reviews": reviews.slice(0, MAX_REVIEWS), "next_unit": next_unit(), "steps": plan_steps(now)}
 
-## First unmastered lesson in blueprint domain order, or {} if all mastered.
+## The daily session's unit: the first one, in blueprint order, that is neither
+## Completed nor Mastered. Once every unit is Completed, the first that isn't
+## Mastered comes round again. {} when everything is Mastered.
 func next_unit() -> Dictionary:
+	var revisit := {}
 	for d in ContentDB.domains:
 		for l in ContentDB.lessons_for_domain(d.id):
-			if not Progress.is_mastered(l.id):
+			if Progress.is_mastered(l.id):
+				continue
+			if not Progress.is_completed(l.id):
 				return l
-	return {}
+			if revisit.is_empty():
+				revisit = l
+	return revisit
 
 func plan_steps(now: int = -1) -> Array:
 	var out: Array = []
@@ -66,7 +75,15 @@ func plan_steps(now: int = -1) -> Array:
 		out.append({"kind": "lab", "lab": l})
 	var unit := next_unit()
 	if not unit.is_empty():
-		out.append_array(unit_steps(unit, false, review_labs, q_ids))
+		out.append_array(unit_plan(unit, false, review_labs, q_ids))
+	return out
+
+## unit_steps, never empty, with its last step marked as completing the unit.
+func unit_plan(unit: Dictionary, on_demand: bool = false, skip_labs: Array = [], skip_ids: Array = []) -> Array:
+	var out := unit_steps(unit, on_demand, skip_labs, skip_ids)
+	if out.is_empty():
+		out = [{"kind": "tutorial", "lesson": unit.id}]
+	out[-1]["completes"] = unit.id
 	return out
 
 ## Steps to study one unit: tutorial (if not done), guided rounds until GUIDED_UNTIL
@@ -143,10 +160,7 @@ func start_drill(drill_id: String, guided: bool) -> void:
 ## Free training: any unit, tutorial or exam area, regardless of the daily plan.
 func start_unit(lesson_id: String) -> void:
 	var unit: Dictionary = ContentDB.lessons[lesson_id]
-	var unit_plan := unit_steps(unit, true)
-	if unit_plan.is_empty():
-		unit_plan = [{"kind": "tutorial", "lesson": lesson_id}]
-	start(unit_plan, "Study: " + unit.title)
+	start(unit_plan(unit, true), "Study: " + unit.title)
 
 func start_tutorial(lesson_id: String) -> void:
 	start([{"kind": "tutorial", "lesson": lesson_id}], "Tutorial: " + ContentDB.lessons[lesson_id].title)
@@ -206,6 +220,8 @@ func step_done(summary: Dictionary) -> void:
 	var r := current_step().duplicate()
 	r.merge(summary, true)
 	results.append(r)
+	if r.has("completes"):
+		Progress.mark_unit_completed(r.completes)
 	Progress.save_game()
 	advance()
 
@@ -223,6 +239,10 @@ func abort() -> void:
 		_go(SCENES[origin])
 	else:
 		_finish()
+
+## Units this session finished, in order.
+func completed_units() -> Array:
+	return results.filter(func(r): return r.has("completes")).map(func(r): return r.completes)
 
 func _finish() -> void:
 	Progress.total_minutes += (Time.get_ticks_msec() - _start_ms) / 60000.0

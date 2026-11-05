@@ -21,7 +21,8 @@
     {
       "heading": "Fiber",
       "body": "Fiber carries light, so it's immune to electrical interference and goes much further. Multimode fiber (wide core, cheaper optics) covers hundreds of metres; single-mode fiber (narrow 9 µm core, lasers) covers kilometres. Common connectors are LC and SC, usually in an SFP module. An SFP (small form-factor pluggable) is a hot-swappable transceiver module: one SFP slot can take fiber or copper optics as needed, and SFP+ does the same at 10 Gbps. 1000BASE-SX uses short-wavelength lasers on multimode fiber; 1000BASE-LX uses long-wavelength lasers, typically on single-mode fiber.",
-      "example": "1000BASE-SX   multimode     ~550 m\n1000BASE-LX   single-mode   ~5-10 km"
+      "example": "1000BASE-SX   multimode     ~550 m\n1000BASE-LX   single-mode   ~5-10 km",
+      "mnemonic": "The letter after BASE- is the wavelength: S for short, L for long. Short light goes a short way (SX on multimode, about 550 m), long light goes a long way (LX on single-mode, kilometres).\nMultimode means many paths of light bouncing around a wide core. They spread the signal out over distance, so multimode can't go as far as single-mode's one straight path."
     },
     {
       "heading": "Shared media and point-to-point",

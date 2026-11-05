@@ -27,7 +27,8 @@
     {
       "heading": "Administrative distance",
       "body": "If two sources offer the same prefix and length, only one is installed: the one with the lowest administrative distance. Metrics are compared only between routes from the same protocol. A floating static route gets a deliberately high AD so it's used only as a backup. Fuller list: internal EIGRP 90, external EIGRP 170, iBGP 200, and 255 means never trusted, so a route with AD 255 is never installed. A floating static route only wins if its AD is lower than the other source: at AD 200 it stays out while an external EIGRP route (170) exists. If the installed route disappears, the next-best source's route is installed instead.",
-      "example": "Connected 0   Static 1   eBGP 20   EIGRP 90\nOSPF 110      RIP 120    iBGP 200\nip route 10.9.0.0 255.255.0.0 10.0.0.6 130   ← floating static"
+      "example": "Connected 0   Static 1   eBGP 20   EIGRP 90\nOSPF 110      RIP 120    iBGP 200\nip route 10.9.0.0 255.255.0.0 10.0.0.6 130   ← floating static",
+      "mnemonic": "Trust goes from what you can see to what you hear second-hand. Connected is 0 (you can see it), Static is 1 (you typed it), eBGP is 20.\nThen the inside protocols: EIGRP 90 sits just under 100, and OSPF 110 and RIP 120 just over, ten apart, with old RIP trusted least.\nRoutes heard second-hand are high: external EIGRP 170, iBGP 200. And 255 means never."
     },
     {
       "heading": "The default route",
@@ -42,7 +43,8 @@
     {
       "heading": "Codes, metrics and the IPv6 table",
       "body": "Codes: C connected, L local, S static, D EIGRP (from DUAL), O OSPF, R RIP; C, L and S aren't learned from a dynamic protocol. Each protocol has its own metric: OSPF uses cost (from interface bandwidth), RIP hop count, and EIGRP a composite of bandwidth and delay. In 'show ipv6 route' the local route for each address is a /128, and routes learned from a routing protocol use the neighbour's link-local address (FE80::...) plus the exit interface as the next hop. 'show ip route 10.5.5.5' shows the entry that matches one address: 'from 2.2.2.2' is the advertising router's ID and 'via' the next hop; one descriptor block means one path.",
-      "example": "O   2001:DB8:2::/64 [110/2]\n     via FE80::2, GigabitEthernet0/1\nL   2001:DB8:1::1/128 [0/0]\n     via GigabitEthernet0/0, receive"
+      "example": "O   2001:DB8:2::/64 [110/2]\n     via FE80::2, GigabitEthernet0/1\nL   2001:DB8:1::1/128 [0/0]\n     via GigabitEthernet0/0, receive",
+      "mnemonic": "Most codes are first letters: C connected, L local, S static, O OSPF, R RIP, B BGP.\nThe odd one is EIGRP, which is D: E was already taken by the older EGP protocol. Remember D for DUAL, EIGRP's algorithm.\nL is always a single address (/32 or /128): the router's own."
     },
     {
       "heading": "How the packet is actually forwarded",

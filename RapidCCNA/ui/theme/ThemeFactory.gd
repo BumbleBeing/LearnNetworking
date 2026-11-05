@@ -90,6 +90,8 @@ static func build(p: Dictionary, scale: float = 1.0) -> Theme:
 	t.set_font_size("font_size", "TooltipLabel", sz.call(15))
 	t.set_type_variation("Exhibit", "PanelContainer")
 	t.set_stylebox("panel", "Exhibit", box(p.input, p.border, r_small, 1, 16, 12))
+	t.set_type_variation("MemoryAid", "PanelContainer")
+	t.set_stylebox("panel", "MemoryAid", box(p.chip, p.warn, r_small, 2, 16, 12))
 
 	# Buttons
 	t.set_font("font", "Button", semibold)

@@ -17,7 +17,8 @@
     {
       "heading": "SNMP versions",
       "body": "SNMPv1 and v2c authenticate with a community string sent in clear text: RO for read-only, RW for read-write. SNMPv3 adds users with authentication and encryption (noAuthNoPriv, authNoPriv, authPriv).",
-      "example": "snmp-server community NETMON ro 10   ! read-only, managers allowed by ACL 10\nsnmp-server location HQ-Rack-3"
+      "example": "snmp-server community NETMON ro 10   ! read-only, managers allowed by ACL 10\nsnmp-server location HQ-Rack-3",
+      "mnemonic": "The c in v2c stands for community: v1 and v2c send a community string in clear text. v3 replaces it with real users.\nv3's levels go up in pairs, where Auth is \"who you are\" and Priv is privacy (encryption): noAuthNoPriv, then authNoPriv, then authPriv.\nRO reads, RW writes."
     },
     {
       "heading": "Syslog",
@@ -27,7 +28,8 @@
     {
       "heading": "Severity levels",
       "body": "Remember them in order.",
-      "example": "0 emergencies   1 alerts   2 critical   3 errors\n4 warnings      5 notifications\n6 informational 7 debugging"
+      "example": "0 emergencies   1 alerts   2 critical   3 errors\n4 warnings      5 notifications\n6 informational 7 debugging",
+      "mnemonic": "\"Every Awesome Cisco Engineer Will Need Ice cream Daily\": Emergencies 0, Alerts 1, Critical 2, Errors 3, Warnings 4, Notifications 5, Informational 6, Debugging 7.\nThe lower the number, the worse the news. 'logging trap 4' sends level 4 and everything more severe (0-3), but not the chattier levels 5-7."
     },
     {
       "heading": "Where logs go",

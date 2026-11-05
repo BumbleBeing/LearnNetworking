@@ -12,7 +12,8 @@
     {
       "heading": "DNS",
       "body": "DNS turns names into addresses. A client asks its configured DNS server, which answers from its cache or resolves the name through the root, TLD and authoritative servers. Queries normally use UDP 53 (TCP 53 for large answers and zone transfers).",
-      "example": "A     www.example.com → 93.184.216.34\nAAAA  IPv6 address\nCNAME alias → another name\nMX    mail server for a domain\nPTR   address → name (reverse lookup)"
+      "example": "A     www.example.com → 93.184.216.34\nAAAA  IPv6 address\nCNAME alias → another name\nMX    mail server for a domain\nPTR   address → name (reverse lookup)",
+      "mnemonic": "A is for Address (IPv4). AAAA has four A's because an IPv6 address is four times longer (128 bits instead of 32).\nMX is the Mail eXchanger. CNAME is a Canonical NAME, meaning an alias. PTR points back from an address to a name.\nQueries use UDP 53. Zone transfers are big jobs, so they move to TCP 53."
     },
     {
       "heading": "DNS on a router",

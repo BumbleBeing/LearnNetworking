@@ -23,13 +23,19 @@ All question content is original and written in exam style. The game does not us
 The dashboard plans each day's session:
 1. **Review:** questions that spaced repetition says are due.
 2. **Drill refreshers:** short unguided rounds for generated drill skills that are due.
-3. **Next unit:** the first unmastered lesson. You get its tutorial (once), a **guided** drill round (hints, place values, a worked solution after every item) until you have 10 unguided attempts, then an **unguided** round. Units without a drill (theory topics and lab-only units) end with a **unit quiz** on their own questions instead. Accuracy over the last 20 unguided attempts or quiz answers drives mastery (85% or better).
+3. **Next unit:** the first unit that isn't **Completed** (or Mastered). You get its tutorial (once), a **guided** drill round (hints, place values, a worked solution after every item) until you have 10 unguided attempts, then an **unguided** round. Units without a drill (theory topics and lab-only units) end with a **unit quiz** on their own questions instead. Accuracy over the last 20 unguided attempts or quiz answers drives mastery (85% or better).
+
+A unit is **Completed** once you finish its last step, from the daily session or from *Study unit* in Topics. Leaving part-way doesn't count. Completing a unit moves the next daily session on to the next unit. Mastery is tracked separately, and weak units come back through spaced repetition. Once every unit is Completed, the daily session goes back to the first unit that isn't Mastered, without its tutorial. The Summary screen names the unit you completed and the one up next, and Topics marks Completed units. Saves from before this change count a unit as Completed if it's Mastered, or if its tutorial is done and it has at least 10 unguided attempts or quiz answers.
 
 The daily plan always follows the exam areas in order. To study anything else, use **Topics** (from the dashboard): every exam area has a quiz, and every unit has *Study unit* (tutorial if new, drills, labs), *Tutorial*, per-drill Guided/Unguided buttons and its labs. Free training updates the same progress and spaced-repetition schedule.
+
+Multiple-choice answers are shuffled each time a question is shown, mock exams included. The number keys pick by position on screen. Typed answers are centred.
 
 Every answer shows an explanation. A miss always shows the worked solution. Drill skills are graded once per round, so a 10-item round doesn't inflate review intervals.
 
 Under every question (outside mock exams), **Submit**, **I don't know** and **Study** sit centred in one row. **Study** opens the question's whole lesson over the screen; Back (or Esc) returns to the question as you left it. Every question can be answered from its lesson's cards.
+
+**Memory aids:** 49 cards that are mostly values to memorise (ports, administrative distances, syslog severities, STP costs, DSCP values...) have a `mnemonic` field. It's drawn as a "Memory aid" box under the card, in tutorials and in Study. It gives the numbers a pattern, a story or a rhyme, and points out the values that are easy to mix up.
 
 **Acronyms** in lessons and questions (OSPF, VLAN, DHCP...) are drawn in a contrasting colour from the current look, and hovering one shows what it stands for. The list lives in `core/Glossary.gd`, and CI (`tools/check_acronyms.py`) fails if lesson or question text uses an acronym it doesn't explain.
 

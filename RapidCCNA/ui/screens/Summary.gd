@@ -25,6 +25,13 @@ func _ready() -> void:
 	UI.stat(stats, "%d%%" % (int(round(100.0 * correct / items)) if items > 0 else 0), "accuracy", look.good)
 	UI.stat(stats, str(Progress.streak_days), "day streak", look.warn)
 	UI.stat(stats, str(SRS.due_cards(int(Time.get_unix_time_from_system()) + 86400).size()), "due by tomorrow", look.accent2)
+	var done := SessionManager.completed_units()
+	if not done.is_empty():
+		var moved := UI.card(v)
+		for id in done:
+			UI.label(moved, "Completed: " + str(ContentDB.lessons.get(id, {}).get("title", id)), "H2", true)
+		var next := SessionManager.next_unit()
+		UI.label(moved, "Next up: " + str(next.get("title", "")) if not next.is_empty() else "Every unit is mastered.", "Body", true)
 	for r in SessionManager.results:
 		if r.has("exam"):
 			ExamReport.build(v, r)

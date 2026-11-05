@@ -115,6 +115,13 @@ static func lesson_card(parent: Node, lesson_card_data: Dictionary) -> void:
 		ex.theme_type_variation = "Exhibit"
 		parent.add_child(ex)
 		rich(ex, str(lesson_card_data.example), "Code")
+	if lesson_card_data.has("mnemonic"):
+		var aid := PanelContainer.new()
+		aid.theme_type_variation = "MemoryAid"
+		parent.add_child(aid)
+		var inner := vbox(aid, 6)
+		label(inner, "MEMORY AID", "H3")
+		rich(inner, str(lesson_card_data.mnemonic), "Body")
 
 static func button(parent: Node, text: String, on_press: Callable, primary: bool = false) -> Button:
 	var b := Button.new()

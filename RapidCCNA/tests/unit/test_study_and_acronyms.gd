@@ -51,9 +51,9 @@ func test_choice_buttons_keep_their_text_and_explain_acronyms():
 	assert_true(with_acronym.has_meta("rich_text"))
 	assert_eq(with_acronym.tooltip_text, Glossary.tooltip(with_acronym.text))
 	var right := int(v.q.answer)
-	v._choice_buttons[right].button_pressed = true
+	v.choice_button(right).button_pressed = true
 	v._on_submit()
-	var copy: RichTextLabel = v._choice_buttons[right].get_meta("rich_text", null)
+	var copy: RichTextLabel = v.choice_button(right).get_meta("rich_text", null)
 	if copy:
 		assert_string_contains(copy.get_parsed_text(), "(correct answer)", "the coloured copy follows the label")
 

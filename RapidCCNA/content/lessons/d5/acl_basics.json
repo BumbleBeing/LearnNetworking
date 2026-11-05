@@ -11,7 +11,8 @@
     {
       "heading": "Standard vs extended",
       "body": "Standard ACLs (1-99, 1300-1999) match only the source address. Extended ACLs (100-199, 2000-2699) match protocol, source, destination and optionally ports, so they can be far more precise. Neither type matches MAC addresses. In an entry, 'host 10.1.1.10' is the same as '10.1.1.10 0.0.0.0', and IOS knows common ports by name ('eq https' is 'eq 443').",
-      "example": "access-list 10 permit 192.168.1.0 0.0.0.255\naccess-list 100 permit tcp 192.168.1.0 0.0.0.255 host 10.1.1.10 eq 443"
+      "example": "access-list 10 permit 192.168.1.0 0.0.0.255\naccess-list 100 permit tcp 192.168.1.0 0.0.0.255 host 10.1.1.10 eq 443",
+      "mnemonic": "One more digit, more detail: standard ACLs are 1-99 and extended ones are 100-199.\nWhen those ran out, the expanded ranges kept the same order, standard first: 1300-1999 standard, 2000-2699 extended.\nS for Standard, S for Source only."
     },
     {
       "heading": "Top-down, first match wins",
