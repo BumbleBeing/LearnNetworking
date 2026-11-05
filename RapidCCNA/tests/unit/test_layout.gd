@@ -113,7 +113,7 @@ func test_every_question_before_and_after_answering():
 	for size in SIZES:
 		await _set_size(size)
 		var bad := 0
-		for id in ContentDB.questions:
+		for id in _every_version():
 			if bad >= 5:
 				break   # enough to act on
 			var s := await _open("res://ui/screens/Review.tscn", [{"kind": "review", "ids": [id], "title": "Quiz"}])
@@ -124,7 +124,24 @@ func test_every_question_before_and_after_answering():
 			ok = _check(s, id + " answered") and ok
 			bad += 0 if ok else 1
 			s.queue_free()
+	for id in ContentDB.questions.keys().filter(func(k): return k.contains("~v")):
+		ContentDB.questions.erase(id)
 	assert_true(true)
+
+## Every question id, plus a stand-in "<id>~vN" for each variant so each version
+## is laid out on its own (a review of the real id picks a version at random).
+func _every_version() -> Array:
+	var out: Array = []
+	for id in ContentDB.questions.keys():
+		if id.contains("~v"):
+			continue
+		out.append(id)
+		for n in range(1, ContentDB.questions[id].get("variants", []).size() + 1):
+			var only := ContentDB.question_version(id, n)
+			only.id = "%s~v%d" % [id, n]
+			ContentDB.questions[only.id] = only
+			out.append(only.id)
+	return out
 
 func test_every_lesson_in_tutorial_and_study_overlay():
 	for size in SIZES:
@@ -264,3 +281,35 @@ func test_bottom_buttons_are_centred():
 	add_child_autofree(sum)
 	await wait_process_frames(3)
 	_centred(sum.find_children("*", "Button", true, false).filter(func(b): return b.text.begins_with("Back to"))[-1])
+
+func test_a_long_session_plan_scrolls_inside_its_card():
+	var saved_path := Progress.save_path
+	Progress.save_path = "user://test_layout_plan.json"
+	Progress.reset()
+	for d in ContentDB.drills:   # every drill and lab due: one plan line each
+		SRS.grade("gen.%s.a" % d, 1, 1_000_000_000)
+	for l in ContentDB.labs:
+		SRS.grade(l, 1, 1_000_000_000)
+	for size in SIZES:
+		await _set_size(size)
+		var s := await _open("res://ui/screens/Dashboard.tscn")
+		await wait_process_frames(2)
+		var sc: ScrollContainer = s.find_child("PlanScroll", true, false)
+		var content: Control = sc.get_child(0)
+		assert_lte(sc.size.y, s.PLAN_MAX_HEIGHT + 1, "the plan stops growing at %s" % size)
+		assert_gt(content.size.y, sc.size.y, "and the rest scrolls")
+		s.queue_free()
+	Progress.save_path = saved_path
+	Progress.load_game()
+
+func test_a_short_session_plan_shows_in_full():
+	var saved_path := Progress.save_path
+	Progress.save_path = "user://test_layout_plan.json"
+	Progress.reset()
+	var s := await _open("res://ui/screens/Dashboard.tscn")
+	await wait_process_frames(2)
+	var sc: ScrollContainer = s.find_child("PlanScroll", true, false)
+	assert_almost_eq(sc.size.y, sc.get_child(0).size.y, 1.0, "no scrolling needed for a few lines")
+	s.queue_free()
+	Progress.save_path = saved_path
+	Progress.load_game()

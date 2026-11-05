@@ -15,8 +15,8 @@ from pathlib import Path
 
 # Not acronyms: device and object names, HTTP methods, IOS output words, hex groups.
 ALLOWED = {
-    "SW1", "SW2", "SW3", "PC1", "PC2", "R1", "R2", "R3", "HR", "SALES", "ENGINEERING", "BLOCK", "NETMON",
-    "GET", "PUT", "POST", "PATCH", "DELETE", "OK", "AND", "TWO", "ONLY",
+    "SW1", "SW2", "SW3", "SW4", "PC1", "PC2", "R1", "R2", "R3", "HR", "SALES", "ENGINEERING", "BLOCK", "NETMON",
+    "GET", "PUT", "POST", "PATCH", "DELETE", "OK", "AND", "TWO", "THREE", "FOUR", "ONLY", "NOT",
     "FULL", "DOWN", "BROADCAST", "EXSTART", "EXCHANGE", "LINK", "UPDOWN", "NATIVE", "MISMATCH", "CONFIG",
     "SEC", "DEBUG", "IPACCESSLOGP", "SYS", "SU", "EXEC", "XE", "CL", "AAAA",
     "OFFER", "DHCPOFFER", "DHCPACK", "DISCOVER", "REQUEST", "ACK",
@@ -40,8 +40,9 @@ def texts(root):
             yield lesson["id"], c.get("body", "")
     for p in sorted((root / "content" / "questions").glob("*.json")):
         for q in json.loads(p.read_text(encoding="utf-8")):
-            for t in [q.get("stem", ""), q.get("explanation", "")] + [str(c) for c in q.get("choices", [])]:
-                yield q["id"], t
+            for v in [q] + q.get("variants", []):   # variants are question text too
+                for t in [v.get("stem", ""), v.get("explanation", "")] + [str(c) for c in v.get("choices", [])]:
+                    yield q["id"], t
 
 
 def main(argv):

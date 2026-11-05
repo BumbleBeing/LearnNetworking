@@ -24,7 +24,8 @@
     {
       "heading": "Well-known ports",
       "body": "Learn these pairs.",
-      "example": "TCP 20/21 FTP     TCP 22 SSH      TCP 23 Telnet\nTCP 25 SMTP       TCP 80 HTTP     TCP 443 HTTPS\nUDP 53 DNS (TCP for zone transfers)\nUDP 67/68 DHCP    UDP 69 TFTP     UDP 123 NTP\nUDP 161/162 SNMP  UDP 514 Syslog"
+      "example": "TCP 20/21 FTP     TCP 22 SSH      TCP 23 Telnet\nTCP 25 SMTP       TCP 80 HTTP     TCP 443 HTTPS\nUDP 53 DNS (TCP for zone transfers)\nUDP 67/68 DHCP    UDP 69 TFTP     UDP 123 NTP\nUDP 161/162 SNMP  UDP 514 Syslog",
+      "mnemonic": "Learn the table in three chunks.\nThe early 20s are the old text-based tools, all on TCP: FTP 20/21 (20 data, 21 control), then SSH 22, then Telnet 23 (the secure way in comes just before the insecure one), then SMTP 25 to send mail.\nWeb: HTTP is 80. For HTTPS 443: \"four-four-three, secure for me\".\nThe UDP services read like a device booting: DHCP 67/68 gives it an address (server 67, client 68), then TFTP 69 fetches its file. PXE network boot really does use them in that order, so picture them side by side. DNS is 53 (\"five-three, look it up for me\").\nMonitoring: NTP 123 (\"one-two-three, keep time with me\"), SNMP 161 for polling the agent and 162 for traps (one higher), Syslog 514.\nEasy to mix up: TFTP is UDP 69, FTP is TCP 20/21. DNS is UDP 53, but TCP 53 for zone transfers."
     }
   ],
   "recall": [

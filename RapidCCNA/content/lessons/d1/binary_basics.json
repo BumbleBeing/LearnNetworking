@@ -21,7 +21,8 @@
     {
       "heading": "The mask values to memorise",
       "body": "Subnet mask octets are always ones followed by zeros, so only nine values are possible. Each one adds the next place value to the previous. Knowing these by heart is what makes subnetting fast. Count the 1 bits to get the prefix length: in the last octet 128 is /25, 192 /26, 224 /27, 240 /28, 248 /29, 252 /30 (add 24 for the first three 255 octets).",
-      "example": "0000 0000 =   0     1111 1000 = 248\n1000 0000 = 128     1111 1100 = 252\n1100 0000 = 192     1111 1110 = 254\n1110 0000 = 224     1111 1111 = 255\n1111 0000 = 240"
+      "example": "0000 0000 =   0     1111 1000 = 248\n1000 0000 = 128     1111 1100 = 252\n1100 0000 = 192     1111 1110 = 254\n1110 0000 = 224     1111 1111 = 255\n1111 0000 = 240",
+      "mnemonic": "Start at 128 and keep adding half of what you just added: 128, +64 = 192, +32 = 224, +16 = 240, +8 = 248, +4 = 252, +2 = 254, +1 = 255.\nOr work back from the block size: mask = 256 - block. A block of 64 gives 192, a block of 4 gives 252.\nEasy to mix up: 252 is /30 (the two-host link mask) and 254 is /31."
     },
     {
       "heading": "Hex in one step",

@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate content
-        run: python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600
+        run: python3 tools/validate_content.py --min-per-subtopic 5 --min-total 600 --min-variants 1
       - name: Content QA (answer-key giveaways, wording, links)
         run: |
           python3 tools/test_qa_content.py

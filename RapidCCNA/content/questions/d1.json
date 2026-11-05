@@ -14,7 +14,14 @@
     ],
     "answer": 2,
     "explanation": "/26 has a block size of 64 in the 4th octet. 130 rounds down to 128, so the network is 192.168.1.128.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "What is the network address of host 192.168.1.200/26?",
+        "answer": 3,
+        "explanation": "/26 has a block size of 64 in the 4th octet (.0, .64, .128, .192). 200 rounds down to 192, so the network is 192.168.1.192."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.002",
@@ -31,7 +38,14 @@
     ],
     "answer": 1,
     "explanation": "/27 has a block size of 32. 70 falls in the 64-95 block, so the broadcast is 10.0.0.95.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "What is the broadcast address of 10.0.0.40/27?",
+        "answer": 0,
+        "explanation": "/27 has a block size of 32. 40 falls in the 32-63 block, so the broadcast is one below the next network (.64): 10.0.0.63."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.003",
@@ -52,7 +66,24 @@
       2
     ],
     "explanation": "/29 = 8 addresses: .0 is the network, .7 the broadcast, so .1-.6 are usable. .8 is in the next subnet.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "Which TWO addresses are usable hosts in 172.16.5.8/29?",
+        "choices": [
+          "172.16.5.7",
+          "172.16.5.8",
+          "172.16.5.9",
+          "172.16.5.14",
+          "172.16.5.15"
+        ],
+        "answer": [
+          2,
+          3
+        ],
+        "explanation": "/29 = 8 addresses: .8 is the network and .15 the broadcast, so .9-.14 are usable. .7 is the broadcast of the previous subnet."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.004",
@@ -84,7 +115,18 @@
       "hosts": "4094"
     },
     "explanation": "/20 puts the interesting octet in octet 3 with block size 16 (mask 255.255.240.0). 45 falls in the 32-47 block, so the network is 172.16.32.0 and the broadcast is 172.16.47.255. 12 host bits give 2^12 - 2 = 4094 hosts.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "Host 172.16.100.5 is configured with a /21 prefix. Fill in its subnet.",
+        "answer": {
+          "network": "172.16.96.0",
+          "broadcast": "172.16.103.255",
+          "hosts": "2046"
+        },
+        "explanation": "/21 is 255.255.248.0, so the interesting octet is the third with block size 8. 100 falls in the 96-103 block: network 172.16.96.0, broadcast 172.16.103.255. 11 host bits give 2^11 - 2 = 2046 hosts."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.005",
@@ -95,7 +137,14 @@
     "stem": "How many usable host addresses does a /28 subnet provide?",
     "answer": "14",
     "explanation": "/28 leaves 4 host bits: 2^4 = 16 addresses, minus the network and broadcast addresses = 14.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "How many usable host addresses does a /29 subnet provide?",
+        "answer": "6",
+        "explanation": "/29 leaves 3 host bits: 2^3 = 8 addresses, minus the network and broadcast addresses = 6."
+      }
+    ]
   },
   {
     "id": "q.d1.ipparams.001",
@@ -113,7 +162,15 @@
     ],
     "answer": 0,
     "explanation": "255.255.255.240 is /28, block size 16. 77 sits in the 64-79 subnet (hosts .65-.78). The gateway .94 belongs to the 80-95 subnet, so the PC can't reach it directly and off-subnet traffic fails.",
-    "lesson_ref": "d1.client_ip"
+    "lesson_ref": "d1.client_ip",
+    "variants": [
+      {
+        "stem": "A user can reach hosts on their own subnet but nothing beyond it. Based on the exhibit, what is the most likely cause?",
+        "exhibit": "Ethernet adapter Ethernet0:\n   IPv4 Address. . . . . . . . . . . : 10.20.30.77\n   Subnet Mask . . . . . . . . . . . : 255.255.255.240\n   Default Gateway . . . . . . . . . : 10.20.30.64",
+        "answer": 3,
+        "explanation": "255.255.255.240 is /28, block size 16. 77 sits in the 64-79 subnet, so the gateway .64 is inside the subnet but is its network address, which no router can use. A real gateway would be one of .65-.78."
+      }
+    ]
   },
   {
     "id": "q.d1.binary.001",
@@ -130,7 +187,14 @@
     ],
     "answer": 1,
     "explanation": "128 + 64 + 32 = 224. It's the /27 mask octet.",
-    "lesson_ref": "d1.binary_basics"
+    "lesson_ref": "d1.binary_basics",
+    "variants": [
+      {
+        "stem": "What is 1111 0000 in decimal?",
+        "answer": 2,
+        "explanation": "128 + 64 + 32 + 16 = 240. Four 1 bits in the last octet make it the /28 mask octet; don't stop at 224, which is only three bits."
+      }
+    ]
   },
   {
     "id": "q.d1.binary.002",
@@ -144,7 +208,17 @@
       "1111 1000"
     ],
     "explanation": "248 = 128 + 64 + 32 + 16 + 8, so the first five bits are 1: 1111 1000.",
-    "lesson_ref": "d1.binary_basics"
+    "lesson_ref": "d1.binary_basics",
+    "variants": [
+      {
+        "stem": "Write 224 as an 8-bit binary number.",
+        "answer": [
+          "11100000",
+          "1110 0000"
+        ],
+        "explanation": "224 = 128 + 64 + 32, so the first three bits are 1 and the other five are 0: 1110 0000."
+      }
+    ]
   },
   {
     "id": "q.d1.binary.003",
@@ -163,7 +237,22 @@
       "/28"
     ],
     "explanation": "Count the 1 bits: 24 from the first three octets plus 1 (128), 2 (192), 3 (224) or 6 (252) in the last.",
-    "lesson_ref": "d1.binary_basics"
+    "lesson_ref": "d1.binary_basics",
+    "variants": [
+      {
+        "stem": "Match each of these subnet masks to its prefix length.",
+        "answer": {
+          "255.255.255.240": "/28",
+          "255.255.255.248": "/29",
+          "255.255.255.192": "/26",
+          "255.255.255.254": "/31"
+        },
+        "distractors": [
+          "/30"
+        ],
+        "explanation": "Count the 1 bits: 24 from the three 255 octets plus 2 (192), 4 (240), 5 (248) or 7 (254) in the last. 252 would be /30, which is why /30 is left over."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.001",
@@ -184,7 +273,18 @@
       2
     ],
     "explanation": "UDP sends datagrams without setting up a session and has an 8-byte header. Sequencing, acknowledgements, windowing and the three-way handshake are TCP features.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "Which THREE statements describe TCP? (Choose three.)",
+        "answer": [
+          1,
+          3,
+          4
+        ],
+        "explanation": "TCP is connection-oriented: it opens sessions with a three-way handshake, numbers bytes so segments can be reordered, and uses windowing for flow control. Being connectionless with low overhead describes UDP."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.002",
@@ -200,7 +300,19 @@
       "Data is exchanged"
     ],
     "explanation": "TCP's three-way handshake is SYN, SYN-ACK, ACK. Only then does data flow.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "Put the steps of a graceful TCP close in order, starting with the host that finishes first.",
+        "answer": [
+          "Host A sends FIN",
+          "Host B acknowledges with ACK",
+          "Host B sends its own FIN",
+          "Host A acknowledges with ACK"
+        ],
+        "explanation": "A graceful close is a four-way exchange: FIN, ACK, FIN, ACK, because each side closes its own direction. RST would abort the connection at once instead."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.001",
@@ -217,7 +329,14 @@
     ],
     "answer": 0,
     "explanation": "Switches learn the source MAC address of each incoming frame and map it to the ingress port and VLAN. Destination addresses are only looked up, never learned.",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "What does a switch look up in its MAC address table to decide where to forward a frame?",
+        "answer": 1,
+        "explanation": "The switch learns from source MACs but forwards by looking up the destination MAC in the table for the frame's VLAN. A hit sends the frame out one port; a miss floods it."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.002",
@@ -234,7 +353,14 @@
     ],
     "answer": 2,
     "explanation": "An unknown unicast is flooded out every port in the same VLAN except the one it arrived on. When the destination replies, the switch learns where it is.",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "A switch receives a unicast frame whose destination MAC address is in its table on the same port the frame arrived on. What does it do?",
+        "answer": 0,
+        "explanation": "This is filtering: the destination is on the ingress port (for example, behind a hub) and has already received the frame, so the switch drops it."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.003",
@@ -252,7 +378,14 @@
     ],
     "answer": 3,
     "explanation": "The only entry for 0050.7966.1a01 is in VLAN 10. MAC tables are per VLAN, so the lookup in VLAN 20 misses and the frame is flooded within VLAN 20.",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "SW1 receives a frame on Fa0/3 (VLAN 20) with destination 000c.2944.3c03. Based on the exhibit, what does SW1 do with it?",
+        "answer": 1,
+        "explanation": "000c.2944.3c03 is in the table for VLAN 20 on Gi0/1, so this is a known unicast: the frame goes out Gi0/1 only, with no flooding."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.004",
@@ -271,7 +404,22 @@
       "Destination not in the table for the VLAN": "Flood in the VLAN (unknown unicast)"
     },
     "explanation": "Known unicast goes out one port; broadcasts and unknown unicasts flood within the VLAN; a destination on the ingress port is filtered.",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "Match each switch action to the situation that causes it.",
+        "answer": {
+          "Forward out one port": "Destination learned on another port in the VLAN",
+          "Filter (drop)": "Destination learned on the ingress port",
+          "Flood in the VLAN (unknown unicast)": "Destination not in the table for the VLAN",
+          "Flood in the VLAN (broadcast)": "Destination is ffff.ffff.ffff"
+        },
+        "distractors": [
+          "Destination is the default gateway's IP address"
+        ],
+        "explanation": "A switch works on MAC addresses, not IP addresses. A known destination on another port is forwarded, one on the ingress port is filtered, and unknown or broadcast destinations flood within the VLAN."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.005",
@@ -291,7 +439,17 @@
       3
     ],
     "explanation": "Dynamic entries age out (300 s by default) and an address seen on a new port replaces the old entry. Entries are kept per VLAN, and the table isn't routed or shared with other switches.",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "Which two statements about a switch's MAC address table are NOT true? (Choose two.)",
+        "answer": [
+          0,
+          2
+        ],
+        "explanation": "The table is local to each switch and isn't shared over CDP, and entries are kept per VLAN, so a MAC in VLAN 10 doesn't help a VLAN 20 lookup. Aging after 300 s and moving to a new port are both true."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.006",
@@ -306,7 +464,17 @@
       "another switch"
     ],
     "explanation": "Many MAC addresses learned on one port means many hosts are reachable through it, typically another switch (often over a trunk).",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "Which kind of MAC address table entry never ages out? (one word)",
+        "answer": [
+          "static",
+          "static entry"
+        ],
+        "explanation": "Dynamic entries are removed after 300 seconds of silence by default; static entries are configured and never age out."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.001",
@@ -325,7 +493,22 @@
       "Wireless LAN controller": "Centrally manages lightweight access points"
     },
     "explanation": "Routers join networks, switches build the LAN, firewalls enforce security policy between zones, and a WLC runs the APs.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "Match each of these network devices to its main job.",
+        "answer": {
+          "Hub": "Repeats bits out every port",
+          "Access point": "Bridges wireless clients onto the wired network",
+          "IPS": "Sits inline and blocks traffic matching attack signatures",
+          "Server": "Provides services such as DNS and DHCP"
+        },
+        "distractors": [
+          "Forwards packets between IP networks"
+        ],
+        "explanation": "A hub works at layer 1, an AP joins wireless clients to the LAN, an IPS blocks attacks inline, and servers provide services to endpoints. Forwarding between IP networks is a router's job."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.002",
@@ -342,7 +525,14 @@
     ],
     "answer": 1,
     "explanation": "A stateful firewall tracks sessions in a state table and automatically allows the matching return traffic, while blocking unsolicited inbound traffic.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "What does a stateful firewall do with unsolicited inbound traffic that matches no session in its state table?",
+        "answer": 0,
+        "explanation": "Only return traffic for sessions started from inside is allowed automatically. Unsolicited inbound traffic is blocked unless a rule explicitly permits it."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.003",
@@ -359,7 +549,20 @@
     ],
     "answer": 2,
     "explanation": "An IPS is inline, so it can drop malicious traffic. An IDS gets a copy of the traffic (for example from a SPAN port) and can only alert.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "Which device only watches a copy of the traffic and raises alerts, without blocking anything?",
+        "choices": [
+          "An IPS placed inline",
+          "An IDS fed by a SPAN port",
+          "A layer 2 switch",
+          "A wireless LAN controller"
+        ],
+        "answer": 1,
+        "explanation": "An IDS receives a copy of the traffic, usually from a SPAN port, so it can only alert. An IPS sits inline and can drop matching traffic itself."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.004",
@@ -374,7 +577,18 @@
       "30W"
     ],
     "explanation": "802.3af PoE gives 15.4 W, 802.3at PoE+ 30 W, and 802.3bt up to 60 or 90-100 W.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "What is the maximum power per port of 802.3af (standard PoE), in watts?",
+        "answer": [
+          "15.4",
+          "15.4 W",
+          "15.4W"
+        ],
+        "explanation": "802.3af PoE gives 15.4 W per port. PoE+ (802.3at) doubles that to 30 W, and 802.3bt goes to 60 or 90-100 W."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.005",
@@ -391,7 +605,14 @@
     ],
     "answer": 3,
     "explanation": "A multilayer (layer 3) switch routes between VLANs in hardware using SVIs.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "Which device repeats bits out every port and puts all its ports in one collision domain?",
+        "answer": 0,
+        "explanation": "A hub is a layer 1 device: it repeats every bit out every port, so all attached devices share one collision domain. Switches give each port its own."
+      }
+    ]
   },
   {
     "id": "q.d1.topo.001",
@@ -408,7 +629,20 @@
     ],
     "answer": 0,
     "explanation": "Every leaf connects to every spine. Leaves don't connect to leaves and spines don't connect to spines, so every server-to-server path is leaf-spine-leaf.",
-    "lesson_ref": "d1.topologies"
+    "lesson_ref": "d1.topologies",
+    "variants": [
+      {
+        "stem": "A spine-leaf data centre needs more server ports. What do you add?",
+        "choices": [
+          "More spine switches",
+          "More leaf switches",
+          "A link between every pair of leaves",
+          "A core layer above the spines"
+        ],
+        "answer": 1,
+        "explanation": "Servers connect to leaves, so you add leaves for ports (and spines for bandwidth). Leaves never connect to each other, and there is no core above the spines."
+      }
+    ]
   },
   {
     "id": "q.d1.topo.002",
@@ -426,7 +660,21 @@
       "Core": "Fast, resilient backbone between distribution blocks"
     },
     "explanation": "Three-tier: access for endpoints, distribution for aggregation and policy, core for high-speed transport.",
-    "lesson_ref": "d1.topologies"
+    "lesson_ref": "d1.topologies",
+    "variants": [
+      {
+        "stem": "Match each campus role to its layer.",
+        "answer": {
+          "Connects end devices, with PoE and port security": "Access",
+          "Aggregates access switches and routes between VLANs": "Distribution",
+          "Fast, resilient backbone between distribution blocks": "Core"
+        },
+        "distractors": [
+          "WAN edge"
+        ],
+        "explanation": "Three-tier: access for endpoints, distribution for aggregation and policy, core for high-speed transport. The WAN edge isn't one of the three campus layers."
+      }
+    ]
   },
   {
     "id": "q.d1.topo.003",
@@ -443,7 +691,14 @@
     ],
     "answer": 2,
     "explanation": "A two-tier design with a collapsed core.",
-    "lesson_ref": "d1.topologies"
+    "lesson_ref": "d1.topologies",
+    "variants": [
+      {
+        "stem": "A WAN design connects every branch only to one central site. What is this design called?",
+        "answer": 1,
+        "explanation": "In hub-and-spoke the branches (spokes) link only to the central hub, so branch-to-branch traffic passes through it. A collapsed core is a campus design, not a WAN one."
+      }
+    ]
   },
   {
     "id": "q.d1.topo.004",
@@ -458,7 +713,21 @@
       "SaaS": "A finished application such as webmail"
     },
     "explanation": "Infrastructure, platform and software as a service: the higher the layer, the less you manage yourself.",
-    "lesson_ref": "d1.topologies"
+    "lesson_ref": "d1.topologies",
+    "variants": [
+      {
+        "stem": "Match each way of running services to what it means for you.",
+        "answer": {
+          "IaaS": "You manage the operating systems on rented VMs",
+          "SaaS": "You just log in and use a finished application",
+          "On-premises": "You own and run the equipment in your own building"
+        },
+        "distractors": [
+          "The provider runs your code on its platform"
+        ],
+        "explanation": "With IaaS you rent infrastructure and manage the VMs, with SaaS you only use the application, and on-premises you run everything yourself. Running your code on the provider's platform is PaaS."
+      }
+    ]
   },
   {
     "id": "q.d1.topo.005",
@@ -475,7 +744,14 @@
     ],
     "answer": 1,
     "explanation": "SOHO networks usually rely on one integrated device.",
-    "lesson_ref": "d1.topologies"
+    "lesson_ref": "d1.topologies",
+    "variants": [
+      {
+        "stem": "Which device centrally manages the lightweight access points in a large campus?",
+        "answer": 2,
+        "explanation": "A wireless LAN controller handles configuration, security, roaming and RF tuning for lightweight APs. A SOHO all-in-one router only runs its own built-in AP."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.001",
@@ -492,7 +768,14 @@
     ],
     "answer": 1,
     "explanation": "Twisted-pair Ethernet (10BASE-T to 10GBASE-T) is limited to 100 m.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "What is the approximate maximum length of a 1000BASE-SX link on multimode fiber?",
+        "answer": 3,
+        "explanation": "1000BASE-SX uses short-wavelength lasers on multimode fiber and reaches about 550 m. 100 m is the copper twisted-pair limit."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.002",
@@ -512,7 +795,23 @@
       3
     ],
     "explanation": "Single-mode fiber has a narrow core and uses lasers, so it reaches kilometres. It is more expensive than multimode and immune to electrical interference like all fiber.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "Which two statements about UTP copper cabling are true? (Choose two.)",
+        "choices": [
+          "It uses a narrow core and a laser light source",
+          "It is limited to 100 m",
+          "It cancels interference by twisting its wire pairs",
+          "It is used for distances of several kilometres"
+        ],
+        "answer": [
+          1,
+          2
+        ],
+        "explanation": "Twisted-pair copper with RJ-45 reaches 100 m, and twisting the pairs cancels interference. Narrow cores, lasers and kilometre runs describe single-mode fiber."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.003",
@@ -530,7 +829,15 @@
     ],
     "answer": 0,
     "explanation": "Late collisions only occur on a half-duplex port whose partner is sending in full duplex: a duplex mismatch.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, why is Fa0/5 not passing any traffic?",
+        "exhibit": "FastEthernet0/5 is administratively down, line protocol is down (disabled)\n  Auto-duplex, Auto-speed, media type is 10/100BaseTX\n     0 runts, 0 giants\n     0 input errors, 0 CRC\n     0 output errors, 0 collisions, 1 interface resets\n     0 late collision, 0 deferred",
+        "answer": 2,
+        "explanation": "'administratively down' means the port was shut down with the shutdown command; 'no shutdown' brings it back. The error counters are all zero, so there is no duplex or cable symptom."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.004",
@@ -546,7 +853,19 @@
       "up, line protocol is up": "Working at layers 1 and 2"
     },
     "explanation": "Read the status pair and the reason in brackets.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "Match each cause to the interface status line it produces.",
+        "answer": {
+          "The shutdown command": "administratively down, line protocol is down",
+          "No cable or the far end is off": "down, line protocol is down (notconnect)",
+          "Port security or BPDU Guard shut it": "down, line protocol is down (err-disabled)",
+          "Working at layers 1 and 2": "up, line protocol is up"
+        },
+        "explanation": "Shutdown shows as 'administratively down', a missing link as (notconnect), a feature shutting the port as (err-disabled), and a healthy port as up/up."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.005",
@@ -561,7 +880,18 @@
       "a runt"
     ],
     "explanation": "Runts are under 64 bytes (often collision fragments); giants are over 1518 bytes.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "What do you call a received Ethernet frame that is larger than 1518 bytes?",
+        "answer": [
+          "giant",
+          "giants",
+          "a giant"
+        ],
+        "explanation": "Giants are over 1518 bytes; runts are the opposite, under 64 bytes."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.006",
@@ -578,7 +908,14 @@
     ],
     "answer": 2,
     "explanation": "Console access uses a rollover (console) cable.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "Which copper cable joins two switches whose ports don't support Auto-MDIX?",
+        "answer": 1,
+        "explanation": "Two switches both transmit on pins 3,6, so a like-to-like link needs a crossover cable. Straight-through is for unlike devices, and rollover is for console ports."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.003",
@@ -598,7 +935,23 @@
       "SNMP": "UDP 161"
     },
     "explanation": "SSH 22 and HTTPS 443 use TCP; DNS queries (53), TFTP (69) and SNMP (161) use UDP.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "Match each of these protocols to its default transport and port.",
+        "answer": {
+          "Telnet": "TCP 23",
+          "HTTP": "TCP 80",
+          "DHCP server": "UDP 67",
+          "NTP": "UDP 123",
+          "Syslog": "UDP 514"
+        },
+        "distractors": [
+          "TCP 22"
+        ],
+        "explanation": "Telnet 23 and HTTP 80 use TCP; the DHCP server listens on UDP 67, NTP on UDP 123 and Syslog on UDP 514. TCP 22 is SSH, the secure replacement for Telnet."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.004",
@@ -615,7 +968,14 @@
     ],
     "answer": 3,
     "explanation": "The window size advertised by the receiver provides flow control.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "Which TCP mechanism sets up a session before any data is sent?",
+        "answer": 1,
+        "explanation": "The three-way handshake (SYN, SYN-ACK, ACK) opens the session. Windowing then controls the flow, and sequence numbers order the data."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.005",
@@ -632,7 +992,20 @@
     ],
     "answer": 0,
     "explanation": "Retransmitting late voice samples is useless and adds delay; UDP's low overhead and lack of retransmission suit real-time traffic.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "Why does a file transfer protocol such as FTP use TCP rather than UDP?",
+        "choices": [
+          "Speed matters more than accuracy when copying files",
+          "TCP retransmits lost segments, so the file arrives complete",
+          "UDP can't carry more than one packet per session",
+          "TCP has a smaller header, so files move faster"
+        ],
+        "answer": 1,
+        "explanation": "A file with missing pieces is useless, so FTP needs TCP's acknowledgements, retransmission and reordering. TCP's header (20+ bytes) is actually larger than UDP's 8 bytes."
+      }
+    ]
   },
   {
     "id": "q.d1.private.001",
@@ -653,7 +1026,17 @@
       3
     ],
     "explanation": "10.0.0.0/8, 172.16.0.0/12 (172.16-31) and 192.168.0.0/16 are private. 172.32.1.1 and 192.169.1.1 are public, and 169.254.x.x is link-local.",
-    "lesson_ref": "d1.private_ipv4"
+    "lesson_ref": "d1.private_ipv4",
+    "variants": [
+      {
+        "stem": "Which two addresses are public addresses that can be routed on the internet? (Choose two.)",
+        "answer": [
+          0,
+          4
+        ],
+        "explanation": "172.32.1.1 is just past 172.16.0.0/12 (172.16-31) and 192.169.1.1 is just past 192.168.0.0/16, so both are public. 172.20.5.5 and 10.200.1.1 are RFC 1918, and 169.254.x.x is link-local, which isn't routed either."
+      }
+    ]
   },
   {
     "id": "q.d1.private.002",
@@ -670,7 +1053,14 @@
     ],
     "answer": 2,
     "explanation": "169.254.0.0/16 is APIPA (link-local): the host assigned itself an address because it got no DHCP reply.",
-    "lesson_ref": "d1.private_ipv4"
+    "lesson_ref": "d1.private_ipv4",
+    "variants": [
+      {
+        "stem": "A PC's settings show a manually configured address of 10.20.1.5 with DHCP turned off. What does this tell you?",
+        "answer": 1,
+        "explanation": "10.20.1.5 is inside 10.0.0.0/8, an RFC 1918 private range, and it was typed in rather than leased, so it is a static private address. It isn't public, and loopback is 127.x.x.x."
+      }
+    ]
   },
   {
     "id": "q.d1.private.003",
@@ -681,7 +1071,14 @@
     "stem": "What is the last address of the private range 172.16.0.0/12?",
     "answer": "172.31.255.255",
     "explanation": "A /12 covers 172.16.0.0 to 172.31.255.255.",
-    "lesson_ref": "d1.private_ipv4"
+    "lesson_ref": "d1.private_ipv4",
+    "variants": [
+      {
+        "stem": "What is the last address of the private range 10.0.0.0/8?",
+        "answer": "10.255.255.255",
+        "explanation": "A /8 fixes only the first octet, so the range runs from 10.0.0.0 to 10.255.255.255."
+      }
+    ]
   },
   {
     "id": "q.d1.private.004",
@@ -698,7 +1095,20 @@
     ],
     "answer": 1,
     "explanation": "Private addresses aren't routed on the internet, so the edge router (or firewall) translates them to a public address with NAT/PAT.",
-    "lesson_ref": "d1.private_ipv4"
+    "lesson_ref": "d1.private_ipv4",
+    "variants": [
+      {
+        "stem": "A host sends a DHCP request and gets no reply. Which address does it most likely give itself?",
+        "choices": [
+          "A public address from its ISP",
+          "A translated address from the NAT router",
+          "An IPv6 address from the router",
+          "A 169.254.x.x link-local address"
+        ],
+        "answer": 3,
+        "explanation": "When DHCP fails, the host assigns itself an APIPA (link-local) address from 169.254.0.0/16. Seeing 169.254 in ipconfig means: look at DHCP first."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.001",
@@ -715,7 +1125,20 @@
     ],
     "answer": 2,
     "explanation": "Drop leading zeros (db8, a00, 1) and replace the run of four zero groups with ::.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Which is the correct shortest form of 2001:0db8:0000:0000:0000:0a00:0000:0001?",
+        "choices": [
+          "2001:db8::a00:0:1",
+          "2001:db8::a00::1",
+          "2001:db8:0:0:0:a00::1",
+          "2001:db8::a00:1"
+        ],
+        "answer": 0,
+        "explanation": "Drop leading zeros (db8, a00, 0, 1) and replace the longest zero run, the three groups after db8, with ::. The single zero group before the last 1 stays as 0, because :: can be used only once."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.002",
@@ -734,7 +1157,22 @@
       "ff02::2": "Multicast (all routers)"
     },
     "explanation": "2000::/3 global unicast, FE80::/10 link-local, FC00::/7 unique local, FF00::/8 multicast.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Match each of these IPv6 addresses to its type.",
+        "answer": {
+          "3001:abcd::10": "Global unicast",
+          "fe80::1": "Link-local",
+          "fd00:ab::5": "Unique local",
+          "ff02::1": "Multicast (all nodes)"
+        },
+        "distractors": [
+          "Broadcast"
+        ],
+        "explanation": "2000::/3 covers addresses starting with 2 or 3, so 3001 is global unicast. FE80::/10 is link-local, FD is unique local and ff02::1 is all nodes. IPv6 has no broadcast."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.003",
@@ -751,7 +1189,20 @@
     ],
     "answer": 3,
     "explanation": "Routers advertise themselves and appear as next hops using link-local addresses; link-local is valid only on the link.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Where is an IPv6 link-local address valid?",
+        "choices": [
+          "Across the whole internet",
+          "Anywhere inside the organisation",
+          "Only on the link where it was created",
+          "Only after a DHCPv6 server assigns it"
+        ],
+        "answer": 2,
+        "explanation": "Link-local addresses (FE80::/10) are created by every interface on its own and are never routed, so they only work on that one link. Site-wide private addressing is unique local (FD)."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.004",
@@ -765,7 +1216,17 @@
       "021a:2bff:fe3c:4d5e"
     ],
     "explanation": "Split into 001A2B | 3C4D5E, insert FFFE, then flip bit 7 of 00 to 02: 021A:2BFF:FE3C:4D5E.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "With modified EUI-64, what interface ID is built from MAC address 0E:11:22:33:44:55?",
+        "answer": [
+          "c11:22ff:fe33:4455",
+          "0c11:22ff:fe33:4455"
+        ],
+        "explanation": "Split into 0E1122 | 334455, insert FFFE, then flip bit 7 of the first byte: 0E becomes 0C (the bit is worth 2). Result: 0C11:22FF:FE33:4455."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.005",
@@ -782,7 +1243,20 @@
     ],
     "answer": 0,
     "explanation": "IPv6 routing is off by default; 'ipv6 unicast-routing' enables it globally.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Which interface command gives a router interface an address built from the 2001:db8:acad:2::/64 prefix and the interface's MAC address?",
+        "choices": [
+          "ipv6 unicast-routing",
+          "ipv6 address 2001:db8:acad:2::/64 eui-64",
+          "ipv6 address 2001:db8:acad:2::1/64",
+          "ipv6 address autoconfig"
+        ],
+        "answer": 1,
+        "explanation": "The eui-64 keyword tells the router to build the 64-bit interface ID from its MAC address. Giving ::1/64 sets a manual address, and 'ipv6 unicast-routing' is a global command that turns on routing."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.006",
@@ -799,7 +1273,14 @@
     ],
     "answer": 1,
     "explanation": "Anycast is a unicast address assigned to several devices; routing delivers packets to the nearest one.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Which description fits the IPv6 address ff02::1?",
+        "answer": 0,
+        "explanation": "ff02::1 is the all-nodes multicast group: one packet reaches every IPv6 host on the local link. It takes the place of IPv4 broadcast, which IPv6 doesn't have."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.007",
@@ -813,7 +1294,14 @@
       "65,536"
     ],
     "explanation": "64 - 48 = 16 subnet bits, so 2^16 = 65,536 subnets.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "A site receives 2001:db8:acad::/56 and uses /64 subnets. How many subnets can it create?",
+        "answer": "256",
+        "explanation": "64 - 56 = 8 subnet bits, so 2^8 = 256 subnets. A /48 would give 16 bits and 65,536 subnets."
+      }
+    ]
   },
   {
     "id": "q.d1.client.001",
@@ -830,7 +1318,20 @@
     ],
     "answer": 2,
     "explanation": "ipconfig on its own shows only the address, mask and gateway; /all adds MAC, DHCP and DNS details.",
-    "lesson_ref": "d1.client_ip"
+    "lesson_ref": "d1.client_ip",
+    "variants": [
+      {
+        "stem": "Which Windows command clears the PC's DNS cache?",
+        "choices": [
+          "ipconfig /flushdns",
+          "ipconfig /displaydns",
+          "ipconfig /all",
+          "ping -a -n 1"
+        ],
+        "answer": 0,
+        "explanation": "ipconfig /flushdns empties the local DNS cache so names are looked up again. ipconfig /all only displays settings."
+      }
+    ]
   },
   {
     "id": "q.d1.client.002",
@@ -848,7 +1349,21 @@
       "Show the DNS servers": "cat /etc/resolv.conf"
     },
     "explanation": "Modern Linux uses the ip command; DNS servers are listed in /etc/resolv.conf (or by resolvectl).",
-    "lesson_ref": "d1.client_ip"
+    "lesson_ref": "d1.client_ip",
+    "variants": [
+      {
+        "stem": "Match each task on a Windows PC to the command.",
+        "answer": {
+          "Show the MAC address and DNS servers": "ipconfig /all",
+          "Give up the DHCP lease": "ipconfig /release",
+          "Clear the DNS cache": "ipconfig /flushdns"
+        },
+        "distractors": [
+          "ip route"
+        ],
+        "explanation": "ipconfig /all adds the MAC, DHCP and DNS details, /release gives up the lease, and /flushdns clears cached names. 'ip route' is a Linux command."
+      }
+    ]
   },
   {
     "id": "q.d1.client.003",
@@ -866,7 +1381,15 @@
     ],
     "answer": 1,
     "explanation": "The host has a route for its own subnet but no default route, so it has no gateway for other networks.",
-    "lesson_ref": "d1.client_ip"
+    "lesson_ref": "d1.client_ip",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, why can't the Linux host reach the internet?",
+        "exhibit": "$ ip address show eth0\n    inet 10.1.1.255/24 brd 10.1.1.255 scope global eth0\n$ ip route\ndefault via 10.1.1.1 dev eth0\n10.1.1.0/24 dev eth0 proto kernel scope link src 10.1.1.255",
+        "answer": 0,
+        "explanation": "The host has a default route, but its own address 10.1.1.255 is the broadcast address of 10.1.1.0/24 (the brd value), so it can't be used as a host address."
+      }
+    ]
   },
   {
     "id": "q.d1.wifi.001",
@@ -883,7 +1406,20 @@
     ],
     "answer": 1,
     "explanation": "Only 1, 6 and 11 are clear of each other in the 2.4 GHz band.",
-    "lesson_ref": "d1.wireless"
+    "lesson_ref": "d1.wireless",
+    "variants": [
+      {
+        "stem": "Which 2.4 GHz channel overlaps both channel 1 and channel 6?",
+        "choices": [
+          "Channel 11",
+          "Channel 12",
+          "Channel 3",
+          "Channel 13"
+        ],
+        "answer": 2,
+        "explanation": "Channels are 5 MHz apart but about 22 MHz wide. Channel 3 sits between 1 and 6, so it overlaps both. Channels 11, 12 and 13 are far enough above 6 to clear it and channel 1."
+      }
+    ]
   },
   {
     "id": "q.d1.wifi.002",
@@ -899,7 +1435,22 @@
       "IBSS": "Clients connected directly with no AP"
     },
     "explanation": "SSID is the name, BSSID identifies an AP radio, ESS extends a WLAN over many APs, IBSS is ad hoc.",
-    "lesson_ref": "d1.wireless"
+    "lesson_ref": "d1.wireless",
+    "variants": [
+      {
+        "stem": "Match each of these wireless terms to its meaning.",
+        "answer": {
+          "BSS": "One AP and its clients",
+          "SSID": "The network name clients join",
+          "Beacon": "Frame an AP sends to advertise its SSID",
+          "Probe request": "Frame a client sends to ask for networks"
+        },
+        "distractors": [
+          "The MAC address of an AP radio"
+        ],
+        "explanation": "A BSS is one AP with its clients, the SSID is the WLAN name, APs advertise it in beacons, and clients can ask with probe requests. The AP radio's MAC is the BSSID."
+      }
+    ]
   },
   {
     "id": "q.d1.wifi.003",
@@ -919,7 +1470,23 @@
       2
     ],
     "explanation": "5 GHz offers many more non-overlapping channels but a shorter range for the same power.",
-    "lesson_ref": "d1.wireless"
+    "lesson_ref": "d1.wireless",
+    "variants": [
+      {
+        "stem": "Which two statements compare 2.4 GHz with 5 GHz correctly? (Choose two.)",
+        "choices": [
+          "2.4 GHz has more non-overlapping channels",
+          "2.4 GHz passes through walls better",
+          "2.4 GHz covers a smaller area per AP",
+          "2.4 GHz suffers more from microwave ovens"
+        ],
+        "answer": [
+          1,
+          3
+        ],
+        "explanation": "2.4 GHz reaches further and passes through walls better, but it is crowded: microwave ovens and Bluetooth share it, and it has only three non-overlapping channels."
+      }
+    ]
   },
   {
     "id": "q.d1.wifi.004",
@@ -936,7 +1503,20 @@
     ],
     "answer": 3,
     "explanation": "A radio can't listen for a collision while it's transmitting, so 802.11 avoids collisions (with backoff and acknowledgements) instead of detecting them.",
-    "lesson_ref": "d1.wireless"
+    "lesson_ref": "d1.wireless",
+    "variants": [
+      {
+        "stem": "Why can only one device on a Wi-Fi channel transmit at a time?",
+        "choices": [
+          "The channel is a shared medium, like a hub",
+          "CSMA/CD shuts the other radios down",
+          "Each AP allows only one client to associate",
+          "WPA2 encryption needs the whole channel"
+        ],
+        "answer": 0,
+        "explanation": "Everyone on a channel shares the same air, so wireless is half duplex like an old hub. 802.11 uses CSMA/CA to take turns, not CSMA/CD."
+      }
+    ]
   },
   {
     "id": "q.d1.virt.001",
@@ -953,7 +1533,14 @@
     ],
     "answer": 0,
     "explanation": "Type 1 (bare-metal) hypervisors run directly on the hardware; type 2 hypervisors run on top of a host OS.",
-    "lesson_ref": "d1.virtualization"
+    "lesson_ref": "d1.virtualization",
+    "variants": [
+      {
+        "stem": "What is a type 2 hypervisor?",
+        "answer": 1,
+        "explanation": "A type 2 (hosted) hypervisor such as VirtualBox runs as an application on a normal OS, as on a laptop. Type 1 (bare-metal) runs directly on the hardware."
+      }
+    ]
   },
   {
     "id": "q.d1.virt.002",
@@ -973,7 +1560,23 @@
       2
     ],
     "explanation": "Containers share the host kernel, so they're lighter and start faster. VMs each run a full guest OS.",
-    "lesson_ref": "d1.virtualization"
+    "lesson_ref": "d1.virtualization",
+    "variants": [
+      {
+        "stem": "Which two statements about virtual machines compared with containers are true? (Choose two.)",
+        "choices": [
+          "Each VM runs its own full operating system",
+          "VMs share the host's OS kernel",
+          "VMs start faster and use fewer resources",
+          "VMs run on top of a hypervisor"
+        ],
+        "answer": [
+          0,
+          3
+        ],
+        "explanation": "Each VM runs a complete guest OS on a hypervisor. Sharing the host kernel, starting in seconds and using fewer resources are container traits."
+      }
+    ]
   },
   {
     "id": "q.d1.virt.003",
@@ -990,7 +1593,20 @@
     ],
     "answer": 3,
     "explanation": "VRFs give separate routing tables, so traffic stays separated and address ranges can even overlap.",
-    "lesson_ref": "d1.virtualization"
+    "lesson_ref": "d1.virtualization",
+    "variants": [
+      {
+        "stem": "Two interfaces on one router are placed in different VRFs. What happens by default?",
+        "choices": [
+          "They can't reach each other, because each VRF has its own routing table",
+          "Traffic between them is load balanced over both links",
+          "Traffic between them is encrypted automatically",
+          "They share one routing table, so they must use different subnets"
+        ],
+        "answer": 0,
+        "explanation": "Each VRF is a separate routing table, so interfaces in different VRFs are isolated by default and may even use overlapping address ranges."
+      }
+    ]
   },
   {
     "id": "q.d1.virt.004",
@@ -1005,7 +1621,17 @@
       "the hypervisor"
     ],
     "explanation": "The hypervisor (VMware ESXi, Hyper-V, KVM) creates and runs VMs, giving each a share of the physical CPU, memory, storage and network.",
-    "lesson_ref": "d1.virtualization"
+    "lesson_ref": "d1.virtualization",
+    "variants": [
+      {
+        "stem": "Which platform orchestrates large numbers of containers across many hosts? (one word)",
+        "answer": [
+          "kubernetes",
+          "k8s"
+        ],
+        "explanation": "Docker builds and runs individual containers; Kubernetes orchestrates many of them, deciding where they run and keeping them running."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.006",
@@ -1043,7 +1669,19 @@
       "last": "10.44.191.254"
     },
     "explanation": "/18 is 255.255.192.0, so the interesting octet is the third with block size 64: 0, 64, 128, 192. 130 falls in the 128-191 block.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "Host 10.44.70.77 is configured with a /18 prefix. Fill in its subnet.",
+        "answer": {
+          "network": "10.44.64.0",
+          "broadcast": "10.44.127.255",
+          "first": "10.44.64.1",
+          "last": "10.44.127.254"
+        },
+        "explanation": "/18 is 255.255.192.0, so the interesting octet is the third with block size 64: 0, 64, 128, 192. 70 falls in the 64-127 block, so the first host is 10.44.64.1 and the last 10.44.127.254."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.007",
@@ -1060,7 +1698,14 @@
     ],
     "answer": 1,
     "explanation": "50 subnets need 6 borrowed bits (2^6 = 64; 5 bits only give 32). /16 + 6 = /22 = 255.255.252.0, leaving 10 host bits (1022 hosts).",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "You need at least 100 subnets from 172.16.0.0/16, each as large as possible. Which mask do you use?",
+        "answer": 3,
+        "explanation": "100 subnets need 7 borrowed bits (2^7 = 128; 6 bits only give 64). /16 + 7 = /23 = 255.255.254.0, leaving 9 host bits (510 hosts)."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.008",
@@ -1074,7 +1719,17 @@
       "23"
     ],
     "explanation": "500 hosts need 9 host bits: 2^9 - 2 = 510. 8 bits only give 254. 32 - 9 = /23.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "What is the longest prefix (smallest subnet) that still fits 200 hosts? (for example /20)",
+        "answer": [
+          "/24",
+          "24"
+        ],
+        "explanation": "200 hosts need 8 host bits: 2^8 - 2 = 254. 7 bits only give 126. 32 - 8 = /24."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.009",
@@ -1094,7 +1749,23 @@
       2
     ],
     "explanation": "10.1.4.0/22 covers 10.1.4.0-10.1.7.255. 10.1.6.0/24 is inside it, and 10.1.0.0/21 (10.1.0.0-10.1.7.255) contains it. 10.1.8.0/24 and 10.1.2.0/23 (2.0-3.255) are outside.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "Which two subnets overlap with 10.1.8.0/22? (Choose two.)",
+        "choices": [
+          "10.1.10.0/24",
+          "10.1.0.0/21",
+          "10.1.12.0/23",
+          "10.1.8.0/21"
+        ],
+        "answer": [
+          0,
+          3
+        ],
+        "explanation": "10.1.8.0/22 covers 10.1.8.0-10.1.11.255. 10.1.10.0/24 is inside it, and 10.1.8.0/21 (10.1.8.0-10.1.15.255) contains it. 10.1.0.0/21 ends at 10.1.7.255 and 10.1.12.0/23 starts after the range."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.008",
@@ -1111,7 +1782,14 @@
     ],
     "answer": 0,
     "explanation": "ff00::/8 is multicast (ff02::1 all nodes, ff02::2 all routers). fe80::/10 is link-local, fc00::/7 unique local and 2000::/3 global unicast.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Which prefix identifies IPv6 link-local addresses?",
+        "answer": 2,
+        "explanation": "fe80::/10 is link-local, created on every IPv6 interface and never routed. ff00::/8 is multicast, fc00::/7 unique local and 2000::/3 global unicast."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.009",
@@ -1128,7 +1806,14 @@
     ],
     "answer": 0,
     "explanation": "With SLAAC the host takes the /64 prefix from a router advertisement and adds its own interface ID (EUI-64 or random). Neighbour discovery (NDP) finds MAC addresses.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Which option lets an IPv6 host get its address from a server instead of building the address itself?",
+        "answer": 1,
+        "explanation": "DHCPv6 hands out addresses from a server. SLAAC is the other way: the host builds its own address from the router advertisement prefix plus its own interface ID."
+      }
+    ]
   },
   {
     "id": "q.d1.client.004",
@@ -1145,7 +1830,14 @@
     ],
     "answer": 0,
     "explanation": "/release gives up the lease and /renew runs DHCP again. /flushdns clears the DNS cache, and /all just displays settings.",
-    "lesson_ref": "d1.client_ip"
+    "lesson_ref": "d1.client_ip",
+    "variants": [
+      {
+        "stem": "Which Windows commands clear the DNS cache and then display the full IP settings?",
+        "answer": 1,
+        "explanation": "/flushdns empties the DNS cache and /all then lists the address, MAC, DHCP and DNS details. /release and /renew get a new DHCP lease instead."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.006",
@@ -1158,7 +1850,16 @@
       "FIN"
     ],
     "explanation": "FIN starts the four-way close (FIN, ACK, FIN, ACK). RST aborts a connection immediately; SYN opens one.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "Which TCP flag does a host set to abort a connection immediately?",
+        "answer": [
+          "RST"
+        ],
+        "explanation": "RST resets the connection at once with no graceful exchange. FIN is the polite close (FIN, ACK, FIN, ACK) and SYN opens a connection."
+      }
+    ]
   },
   {
     "id": "q.d1.wifi.005",
@@ -1175,7 +1876,14 @@
     ],
     "answer": 1,
     "explanation": "Wi-Fi 4 = 802.11n, Wi-Fi 5 = 802.11ac, Wi-Fi 6 = 802.11ax (2.4 and 5 GHz; 6E adds 6 GHz).",
-    "lesson_ref": "d1.wireless"
+    "lesson_ref": "d1.wireless",
+    "variants": [
+      {
+        "stem": "Which IEEE standard is marketed as Wi-Fi 5?",
+        "answer": 2,
+        "explanation": "The numbers count up from n: Wi-Fi 4 = 802.11n, Wi-Fi 5 = 802.11ac (5 GHz only), Wi-Fi 6 = 802.11ax."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.007",
@@ -1192,7 +1900,20 @@
     ],
     "answer": 0,
     "explanation": "The default aging time is 300 seconds (5 minutes). The ARP cache on routers is a different timer (4 hours).",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "A host moves from Fa0/1 to Fa0/7 on the same switch and sends a frame. What happens to its dynamic MAC entry?",
+        "choices": [
+          "It moves to Fa0/7 straight away",
+          "It stays on Fa0/1 until it ages out after 300 seconds",
+          "Both ports keep an entry for the MAC",
+          "The switch err-disables Fa0/7"
+        ],
+        "answer": 0,
+        "explanation": "The switch learns from every incoming source MAC, so as soon as the host sends from Fa0/7 the entry is updated to the new port. Waiting for aging only applies if the host stays silent."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.006",
@@ -1209,7 +1930,14 @@
     ],
     "answer": 1,
     "explanation": "Each switch port is its own collision domain; broadcasts still flood within the VLAN. Routers separate broadcast domains; hubs and repeaters share one collision domain.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "Which device puts each of its interfaces in a separate broadcast domain?",
+        "answer": 2,
+        "explanation": "A router doesn't forward broadcasts, so each router interface is its own broadcast domain. A switch keeps all ports in one VLAN in the same broadcast domain."
+      }
+    ]
   },
   {
     "id": "q.d1.topo.006",
@@ -1226,7 +1954,14 @@
     ],
     "answer": 0,
     "explanation": "Branches (spokes) connect only to the hub, so branch-to-branch traffic passes through it. Full mesh links every site directly, at a higher cost.",
-    "lesson_ref": "d1.topologies"
+    "lesson_ref": "d1.topologies",
+    "variants": [
+      {
+        "stem": "In a full-mesh WAN, how do two branch sites usually talk to each other?",
+        "answer": 1,
+        "explanation": "A full mesh links every site directly to every other, so branches use their own link. Going through a central site is hub-and-spoke."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.007",
@@ -1243,7 +1978,14 @@
     ],
     "answer": 2,
     "explanation": "A next-generation firewall identifies applications by inspecting traffic up to layer 7 (application visibility and control), so it doesn't rely on port numbers.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "Which device forwards frames by MAC address but has no idea which application the traffic belongs to?",
+        "answer": 1,
+        "explanation": "A layer 2 switch only reads the MAC addresses in frames. Recognising applications needs a next-generation firewall, which inspects up to layer 7."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.008",
@@ -1254,7 +1996,14 @@
     "stem": "A switch has a 370 W PoE budget. How many devices drawing the full 802.3at (PoE+) 30 W can it power at once?",
     "answer": "12",
     "explanation": "370 / 30 = 12.3, so 12 devices. The budget is shared across all ports, so a 24-port PoE+ switch can't always power every port at full power.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "A switch has a 370 W PoE budget. How many devices drawing the full 802.3af (PoE) 15.4 W can it power at once?",
+        "answer": "24",
+        "explanation": "370 / 15.4 = 24.03, so 24 devices. At PoE+ 30 W the same budget would only power 12."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.009",
@@ -1270,7 +2019,19 @@
       "Next-generation firewall": "Layer 7"
     },
     "explanation": "A hub repeats bits, a switch forwards frames by MAC address, a router forwards packets by IP address and an NGFW inspects up to the application.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "Match each layer to the device that mainly works at it.",
+        "answer": {
+          "Layer 1": "Hub",
+          "Layer 2": "Layer 2 switch",
+          "Layer 3": "Router",
+          "Layer 7": "Next-generation firewall"
+        },
+        "explanation": "Think of the highest layer a device reads: a hub repeats bits (1), a switch reads MACs in frames (2), a router reads IP addresses in packets (3) and an NGFW looks into the application (7)."
+      }
+    ]
   },
   {
     "id": "q.d1.comp.010",
@@ -1287,7 +2048,20 @@
     ],
     "answer": 2,
     "explanation": "Lightweight APs join a WLC over CAPWAP. The WLC pushes configuration, tunes channels and power, and handles roaming and authentication for the whole WLAN.",
-    "lesson_ref": "d1.components"
+    "lesson_ref": "d1.components",
+    "variants": [
+      {
+        "stem": "How do lightweight APs join a wireless LAN controller?",
+        "choices": [
+          "Over CAPWAP tunnels",
+          "Through SPAN sessions",
+          "By PoE negotiation",
+          "Over site-to-site IPsec"
+        ],
+        "answer": 0,
+        "explanation": "Lightweight APs build CAPWAP tunnels to the WLC, which then pushes their configuration and manages RF and roaming. PoE only powers the AP."
+      }
+    ]
   },
   {
     "id": "q.d1.topo.007",
@@ -1304,7 +2078,14 @@
     ],
     "answer": 0,
     "explanation": "Access switches connect users, phones and APs. Distribution aggregates access switches and applies policy between them; core is the fast backbone.",
-    "lesson_ref": "d1.topologies"
+    "lesson_ref": "d1.topologies",
+    "variants": [
+      {
+        "stem": "In a three-tier campus, which layer is the fast, highly available backbone between distribution blocks?",
+        "answer": 2,
+        "explanation": "The core moves traffic between distribution blocks as fast and reliably as possible. Access connects endpoints and distribution aggregates access switches."
+      }
+    ]
   },
   {
     "id": "q.d1.topo.008",
@@ -1321,7 +2102,20 @@
     ],
     "answer": 2,
     "explanation": "Every leaf connects to every spine and spines don't connect to each other, so any leaf-to-leaf path is leaf, spine, leaf. The predictable hop count is the point of the design.",
-    "lesson_ref": "d1.topologies"
+    "lesson_ref": "d1.topologies",
+    "variants": [
+      {
+        "stem": "In a spine-leaf fabric, how many switches does traffic between two servers on the same leaf pass through?",
+        "choices": [
+          "One: the shared leaf",
+          "Two: leaf and spine",
+          "Three: leaf, spine, leaf",
+          "It depends on the number of spines"
+        ],
+        "answer": 0,
+        "explanation": "Both servers plug into the same leaf, so that leaf switches the traffic directly. Only traffic between different leaves takes the leaf-spine-leaf path through three switches."
+      }
+    ]
   },
   {
     "id": "q.d1.topo.009",
@@ -1338,7 +2132,20 @@
     ],
     "answer": 1,
     "explanation": "Full mesh gives direct paths and no single point of failure, but the number of links grows as n(n-1)/2, which makes it expensive.",
-    "lesson_ref": "d1.topologies"
+    "lesson_ref": "d1.topologies",
+    "variants": [
+      {
+        "stem": "What is the main drawback of a full-mesh WAN compared with hub-and-spoke?",
+        "choices": [
+          "It costs more, because the links grow as n(n-1)/2",
+          "Every site gets a direct path to every other site, with no hub",
+          "Branch-to-branch traffic must always pass through one hub site",
+          "It doesn't need any routing"
+        ],
+        "answer": 0,
+        "explanation": "Linking every site to every other site needs n(n-1)/2 links, which gets expensive fast. Direct paths are its advantage, and passing through a hub describes hub-and-spoke."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.007",
@@ -1355,7 +2162,14 @@
     ],
     "answer": 0,
     "explanation": "Cat6a carries 10GBASE-T to 100 m. Cat6 only manages about 55 m at 10 Gbps, and Cat5e is rated for 1 Gbps.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "What is the lowest of these cable categories that supports 1000BASE-T over the full 100 m?",
+        "answer": 2,
+        "explanation": "Cat5e handles 1 Gbps to 100 m. Cat6 and Cat6a also work but are higher categories, needed for 10 Gbps; Cat3 is far too old."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.008",
@@ -1372,7 +2186,20 @@
     ],
     "answer": 2,
     "explanation": "SFP (and SFP+ for 10 Gbps) modules are hot-swappable transceivers, so the same port can take different fiber or copper media.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "How does an SFP+ module differ from a standard SFP module?",
+        "choices": [
+          "SFP+ runs at 10 Gbps",
+          "SFP+ can only take copper media",
+          "SFP+ can't be hot-swapped",
+          "SFP+ is used only for console access"
+        ],
+        "answer": 0,
+        "explanation": "SFP+ is the same hot-swappable pluggable transceiver idea as SFP, but at 10 Gbps. Both can take fiber or copper modules."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.009",
@@ -1390,7 +2217,21 @@
       "Coaxial cable"
     ],
     "explanation": "T means twisted-pair copper. SX uses short-wavelength lasers on multimode fiber; LX uses long-wavelength lasers, typically on single-mode fiber for longer runs.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "Match each medium to the Ethernet standard that uses it.",
+        "answer": {
+          "Copper UTP, Cat5e or better": "1000BASE-T",
+          "Multimode fiber, short reach": "1000BASE-SX",
+          "Single-mode fiber, up to about 10 km": "1000BASE-LX"
+        },
+        "distractors": [
+          "10GBASE-T"
+        ],
+        "explanation": "T is twisted-pair copper, S is short wavelength on multimode and L is long wavelength, typically on single-mode. 10GBASE-T is copper too but needs Cat6a for 100 m, not Cat5e."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.010",
@@ -1407,7 +2248,14 @@
     ],
     "answer": 0,
     "explanation": "Switch-to-switch is a like-to-like connection: both transmit on the same pairs. Without Auto-MDIX that needs a crossover cable.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "Two switches are joined with a straight-through cable, and Auto-MDIX is turned on at both ports. What happens?",
+        "answer": 2,
+        "explanation": "Auto-MDIX detects the wrong cable type and swaps the transmit and receive pairs, so the like-to-like link comes up normally without a crossover cable."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.011",
@@ -1425,7 +2273,15 @@
     ],
     "answer": 1,
     "explanation": "CRC errors with no collisions on a full-duplex link point to the physical layer: a bad cable, connector or interference. A duplex mismatch shows late collisions on the half-duplex side; giants point to MTU issues.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "Gi0/2 has stopped passing traffic. Based on the exhibit, what is the most likely cause?",
+        "exhibit": "GigabitEthernet0/2 is down, line protocol is down (err-disabled)\n  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX\n     0 runts, 0 giants, 0 throttles\n     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored\n     0 output errors, 0 collisions, 1 interface resets\n     0 late collision, 0 deferred",
+        "answer": 3,
+        "explanation": "(err-disabled) means a feature such as port security or BPDU Guard shut the port. The counters are clean, so it isn't a cable or duplex fault. Fix the cause, then shutdown / no shutdown."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.012",
@@ -1442,7 +2298,14 @@
     ],
     "answer": 0,
     "explanation": "It can sense the speed from the signal, but with no negotiation it can't learn the duplex, so it falls back to half duplex at 10 or 100 Mbps. Set both ends the same way.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "One end of a link is hard-set to 100 Mbps full duplex. To avoid a mismatch, what should the other end be hard-set to?",
+        "answer": 1,
+        "explanation": "Both ends must match. If the other end were left on auto it would sense 100 Mbps but fall back to half duplex, giving a duplex mismatch, so set it to 100 Mbps full duplex too."
+      }
+    ]
   },
   {
     "id": "q.d1.cable.013",
@@ -1459,7 +2322,14 @@
     ],
     "answer": 3,
     "explanation": "Collisions after the first 64 bytes shouldn't happen on a working half-duplex segment. They appear when the other end is full duplex and transmits whenever it likes.",
-    "lesson_ref": "d1.cabling"
+    "lesson_ref": "d1.cabling",
+    "variants": [
+      {
+        "stem": "Which counter rises when an interface receives frames larger than 1518 bytes?",
+        "answer": 0,
+        "explanation": "Giants are frames over 1518 bytes, often an MTU problem. Late collisions are the duplex-mismatch symptom, and runts are frames under 64 bytes."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.007",
@@ -1476,7 +2346,20 @@
     ],
     "answer": 0,
     "explanation": "Acknowledgements and retransmission make TCP reliable. UDP has neither; the application has to cope with loss.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "What does a UDP sender do when one of its datagrams is lost?",
+        "choices": [
+          "Retransmits the datagram after a timeout",
+          "Drops the connection and reports an error",
+          "Switches to TCP for the rest of the data",
+          "Carries on sending and ignores the loss"
+        ],
+        "answer": 3,
+        "explanation": "UDP has no acknowledgements and no retransmission, so the sender never even learns of the loss. Any recovery is up to the application."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.008",
@@ -1487,7 +2370,14 @@
     "stem": "Which well-known port number does DNS use?",
     "answer": "53",
     "explanation": "DNS uses port 53: UDP for most queries, TCP for zone transfers and large responses.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "Which well-known port number does HTTPS use?",
+        "answer": "443",
+        "explanation": "HTTPS uses TCP 443 (\"four-four-three, secure for me\"). Plain HTTP uses TCP 80."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.009",
@@ -1507,7 +2397,17 @@
       1
     ],
     "explanation": "TFTP (UDP 69) and SNMP (UDP 161/162) use UDP. FTP (TCP 20/21) and SMTP (TCP 25) need TCP's reliability.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "Which two applications normally use TCP? (Choose two.)",
+        "answer": [
+          2,
+          3
+        ],
+        "explanation": "SMTP (TCP 25) and FTP (TCP 20/21) need TCP's reliability to deliver whole messages and files. TFTP (UDP 69) and SNMP (UDP 161/162) use UDP."
+      }
+    ]
   },
   {
     "id": "q.d1.tcpudp.010",
@@ -1524,7 +2424,14 @@
     ],
     "answer": 0,
     "explanation": "Each connection is identified by source IP, source port, destination IP and destination port. The client picks a different ephemeral source port for each.",
-    "lesson_ref": "d1.tcp_udp"
+    "lesson_ref": "d1.tcp_udp",
+    "variants": [
+      {
+        "stem": "A PC connects to a server that runs both a web service and SSH. How does the server know the connection is for the web service?",
+        "answer": 1,
+        "explanation": "The destination port identifies the server application: 443 (or 80) for the web service, 22 for SSH. The client's ephemeral source port only tells its own connections apart."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.010",
@@ -1535,7 +2442,14 @@
     "stem": "What is the broadcast address of 172.31.200.10/21?",
     "answer": "172.31.207.255",
     "explanation": "/21 is 255.255.248.0: block size 8 in the third octet. 200 is in the 200-207 block, so the broadcast is 172.31.207.255.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "What is the broadcast address of 172.31.100.10/21?",
+        "answer": "172.31.103.255",
+        "explanation": "/21 is 255.255.248.0: block size 8 in the third octet. 100 is in the 96-103 block, so the broadcast is 172.31.103.255."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.011",
@@ -1552,7 +2466,14 @@
     ],
     "answer": 2,
     "explanation": "/27 (255.255.255.224) leaves 5 host bits: 2^5 - 2 = 30. /28 only gives 14.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "Which mask gives 14 usable hosts per subnet with the fewest wasted addresses?",
+        "answer": 1,
+        "explanation": "/28 (255.255.255.240) leaves 4 host bits: 2^4 - 2 = 14. /29 only gives 6, and /27 wastes 16 addresses."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.012",
@@ -1563,7 +2484,14 @@
     "stem": "How many /26 subnets fit inside one /22?",
     "answer": "16",
     "explanation": "26 - 22 = 4 extra network bits, and 2^4 = 16 subnets.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "How many /26 subnets fit inside one /24?",
+        "answer": "4",
+        "explanation": "26 - 24 = 2 extra network bits, and 2^2 = 4 subnets (.0, .64, .128, .192)."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.013",
@@ -1580,7 +2508,20 @@
     ],
     "answer": 1,
     "explanation": "100 hosts need a /25 (.0-.127). 50 need a /26 (.128-.191). 20 need a /27, which starts at the next free address: 192.168.10.192/27 (.192-.223).",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "You split 192.168.10.0/24 for LANs of 60, 50 and 20 hosts, largest first, starting at .0. What is the third subnet?",
+        "choices": [
+          "192.168.10.128/27",
+          "192.168.10.160/27",
+          "192.168.10.128/26",
+          "192.168.10.192/27"
+        ],
+        "answer": 0,
+        "explanation": "60 hosts need a /26 (.0-.63) and 50 hosts also need a /26 (.64-.127). 20 hosts need a /27, which starts at the next free address: 192.168.10.128/27 (.128-.159). A /26 there would waste 32 addresses."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.014",
@@ -1600,7 +2541,23 @@
       2
     ],
     "explanation": "10.10.16.0/20 runs from 10.10.16.0 to 10.10.31.255. 10.10.24.0 and 10.10.16.255 are inside it and aren't the network or broadcast address. 10.10.31.255 is the broadcast and 10.10.32.1 is in the next subnet.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "Which two addresses are usable host addresses in 10.10.32.0/20? (Choose two.)",
+        "choices": [
+          "10.10.32.0",
+          "10.10.47.254",
+          "10.10.40.0",
+          "10.10.48.1"
+        ],
+        "answer": [
+          1,
+          2
+        ],
+        "explanation": "10.10.32.0/20 runs from 10.10.32.0 to 10.10.47.255. 10.10.47.254 and 10.10.40.0 are inside it and aren't the network or broadcast. 10.10.32.0 is the network address and 10.10.48.1 is in the next subnet."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.015",
@@ -1632,7 +2589,18 @@
       "hosts": "6"
     },
     "explanation": "/29 has block size 8 in the last octet: 96-103 contains 99. Three host bits give 2^3 - 2 = 6 hosts.",
-    "lesson_ref": "d1.subnetting_basics"
+    "lesson_ref": "d1.subnetting_basics",
+    "variants": [
+      {
+        "stem": "Host 192.168.77.50 is configured with a /28 prefix. Fill in its subnet.",
+        "answer": {
+          "network": "192.168.77.48",
+          "broadcast": "192.168.77.63",
+          "hosts": "14"
+        },
+        "explanation": "/28 has block size 16 in the last octet: 48-63 contains 50. Four host bits give 2^4 - 2 = 14 hosts."
+      }
+    ]
   },
   {
     "id": "q.d1.binary.004",
@@ -1643,7 +2611,14 @@
     "stem": "Convert 1100 1000 to decimal.",
     "answer": "200",
     "explanation": "Add the place values of the 1 bits: 128 + 64 + 8 = 200. 1100 1000 is also the last octet of a /29 mask (255.255.255.248 is 1111 1000).",
-    "lesson_ref": "d1.binary_basics"
+    "lesson_ref": "d1.binary_basics",
+    "variants": [
+      {
+        "stem": "Convert 1111 1100 to decimal.",
+        "answer": "252",
+        "explanation": "Add the place values of the six 1 bits: 128 + 64 + 32 + 16 + 8 + 4 = 252. It's the /30 mask octet used on two-host links."
+      }
+    ]
   },
   {
     "id": "q.d1.binary.005",
@@ -1654,7 +2629,14 @@
     "stem": "What is hex AC in decimal?",
     "answer": "172",
     "explanation": "A = 10 and C = 12, so 10 x 16 + 12 = 172.",
-    "lesson_ref": "d1.binary_basics"
+    "lesson_ref": "d1.binary_basics",
+    "variants": [
+      {
+        "stem": "What is hex C8 in decimal?",
+        "answer": "200",
+        "explanation": "C = 12 and 8 = 8, so 12 x 16 + 8 = 192 + 8 = 200. In binary that is 1100 1000."
+      }
+    ]
   },
   {
     "id": "q.d1.subnet.cli.001",
@@ -1683,7 +2665,20 @@
     ],
     "answer": 1,
     "explanation": "172.16.0.0/12 covers 172.16.0.0-172.31.255.255, so 172.31.255.1 is private and 172.32.0.1 is not. 192.168.0.0/16 doesn't include 192.169.x.",
-    "lesson_ref": "d1.private_ipv4"
+    "lesson_ref": "d1.private_ipv4",
+    "variants": [
+      {
+        "stem": "Which of these addresses is in an RFC 1918 private range?",
+        "choices": [
+          "172.15.0.1",
+          "192.169.1.1",
+          "10.255.0.1",
+          "100.64.0.1"
+        ],
+        "answer": 2,
+        "explanation": "10.0.0.0/8 covers every address starting with 10, so 10.255.0.1 is private. 172.15.x is just below 172.16, 192.169.x is just past 192.168, and 100.64.0.0/10 is carrier-grade NAT space, not RFC 1918."
+      }
+    ]
   },
   {
     "id": "q.d1.private.006",
@@ -1700,7 +2695,14 @@
     ],
     "answer": 3,
     "explanation": "RFC 6598 reserves 100.64.0.0/10 for carrier-grade NAT. It isn't RFC 1918, but it isn't routed on the internet either.",
-    "lesson_ref": "d1.private_ipv4"
+    "lesson_ref": "d1.private_ipv4",
+    "variants": [
+      {
+        "stem": "What is the 169.254.0.0/16 range for?",
+        "answer": 2,
+        "explanation": "169.254.0.0/16 is link-local (APIPA): a host gives itself one of these addresses when it gets no DHCP reply. Carrier-grade NAT uses 100.64.0.0/10 instead."
+      }
+    ]
   },
   {
     "id": "q.d1.private.007",
@@ -1711,7 +2713,14 @@
     "stem": "How many /24 networks does the private range 192.168.0.0/16 contain?",
     "answer": "256",
     "explanation": "24 - 16 = 8 bits, and 2^8 = 256: 192.168.0.0/24 to 192.168.255.0/24.",
-    "lesson_ref": "d1.private_ipv4"
+    "lesson_ref": "d1.private_ipv4",
+    "variants": [
+      {
+        "stem": "How many /16 networks does the private range 172.16.0.0/12 contain?",
+        "answer": "16",
+        "explanation": "16 - 12 = 4 bits, and 2^4 = 16: 172.16.0.0/16 to 172.31.0.0/16. That is why 172.32.x.x is already public."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.010",
@@ -1728,7 +2737,20 @@
     ],
     "answer": 1,
     "explanation": "Drop leading zeros and replace one run of zero groups with ::. Here two runs of two tie, so RFC 5952 compresses the first. :: can appear only once, and leading zeros must go.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "What is the RFC 5952 (canonical) form of 2001:0db8:0000:0001:0000:0000:0000:0001?",
+        "choices": [
+          "2001:db8::1:0:0:0:1",
+          "2001:db8::1::1",
+          "2001:db8:0:1::1",
+          "2001:db8:0:1:0:0:0:1"
+        ],
+        "answer": 2,
+        "explanation": "Drop leading zeros, then put :: on the longest zero run: the three groups before the last 1. The single zero group after db8 stays as 0, and :: may appear only once."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.011",
@@ -1745,7 +2767,14 @@
     ],
     "answer": 0,
     "explanation": "A /64 leaves a 64-bit interface ID, which SLAAC and EUI-64 need. /48 and /56 are typical site allocations; /128 is a single address.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "What prefix length identifies one single IPv6 address?",
+        "answer": 3,
+        "explanation": "A /128 fixes all 128 bits, so it matches exactly one address. /64 is the normal LAN subnet, and /48 and /56 are site allocations."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.012",
@@ -1758,7 +2787,16 @@
       "ipv6 address 2001:db8:acad:1::1/64"
     ],
     "explanation": "IPv6 uses prefix-length notation in the command. 'ipv6 unicast-routing' is needed separately for the router to forward IPv6.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Write the interface command that gives an interface an EUI-64 address in the prefix 2001:db8:acad:2::/64.",
+        "answer": [
+          "ipv6 address 2001:db8:acad:2::/64 eui-64"
+        ],
+        "explanation": "Give the /64 prefix and add the eui-64 keyword; the router fills in the interface ID from its MAC address (split, insert FFFE, flip bit 7)."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.013",
@@ -1775,7 +2813,14 @@
     ],
     "answer": 0,
     "explanation": "Link-local addresses are only valid on one link. Routers use them as next hops and neighbour discovery uses them.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Which IPv6 address type comes from 2000::/3 and is public and routable on the internet?",
+        "answer": 2,
+        "explanation": "Global unicast addresses (2000::/3, starting with 2 or 3) are the IPv6 equivalent of public IPv4. Link-local fe80::/10 is created automatically and never routed."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.014",
@@ -1792,7 +2837,20 @@
     ],
     "answer": 3,
     "explanation": "Functions that used broadcast in IPv4 (ARP, for example) use multicast in IPv6, often solicited-node multicast.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "Which IPv6 address type delivers a packet to the nearest of several devices that share one address?",
+        "choices": [
+          "Anycast",
+          "Link-local unicast",
+          "Unicast to every host, sent one copy at a time",
+          "Multicast, such as ff02::1 for all nodes"
+        ],
+        "answer": 0,
+        "explanation": "Anycast is one unicast address configured on several devices, and routing delivers each packet to the nearest one. Multicast goes to every member of a group instead."
+      }
+    ]
   },
   {
     "id": "q.d1.ipv6.015",
@@ -1809,7 +2867,14 @@
     ],
     "answer": 1,
     "explanation": "Unique local addresses are IPv6's rough equivalent of RFC 1918 space. The L bit set to 1 gives fd00::/8, with a random 40-bit global ID.",
-    "lesson_ref": "d1.ipv6"
+    "lesson_ref": "d1.ipv6",
+    "variants": [
+      {
+        "stem": "What are global unicast addresses (2000::/3) for?",
+        "answer": 0,
+        "explanation": "Global unicast addresses are public and routable on the internet, like public IPv4. Private addressing inside an organisation uses unique local (fd00::/8) instead."
+      }
+    ]
   },
   {
     "id": "q.d1.client.005",
@@ -1827,7 +2892,15 @@
     ],
     "answer": 1,
     "explanation": "The gateway must be on the PC's own subnet (192.168.1.0/24) so the PC can ARP for it. 192.168.2.1 isn't, so off-subnet traffic has nowhere to go.",
-    "lesson_ref": "d1.client_ip"
+    "lesson_ref": "d1.client_ip",
+    "variants": [
+      {
+        "stem": "A Windows PC can't reach anything outside its own subnet. Based on the exhibit, why?",
+        "exhibit": "Ethernet adapter Ethernet:\n   IPv4 Address. . . . . . . . . . . : 169.254.77.3\n   Subnet Mask . . . . . . . . . . . : 255.255.0.0\n   Default Gateway . . . . . . . . . :\n   DNS Servers . . . . . . . . . . . :",
+        "answer": 3,
+        "explanation": "A 169.254.x.x address with no gateway or DNS servers is APIPA: the PC got no DHCP reply and gave itself a link-local address. Fix DHCP, then renew the lease."
+      }
+    ]
   },
   {
     "id": "q.d1.client.006",
@@ -1844,7 +2917,14 @@
     ],
     "answer": 2,
     "explanation": "'ip address show' (or the older ifconfig) lists interface addresses. ipconfig is Windows and 'show ip interface brief' is Cisco IOS.",
-    "lesson_ref": "d1.client_ip"
+    "lesson_ref": "d1.client_ip",
+    "variants": [
+      {
+        "stem": "Which command shows a Windows PC's full IP settings, including its MAC address?",
+        "answer": 1,
+        "explanation": "ipconfig /all adds the MAC address, DHCP server, lease times and DNS servers to the basic output. 'ip address show' is Linux and 'show ip interface brief' is Cisco IOS."
+      }
+    ]
   },
   {
     "id": "q.d1.client.007",
@@ -1861,7 +2941,14 @@
     ],
     "answer": 1,
     "explanation": "Reaching an internet IP proves the address, mask and gateway work. Names failing points at DNS: check the DNS server setting or try nslookup.",
-    "lesson_ref": "d1.client_ip"
+    "lesson_ref": "d1.client_ip",
+    "variants": [
+      {
+        "stem": "A PC can reach hosts on its own subnet but can't ping 8.8.8.8 or any other off-subnet address. Its address and mask match the router's. Which setting is most likely wrong?",
+        "answer": 0,
+        "explanation": "Local traffic works, so the address and mask are fine. Everything off the subnet goes through the default gateway, so a wrong or missing gateway is the likely fault. DNS can't be the cause, because pinging an IP address doesn't use names."
+      }
+    ]
   },
   {
     "id": "q.d1.wifi.006",
@@ -1878,7 +2965,20 @@
     ],
     "answer": 3,
     "explanation": "APs send beacons (about 10 per second by default) carrying the SSID and capabilities. Clients can also send probe requests to ask.",
-    "lesson_ref": "d1.wireless"
+    "lesson_ref": "d1.wireless",
+    "variants": [
+      {
+        "stem": "Which frames does a client send to ask which wireless networks are nearby?",
+        "choices": [
+          "DHCP offers",
+          "ARP replies",
+          "Probe requests",
+          "Beacon frames"
+        ],
+        "answer": 2,
+        "explanation": "A client sends probe requests to ask for networks. Beacons go the other way: the AP sends them about 10 times a second to advertise its SSID."
+      }
+    ]
   },
   {
     "id": "q.d1.wifi.007",
@@ -1895,7 +2995,14 @@
     ],
     "answer": 2,
     "explanation": "Wi-Fi 6E is 802.11ax extended into the 6 GHz band, with many more clean channels.",
-    "lesson_ref": "d1.wireless"
+    "lesson_ref": "d1.wireless",
+    "variants": [
+      {
+        "stem": "Which band do 802.11a and 802.11ac use?",
+        "answer": 3,
+        "explanation": "802.11a (54 Mbps) and 802.11ac (Wi-Fi 5) are 5 GHz only. 802.11b and g use 2.4 GHz, and 6 GHz arrived with Wi-Fi 6E."
+      }
+    ]
   },
   {
     "id": "q.d1.wifi.008",
@@ -1912,7 +3019,14 @@
     ],
     "answer": 0,
     "explanation": "Microwave ovens leak energy around 2.45 GHz. Bluetooth and many cordless devices also share the crowded 2.4 GHz band.",
-    "lesson_ref": "d1.wireless"
+    "lesson_ref": "d1.wireless",
+    "variants": [
+      {
+        "stem": "Which band offers around two dozen non-overlapping 20 MHz channels but a shorter range than 2.4 GHz?",
+        "answer": 1,
+        "explanation": "5 GHz has many more non-overlapping channels than 2.4 GHz (which has only 1, 6 and 11), at the cost of a shorter range through walls."
+      }
+    ]
   },
   {
     "id": "q.d1.wifi.009",
@@ -1929,7 +3043,20 @@
     ],
     "answer": 2,
     "explanation": "An ESS is several BSSs (APs) with the same SSID. Clients move from one AP to another as they go, and a WLC can keep their session intact.",
-    "lesson_ref": "d1.wireless"
+    "lesson_ref": "d1.wireless",
+    "variants": [
+      {
+        "stem": "What is an IBSS (ad hoc) wireless network?",
+        "choices": [
+          "A client connecting to two SSIDs at once on different bands",
+          "Wireless clients talking directly to each other with no AP",
+          "A client moving between APs with the same SSID without losing its connection",
+          "Two APs bridging their wired networks together over the air"
+        ],
+        "answer": 1,
+        "explanation": "An IBSS has no AP at all: the clients connect to each other directly. Moving between APs with the same SSID is roaming within an ESS."
+      }
+    ]
   },
   {
     "id": "q.d1.virt.005",
@@ -1946,7 +3073,20 @@
     ],
     "answer": 3,
     "explanation": "A type 2 hypervisor runs as an application on a normal OS. ESXi and Hyper-V Server run directly on the hardware (type 1).",
-    "lesson_ref": "d1.virtualization"
+    "lesson_ref": "d1.virtualization",
+    "variants": [
+      {
+        "stem": "Which is an example of a type 1 (bare-metal) hypervisor?",
+        "choices": [
+          "VMware ESXi installed directly on a server",
+          "VMware Workstation on a laptop",
+          "Oracle VirtualBox on a Windows laptop",
+          "Docker on a Linux host"
+        ],
+        "answer": 0,
+        "explanation": "ESXi runs directly on the server hardware, which makes it type 1. Workstation and VirtualBox run on top of a normal OS (type 2), and Docker runs containers, not VMs."
+      }
+    ]
   },
   {
     "id": "q.d1.virt.006",
@@ -1963,7 +3103,20 @@
     ],
     "answer": 2,
     "explanation": "The hypervisor's virtual switch connects VM vNICs to each other and to the physical NICs, and can tag VLANs like a physical switch.",
-    "lesson_ref": "d1.virtualization"
+    "lesson_ref": "d1.virtualization",
+    "variants": [
+      {
+        "stem": "In a virtualized server, what links the host's virtual switch to the real network?",
+        "choices": [
+          "The host's physical NICs, usually on trunks carrying the VMs' VLANs",
+          "A console cable running from the host to the nearest access switch",
+          "A container runtime such as Docker, bridging the VMs onto the LAN",
+          "A VRF on the hypervisor that routes the VMs' traffic to the LAN"
+        ],
+        "answer": 0,
+        "explanation": "The virtual switch connects the VMs to each other and to the physical NICs, which uplink to the real switches, usually as trunks so every VM's VLAN can pass."
+      }
+    ]
   },
   {
     "id": "q.d1.virt.007",
@@ -1980,7 +3133,20 @@
     ],
     "answer": 2,
     "explanation": "Containers isolate applications but share the host kernel, which makes them much lighter and faster to start than VMs, each of which runs a whole guest OS.",
-    "lesson_ref": "d1.virtualization"
+    "lesson_ref": "d1.virtualization",
+    "variants": [
+      {
+        "stem": "What does each virtual machine run that a container doesn't need?",
+        "choices": [
+          "A shared host kernel",
+          "Its own full guest operating system",
+          "Only the application and its libraries",
+          "A Kubernetes cluster"
+        ],
+        "answer": 1,
+        "explanation": "A VM carries a whole guest OS on the hypervisor. A container packages only the application and its libraries and shares the host's kernel, which is why it is so much smaller."
+      }
+    ]
   },
   {
     "id": "q.d1.virt.008",
@@ -1997,7 +3163,14 @@
     ],
     "answer": 2,
     "explanation": "Many VMs share one physical server, so hardware is used efficiently, and new servers can be deployed from templates in minutes.",
-    "lesson_ref": "d1.virtualization"
+    "lesson_ref": "d1.virtualization",
+    "variants": [
+      {
+        "stem": "Which wasteful situation does server virtualization replace?",
+        "answer": 0,
+        "explanation": "Before virtualization each application often had its own physical server, mostly idle. Running many VMs on one server uses the hardware far better."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.008",
@@ -2014,7 +3187,20 @@
     ],
     "answer": 1,
     "explanation": "Broadcasts flood within the VLAN only, never back out the receiving port. That's why a VLAN is a broadcast domain.",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "A switch receives a unicast frame on Fa0/1 in VLAN 10. Its destination MAC is in the VLAN 10 table on trunk port Gi0/1. Where does the switch send it?",
+        "choices": [
+          "Out every port on the switch, in every VLAN, including Fa0/1",
+          "Out every other port in VLAN 10, including trunks carrying VLAN 10",
+          "Only out Gi0/1, where the destination was learned",
+          "Back out Fa0/1"
+        ],
+        "answer": 2,
+        "explanation": "A known unicast goes out the one port where the destination was learned, here the trunk Gi0/1. Flooding within the VLAN is only for broadcasts and unknown destinations."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.009",
@@ -2031,7 +3217,14 @@
     ],
     "answer": 0,
     "explanation": "When the destination MAC is on the same port as the source, B already received the frame through the hub, so the switch filters it.",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "Hosts A and B both connect to a hub on switch port Fa0/1. A sends a frame to host C, whose MAC the switch hasn't learned yet. What does the switch do?",
+        "answer": 2,
+        "explanation": "C isn't in the table, so this is an unknown unicast: the switch floods it out every other port in the VLAN (not back out Fa0/1). It learns C's port when C replies."
+      }
+    ]
   },
   {
     "id": "q.d1.switch.010",
@@ -2045,6 +3238,16 @@
       "show mac-address-table"
     ],
     "explanation": "It lists VLAN, MAC, type (dynamic or static) and port. Add 'dynamic', 'interface' or 'vlan' to filter. Some older platforms spell it 'show mac-address-table'.",
-    "lesson_ref": "d1.switching"
+    "lesson_ref": "d1.switching",
+    "variants": [
+      {
+        "stem": "Which command removes all dynamically learned MAC addresses from a Cisco switch's table? (full command)",
+        "answer": [
+          "clear mac address-table dynamic",
+          "clear mac-address-table dynamic"
+        ],
+        "explanation": "'clear mac address-table dynamic' empties the dynamic entries so they are relearned from new frames. Static entries stay. Older platforms spell it 'clear mac-address-table dynamic'."
+      }
+    ]
   }
 ]

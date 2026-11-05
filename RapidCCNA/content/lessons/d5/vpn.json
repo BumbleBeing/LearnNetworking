@@ -23,7 +23,8 @@
     },
     {
       "heading": "IPsec building blocks",
-      "body": "IKE negotiates the security associations (algorithms and keys) between the peers. ESP encrypts and authenticates the payload; AH only authenticates (no encryption), so ESP is what's used in practice. Tunnel mode wraps the whole original packet in a new IP header (gateway to gateway); transport mode protects only the payload (host to host). ESP is IP protocol 50 and AH is IP protocol 51. IKE uses UDP 500 (UDP 4500 when NAT is in the path); it authenticates the peers and agrees the algorithms and keys, then ESP protects the data, typically with AES. GRE on its own is an unencrypted tunnel."
+      "body": "IKE negotiates the security associations (algorithms and keys) between the peers. ESP encrypts and authenticates the payload; AH only authenticates (no encryption), so ESP is what's used in practice. Tunnel mode wraps the whole original packet in a new IP header (gateway to gateway); transport mode protects only the payload (host to host). ESP is IP protocol 50 and AH is IP protocol 51. IKE uses UDP 500 (UDP 4500 when NAT is in the path); it authenticates the peers and agrees the algorithms and keys, then ESP protects the data, typically with AES. GRE on its own is an unencrypted tunnel.",
+      "mnemonic": "ESP 50 and AH 51 are IP protocol numbers, not ports. They're consecutive, with the encrypting one first.\nThe names say what they do. Encapsulating Security Payload wraps and encrypts the payload. Authentication Header only authenticates.\nIKE is UDP 500, and NAT adds 4000 (UDP 4500 when NAT is in the path)."
     },
     {
       "heading": "GRE over IPsec and DMVPN",

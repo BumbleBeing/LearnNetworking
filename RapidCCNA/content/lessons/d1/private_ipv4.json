@@ -11,7 +11,8 @@
     {
       "heading": "Why private addresses",
       "body": "There aren't enough public IPv4 addresses for every device. RFC 1918 reserves three ranges that anyone can use internally; they're never routed on the internet. To reach the internet, private addresses are translated to a public address with NAT (usually PAT).",
-      "example": "10.0.0.0/8       10.0.0.0 - 10.255.255.255\n172.16.0.0/12    172.16.0.0 - 172.31.255.255\n192.168.0.0/16   192.168.0.0 - 192.168.255.255"
+      "example": "10.0.0.0/8       10.0.0.0 - 10.255.255.255\n172.16.0.0/12    172.16.0.0 - 172.31.255.255\n192.168.0.0/16   192.168.0.0 - 192.168.255.255",
+      "mnemonic": "There's one range for each old class, and each prefix is 4 bits longer than the last: 10/8, 172.16/12, 192.168/16.\nThe middle one is the trap. It starts at 16 and covers 16 second octets (172.16 to 172.31), stopping just before 32. So 172.32.0.1 is public."
     },
     {
       "heading": "The 172.16.0.0/12 trap",
@@ -19,7 +20,8 @@
     },
     {
       "heading": "Other special ranges",
-      "body": "127.0.0.0/8 is loopback (the host itself). 169.254.0.0/16 is link-local (APIPA): a host gives itself one when DHCP fails. 100.64.0.0/10 is shared address space for carrier-grade NAT. These aren't RFC 1918 but aren't routed on the internet either. 100.64.0.0/10 is defined in RFC 6598. 192.168.0.0/16 contains 2^(24-16) = 256 /24 networks, from 192.168.0.0/24 to 192.168.255.0/24."
+      "body": "127.0.0.0/8 is loopback (the host itself). 169.254.0.0/16 is link-local (APIPA): a host gives itself one when DHCP fails. 100.64.0.0/10 is shared address space for carrier-grade NAT. These aren't RFC 1918 but aren't routed on the internet either. 100.64.0.0/10 is defined in RFC 6598. 192.168.0.0/16 contains 2^(24-16) = 256 /24 networks, from 192.168.0.0/24 to 192.168.255.0/24.",
+      "mnemonic": "127 is the last number before 128, where the old class B space begins. Loopback lives at the very end of class A.\n169.254 is what a host gives itself when DHCP fails. If you see 169.254 in ipconfig, look at DHCP first.\n100.64/10 is for the carrier (carrier-grade NAT), not for you."
     }
   ],
   "recall": [

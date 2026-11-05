@@ -14,12 +14,14 @@
     },
     {
       "heading": "RADIUS",
-      "body": "An open standard on UDP 1812 (authentication/authorisation) and 1813 (accounting). It combines authentication and authorisation and encrypts only the password. It's the usual choice for network access: VPN users, Wi-Fi and 802.1X."
+      "body": "An open standard on UDP 1812 (authentication/authorisation) and 1813 (accounting). It combines authentication and authorisation and encrypts only the password. It's the usual choice for network access: VPN users, Wi-Fi and 802.1X.",
+      "mnemonic": "1812 is a famous year (Tchaikovsky's 1812 Overture). Authentication is at 1812, and accounting is next door at 1813.\nRADIUS is for users joining the network (Wi-Fi, VPN, 802.1X), and it hides only the password."
     },
     {
       "heading": "TACACS+",
       "body": "Cisco-originated, on TCP 49. It encrypts the whole payload and keeps authentication, authorisation and accounting separate, so it can authorise individual commands. It's the usual choice for device administration. 'aaa new-model' must come first; from then on lines use the default method list unless you assign another. Methods in a list are tried in order, and the next one is used only if the previous one doesn't respond: 'group radius local' falls back to local users only when no RADIUS server answers, not when RADIUS rejects the login.",
-      "example": "aaa new-model\ntacacs server ISE\n address ipv4 10.0.0.20\n key T@csKey\naaa authentication login default group tacacs+ local"
+      "example": "aaa new-model\ntacacs server ISE\n address ipv4 10.0.0.20\n key T@csKey\naaa authentication login default group tacacs+ local",
+      "mnemonic": "TACACS+ and TCP both start with T. Port 49: the forty-niners dug into everything, and TACACS+ encrypts everything.\nIt splits the three A's apart, so it can authorise each command an admin types. That makes it the choice for device admins, while RADIUS is for users."
     },
     {
       "heading": "802.1X",

@@ -3,10 +3,11 @@ extends Node
 
 signal saved
 
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 const MASTERY_WINDOW := 20
 const MASTERY_THRESHOLD := 0.85
 const MOCK_HISTORY_MAX := 30
+const MIGRATED_COMPLETE_MIN := 10    # v2 saves: unguided attempts that show a unit's last round was finished
 
 var save_path := "user://save.json"
 var attempts: Dictionary = {}     # unit_id -> Array[bool], last MASTERY_WINDOW unguided results
@@ -15,6 +16,7 @@ var last_study_day: String = ""   # yyyy-mm-dd
 var total_minutes: float = 0.0
 var tutorials_done: Dictionary = {}  # lesson_id -> unix time completed
 var labs_done: Dictionary = {}       # lab_id -> unix time first completed
+var units_completed: Dictionary = {} # unit_id -> unix time its study steps were first finished
 var mock_history: Array = []         # oldest first: {when, label, total, correct, scaled, passed, seconds, by_domain}
 var last_mock_ids: Array = []        # questions on the latest mock; the next one prefers others
 
@@ -28,6 +30,7 @@ func reset() -> void:
 	total_minutes = 0.0
 	tutorials_done = {}
 	labs_done = {}
+	units_completed = {}
 	mock_history = []
 	last_mock_ids = []
 	SRS.reset()
@@ -60,6 +63,14 @@ func mark_lab_done(lab_id: String) -> void:
 
 func is_lab_done(lab_id: String) -> bool:
 	return labs_done.has(lab_id)
+
+## A unit is Completed once all its study steps are finished; it says nothing about skill.
+func mark_unit_completed(unit_id: String) -> void:
+	if not units_completed.has(unit_id):
+		units_completed[unit_id] = int(Time.get_unix_time_from_system())
+
+func is_completed(unit_id: String) -> bool:
+	return units_completed.has(unit_id)
 
 ## Stores a finished mock exam (a MockExam.score report plus label/seconds).
 func record_mock(report: Dictionary, label: String, seconds: int, ids: Array, when: int = -1) -> void:
@@ -114,6 +125,7 @@ func to_dict() -> Dictionary:
 		"total_minutes": total_minutes,
 		"tutorials_done": tutorials_done,
 		"labs_done": labs_done,
+		"units_completed": units_completed,
 		"mock_history": mock_history,
 		"last_mock_ids": last_mock_ids,
 		"srs": SRS.to_dict(),
@@ -127,6 +139,7 @@ func from_dict(d: Dictionary) -> void:
 	total_minutes = float(d.get("total_minutes", 0.0))
 	tutorials_done = d.get("tutorials_done", {})
 	labs_done = d.get("labs_done", {})
+	units_completed = d.get("units_completed", {})
 	mock_history = d.get("mock_history", [])
 	last_mock_ids = d.get("last_mock_ids", [])
 	SRS.from_dict(d.get("srs", {}))
@@ -151,7 +164,23 @@ func _migrate(d: Dictionary) -> Dictionary:
 	if v < 2:
 		d["mock_history"] = []      # v2 adds mock exams
 		d["last_mock_ids"] = []
+	if v < 3:
+		d["units_completed"] = _infer_completed(d)   # v3 adds Completed units
 	return d
+
+## For saves from before Completed existed: a unit counts if it's mastered, or its
+## tutorial is done and it has enough unguided attempts to have finished a round.
+static func _infer_completed(d: Dictionary) -> Dictionary:
+	var out := {}
+	var tutorials: Dictionary = d.get("tutorials_done", {})
+	var all_attempts: Dictionary = d.get("attempts", {})
+	for unit_id in all_attempts:
+		var arr: Array = all_attempts[unit_id]
+		var right := arr.count(true)
+		var mastered := arr.size() >= MASTERY_WINDOW and float(right) / arr.size() >= MASTERY_THRESHOLD
+		if mastered or (tutorials.has(unit_id) and arr.size() >= MIGRATED_COMPLETE_MIN):
+			out[unit_id] = int(tutorials.get(unit_id, 0))
+	return out
 
 static func _day_diff(a: String, b: String) -> int:
 	var ta := Time.get_unix_time_from_datetime_string(a + "T00:00:00")

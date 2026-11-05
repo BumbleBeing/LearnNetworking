@@ -15,7 +15,8 @@
     {
       "heading": "Classification and marking",
       "body": "Traffic is classified (by ACL, NBAR application recognition, or incoming markings) and marked as close to the source as possible. Layer 2: 802.1Q CoS (3 bits, 0-7). Layer 3: the DSCP field (6 bits, 0-63) in the IP header's ToS byte. CoS is the 3-bit 802.1p priority in the 802.1Q tag (values 0-7). DSCP is 6 bits of the IPv4 ToS / IPv6 Traffic Class byte; the other 2 bits are ECN.",
-      "example": "EF 46        voice\nAF41 34      video\nAF21-23      business data\nCS0 / 0      best effort\nCS6 48       network control"
+      "example": "EF 46        voice\nAF41 34      video\nAF21-23      business data\nCS0 / 0      best effort\nCS6 48       network control",
+      "mnemonic": "EF 46 is voice: Expedited Forwarding, because a phone call can't wait. Only network control (CS6 48, CS7 56) sits above it.\nAF classes follow a formula, AFxy = 8x + 2y, so AF41 = 32 + 2 = 34. CS values are 8 × the class, so CS6 = 48.\nEasy to mix up: in AFxy a higher x is more important, but a higher y is dropped first.\nCoS has 3 bits (0-7) and DSCP has 6 bits (0-63): DSCP has twice the bits."
     },
     {
       "heading": "AF arithmetic",

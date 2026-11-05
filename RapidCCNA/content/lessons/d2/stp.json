@@ -15,12 +15,14 @@
     {
       "heading": "1. Elect the root bridge",
       "body": "Every switch has a bridge ID: priority (default 32768) plus its MAC address. The lowest bridge ID wins: lowest priority, then lowest MAC. PVST+ runs one tree per VLAN and adds the VLAN number to the priority (the extended system ID), so 32768 in VLAN 10 shows as 32778. The low 12 bits of the priority field hold the VLAN ID, so the configurable priority goes in steps of 4096 from 0 to 61440. 'root primary' sets 24576, or 4096 below the current root's priority if that's already lower.",
-      "example": "spanning-tree vlan 10 priority 24576   (multiples of 4096)\nspanning-tree vlan 10 root primary     (sets 24576 or lower)"
+      "example": "spanning-tree vlan 10 priority 24576   (multiples of 4096)\nspanning-tree vlan 10 root primary     (sets 24576 or lower)",
+      "mnemonic": "32768 is the middle of the 16-bit range (2^15). Every switch starts in the middle, so you can push one lower to win.\nThe steps are 4096 because the bottom 12 bits hold the VLAN ID, and 2^12 = 4096. That's why the priority you see is a multiple of 4096 plus the VLAN number: 32768 + 10 = 32778.\nIn STP, lowest always wins: priority, then MAC, then cost."
     },
     {
       "heading": "2. Root port on every other switch",
       "body": "Each non-root switch picks the one port with the lowest total cost to the root. Default costs: 10 Gbps = 2, 1 Gbps = 4, 100 Mbps = 19, 10 Mbps = 100. Ties go to the lowest neighbour bridge ID, then the lowest neighbour port ID (priority.number). Root path cost adds the cost of every link on the way: two 1 Gbps hops cost 4 + 4 = 8. Tiebreakers in order: lowest root path cost, lowest neighbour bridge ID, lowest neighbour port ID, then lowest local port ID.",
-      "example": "SW3 Gi0/1: 0 + 4 = 4   ← root port\nSW3 Gi0/2: 4 + 4 = 8"
+      "example": "SW3 Gi0/1: 0 + 4 = 4   ← root port\nSW3 Gi0/2: 4 + 4 = 8",
+      "mnemonic": "Count down from the slow end like a launch: 100, 19, 4, 2. That's 10 Mbps, 100 Mbps, 1 Gbps, 10 Gbps. The faster the link, the lower the cost.\nEasy to mix up: these are STP costs. OSPF has its own scale, where 100 Mbps costs 1 by default."
     },
     {
       "heading": "3. Designated port on every link",
@@ -44,7 +46,8 @@
     {
       "heading": "Classic STP timers and per-VLAN trees",
       "body": "Classic 802.1D STP moves a port through blocking (max age 20 s), listening (15 s) and learning (15 s) before forwarding: up to 50 seconds. Running one tree per VLAN (PVST+) lets you make one switch root for some VLANs and another for the rest, so both uplinks carry traffic instead of one sitting blocked.",
-      "example": "Blocking -> Listening -> Learning -> Forwarding\n  20 s        15 s         15 s"
+      "example": "Blocking -> Listening -> Learning -> Forwarding\n  20 s        15 s         15 s",
+      "mnemonic": "The states in order: \"Bored Lions Learn Fast\" (Blocking, Listening, Learning, Forwarding). A port listens for BPDUs before it learns MAC addresses.\nTimers: 20 s of max age, then 15 + 15 s of forward delay. 20 + 15 + 15 = 50 s, the classic worst case that Rapid PVST+ was built to avoid."
     }
   ],
   "recall": [

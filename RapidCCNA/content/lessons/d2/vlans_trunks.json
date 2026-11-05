@@ -27,7 +27,8 @@
     {
       "heading": "DTP: let it negotiate or not",
       "body": "Ports default to dynamic auto: they become a trunk only if the other side actively asks (trunk or dynamic desirable). Two dynamic auto ports stay access ports. Best practice is to configure trunks statically and turn DTP off with 'switchport nonegotiate'. Dynamic desirable actively asks to trunk; dynamic auto only answers. A dynamic auto port acts as an access port (in VLAN 1 by default) unless the other side asks. 'switchport nonegotiate' stops DTP frames and only works with a static mode.",
-      "example": "auto + auto       → access\nauto + desirable  → trunk\ntrunk + auto      → trunk"
+      "example": "auto + auto       → access\nauto + desirable  → trunk\ntrunk + auto      → trunk",
+      "mnemonic": "Desirable is desperate: it asks to trunk. Auto is apathetic: it only answers. One asker is enough. Two auto ports both wait to be asked and stay access ports.\nThese are the same words PAgP uses, because both are Cisco's own protocols."
     },
     {
       "heading": "Verify",
@@ -41,7 +42,8 @@
     },
     {
       "heading": "VLAN numbers and the 802.1Q tag",
-      "body": "Normal-range VLANs are 1-1005 (1002-1005 are reserved for old Token Ring and FDDI); the extended range is 1006-4094; 0 and 4095 are reserved. VLAN 1 is the default: every port starts in it, it's the default native VLAN, and it can't be deleted or renamed. 'vlan 30' then 'name HR' creates and names a VLAN; 'interface vlan 30' creates an SVI instead. 802.1Q inserts a 4-byte tag after the source MAC: a 2-byte TPID (0x8100) and a 2-byte TCI with a 3-bit priority (PCP/CoS), 1-bit DEI and 12-bit VLAN ID. ISL was the old Cisco-proprietary method that wrapped the whole frame in a 26-byte header and 4-byte trailer; it's obsolete."
+      "body": "Normal-range VLANs are 1-1005 (1002-1005 are reserved for old Token Ring and FDDI); the extended range is 1006-4094; 0 and 4095 are reserved. VLAN 1 is the default: every port starts in it, it's the default native VLAN, and it can't be deleted or renamed. 'vlan 30' then 'name HR' creates and names a VLAN; 'interface vlan 30' creates an SVI instead. 802.1Q inserts a 4-byte tag after the source MAC: a 2-byte TPID (0x8100) and a 2-byte TCI with a 3-bit priority (PCP/CoS), 1-bit DEI and 12-bit VLAN ID. ISL was the old Cisco-proprietary method that wrapped the whole frame in a 26-byte header and 4-byte trailer; it's obsolete.",
+      "mnemonic": "A 12-bit VLAN ID gives 4096 values (0-4095). The two ends are reserved, so the last usable VLAN is 4094.\nNormal range ends at 1005, and its last four (1002-1005) belong to old Token Ring and FDDI.\nThe tag in three numbers, 4-12-3: a 4-byte tag, a 12-bit VLAN ID and a 3-bit priority. That priority is the CoS that QoS uses, values 0-7."
     },
     {
       "heading": "Routing between VLANs",

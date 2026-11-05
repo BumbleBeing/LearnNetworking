@@ -126,3 +126,51 @@ func test_quiz_ids_come_from_one_area():
 	assert_eq(SessionManager.quiz_ids("d9"), [], "an area without questions gives an empty quiz")
 	for id in SessionManager.quiz_ids("d6"):
 		assert_eq(ContentDB.questions[id].domain, "d6")
+
+# --- Completed units ---
+
+func _complete_before(unit_id: String) -> void:
+	for d in ContentDB.domains:
+		for l in ContentDB.lessons_for_domain(d.id):
+			if l.id == unit_id:
+				return
+			Progress.mark_unit_completed(l.id)
+
+func test_last_step_of_a_unit_plan_completes_it():
+	var steps := SessionManager.plan_steps(NOW)
+	var unit_id: String = SessionManager.next_unit().id
+	assert_eq(steps[-1].get("completes", ""), unit_id)
+	assert_eq(steps.filter(func(s): return s.has("completes")).size(), 1, "only the last step")
+
+func test_completed_unit_moves_the_daily_session_on():
+	Progress.mark_unit_completed("d1.components")
+	assert_eq(SessionManager.next_unit().id, "d1.topologies", "Completed, though not Mastered")
+
+func test_finishing_the_last_step_marks_the_unit_completed_and_leaving_early_does_not():
+	SessionManager.navigate = false
+	var unit_id: String = SessionManager.next_unit().id
+	SessionManager.start(SessionManager.plan_steps(NOW), "Daily session")
+	while SessionManager.index < SessionManager.steps.size() - 1:
+		SessionManager.step_done({})
+		assert_false(Progress.is_completed(unit_id), "not until the last step")
+	SessionManager.step_done({})
+	assert_true(Progress.is_completed(unit_id))
+	assert_eq(SessionManager.completed_units(), [unit_id])
+	SessionManager.navigate = true
+
+func test_study_unit_from_topics_completes_too():
+	SessionManager.navigate = false
+	SessionManager.start_unit("d2.stp")
+	while SessionManager.index < SessionManager.steps.size():
+		SessionManager.step_done({})
+	assert_true(Progress.is_completed("d2.stp"))
+	SessionManager.navigate = true
+
+func test_after_every_unit_is_completed_unmastered_ones_come_round_again():
+	_complete_before("")
+	var first: Dictionary = ContentDB.lessons_for_domain(ContentDB.domains[0].id)[0]
+	for i in Progress.MASTERY_WINDOW:
+		Progress.record_attempt(first.id, true)
+	Progress.mark_tutorial_done("d1.topologies")
+	assert_eq(SessionManager.next_unit().id, "d1.topologies", "first Completed unit that isn't Mastered")
+	assert_false(SessionManager.plan_steps(NOW).any(func(s): return s.kind == "tutorial"), "no tutorial again")

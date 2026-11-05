@@ -16,7 +16,8 @@
     {
       "heading": "LACP, PAgP or static",
       "body": "LACP (802.3ad, open standard) uses modes active and passive. PAgP (Cisco) uses desirable and auto. Mode on forces the bundle with no negotiation at all. You can't mix protocols, and 'on' only works with 'on'. LACP is IEEE 802.3ad (now 802.1AX); PAgP is Cisco-proprietary. Active and desirable start negotiation; passive and auto only answer, so at least one side must start it.",
-      "example": "active   + active/passive   → LACP\ndesirable + desirable/auto  → PAgP\non + on                    → static\npassive + passive, auto + auto → nothing"
+      "example": "active   + active/passive   → LACP\ndesirable + desirable/auto  → PAgP\non + on                    → static\npassive + passive, auto + auto → nothing",
+      "mnemonic": "Cisco's own protocols share Cisco's own words. PAgP and DTP both use desirable/auto, so the open standard, LACP, is the one with active/passive.\nIn every mode pair, one side is eager (active, desirable) and one is shy (passive, auto). One eager side is enough. Two shy sides each wait for the other to say hello, and nothing happens.\n'on' doesn't talk at all, so it only bundles with another 'on'."
     },
     {
       "heading": "Configure it",

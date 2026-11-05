@@ -3,7 +3,7 @@ extends VBoxContainer
 ## Renders one question of any non-CLI type, grades it and shows an explanation.
 ## Keyboard: 1-9 pick choices, Enter submits / continues.
 
-signal answered(result: Dictionary)   # {id, correct, response, ms, skipped}
+signal answered(result: Dictionary)   # {id, variant, correct, response, ms, skipped}
 signal continued
 
 var q: Dictionary = {}
@@ -11,7 +11,8 @@ var show_feedback := true
 
 var _look: Dictionary
 var _get_response: Callable
-var _choice_buttons: Array[Button] = []
+var _choice_buttons: Array[Button] = []   # in the order shown
+var _choice_order: Array[int] = []        # shown position -> index into q.choices
 var _lockables: Array[Control] = []
 var _order_items: Array = []
 var _order_list: VBoxContainer
@@ -83,9 +84,13 @@ func _build_choices(multi: bool) -> void:
 		UI.label(self, "Choose %d." % q.answer.size(), "Muted")
 	var group: ButtonGroup = null if multi else ButtonGroup.new()
 	var box := UI.vbox(self, 8)
+	# A fresh order every time the question is shown; digits pick by position on screen.
+	for i in q.choices.size():
+		_choice_order.append(i)
+	_choice_order.shuffle()
 	for i in q.choices.size():
 		var b := Button.new()
-		b.text = "%d.   %s" % [i + 1, q.choices[i]]
+		b.text = "%d.   %s" % [i + 1, q.choices[_choice_order[i]]]
 		b.toggle_mode = true
 		b.button_group = group
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -102,14 +107,16 @@ func _build_choices(multi: bool) -> void:
 		var sel: Array = []
 		for i in _choice_buttons.size():
 			if _choice_buttons[i].button_pressed:
-				sel.append(i)
+				sel.append(_choice_order[i])   # responses keep the content's indices
 		if multi:
+			sel.sort()
 			return sel
 		return sel[0] if sel.size() > 0 else -1
 
 func _build_fill_in() -> void:
 	var le := _line_edit("Type your answer")
 	le.accessibility_name = "Your answer"
+	le.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	add_child(le)
 	le.text_submitted.connect(func(_t): _on_submit())
 	_get_response = func(): return le.text
@@ -204,6 +211,7 @@ func _build_fields() -> void:
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 16)
 	grid.add_theme_constant_override("v_separation", 8)
+	grid.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	add_child(grid)
 	var inputs := {}
 	var order: Array[LineEdit] = []
@@ -294,7 +302,7 @@ func _on_submit(skip: bool = false) -> void:
 	_skip.visible = false   # Study stays, to read up on the answer
 	_notice.text = ""
 	_notice.visible = false
-	answered.emit({"id": q.get("id", ""), "correct": correct, "response": response, "ms": ms, "skipped": skip})
+	answered.emit({"id": q.get("id", ""), "variant": int(q.get("variant", 0)), "correct": correct, "response": response, "ms": ms, "skipped": skip})
 	if show_feedback:
 		_show_feedback(correct)
 	else:
@@ -326,7 +334,7 @@ func _show_feedback(correct: bool) -> void:
 		var right: Array = q.answer if q.answer is Array else [q.answer]
 		right = right.map(func(x): return int(x))
 		for i in _choice_buttons.size():
-			if i in right:
+			if _choice_order[i] in right:
 				UI.mark_choice(_choice_buttons[i], true)
 			elif _choice_buttons[i].button_pressed:
 				UI.mark_choice(_choice_buttons[i], false)
@@ -355,6 +363,10 @@ func _show_feedback(correct: bool) -> void:
 		spoken.append("Answer: %s." % Grader.answer_text(q))
 	spoken.append(str(q.get("explanation", "")))
 	UI.announce(" ".join(spoken))
+
+## The button showing q.choices[index], wherever the shuffle put it.
+func choice_button(index: int) -> Button:
+	return _choice_buttons[_choice_order.find(index)]
 
 # --- studying ---
 

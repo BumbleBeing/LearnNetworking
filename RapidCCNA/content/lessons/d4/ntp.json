@@ -14,7 +14,8 @@
     },
     {
       "heading": "Stratum",
-      "body": "Stratum is the distance from an authoritative clock. A stratum 0 device (GPS, atomic clock) feeds a stratum 1 server; a device synced to stratum 1 becomes stratum 2, and so on. Lower is better; 16 means unsynchronised."
+      "body": "Stratum is the distance from an authoritative clock. A stratum 0 device (GPS, atomic clock) feeds a stratum 1 server; a device synced to stratum 1 becomes stratum 2, and so on. Lower is better; 16 means unsynchronised.",
+      "mnemonic": "Stratum counts floors above the ground. The reference clock (GPS, atomic) is the ground floor, 0. A server wired to it is 1, and every hop adds one.\n16 means \"too high to trust\" (unsynchronised), the same idea as RIP, where 16 hops means unreachable."
     },
     {
       "heading": "Client, server and peer",

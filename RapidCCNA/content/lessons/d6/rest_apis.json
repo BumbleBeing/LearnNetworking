@@ -15,7 +15,8 @@
     {
       "heading": "CRUD and HTTP methods",
       "body": "Create → POST. Read → GET. Update → PUT (replace the whole resource) or PATCH (change part of it). Delete → DELETE. PUT can also create a resource at a URI you already know.",
-      "example": "GET    /api/v1/devices          list devices\nPOST   /api/v1/vlans            create a VLAN\nPATCH  /api/v1/interfaces/Gi0%2F1  change one field\nDELETE /api/v1/vlans/30         remove VLAN 30"
+      "example": "GET    /api/v1/devices          list devices\nPOST   /api/v1/vlans            create a VLAN\nPATCH  /api/v1/interfaces/Gi0%2F1  change one field\nDELETE /api/v1/vlans/30         remove VLAN 30",
+      "mnemonic": "Create is POST, like posting a new letter. Read is GET. Delete is DELETE.\nUpdate has two: PUT replaces the whole thing, like putting on new clothes, and PATCH changes one part, like patching a hole."
     },
     {
       "heading": "Anatomy of a request",
@@ -24,7 +25,8 @@
     },
     {
       "heading": "Response codes",
-      "body": "2xx success (200 OK, 201 Created, 204 No Content), 3xx redirection, 4xx client errors (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found), 5xx server errors (500 Internal Server Error). 401 Unauthorized means authentication is missing or invalid; 403 Forbidden means the server knows who you are and refuses anyway."
+      "body": "2xx success (200 OK, 201 Created, 204 No Content), 3xx redirection, 4xx client errors (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found), 5xx server errors (500 Internal Server Error). 401 Unauthorized means authentication is missing or invalid; 403 Forbidden means the server knows who you are and refuses anyway.",
+      "mnemonic": "The first digit tells the story: 2 is all good, 3 is \"go see\" (redirect), 4 is your fault (client), 5 is our fault (server).\n401 vs 403: 401 asks \"who are you?\" (log in). 403 says \"I know who you are, and no.\"\n201 Created means a new thing now exists, and 404 means nothing is there."
     },
     {
       "heading": "Authentication",

@@ -4,6 +4,9 @@ extends Control
 ## Screenshot/preview hook: domain_id -> readiness override (0..1). Empty in normal play.
 static var preview_readiness: Dictionary = {}
 
+## Tallest the session plan grows before it scrolls (about six lines).
+const PLAN_MAX_HEIGHT := 150.0
+
 var _exam_input: LineEdit
 
 func _ready() -> void:
@@ -45,7 +48,15 @@ func _ready() -> void:
 		var d := ContentDB.get_domain(next.domain)
 		UI.label(left, d.get("name", ""), "Muted", true)
 	var plan: Array = session.steps
-	var plan_box := UI.vbox(left, 2)
+	# A long plan scrolls inside the card instead of stretching the whole dashboard.
+	var plan_scroll := ScrollContainer.new()
+	plan_scroll.name = "PlanScroll"
+	plan_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	left.add_child(plan_scroll)
+	var plan_box := UI.vbox(plan_scroll, 2)
+	plan_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	plan_box.resized.connect(func():
+		plan_scroll.custom_minimum_size.y = minf(plan_box.get_combined_minimum_size().y, PLAN_MAX_HEIGHT))
 	for st in plan:
 		UI.label(plan_box, "•  " + SessionManager.describe(st), "Body", true)
 	var go := UI.button(left, "Start session", SessionManager.start_daily, true)

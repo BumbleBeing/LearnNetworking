@@ -14,7 +14,20 @@
     ],
     "answer": 0,
     "explanation": "802.1Q tags every VLAN except the native VLAN, whose frames cross the trunk untagged. It defaults to VLAN 1 but can be changed; both ends should match.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which VLAN is the native VLAN on an 802.1Q trunk unless you change it?",
+        "choices": [
+          "VLAN 99",
+          "VLAN 1002",
+          "VLAN 1",
+          "None: the native VLAN must be set by hand"
+        ],
+        "answer": 2,
+        "explanation": "VLAN 1 is the default VLAN and the default native VLAN. Hardening moves the native VLAN to an unused VLAN such as 99, but nothing forces you to set one."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.002",
@@ -31,7 +44,20 @@
     ],
     "answer": 1,
     "explanation": "dynamic auto only answers trunk requests; it never starts one. With auto on both ends nobody asks, so the link stays an access link.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "One switch port is set to dynamic desirable and the connected port is left in dynamic auto. What happens?",
+        "choices": [
+          "They stay access ports, because neither side asks to trunk",
+          "The link goes err-disabled because of the DTP mismatch",
+          "They form a trunk, because the desirable side asks and auto answers",
+          "They form an EtherChannel"
+        ],
+        "answer": 2,
+        "explanation": "Dynamic desirable actively asks to trunk and dynamic auto answers, so the link trunks. Only auto on both ends stays access, because nobody asks."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.003",
@@ -49,7 +75,15 @@
     ],
     "answer": 0,
     "explanation": "The trunk is up and trunking, but only VLANs 10 and 20 are allowed. Add VLAN 30 with 'switchport trunk allowed vlan add 30'.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Hosts in VLAN 30 on SW1 can't reach VLAN 30 hosts on SW2 over the link on Gi0/1. VLAN 30 exists on both switches. Based on the exhibit from SW1, what's the cause?",
+        "exhibit": "SW1#show interfaces gi0/1 switchport\nName: Gi0/1\nSwitchport: Enabled\nAdministrative Mode: dynamic auto\nOperational Mode: static access\nAdministrative Trunking Encapsulation: dot1q\nNegotiation of Trunking: On\nAccess Mode VLAN: 1 (default)",
+        "answer": 3,
+        "explanation": "Gi0/1 is operating as an access port in VLAN 1, so it carries only VLAN 1. Dynamic auto never asks to trunk; if the other side is also auto the link stays access. Make it a static trunk."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.cli.001",
@@ -78,7 +112,19 @@
     ],
     "answer": 1,
     "explanation": "passive only responds to LACP; it never starts negotiation. The other end must be active.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "SW1's member ports use 'channel-group 1 mode auto'. Which mode on SW2 forms a PAgP EtherChannel?",
+        "answer": 2,
+        "explanation": "auto is PAgP and only answers, so the other end must start PAgP with desirable. active and passive are LACP and can't talk to PAgP."
+      },
+      {
+        "stem": "SW1's member ports use 'channel-group 1 mode active'. Which mode on SW2 forms an LACP EtherChannel while only answering, never starting negotiation?",
+        "answer": 0,
+        "explanation": "passive is the LACP mode that only answers. Because SW1 is active and starts the negotiation, active + passive forms the channel."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.002",
@@ -95,7 +141,20 @@
       "on": "No negotiation protocol"
     },
     "explanation": "LACP (IEEE 802.3ad) uses active/passive. PAgP (Cisco proprietary) uses desirable/auto. 'on' bundles without negotiating.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "Match each channel-group mode to how it behaves.",
+        "answer": {
+          "active": "Starts LACP negotiation",
+          "passive": "Only answers LACP",
+          "desirable": "Starts PAgP negotiation",
+          "auto": "Only answers PAgP",
+          "on": "Bundles with no negotiation"
+        },
+        "explanation": "In each protocol one mode is eager (active, desirable) and one only answers (passive, auto). 'on' sends nothing, so it only bundles with another 'on'."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.003",
@@ -113,7 +172,21 @@
     ],
     "answer": 2,
     "explanation": "The trunk member ports must match on native VLAN and allowed VLANs. Gi0/2 has a different allowed list, so it's suspended (s).",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, why isn't Gi0/2 bundled into Po1?",
+        "exhibit": "interface GigabitEthernet0/1\n switchport trunk allowed vlan 10,20\n switchport mode trunk\n channel-group 1 mode active\n!\ninterface GigabitEthernet0/2\n switchport access vlan 10\n switchport mode access\n channel-group 1 mode active\n\nSW1#show etherchannel summary\n1      Po1(SU)       LACP        Gi0/1(P)    Gi0/2(s)",
+        "choices": [
+          "LACP needs at least three member ports",
+          "The switchport modes don't match",
+          "Gi0/2 should be in mode passive",
+          "The port numbers must be the same on both switches"
+        ],
+        "answer": 1,
+        "explanation": "Gi0/1 is a trunk and Gi0/2 is an access port. Every member must share the same switchport mode and VLAN settings, so Gi0/2 is suspended (s). Active on both ends is fine."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.004",
@@ -130,7 +203,20 @@
     ],
     "answer": 0,
     "explanation": "Without a bundle, STP blocks one of the parallel links. A port-channel is one logical link to STP, so both members forward.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "A two-link EtherChannel carries one large file transfer between two hosts. Why doesn't that transfer go faster than one member link?",
+        "choices": [
+          "STP blocks one member during the transfer",
+          "The hash keeps each flow on one member link",
+          "LACP allows only one active link per bundle",
+          "Port-channels turn off jumbo frames"
+        ],
+        "answer": 1,
+        "explanation": "An EtherChannel never splits a flow: a hash of addresses picks one member per flow. Many flows share the links, but one flow is limited to a single member's speed."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.005",
@@ -151,7 +237,24 @@
       3
     ],
     "explanation": "active + passive negotiates LACP and on + on forces a static channel. auto + auto and passive + passive never start negotiation, and desirable (PAgP) can't talk to active (LACP).",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "Which two pairs of modes never form an EtherChannel? (Choose two.)",
+        "choices": [
+          "active / passive",
+          "auto / auto",
+          "desirable / auto",
+          "on / on",
+          "passive / passive"
+        ],
+        "answer": [
+          1,
+          4
+        ],
+        "explanation": "auto and passive only answer, so two of them wait for each other forever. active + passive (LACP), desirable + auto (PAgP) and on + on (static) all form a channel."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.006",
@@ -162,7 +265,16 @@
     "stem": "What is the maximum number of active member links in a single LACP EtherChannel on a Catalyst switch?",
     "answer": "8",
     "explanation": "Up to 8 links are active in one bundle (LACP can hold 8 more in hot-standby).",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "In 'show etherchannel summary', which one-letter flag marks a member port that is bundled in the port-channel?",
+        "answer": [
+          "P"
+        ],
+        "explanation": "P = bundled in the port-channel. s = suspended (a mismatch), I = stand-alone and D = down."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.001",
@@ -179,7 +291,20 @@
     ],
     "answer": 2,
     "explanation": "The lowest bridge ID wins. The bridge ID is the priority followed by the MAC address, so priority is compared first and the MAC breaks ties.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Every switch in VLAN 10 keeps the default bridge priority. Which switch becomes the root bridge?",
+        "choices": [
+          "The switch with the lowest MAC address",
+          "The switch with the most ports",
+          "The switch with the highest MAC address",
+          "The switch with the fastest uplinks"
+        ],
+        "answer": 0,
+        "explanation": "With equal priorities the bridge IDs differ only in the MAC address, and the lowest bridge ID wins. Port count and link speed play no part in the root election."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.002",
@@ -190,7 +315,19 @@
     "stem": "A switch runs Rapid PVST+ with the default priority. What bridge priority does it advertise in VLAN 20?",
     "answer": "32788",
     "explanation": "Default 32768 plus the extended system ID (the VLAN number, 20) = 32788.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "A switch runs Rapid PVST+ with 'spanning-tree vlan 30 priority 24576'. What bridge priority does it advertise in VLAN 30?",
+        "answer": "24606",
+        "explanation": "The configured 24576 plus the extended system ID (the VLAN number, 30) = 24606."
+      },
+      {
+        "stem": "A switch runs Rapid PVST+ with the default priority. What bridge priority does it advertise in VLAN 1?",
+        "answer": "32769",
+        "explanation": "Default 32768 plus the extended system ID (the VLAN number, 1) = 32769."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.003",
@@ -208,7 +345,21 @@
     ],
     "answer": 1,
     "explanation": "SW2 isn't the root (the root ID differs from its bridge ID). Gi0/1 is its root port. Gi0/2 is an alternate port: a backup path to the root that discards frames until the root port fails.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, what is SW2's role and what is Gi0/2 doing?",
+        "exhibit": "SW2#show spanning-tree vlan 10\nVLAN0010\n  Root ID    Priority    24586\n             Address     0019.e8b2.2d00\n             This bridge is the root\n  Bridge ID  Priority    24586  (priority 24576 sys-id-ext 10)\n             Address     0019.e8b2.2d00\n\nInterface           Role Sts Cost      Prio.Nbr Type\nGi0/1               Desg FWD 4         128.1    P2p\nGi0/2               Desg FWD 4         128.2    P2p\nFa0/5               Desg FWD 19        128.5    P2p Edge",
+        "choices": [
+          "SW2 is the root bridge, so Gi0/2 is designated and forwarding",
+          "SW2 is not the root; Gi0/2 is an alternate path to the root",
+          "SW2 is not the root; Gi0/2 is its root port",
+          "Gi0/2 was err-disabled by BPDU Guard"
+        ],
+        "answer": 0,
+        "explanation": "The root ID matches SW2's own bridge ID ('This bridge is the root'). Every port on the root bridge is designated and forwards; a root bridge has no root port."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.004",
@@ -227,7 +378,22 @@
       "10 Gbps": "2"
     },
     "explanation": "Short (802.1D) costs, used by default by Rapid PVST+: 100, 19, 4, 2.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Match each default spanning tree port cost to its link speed.",
+        "distractors": [
+          "40 Gbps"
+        ],
+        "answer": {
+          "100": "10 Mbps",
+          "19": "100 Mbps",
+          "4": "1 Gbps",
+          "2": "10 Gbps"
+        },
+        "explanation": "The faster the link, the lower the cost: 10 Mbps = 100, 100 Mbps = 19, 1 Gbps = 4 and 10 Gbps = 2."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.005",
@@ -244,7 +410,20 @@
     ],
     "answer": 1,
     "explanation": "Cost and neighbour bridge ID tie, so the lowest neighbour (sender) port ID decides. The local port that connects to the root's Gi0/1 wins, which is the local Gi0/2.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "A non-root switch has two links to the root bridge with equal cost, connected to the root's Gi0/1 and Gi0/2. Its own ports are Gi0/1 and Gi0/2 respectively. Which port becomes its root port?",
+        "choices": [
+          "Gi0/1, because it connects to the root's lower port ID",
+          "Gi0/2, because it connects to the root's higher port ID",
+          "Both, because costs are equal",
+          "Neither; both block until costs are changed"
+        ],
+        "answer": 0,
+        "explanation": "Cost and neighbour bridge ID tie, so the lowest neighbour port ID decides. The local Gi0/1 connects to the root's Gi0/1, so it wins; its own port number only counts if everything else ties."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.006",
@@ -264,7 +443,23 @@
       2
     ],
     "explanation": "PortFast moves the port straight to forwarding. BPDU Guard err-disables it if a BPDU arrives, such as when someone connects a switch.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Which two statements about BPDU Guard and Root Guard are true? (Choose two.)",
+        "choices": [
+          "Root Guard err-disables a port that receives any BPDU",
+          "BPDU Guard err-disables a port that receives any BPDU",
+          "Root Guard blocks a port while superior BPDUs arrive on it",
+          "BPDU Guard makes the switch the root bridge"
+        ],
+        "answer": [
+          1,
+          2
+        ],
+        "explanation": "BPDU Guard is the edge-port tool: any BPDU err-disables the port. Root Guard puts a port root-inconsistent (blocked) only while superior BPDUs arrive, then lets it recover."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.007",
@@ -277,7 +472,16 @@
       "spanning-tree vlan 10 root primary"
     ],
     "explanation": "root primary sets the priority to 24576, or 4096 below the current root's priority if that's already lower.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Which global command sets the bridge priority for VLAN 10 to exactly 4096? (full command)",
+        "answer": [
+          "spanning-tree vlan 10 priority 4096"
+        ],
+        "explanation": "'spanning-tree vlan 10 priority' sets a fixed value, which must be a multiple of 4096. 'root primary' picks a value for you instead."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.cli.001",
@@ -321,7 +525,23 @@
       3
     ],
     "explanation": "LLDP is IEEE 802.1AB, vendor-neutral, and off by default on Cisco devices (enable it with 'lldp run'). CDP is the Cisco-proprietary one that's on by default.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "Which two statements about CDP are true? (Choose two.)",
+        "choices": [
+          "It is an IEEE standard (802.1AB)",
+          "It is enabled by default on Cisco devices",
+          "It only reaches directly connected neighbours",
+          "It is routed across the network"
+        ],
+        "answer": [
+          1,
+          2
+        ],
+        "explanation": "CDP is Cisco-proprietary and on by default, and like LLDP it isn't routed, so it only reaches directly connected devices. 802.1AB is LLDP."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.002",
@@ -339,7 +559,19 @@
     ],
     "answer": 2,
     "explanation": "'Local Intrfce' is SW1's own port; 'Port ID' is the neighbour's port. SW1 Gi0/2 connects to R1's Gi0/0/0.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, which SW1 port connects to SW2?",
+        "answer": 1,
+        "explanation": "Read the 'Local Intrfce' column on SW2's row: SW1 uses Gi0/1. 'Port ID' is SW2's own port, which here happens to be Gi0/1 as well."
+      },
+      {
+        "stem": "Based on the exhibit, which port on R1 connects to SW1?",
+        "answer": 0,
+        "explanation": "'Port ID' is the neighbour's port, so R1 uses Gi0/0/0. 'Local Intrfce' (Gi0/2) is SW1's own end of the link."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.003",
@@ -352,7 +584,23 @@
       "no cdp enable"
     ],
     "explanation": "'no cdp enable' disables CDP on one interface; 'no cdp run' disables it globally.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "Which global command turns CDP off on every interface of a Cisco switch at once? (full command)",
+        "answer": [
+          "no cdp run"
+        ],
+        "explanation": "'no cdp run' disables CDP globally. 'no cdp enable' is the per-interface version."
+      },
+      {
+        "stem": "Which interface command stops a port from sending LLDP advertisements while LLDP keeps running elsewhere? (full command)",
+        "answer": [
+          "no lldp transmit"
+        ],
+        "explanation": "LLDP's transmit and receive are controlled separately per port. 'no lldp transmit' stops it advertising on that port."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.004",
@@ -368,7 +616,19 @@
       "LLDP hold time": "120 seconds"
     },
     "explanation": "CDP: 60/180 seconds. LLDP: 30/120 seconds.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "Match each default timer value to the discovery protocol setting it belongs to.",
+        "answer": {
+          "60 seconds": "CDP advertisement interval",
+          "180 seconds": "CDP holdtime",
+          "30 seconds": "LLDP advertisement interval",
+          "120 seconds": "LLDP hold time"
+        },
+        "explanation": "CDP sends every 60 s and holds for 180 s (three times). LLDP talks twice as often, every 30 s, and holds for 120 s (four times)."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.005",
@@ -385,7 +645,14 @@
     ],
     "answer": 1,
     "explanation": "The summary view doesn't list addresses; the detail view (or 'show cdp entry') does.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "Which command reports whether CDP is running on a device, with its timers?",
+        "answer": 0,
+        "explanation": "'show cdp' reports whether CDP runs, with its interval and holdtime. The detail view is the one that lists neighbours' IP addresses."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.001",
@@ -405,7 +672,22 @@
       "SE-Connect": "Spectrum analysis of RF interference"
     },
     "explanation": "Local is the default; FlexConnect suits branches; monitor, sniffer and SE-Connect are dedicated analysis modes.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Match each AP mode to its description.",
+        "distractors": [
+          "Encrypts the CAPWAP data channel"
+        ],
+        "answer": {
+          "Local": "The default; serves clients and tunnels their traffic to the WLC",
+          "Monitor": "Serves no clients; scans every channel for rogues",
+          "Rogue detector": "Listens on the wire for rogue devices",
+          "Bridge": "Links APs or buildings wirelessly"
+        },
+        "explanation": "Local is the default client-serving mode. Monitor watches the air and rogue detector watches the wire; bridge/mesh relays traffic over the air where there's no cable."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.002",
@@ -422,7 +704,31 @@
     ],
     "answer": 0,
     "explanation": "CAPWAP: UDP 5246 for control (DTLS-encrypted) and UDP 5247 for data.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which UDP port carries the CAPWAP control channel between a lightweight AP and its WLC?",
+        "choices": [
+          "UDP 5247",
+          "UDP 5246",
+          "TCP 22",
+          "UDP 1812"
+        ],
+        "answer": 1,
+        "explanation": "Control comes before data: 5246 is control (DTLS-encrypted) and 5247 is data. 1812 is RADIUS authentication."
+      },
+      {
+        "stem": "Which UDP port carries the CAPWAP data channel between a lightweight AP and its WLC?",
+        "choices": [
+          "UDP 5246",
+          "UDP 1813",
+          "TCP 22",
+          "UDP 5247"
+        ],
+        "answer": 3,
+        "explanation": "5247 carries client data and 5246 carries control. Only the control channel is always DTLS-encrypted."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.003",
@@ -439,7 +745,14 @@
     ],
     "answer": 1,
     "explanation": "In local mode all client traffic is tunnelled to the WLC in CAPWAP, so the AP only needs an access port in its management VLAN. Autonomous or FlexConnect APs switching VLANs locally need trunks.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "A switch port connects to an autonomous AP serving three WLANs in different VLANs. How should the port be configured?",
+        "answer": 0,
+        "explanation": "An autonomous AP bridges each WLAN onto its own VLAN itself, so the port must trunk all three. Only a local-mode lightweight AP gets by with an access port."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.004",
@@ -456,7 +769,20 @@
     ],
     "answer": 3,
     "explanation": "WLC LAG doesn't run LACP or PAgP, so the switch side must be statically configured with mode on.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "A switch's ports facing a WLC's LAG use 'channel-group 1 mode active'. Why doesn't the bundle come up?",
+        "choices": [
+          "WLC LAG needs PAgP desirable on the switch",
+          "WLC LAG doesn't negotiate; use mode on",
+          "The WLC needs at least four distribution ports",
+          "LAG only works on the service port"
+        ],
+        "answer": 1,
+        "explanation": "WLC LAG runs neither LACP nor PAgP. An active port waits for an LACP partner that never answers; 'channel-group mode on' bundles without negotiating."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.005",
@@ -472,7 +798,19 @@
       "Console port": "Local CLI access during setup"
     },
     "explanation": "The service port is OOB management; DS ports carry data; the redundancy port pairs WLCs.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Match each WLC logical interface to its purpose.",
+        "answer": {
+          "Management interface": "CAPWAP and admin access to the WLC",
+          "Virtual interface": "DHCP relay and web authentication",
+          "Dynamic interface": "Maps a WLAN to a VLAN",
+          "Service-port interface": "Out-of-band management address"
+        },
+        "explanation": "The management interface is what APs and admins reach, the virtual interface handles web auth and DHCP relay, and dynamic interfaces put each WLAN's clients in a VLAN."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.006",
@@ -488,7 +826,19 @@
       "Set the QoS profile and apply"
     ],
     "explanation": "Create, map to an interface, secure, then set QoS and apply.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Put the steps for creating a new WLAN on a WLC GUI in reverse order, from the last step back to the first.",
+        "answer": [
+          "Set the QoS profile and apply",
+          "Configure Layer 2 security such as WPA2 with a PSK",
+          "Enable the WLAN and map it to an interface (VLAN)",
+          "Choose WLANs > Create New and enter the profile name and SSID"
+        ],
+        "explanation": "Forwards it's create, map to an interface, secure, then QoS and apply; reversed, QoS comes first and Create New comes last."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.007",
@@ -505,7 +855,14 @@
     ],
     "answer": 0,
     "explanation": "Platinum = voice, Gold = video, Silver = best effort (default), Bronze = background.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which WLC QoS profile is meant for video traffic?",
+        "answer": 1,
+        "explanation": "Gold = video. Platinum is voice, Silver best effort (the default) and Bronze background."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.001",
@@ -522,7 +879,20 @@
     ],
     "answer": 2,
     "explanation": "Telnet sends everything, including usernames and passwords, in clear text. SSH encrypts the session.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "Why is console access still useful when the network is down?",
+        "choices": [
+          "It encrypts every session with SSH",
+          "It uses TCP 23, which is never filtered",
+          "It's out-of-band, apart from the network",
+          "It's faster than SSH over the VTY lines"
+        ],
+        "answer": 2,
+        "explanation": "The console is a direct cable to the device, a path separate from the production network. That's why it's the first way into a new or broken device."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.002",
@@ -542,7 +912,23 @@
       "RADIUS authentication": "UDP 1812"
     },
     "explanation": "SSH 22, Telnet 23, HTTPS 443, TACACS+ 49, RADIUS 1812 (accounting 1813).",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "Match each port to the management protocol that uses it.",
+        "distractors": [
+          "HTTP"
+        ],
+        "answer": {
+          "TCP 22": "SSH",
+          "TCP 23": "Telnet",
+          "TCP 443": "HTTPS",
+          "TCP 49": "TACACS+",
+          "UDP 1812": "RADIUS authentication"
+        },
+        "explanation": "22 SSH, 23 Telnet, 443 HTTPS, 49 TACACS+ and 1812 RADIUS authentication. Plain HTTP uses TCP 80, so it has no port here."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.003",
@@ -559,7 +945,20 @@
     ],
     "answer": 3,
     "explanation": "Out-of-band uses a path separate from production traffic, such as the console port or a dedicated management network.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "Which is an example of in-band management?",
+        "choices": [
+          "A console cable from a laptop",
+          "SSH to a switch's management SVI over the production network",
+          "A console server connected to each device's console port",
+          "A dedicated management port on its own separate network"
+        ],
+        "answer": 1,
+        "explanation": "In-band management shares the production network, such as SSH to an SVI. Console access and a separate management network are out-of-band."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.004",
@@ -576,7 +975,14 @@
     ],
     "answer": 1,
     "explanation": "TACACS+ (TCP 49) encrypts the whole body and separates authentication, authorisation and accounting. RADIUS encrypts only the password and suits network access.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "Which AAA protocol encrypts only the password and suits network access such as Wi-Fi and 802.1X?",
+        "answer": 0,
+        "explanation": "RADIUS (UDP 1812/1813) encrypts only the password and is the usual choice for network access. TACACS+ encrypts the whole body and suits device administration."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.cli.001",
@@ -605,7 +1011,20 @@
     ],
     "answer": 2,
     "explanation": "Each VLAN is a separate broadcast domain and subnet; traffic between them must be routed (router-on-a-stick, an SVI on a layer 3 switch, or a router).",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Two PCs in VLAN 10 are on the same switch. What do they need to communicate?",
+        "choices": [
+          "A layer 3 device to route between them",
+          "Nothing extra: they share a VLAN",
+          "A trunk between their two access ports",
+          "Different native VLANs on their ports"
+        ],
+        "answer": 1,
+        "explanation": "Hosts in the same VLAN share a broadcast domain and subnet, so the switch forwards between them at layer 2. Routing is only needed between different VLANs."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.005",
@@ -619,7 +1038,17 @@
       "show vlan"
     ],
     "explanation": "'show vlan brief' lists each VLAN with its access ports (trunk ports aren't listed).",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which command lists the ports that are trunking, with each one's native VLAN and allowed VLANs? (full command)",
+        "answer": [
+          "show interfaces trunk",
+          "show interface trunk"
+        ],
+        "explanation": "'show interfaces trunk' shows trunk mode, native VLAN and the allowed, active and forwarding VLAN lists. 'show vlan brief' leaves trunk ports out."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.008",
@@ -636,7 +1065,14 @@
     ],
     "answer": 1,
     "explanation": "FlexConnect switches client traffic locally and keeps working when the WLC is unreachable.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "An engineer at a branch wants an AP to capture 802.11 frames and send them to a laptop running Wireshark. Which AP mode fits?",
+        "answer": 3,
+        "explanation": "Sniffer mode captures frames and forwards them to an analyser. Monitor mode scans for rogues, and FlexConnect is the mode for surviving a WAN outage."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.009",
@@ -653,7 +1089,19 @@
     ],
     "answer": 0,
     "explanation": "The General tab selects the interface (dynamic interface/VLAN) for the WLAN; Security, QoS and Advanced cover the rest.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "On the WLC GUI, which tab of a WLAN sets WPA2 with a pre-shared key?",
+        "answer": 1,
+        "explanation": "The Security tab (its Layer 2 sub-tab) holds WPA2/WPA3, the cipher and the PSK or 802.1X. The General tab is where the VLAN interface is picked."
+      },
+      {
+        "stem": "On the WLC GUI, which tab of a WLAN sets the Platinum profile for a voice WLAN?",
+        "answer": 2,
+        "explanation": "The QoS tab picks Platinum, Gold, Silver (default) or Bronze. A voice WLAN should use Platinum."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.006",
@@ -670,7 +1118,19 @@
     ],
     "answer": 2,
     "explanation": "Normal range is 1-1005 (1002-1005 are reserved for old Token Ring/FDDI). Extended range is 1006-4094. 0 and 4095 are reserved.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which VLAN IDs are reserved for old Token Ring and FDDI?",
+        "answer": 1,
+        "explanation": "1002-1005 sit at the end of the normal range (1-1005) and are kept for Token Ring and FDDI. The extended range is 1006-4094."
+      },
+      {
+        "stem": "Which VLAN IDs make up the normal range?",
+        "answer": 0,
+        "explanation": "The normal range is 1-1005, including the reserved 1002-1005. 1006-4094 is the extended range, and 0 and 4095 are reserved."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.007",
@@ -690,7 +1150,23 @@
       3
     ],
     "explanation": "VLAN 1 is the default VLAN: all ports start in it, it's allowed on trunks and it's the default native VLAN, and it can't be deleted or renamed. Good practice moves users and the native VLAN off it.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which two statements about VLAN 1 are true? (Choose two.)",
+        "choices": [
+          "VLAN 1 can be renamed",
+          "VLAN 1 is the default native VLAN on trunks",
+          "VLAN 1 is in the normal range",
+          "VLAN 1 is in the extended range"
+        ],
+        "answer": [
+          1,
+          2
+        ],
+        "explanation": "VLAN 1 is the default native VLAN and sits in the normal range (1-1005). It can't be deleted or renamed, and the extended range starts at 1006."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.008",
@@ -708,7 +1184,15 @@
     ],
     "answer": 3,
     "explanation": "VLAN 10 exists and is active, but Fa0/7 is still in VLAN 1. Assign it with 'switchport access vlan 10'. Trunk ports wouldn't appear in show vlan brief at all.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, the hosts on Fa0/1-3 belong in VLAN 10, named SALES, which hasn't been set up yet. What should be done before moving the ports?",
+        "exhibit": "SW1#show vlan brief\nVLAN Name                             Status    Ports\n---- -------------------------------- --------- -------------------------------\n1    default                          active    Fa0/1, Fa0/2, Fa0/3, Fa0/7\n                                                Fa0/8, Gi0/2\n20   VOICE                            active    Fa0/4",
+        "answer": 0,
+        "explanation": "VLAN 10 isn't in the list, so create it with 'vlan 10' and 'name SALES'. A port assignment alone would create it unnamed, and VLANs have no 'no shutdown'."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.009",
@@ -725,7 +1209,14 @@
     ],
     "answer": 0,
     "explanation": "'switchport voice vlan 20' tells the phone (via CDP) to tag voice frames with VLAN 20, while the PC's frames stay untagged in access VLAN 10. The port stays an access port.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "An access port connects an IP phone with a PC behind it. Which command puts the PC's untagged frames in VLAN 20?",
+        "answer": 2,
+        "explanation": "The PC's frames are untagged, so they go into the access VLAN set by 'switchport access vlan 20'. The voice VLAN command only tells the phone which tag to use."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.010",
@@ -738,7 +1229,16 @@
       "switchport trunk native vlan 99"
     ],
     "explanation": "Set the same native VLAN on both ends. Using an unused VLAN rather than VLAN 1 is a common hardening step.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which interface command adds VLAN 40 to a trunk's existing allowed list? (full command)",
+        "answer": [
+          "switchport trunk allowed vlan add 40"
+        ],
+        "explanation": "Without 'add', 'switchport trunk allowed vlan 40' replaces the whole list with VLAN 40 alone. 'add' and 'remove' edit the existing list."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.011",
@@ -755,7 +1255,19 @@
     ],
     "answer": 2,
     "explanation": "The 4-byte tag sits after the source MAC: a 2-byte TPID (0x8100) and a 2-byte TCI holding the 3-bit priority (PCP/CoS), 1-bit DEI and 12-bit VLAN ID.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "How many bytes long is the TPID field inside an 802.1Q tag?",
+        "answer": 0,
+        "explanation": "The 4-byte tag splits into a 2-byte TPID (0x8100) and a 2-byte TCI holding priority, DEI and the 12-bit VLAN ID."
+      },
+      {
+        "stem": "How many bytes long was the header that ISL wrapped around each frame?",
+        "answer": 3,
+        "explanation": "ISL encapsulated the whole frame in a 26-byte header plus a 4-byte trailer. 802.1Q replaced it by inserting a 4-byte tag instead."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.012",
@@ -772,7 +1284,20 @@
     ],
     "answer": 1,
     "explanation": "The trunk stays up, but untagged frames cross between VLAN 1 and VLAN 99, joining two broadcast domains. CDP logs '%CDP-4-NATIVE_VLAN_MISMATCH'.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "SW1 and SW2 both use native VLAN 99 on their trunk. How do frames in VLAN 99 cross the link?",
+        "choices": [
+          "Tagged with VLAN ID 99",
+          "Tagged twice, with VLAN 1 outside and 99 inside",
+          "Untagged, and both ends put them in VLAN 99",
+          "They can't cross, because the native VLAN only carries DTP"
+        ],
+        "answer": 2,
+        "explanation": "Native VLAN frames are sent untagged. Because both ends agree on VLAN 99, each switch puts the untagged frames into VLAN 99 and nothing leaks."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.013",
@@ -789,7 +1314,19 @@
     ],
     "answer": 2,
     "explanation": "'allowed vlan 40' replaces the whole list with just VLAN 40, cutting 10, 20 and 30 off. 'add' (and 'remove') edit the existing list.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Trunk Gi0/1 allows VLANs 10,20,30. Which command makes it carry only VLAN 40?",
+        "answer": 0,
+        "explanation": "Without 'add' or 'remove', 'switchport trunk allowed vlan 40' replaces the whole list, so only VLAN 40 is left. That's the classic mistake when you meant to add one."
+      },
+      {
+        "stem": "Which command makes VLAN 40 the VLAN that trunk Gi0/1 sends untagged?",
+        "answer": 1,
+        "explanation": "The native VLAN is the one sent untagged, set with 'switchport trunk native vlan 40'. Both ends of the trunk must agree on it."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.006",
@@ -806,7 +1343,19 @@
     ],
     "answer": 0,
     "explanation": "'no cdp run' is global. 'no cdp enable' is the per-interface command. 'no lldp run' turns off LLDP, not CDP.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "Which command turns CDP off on one interface only?",
+        "answer": 1,
+        "explanation": "'no cdp enable' is the per-interface command. 'no cdp run' is global, and 'no lldp run' affects LLDP, not CDP."
+      },
+      {
+        "stem": "Which command turns LLDP off globally?",
+        "answer": 2,
+        "explanation": "'no lldp run' stops LLDP on the whole device. 'no cdp run' and 'no cdp enable' affect CDP instead."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.007",
@@ -823,7 +1372,14 @@
     ],
     "answer": 3,
     "explanation": "CDP sends every 60 s with a 180 s holdtime. LLDP defaults to 30 s and 120 s (holdtime = 4 x timer).",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "What are LLDP's default advertisement interval and hold time?",
+        "answer": 1,
+        "explanation": "LLDP sends every 30 s with a 120 s hold time (4 x the timer). CDP defaults to 60 s and 180 s."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.007",
@@ -843,7 +1399,17 @@
       3
     ],
     "explanation": "Members must agree on speed, duplex, switchport mode and VLAN settings, or they're suspended. Descriptions and CDP settings don't matter.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "Which two settings can differ between member ports without stopping an EtherChannel from bundling? (Choose two.)",
+        "answer": [
+          0,
+          1
+        ],
+        "explanation": "Descriptions and CDP don't affect bundling. Speed, duplex, switchport mode and VLAN settings must match, or the odd port is suspended."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.008",
@@ -860,7 +1426,14 @@
     ],
     "answer": 3,
     "explanation": "PAgP (modes desirable and auto) is Cisco's. LACP (active and passive) is IEEE 802.3ad, now 802.1AX.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "Which EtherChannel negotiation protocol is an IEEE open standard?",
+        "answer": 0,
+        "explanation": "LACP is IEEE 802.3ad (now 802.1AX), with modes active and passive. PAgP is Cisco's own; LLDP and STP aren't bundling protocols."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.008",
@@ -876,7 +1449,19 @@
       "Backup port": "A discarding backup for a designated port on the same shared segment"
     },
     "explanation": "Root and designated ports forward. Alternate ports replace a failed root port quickly; backup ports only appear when two ports of one switch share a segment (a hub).",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Match each spanning tree command to what it does.",
+        "answer": {
+          "spanning-tree portfast": "Skips listening and learning on an edge port",
+          "spanning-tree bpduguard enable": "Err-disables the port if any BPDU arrives",
+          "spanning-tree guard root": "Blocks the port while superior BPDUs arrive",
+          "spanning-tree vlan 10 root primary": "Sets priority 24576 or lower for VLAN 10"
+        },
+        "explanation": "PortFast and BPDU Guard go on host ports, Root Guard on ports facing switches that must never be root, and root primary lowers the priority to win the election."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.009",
@@ -893,7 +1478,14 @@
     ],
     "answer": 3,
     "explanation": "RSTP merges 802.1D's disabled, blocking and listening into one discarding state. The five-state list belongs to classic 802.1D STP.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Which port states does classic 802.1D STP use?",
+        "answer": 1,
+        "explanation": "802.1D has blocking, listening, learning, forwarding and disabled. RSTP folds disabled, blocking and listening into one discarding state."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.010",
@@ -910,7 +1502,19 @@
     ],
     "answer": 2,
     "explanation": "Root Guard keeps the root where you put it. BPDU Guard (any BPDU, err-disable) is for edge ports, root primary sets priority, and PortFast skips to forwarding.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "What does 'spanning-tree bpduguard enable' do on a PortFast port?",
+        "answer": 0,
+        "explanation": "BPDU Guard err-disables the port as soon as any BPDU arrives, so a plugged-in switch can't join the tree. Root Guard is the one that only blocks for superior BPDUs."
+      },
+      {
+        "stem": "What does 'spanning-tree portfast' do on a port?",
+        "answer": 3,
+        "explanation": "PortFast sends an edge port straight to forwarding, skipping listening and learning. Pair it with BPDU Guard so a connected switch err-disables the port."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.010",
@@ -927,7 +1531,19 @@
     ],
     "answer": 2,
     "explanation": "Cloud-based APs are managed in the cloud but forward data locally. Autonomous APs are configured one by one; lightweight APs tunnel to a WLC with CAPWAP.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which architecture configures and manages each AP on its own, one at a time?",
+        "answer": 0,
+        "explanation": "Autonomous APs are standalone devices, fine for a handful of APs. Lightweight APs are run by a WLC and cloud APs by an internet dashboard."
+      },
+      {
+        "stem": "Which architecture has each AP tunnel to a controller with CAPWAP, sharing the work in split-MAC?",
+        "answer": 1,
+        "explanation": "Lightweight APs handle real-time radio work and a WLC does management, authentication and roaming, over CAPWAP tunnels on UDP 5246/5247."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.011",
@@ -944,7 +1560,14 @@
     ],
     "answer": 2,
     "explanation": "An autonomous AP bridges each SSID to its own VLAN, so it needs a trunk. A lightweight AP in local mode tunnels client traffic to the WLC in CAPWAP, so it only needs an access port.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "A lightweight AP in local mode serves two SSIDs mapped to VLANs 10 and 20, with management VLAN 99. How should its switch port be set up?",
+        "answer": 0,
+        "explanation": "In local mode all client traffic goes through the CAPWAP tunnel to the WLC, which puts it on VLANs 10 and 20. The AP only needs an access port in its management VLAN."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.012",
@@ -961,7 +1584,19 @@
     ],
     "answer": 1,
     "explanation": "Dynamic interfaces are the WLC's VLAN interfaces for client data; each WLAN is tied to one. The management interface is for CAPWAP and admin access, the virtual interface for web auth and DHCP relay, and the service port is out-of-band.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which WLC interface do the APs build CAPWAP tunnels to, and admins use to manage the controller?",
+        "answer": 0,
+        "explanation": "The management interface carries CAPWAP and in-band admin access. Dynamic interfaces carry client VLANs, and the service port is out-of-band."
+      },
+      {
+        "stem": "Which WLC port gives out-of-band management, separate from the distribution system ports?",
+        "answer": 3,
+        "explanation": "The service port is the out-of-band management port. Distribution system ports and their management and dynamic interfaces carry the in-band traffic."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.005",
@@ -978,7 +1613,20 @@
     ],
     "answer": 1,
     "explanation": "A layer 2 switch doesn't route, so it needs a default gateway for its own traffic to other subnets. 'ip routing' would turn it into a layer 3 switch.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "A layer 2 switch has 'ip default-gateway 10.99.0.1', but interface vlan 99 has no address. Admins can't SSH to it. What is missing?",
+        "choices": [
+          "ip routing",
+          "An IP address and 'no shutdown' on interface vlan 99",
+          "A static route on the switch to every admin subnet",
+          "switchport mode trunk on interface vlan 99"
+        ],
+        "answer": 1,
+        "explanation": "A layer 2 switch needs a management address on an SVI before anything can reach it; the default gateway only helps once it has one. It doesn't route, so 'ip routing' isn't the fix."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.006",
@@ -995,7 +1643,20 @@
     ],
     "answer": 1,
     "explanation": "Layer 2 switch ports have no IP addresses. The switch gets a management address on a switched virtual interface in its management VLAN.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "On a layer 2 switch, which command lets its own management traffic reach other subnets?",
+        "choices": [
+          "ip routing",
+          "interface vlan 99",
+          "transport input ssh",
+          "ip default-gateway 10.99.0.1"
+        ],
+        "answer": 3,
+        "explanation": "A layer 2 switch doesn't route, so it sends traffic for other subnets to its default gateway. The SVI gives it an address, but not a way off the subnet."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.007",
@@ -1011,7 +1672,19 @@
       "HTTPS": "In-band, encrypted web GUI"
     },
     "explanation": "Console access works even when the network is down. Telnet, SSH and HTTPS travel over the production network; only SSH and HTTPS are encrypted.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "Match each protocol to its description.",
+        "answer": {
+          "TACACS+": "Encrypts the whole payload; suits device administration",
+          "RADIUS": "Encrypts only the password; suits network access",
+          "Telnet": "Clear-text remote command line",
+          "SSH": "Encrypted remote command line"
+        },
+        "explanation": "TACACS+ and RADIUS are the AAA protocols; TACACS+ protects more and can authorise commands. Of the remote CLI options only SSH encrypts the session."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.014",
@@ -1028,7 +1701,20 @@
     ],
     "answer": 0,
     "explanation": "Broadcasts stay inside their VLAN, so each VLAN is its own broadcast domain and normally its own IP subnet. Every switch port is already its own collision domain.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "A switch has hosts in VLAN 10 and VLAN 20. A VLAN 10 host sends a broadcast. Who receives it?",
+        "choices": [
+          "Every host on the switch",
+          "Only hosts in VLAN 10",
+          "Only the default gateway",
+          "Hosts in VLAN 20, untagged"
+        ],
+        "answer": 1,
+        "explanation": "Each VLAN is its own broadcast domain, so the broadcast is flooded only to ports in VLAN 10. Reaching VLAN 20 needs routing, and routers don't forward broadcasts."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.015",
@@ -1045,7 +1731,14 @@
     ],
     "answer": 2,
     "explanation": "'vlan 30' enters VLAN configuration mode and 'name HR' names it. 'interface vlan 30' creates an SVI (a layer 3 interface), not the VLAN itself.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which commands create a layer 3 SVI for VLAN 30 and label it HR?",
+        "answer": 1,
+        "explanation": "'interface vlan 30' creates the SVI, a layer 3 interface for the VLAN, and 'description' labels it. 'vlan 30' then 'name HR' creates the VLAN itself."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.016",
@@ -1062,7 +1755,20 @@
     ],
     "answer": 3,
     "explanation": "Same VLAN means same subnet, so no routing is needed, but the inter-switch link must carry the VLAN. A trunk carries many VLANs with 802.1Q tags.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "A host in VLAN 10 on SW1 must reach a host in VLAN 20 on SW2. The link between the switches carries both VLANs. What else is needed?",
+        "choices": [
+          "Nothing: VLANs span switches automatically",
+          "The same native VLAN as VLAN 10 on both switches",
+          "A layer 3 device to route between VLAN 10 and VLAN 20",
+          "To carry VLAN 10, such as a trunk that allows VLAN 10"
+        ],
+        "answer": 2,
+        "explanation": "Different VLANs are different subnets, so the traffic must be routed by a router or multilayer switch. Carrying both VLANs on the trunk alone doesn't connect them."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.017",
@@ -1079,7 +1785,14 @@
     ],
     "answer": 3,
     "explanation": "One physical router port connects to a switch trunk. Each VLAN gets a subinterface that tags with 'encapsulation dot1Q' and holds that VLAN's gateway address.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which configuration gives a multilayer switch a gateway address for VLAN 10?",
+        "answer": 1,
+        "explanation": "On a multilayer switch each VLAN gets an SVI ('interface vlan 10') holding its gateway address; with 'ip routing' it routes between them. Subinterfaces are the router-on-a-stick method."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.018",
@@ -1096,7 +1809,14 @@
     ],
     "answer": 3,
     "explanation": "Inter-VLAN routing on a layer 3 switch needs 'ip routing'. Without it, the SVIs only work as management addresses.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "A router-on-a-stick has subinterfaces for VLANs 10 and 20, but the switch port facing the router only carries one VLAN. Which interface command is missing on that switch port?",
+        "answer": 2,
+        "explanation": "Router-on-a-stick needs the switch port to be a trunk so it carries every VLAN with 802.1Q tags. 'ip routing' is for SVIs on a multilayer switch."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.019",
@@ -1114,7 +1834,15 @@
     ],
     "answer": 3,
     "explanation": "Dynamic auto acts as an access port unless the other side actively asks for a trunk (dynamic desirable or trunk). It's left in default VLAN 1.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, which statement about Fa0/3 is true?",
+        "exhibit": "SW1#show interfaces fa0/3 switchport\nName: Fa0/3\nSwitchport: Enabled\nAdministrative Mode: trunk\nOperational Mode: trunk\nAdministrative Trunking Encapsulation: dot1q\nNegotiation of Trunking: Off\nAccess Mode VLAN: 1 (default)\nTrunking Native Mode VLAN: 1 (default)",
+        "answer": 0,
+        "explanation": "Both the administrative and operational mode are trunk, so Fa0/3 is a static trunk. 'Negotiation of Trunking: Off' means 'switchport nonegotiate' stopped its DTP frames."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.020",
@@ -1130,7 +1858,19 @@
       "switchport access vlan 20": "Puts the access port in VLAN 20"
     },
     "explanation": "Static modes plus nonegotiate stop the port from being talked into a trunk, which is the usual hardening for user ports.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Match each interface command to its effect.",
+        "answer": {
+          "switchport mode dynamic desirable": "Actively asks the neighbour to trunk",
+          "switchport mode dynamic auto": "Trunks only if the neighbour asks",
+          "switchport voice vlan 20": "Tells the IP phone to tag in VLAN 20",
+          "switchport trunk native vlan 99": "Sends VLAN 99 frames untagged"
+        },
+        "explanation": "Desirable asks and auto only answers. The voice VLAN is learned by the phone through CDP, and the native VLAN is the one a trunk sends untagged."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.021",
@@ -1147,7 +1887,20 @@
     ],
     "answer": 1,
     "explanation": "Native VLAN frames cross the trunk untagged, and untagged frames that arrive are put into the native VLAN. It defaults to VLAN 1.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "An 802.1Q trunk has its native VLAN set to 99. Which frames does it send without a tag?",
+        "choices": [
+          "Frames in VLAN 1",
+          "Frames in VLAN 99",
+          "Broadcast frames",
+          "None: every frame is tagged"
+        ],
+        "answer": 1,
+        "explanation": "Only the native VLAN is untagged. Once it's changed to 99, VLAN 1 frames get a tag like any other VLAN."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.022",
@@ -1164,7 +1917,20 @@
     ],
     "answer": 2,
     "explanation": "Desirable sends DTP requests and trunks with desirable, auto or trunk. Auto only answers, so two auto ports stay access.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which DTP mode only answers trunk requests and never starts one?",
+        "choices": [
+          "trunk",
+          "dynamic auto",
+          "dynamic desirable",
+          "access"
+        ],
+        "answer": 1,
+        "explanation": "Dynamic auto waits to be asked, so it trunks with desirable or trunk but stays access with another auto port. Desirable is the mode that asks."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.023",
@@ -1182,7 +1948,15 @@
     ],
     "answer": 0,
     "explanation": "VLAN 20 is allowed and active, but missing from the last list, so this port isn't forwarding it. Usually that's STP blocking a redundant path for VLAN 20 (or VTP pruning).",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, why isn't VLAN 20 traffic forwarded over Gi0/1?",
+        "exhibit": "SW1#show interfaces trunk\nPort        Mode         Encapsulation  Status        Native vlan\nGi0/1       on           802.1q         trunking      1\n\nPort        Vlans allowed on trunk\nGi0/1       1,10\n\nPort        Vlans allowed and active in management domain\nGi0/1       1,10\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi0/1       1,10",
+        "answer": 2,
+        "explanation": "The allowed list is only 1 and 10, so VLAN 20 never gets onto the trunk. Fix it with 'switchport trunk allowed vlan add 20'; STP isn't involved."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.024",
@@ -1199,7 +1973,20 @@
     ],
     "answer": 1,
     "explanation": "An attacker in the native VLAN can send a double-tagged frame: the first switch strips the outer (native) tag and forwards the inner one into another VLAN. An unused native VLAN with no hosts closes this.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "An attacker in the native VLAN sends a frame with two 802.1Q tags. What does the first switch do that lets the VLAN hopping attack work?",
+        "choices": [
+          "It drops the frame, because two tags aren't allowed",
+          "It sends the frame to the native VLAN's gateway",
+          "It strips the outer tag and forwards the inner one",
+          "It adds a third tag for VLAN 1"
+        ],
+        "answer": 2,
+        "explanation": "The outer tag matches the native VLAN, so the first switch removes it and forwards the frame on the trunk untagged, still carrying the inner tag. The next switch reads that inner tag and delivers the frame into another VLAN."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.025",
@@ -1212,7 +1999,16 @@
       "switchport nonegotiate"
     ],
     "explanation": "Use it with a static mode ('switchport mode trunk' or 'access'). On a dynamic port IOS rejects it.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which interface command makes a port a static trunk? (full command)",
+        "answer": [
+          "switchport mode trunk"
+        ],
+        "explanation": "'switchport mode trunk' sets the port to trunk regardless of the neighbour. Add 'switchport nonegotiate' to stop DTP frames as well."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.026",
@@ -1229,7 +2025,20 @@
     ],
     "answer": 0,
     "explanation": "'show interfaces <if> switchport' shows administrative and operational mode, access and native VLAN and the DTP state. 'show interfaces trunk' lists ports that are trunking.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "Which command shows the native VLAN and allowed VLAN list of every trunking port?",
+        "choices": [
+          "show vlan brief",
+          "show ip interface brief",
+          "show interfaces trunk",
+          "show cdp neighbors detail"
+        ],
+        "answer": 2,
+        "explanation": "'show interfaces trunk' lists every trunking port with its mode, native VLAN and allowed, active and forwarding VLANs. 'show vlan brief' doesn't list trunk ports."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.027",
@@ -1246,7 +2055,20 @@
     ],
     "answer": 2,
     "explanation": "ISL added a 26-byte header and 4-byte trailer around the frame. It's obsolete; modern switches only support 802.1Q, which inserts a 4-byte tag.",
-    "lesson_ref": "d2.vlans_trunks"
+    "lesson_ref": "d2.vlans_trunks",
+    "variants": [
+      {
+        "stem": "What is 802.1Q?",
+        "choices": [
+          "The open standard that tags frames on trunks with a 4-byte tag",
+          "A spanning tree variant that runs per VLAN on trunks",
+          "An old Cisco-proprietary trunking protocol that encapsulated the whole frame",
+          "A link aggregation protocol that bundles parallel links"
+        ],
+        "answer": 0,
+        "explanation": "802.1Q is the IEEE trunking standard: it inserts a 4-byte tag with a 12-bit VLAN ID after the source MAC. ISL is the obsolete Cisco method that wrapped the frame."
+      }
+    ]
   },
   {
     "id": "q.d2.vlan.cli.002",
@@ -1275,7 +2097,20 @@
     ],
     "answer": 3,
     "explanation": "CDP advertises identity and capability details only. That's still useful to an attacker, which is why it's turned off on untrusted ports.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "What does 'show cdp neighbors detail' add to the summary 'show cdp neighbors' view?",
+        "choices": [
+          "The neighbour's routing table",
+          "Its IP address and software version",
+          "The neighbour's enable secret",
+          "The neighbour's running configuration"
+        ],
+        "answer": 1,
+        "explanation": "The detail view adds the neighbour's IP address and software version, handy for finding a device to manage. CDP never shares routes, secrets or configuration."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.009",
@@ -1292,7 +2127,14 @@
     ],
     "answer": 0,
     "explanation": "LLDP (IEEE 802.1AB) is vendor-neutral. CDP, VTP and DTP are Cisco-proprietary.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "Which protocol announces a Cisco device's name, platform and port to its directly connected Cisco neighbours, and is on by default?",
+        "answer": 1,
+        "explanation": "CDP is Cisco's discovery protocol and runs by default. LLDP does the same job across vendors but is off by default; VTP and DTP don't discover neighbours."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.010",
@@ -1305,7 +2147,16 @@
       "lldp run"
     ],
     "explanation": "LLDP is off by default on most Cisco IOS devices. Per port, 'lldp transmit' and 'lldp receive' are on once it runs globally.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "Which command shows whether LLDP is running on a device? (full command)",
+        "answer": [
+          "show lldp"
+        ],
+        "explanation": "'show lldp' reports whether LLDP is running, just as 'show cdp' does for CDP. It's off by default on Cisco devices."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.011",
@@ -1322,7 +2173,20 @@
     ],
     "answer": 1,
     "explanation": "An attacker on the other side would learn exactly which device and IOS version to target. Use 'no cdp enable' on that interface.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "On which ports should CDP be turned off?",
+        "choices": [
+          "Every trunk between your own switches",
+          "Ports to IP phones that learn the voice VLAN",
+          "Ports facing the internet, guests or the public",
+          "None: CDP is harmless"
+        ],
+        "answer": 2,
+        "explanation": "CDP reveals models, versions and addresses, so turn it off on untrusted ports. Phones need CDP to learn the voice VLAN, and links between your own switches are trusted."
+      }
+    ]
   },
   {
     "id": "q.d2.disc.012",
@@ -1340,7 +2204,14 @@
     ],
     "answer": 0,
     "explanation": "'Interface' is the local port on SW1 (Gi0/1). 'Port ID' is the neighbour's port, so R2 uses Gi0/0/0.",
-    "lesson_ref": "d2.discovery"
+    "lesson_ref": "d2.discovery",
+    "variants": [
+      {
+        "stem": "The exhibit is from SW1. Which SW1 interface connects to R2?",
+        "answer": 1,
+        "explanation": "In the detail view 'Interface' is the local port, so SW1 uses Gi0/1. 'Port ID (outgoing port)' is R2's end, Gi0/0/0."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.009",
@@ -1357,7 +2228,19 @@
     ],
     "answer": 3,
     "explanation": "'on' forces a channel with no negotiation, so it only works with 'on' at the other end. The LACP side never hears from a partner and doesn't bundle.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "SW1's ports use 'channel-group 1 mode desirable' and SW2's use 'channel-group 1 mode auto'. What happens?",
+        "answer": 2,
+        "explanation": "Desirable starts PAgP negotiation and auto answers it, so a PAgP channel forms. Two auto ports would wait forever."
+      },
+      {
+        "stem": "SW1's ports use 'channel-group 1 mode active' and SW2's use 'channel-group 1 mode passive'. What happens?",
+        "answer": 0,
+        "explanation": "Active starts LACP negotiation and passive answers, so an LACP channel forms. Members run at full speed; a bundle never halves them."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.010",
@@ -1374,7 +2257,20 @@
     ],
     "answer": 0,
     "explanation": "A hash of MAC/IP (and optionally port) picks the link, which keeps each flow's frames in order. One big flow can't go faster than a single member link.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "Two hosts exchange one large flow across a four-link EtherChannel. How many member links does that flow use?",
+        "choices": [
+          "All four, one frame on each in turn",
+          "Two, for redundancy",
+          "One, chosen by the address hash",
+          "Whichever member is least busy, frame by frame"
+        ],
+        "answer": 2,
+        "explanation": "The hash of the flow's addresses always gives the same member, which keeps frames in order. Other flows may hash to the other links."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.011",
@@ -1387,7 +2283,23 @@
       "channel-group 3 mode active"
     ],
     "explanation": "Active sends LACP; passive only answers. At least one side must be active.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "Which interface command puts a port in channel group 3 using PAgP and starts the negotiation? (full command)",
+        "answer": [
+          "channel-group 3 mode desirable"
+        ],
+        "explanation": "desirable is the PAgP mode that starts negotiation; auto only answers. LACP uses active and passive instead."
+      },
+      {
+        "stem": "Which interface command puts a port in channel group 3 using LACP, only answering and never starting negotiation? (full command)",
+        "answer": [
+          "channel-group 3 mode passive"
+        ],
+        "explanation": "passive only answers LACP, so the other end must be active. Two passive ports never bundle."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.012",
@@ -1404,7 +2316,20 @@
     ],
     "answer": 1,
     "explanation": "STP sees Port-channel1 as a single port, so all members forward. That's why a bundle gives more usable bandwidth than separate parallel links.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "Two switches are joined by two parallel links that aren't bundled. How does spanning tree treat them?",
+        "choices": [
+          "It blocks one of the links to prevent a loop",
+          "As one logical link, so neither is blocked",
+          "It ignores both links",
+          "It runs a separate instance per link"
+        ],
+        "answer": 0,
+        "explanation": "Two separate parallel links form a loop, so STP blocks one. Bundling them into an EtherChannel makes one logical link, and then both forward."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.013",
@@ -1421,7 +2346,20 @@
     ],
     "answer": 2,
     "explanation": "Members and the port-channel must be routed ports. The IP address goes on the Port-channel, not on the members.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "On a layer 3 EtherChannel, where does the IP address go?",
+        "choices": [
+          "On the lowest-numbered member port",
+          "On each member port, in one subnet",
+          "On an SVI for the channel's VLAN",
+          "On the Port-channel interface"
+        ],
+        "answer": 3,
+        "explanation": "The members and the port-channel are routed ports ('no switchport'), and the single IP address goes on the Port-channel. Members carry no address of their own."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.014",
@@ -1439,7 +2377,15 @@
     ],
     "answer": 2,
     "explanation": "'s' means suspended: the port joined the group but its configuration doesn't match the port-channel. Fix the mismatch and it bundles (P).",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "Based on the exhibit, why isn't Gi0/3 adding bandwidth to Po1?",
+        "exhibit": "Flags:  D - down        P - bundled in port-channel\n        I - stand-alone s - suspended\n        S - Layer2      U - in use\n\nGroup  Port-channel  Protocol    Ports\n------+-------------+-----------+---------------------------\n1      Po1(SU)         LACP      Gi0/1(P)    Gi0/2(P)\n2      Po2(SU)         LACP      Gi0/3(P)",
+        "answer": 3,
+        "explanation": "Gi0/3 is bundled (P), but into Po2 in group 2. To join Po1 it needs 'channel-group 1' like Gi0/1 and Gi0/2."
+      }
+    ]
   },
   {
     "id": "q.d2.ec.015",
@@ -1456,7 +2402,20 @@
     ],
     "answer": 0,
     "explanation": "The switch hashes the source and destination IPs. Traffic between one pair of hosts always uses the same link.",
-    "lesson_ref": "d2.etherchannel"
+    "lesson_ref": "d2.etherchannel",
+    "variants": [
+      {
+        "stem": "With 'port-channel load-balance src-dst-ip', what's true of all the traffic between one pair of hosts?",
+        "choices": [
+          "It's spread evenly over every member",
+          "It always uses the same member link",
+          "It uses the least busy member at that moment",
+          "It's copied onto every member link"
+        ],
+        "answer": 1,
+        "explanation": "The switch hashes the source and destination IPs, and the same pair always gives the same hash, so it always picks the same member link."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.011",
@@ -1473,7 +2432,20 @@
     ],
     "answer": 0,
     "explanation": "The low 12 bits of the priority field hold the VLAN ID (sys-id-ext), so the configurable part goes up in steps of 4096.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "What is a switch's default spanning tree bridge priority, before the VLAN number is added?",
+        "choices": [
+          "4096",
+          "24576",
+          "32768",
+          "61440"
+        ],
+        "answer": 2,
+        "explanation": "Every switch starts at 32768, the middle of the 16-bit range. 24576 is what 'root primary' sets, and 61440 is the highest configurable value."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.012",
@@ -1486,7 +2458,16 @@
       "SW2"
     ],
     "explanation": "Equal priorities are broken by the lowest MAC address. 0011.2233.4400 is lower, so SW2 wins.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "SW1 uses priority 28672 and SW2 uses 32768 in VLAN 1. SW1's MAC is 0011.2233.4455 and SW2's is 0011.2233.4400. Which switch becomes the root bridge?",
+        "answer": [
+          "SW1"
+        ],
+        "explanation": "Priority is compared before the MAC. SW1's 28672 is lower than 32768, so SW1 wins even though SW2 has the lower MAC address."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.013",
@@ -1497,7 +2478,14 @@
     "stem": "SW3 reaches the root bridge through SW2 over two 1 Gbps hops (SW3 to SW2, SW2 to root). With default short costs, what is SW3's root path cost?",
     "answer": "8",
     "explanation": "Each 1 Gbps link costs 4, and root path cost adds the cost of every link on the way: 4 + 4 = 8.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "SW3 reaches the root bridge over three hops: a 100 Mbps link from SW3 to SW2, then 1 Gbps links from SW2 to SW1 and SW1 to the root. With default short costs, what is SW3's root path cost?",
+        "answer": "27",
+        "explanation": "Root path cost adds every link on the way: 100 Mbps = 19, plus 4 for each 1 Gbps link: 19 + 4 + 4 = 27."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.014",
@@ -1514,7 +2502,20 @@
     ],
     "answer": 1,
     "explanation": "Tiebreakers in order: lowest root path cost, lowest neighbour bridge ID, lowest neighbour port ID (priority and number), then lowest local port ID.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "A non-root switch has two paths to the root. What does it compare first to pick its root port?",
+        "choices": [
+          "The lower port number on this switch",
+          "The neighbour with the lowest bridge ID",
+          "The lowest total cost to the root bridge",
+          "The port that came up first"
+        ],
+        "answer": 2,
+        "explanation": "Lowest root path cost comes first. Only on a tie does it look at the neighbour bridge ID, then the neighbour port ID, then its own port ID."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.015",
@@ -1531,7 +2532,20 @@
     ],
     "answer": 1,
     "explanation": "RSTP converges in a second or so instead of 30-50 s, because ports negotiate directly and alternate ports take over immediately.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Rapid PVST+ converges in about a second. In the worst case, how long does classic 802.1D STP take to bring a port to forwarding?",
+        "choices": [
+          "About 2 seconds",
+          "About 15 seconds",
+          "Up to 5 minutes",
+          "Up to 50 seconds"
+        ],
+        "answer": 3,
+        "explanation": "Max age (20 s) plus listening (15 s) plus learning (15 s) gives up to 50 seconds. That delay is what Rapid PVST+ was built to avoid."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.016",
@@ -1548,7 +2562,20 @@
     ],
     "answer": 0,
     "explanation": "With PVST+ you can make one switch root for some VLANs and another for the rest, so both uplinks carry traffic instead of one sitting blocked.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Why do redundant switch links need spanning tree at all?",
+        "choices": [
+          "To make every parallel link forward at the same time",
+          "Frames have no TTL, so broadcasts would loop forever",
+          "To save CPU",
+          "Because 802.1Q requires it"
+        ],
+        "answer": 1,
+        "explanation": "With no TTL a broadcast would loop endlessly (a broadcast storm) and MAC tables would flap. STP blocks just enough ports to leave one loop-free path."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.017",
@@ -1565,7 +2592,14 @@
     ],
     "answer": 3,
     "explanation": "BPDU Guard err-disables the port immediately. It stays down until an admin bounces it or 'errdisable recovery cause bpduguard' brings it back.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "A port with Root Guard receives superior BPDUs. What happens, and how is it recovered?",
+        "answer": 0,
+        "explanation": "Root Guard puts the port root-inconsistent (blocked) while superior BPDUs arrive and lets it recover by itself once they stop. Err-disabling is what BPDU Guard does."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.018",
@@ -1581,7 +2615,18 @@
       "Forwarding"
     ],
     "explanation": "Blocking (max age 20 s), listening (15 s), learning (15 s), then forwarding: up to 50 s. RSTP replaces the first states with discarding.",
-    "lesson_ref": "d2.stp"
+    "lesson_ref": "d2.stp",
+    "variants": [
+      {
+        "stem": "Put the Rapid PVST+ (802.1w) port states in the order a port passes through to start forwarding.",
+        "answer": [
+          "Discarding",
+          "Learning",
+          "Forwarding"
+        ],
+        "explanation": "RSTP merges disabled, blocking and listening into discarding, so a port goes discarding, learning, then forwarding."
+      }
+    ]
   },
   {
     "id": "q.d2.stp.cli.002",
@@ -1610,7 +2655,20 @@
     ],
     "answer": 2,
     "explanation": "Time-critical 802.11 functions stay on the AP. The WLC handles management functions: authentication, association, RF management and roaming.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "In split-MAC architecture, which of these does the WLC handle rather than the lightweight AP?",
+        "choices": [
+          "Sending beacons",
+          "Answering probe requests",
+          "Encrypting frames over the air",
+          "Roaming decisions between APs"
+        ],
+        "answer": 3,
+        "explanation": "Roaming is a management function, so the WLC handles it with authentication, association and RF management. Beacons, probe responses and encryption are time-critical and stay on the AP."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.014",
@@ -1627,7 +2685,19 @@
     ],
     "answer": 3,
     "explanation": "Monitor mode APs listen on every channel for IDS and rogue detection. Local mode serves clients and scans off-channel only briefly.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which AP mode is the default, serving clients and tunnelling their traffic to the WLC?",
+        "answer": 0,
+        "explanation": "Local mode is the default: it serves clients, tunnels their data in CAPWAP and only scans off-channel briefly. Monitor mode serves no clients."
+      },
+      {
+        "stem": "Which AP mode links two buildings over the air where running a cable isn't possible?",
+        "answer": 1,
+        "explanation": "Bridge (mesh) mode relays traffic wirelessly between APs. FlexConnect is for branches and monitor mode only listens."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.015",
@@ -1644,7 +2714,19 @@
     ],
     "answer": 1,
     "explanation": "Sniffer mode forwards captured frames to a PC running an analyser. SE-Connect is for spectrum analysis of RF interference.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which AP mode does spectrum analysis to find sources of RF interference?",
+        "answer": 2,
+        "explanation": "SE-Connect (Spectrum Expert) turns the AP into a spectrum analyser. Sniffer captures 802.11 frames, and monitor looks for rogues."
+      },
+      {
+        "stem": "Which AP mode serves no clients and scans every channel for rogue APs and intrusions?",
+        "answer": 0,
+        "explanation": "Monitor mode is the dedicated IDS and rogue-detection mode. Sniffer captures frames for an analyser instead."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.016",
@@ -1661,7 +2743,14 @@
     ],
     "answer": 1,
     "explanation": "Bridge/mesh APs relay traffic over the air, for point-to-point links between buildings or mesh networks where cabling isn't possible.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which AP mode listens on the wired network for rogue devices?",
+        "answer": 3,
+        "explanation": "Rogue detector mode watches the wire, not the air. Monitor mode is the one that scans the radio channels."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.017",
@@ -1678,7 +2767,20 @@
     ],
     "answer": 1,
     "explanation": "In local mode all client data goes through the CAPWAP tunnel to the WLC. FlexConnect can switch it locally at the AP instead.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "A lightweight AP is in FlexConnect mode with local switching. How does a client's data reach the wired network?",
+        "choices": [
+          "The AP switches it onto the WLAN's VLAN at its own switch port",
+          "It's tunnelled in CAPWAP to the WLC, which puts it on the WLAN's VLAN",
+          "It goes directly to the internet through the AP's uplink",
+          "Through the AP's console port"
+        ],
+        "answer": 0,
+        "explanation": "FlexConnect local switching puts client traffic onto VLANs at the AP, which is why it keeps working when the WLC link fails. Local mode tunnels it to the WLC instead."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.018",
@@ -1695,7 +2797,20 @@
     ],
     "answer": 0,
     "explanation": "Cisco offers appliances, virtual controllers (for example a Catalyst 9800-CL in a private or public cloud), controllers embedded in Catalyst switches and controllers running on an AP.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which of these is a WLC that runs as a virtual machine in a private or public cloud?",
+        "choices": [
+          "An autonomous AP",
+          "A Catalyst 9800-CL",
+          "A FlexConnect AP",
+          "A CAPWAP tunnel"
+        ],
+        "answer": 1,
+        "explanation": "The Catalyst 9800-CL is Cisco's virtual controller. WLCs also come as appliances, embedded in Catalyst switches or running on an AP."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.019",
@@ -1712,7 +2827,20 @@
     ],
     "answer": 0,
     "explanation": "With local switching the AP itself puts client traffic onto VLANs, so the switch port must trunk them. A local-mode AP only needs an access port.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "A local-mode AP serves two WLANs in VLANs 10 and 20 and tunnels all their traffic to the WLC. What kind of switch port does it need?",
+        "choices": [
+          "A trunk carrying its management VLAN plus VLANs 10 and 20",
+          "An access port in the AP's management VLAN",
+          "A routed port with an IP address in each WLAN's subnet",
+          "An EtherChannel"
+        ],
+        "answer": 1,
+        "explanation": "The WLC, not the AP, puts the client traffic on VLANs 10 and 20, so the AP only needs an access port. FlexConnect local switching is what needs a trunk."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.020",
@@ -1729,7 +2857,20 @@
     ],
     "answer": 1,
     "explanation": "The WLC bridges each WLAN's clients onto its own VLAN (dynamic interfaces), so the uplink must carry all of those VLANs plus management.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which WLC physical port connects to a standby WLC?",
+        "choices": [
+          "Service port",
+          "Distribution system port",
+          "Redundancy port",
+          "Console port"
+        ],
+        "answer": 2,
+        "explanation": "The redundancy port pairs the WLC with a standby controller. The service port is out-of-band management and DS ports go to the switched network."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.021",
@@ -1746,7 +2887,14 @@
     ],
     "answer": 2,
     "explanation": "The virtual interface address is the same on every WLC in a mobility group. Clients see it during web authentication and as the DHCP server address.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which WLC interface is tied to each WLAN so its clients land in the right VLAN?",
+        "answer": 1,
+        "explanation": "Each WLAN maps to a dynamic interface, the WLC's interface in that VLAN. The virtual interface is for web auth and DHCP relay."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.022",
@@ -1763,7 +2911,20 @@
     ],
     "answer": 2,
     "explanation": "Broadcast discovery only works on the local subnet. DHCP option 43 or the DNS name tells the AP the WLC's management address.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "With no DHCP option or DNS entry set up, how does a new lightweight AP find a WLC on its own subnet?",
+        "choices": [
+          "A static route to the WLC configured on the AP's console",
+          "CDP from the switch, which advertises the WLC's address",
+          "DHCP option 43, or a DNS name for the controller",
+          "It broadcasts a discovery request on the local subnet"
+        ],
+        "answer": 3,
+        "explanation": "On the same subnet the AP just broadcasts and the WLC answers. DHCP option 43 or a DNS name is only needed when the WLC is on another subnet."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.023",
@@ -1780,7 +2941,19 @@
     ],
     "answer": 3,
     "explanation": "802.3af gives up to 15.4 W and 802.3at 30 W. Cisco UPOE and 802.3bt Type 3 give 60 W; Type 4 goes to 90-100 W. 802.3ab is 1000BASE-T, not PoE.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which power option supplies up to 30 W per port?",
+        "answer": 1,
+        "explanation": "802.3at (PoE+) gives up to 30 W. 802.3af gives 15.4 W, and UPOE or 802.3bt Type 3 gives 60 W."
+      },
+      {
+        "stem": "Which power option supplies up to 15.4 W per port?",
+        "answer": 0,
+        "explanation": "802.3af, the original PoE, gives up to 15.4 W. PoE goes up the alphabet: af 15.4 W, at 30 W, bt 60 or 90-100 W."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.008",
@@ -1797,7 +2970,14 @@
     ],
     "answer": 2,
     "explanation": "'transport input' lists the protocols allowed in. 'transport output' controls connections started from the device.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "Which line command allows sessions started from the device's VTY lines to other devices only over SSH?",
+        "answer": 3,
+        "explanation": "'transport output' controls connections started from the device. 'transport input ssh' is the one that controls which protocols may connect in."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.009",
@@ -1814,7 +2994,20 @@
     ],
     "answer": 3,
     "explanation": "The arguments are minutes and seconds. Idle sessions close after 5 minutes; '0 0' would disable the timeout, which isn't recommended.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "What does 'exec-timeout 0 0' under line vty 0 15 do?",
+        "choices": [
+          "Logs out sessions as soon as they connect",
+          "Disables the idle timeout, so sessions never time out",
+          "Blocks every login on the VTY lines",
+          "Logs out sessions after 10 minutes of inactivity"
+        ],
+        "answer": 1,
+        "explanation": "The arguments are minutes and seconds, and '0 0' turns the timeout off. Idle sessions then stay open forever, which isn't recommended."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.010",
@@ -1831,7 +3024,20 @@
     ],
     "answer": 2,
     "explanation": "Central AAA means one place to add or remove admins. TACACS+ can authorise individual commands and log what each admin ran. Keep a local account as a fallback.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "Why keep a local account on devices that log admins in through TACACS+?",
+        "choices": [
+          "It's a fallback if the AAA server can't be reached",
+          "It's needed for TACACS+ to encrypt the payload",
+          "It's required before SSH can be enabled",
+          "It lets RADIUS authorise each command"
+        ],
+        "answer": 0,
+        "explanation": "If the TACACS+ server or the path to it fails, a local account still lets admins log in. Encryption and per-command authorisation come from TACACS+ itself."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.011",
@@ -1848,7 +3054,20 @@
     ],
     "answer": 0,
     "explanation": "It enables the HTTPS management GUI. Pair it with 'no ip http server' to switch off unencrypted HTTP.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "Which command switches off the unencrypted HTTP web interface?",
+        "choices": [
+          "ip http secure-server",
+          "no ip http server",
+          "transport input ssh",
+          "no ip http secure-server"
+        ],
+        "answer": 1,
+        "explanation": "'no ip http server' disables plain HTTP (TCP 80). 'ip http secure-server' is the one that turns on HTTPS, and removing it would lose the encrypted GUI."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.012",
@@ -1859,7 +3078,14 @@
     "stem": "How many simultaneous remote sessions does 'line vty 0 15' configure?",
     "answer": "16",
     "explanation": "The range 0-15 includes both ends: 16 lines. Older devices had only vty 0 4 (5 lines).",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "How many simultaneous remote sessions does 'line vty 0 4' configure?",
+        "answer": "5",
+        "explanation": "The range 0-4 includes both ends: 5 lines, as on older devices. 'line vty 0 15' gives 16."
+      }
+    ]
   },
   {
     "id": "q.d2.mgmt.013",
@@ -1876,7 +3102,20 @@
     ],
     "answer": 0,
     "explanation": "On lines it's 'access-class', on interfaces it's 'ip access-group'. Filtering the VTY lines protects remote access whichever interface it arrives on.",
-    "lesson_ref": "d2.device_access"
+    "lesson_ref": "d2.device_access",
+    "variants": [
+      {
+        "stem": "Which configuration applies standard ACL 10 to traffic arriving on an interface, rather than to the VTY lines?",
+        "choices": [
+          "access-class 10 in, under line vty 0 15",
+          "ip access-group 10 in, under interface g0/1",
+          "access-class 10 in, under interface g0/1",
+          "ip access-group 10 in, under line vty 0 15"
+        ],
+        "answer": 1,
+        "explanation": "On interfaces the command is 'ip access-group'; on lines it's 'access-class'. Mixing them up is the trap."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.024",
@@ -1893,7 +3132,20 @@
     ],
     "answer": 3,
     "explanation": "On the WLANs tab choose Create New and Go, then enter the type, profile name, SSID and ID.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "After creating a WLAN, where in the WLC GUI do you set WPA2 with a pre-shared key?",
+        "choices": [
+          "Management tab, SNMP",
+          "The WLAN's Security tab, Layer 2",
+          "The WLAN's QoS tab",
+          "WLANs tab, Create New, Go"
+        ],
+        "answer": 1,
+        "explanation": "WPA/WPA2/WPA3, the cipher and the PSK or 802.1X live on the Layer 2 sub-tab of the WLAN's Security tab. Create New is only where the WLAN starts."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.025",
@@ -1910,7 +3162,20 @@
     ],
     "answer": 3,
     "explanation": "The profile name is the WLC's label and the SSID is what clients see; they can differ. Security and VLAN mapping come on the following tabs.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "When creating a WLAN on a WLC, which value is the network name that clients see?",
+        "choices": [
+          "Profile name",
+          "SSID",
+          "WLAN ID",
+          "Interface name"
+        ],
+        "answer": 1,
+        "explanation": "Clients see the SSID. The profile name is only the WLC's own label for the WLAN, and the two can differ."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.026",
@@ -1920,14 +3185,21 @@
     "difficulty": 1,
     "stem": "A new WLAN was created, but no client can see its SSID. Which General tab setting was most likely missed?",
     "choices": [
-      "Interface group",
+      "Interface/Interface Group (the VLAN)",
       "Radio policy: 802.11a only",
       "Broadcast SSID: disabled on purpose",
       "Status: Enabled"
     ],
     "answer": 3,
     "explanation": "New WLANs are disabled until you tick Status Enabled. (Turning off SSID broadcast would also hide it, but that's a deliberate choice.)",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "A WLAN is enabled and clients join it, but they get addresses in the wrong VLAN. Which General tab setting should be checked?",
+        "answer": 0,
+        "explanation": "The General tab's Interface/Interface Group setting maps the WLAN to the VLAN its clients use, so a wrong one puts clients in the wrong subnet. Status is clearly already enabled, since clients can join."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.027",
@@ -1944,7 +3216,14 @@
     ],
     "answer": 1,
     "explanation": "Layer 2 security is where WPA/WPA2/WPA3, the cipher and PSK or 802.1X go. Layer 3 is for web authentication.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "On a WLAN's Security tab, which sub-tab sets web authentication?",
+        "answer": 0,
+        "explanation": "Layer 3 security is for web authentication. Layer 2 is where WPA2/WPA3 and the PSK or 802.1X are set."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.028",
@@ -1961,7 +3240,14 @@
     ],
     "answer": 2,
     "explanation": "Silver is best effort, the default. Platinum is for voice, Gold for video and Bronze for background traffic.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Which WLC QoS profile is meant for background traffic?",
+        "answer": 3,
+        "explanation": "Bronze is background. Silver is best effort (the default), Gold video and Platinum voice."
+      }
+    ]
   },
   {
     "id": "q.d2.wlc.029",
@@ -1977,6 +3263,18 @@
       "Bronze": "Background"
     },
     "explanation": "Pick the profile on the WLAN's QoS tab. A voice WLAN should use Platinum.",
-    "lesson_ref": "d2.wireless_arch"
+    "lesson_ref": "d2.wireless_arch",
+    "variants": [
+      {
+        "stem": "Match each kind of traffic to the WLC QoS profile meant for it.",
+        "answer": {
+          "Voice": "Platinum",
+          "Video": "Gold",
+          "Best effort (default)": "Silver",
+          "Background": "Bronze"
+        },
+        "explanation": "From highest to lowest: Platinum for voice, Gold for video, Silver for best effort (the default) and Bronze for background."
+      }
+    ]
   }
 ]

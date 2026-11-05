@@ -50,6 +50,8 @@ func _unit_row(parent: Node, u: Dictionary) -> void:
 	var n := Progress.attempt_count(u.id)
 	if n > 0:
 		bits.append("%d%% over last %d" % [int(round(Progress.accuracy(u.id) * 100)), n])
+	if Progress.is_completed(u.id):
+		bits.append("Completed")
 	if Progress.is_mastered(u.id):
 		bits.append("Mastered")
 	UI.label(info, "  ·  ".join(bits), "Muted")
